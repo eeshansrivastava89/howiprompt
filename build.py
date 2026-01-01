@@ -9,9 +9,14 @@ One-click command to:
 4. Generate index.html
 
 Usage:
-    python build.py                              # Full build
-    python build.py --metrics-only               # Only metrics.json
-    python build.py --claude-code ~/.claude/projects  # Custom data path
+    python build.py                    # Full build (reads from data/ folder)
+    python build.py --metrics-only     # Only compute metrics.json
+    python build.py --copy-claude-code # Copy Claude Code data from ~/.claude/projects
+
+Data setup:
+    1. Copy your Claude.ai export to: data/claude_ai/conversations.json
+    2. Copy your Claude Code data to: data/claude_code/
+       OR run: python build.py --copy-claude-code
 """
 
 import argparse
@@ -42,10 +47,7 @@ PROJECT_ROOT = Path(__file__).parent.resolve()
 class Config:
     """Build configuration - all paths relative to project root."""
 
-    # Data sources (relative to project root)
-    # Users can either:
-    #   1. Copy/symlink their data into data/claude_code/ and data/claude_ai/
-    #   2. Override with --claude-code and --claude-ai CLI args
+    # Data sources - always read from data/ folder
     claude_code_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "claude_code")
     claude_ai_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "claude_ai" / "conversations.json")
 
@@ -686,8 +688,8 @@ def generate_header(branding: dict, personas: dict) -> str:
                     <div class="card p-5 lg:p-6 flex flex-col">
                         <h3 class="text-sm font-semibold text-muted uppercase tracking-wider mb-4 shrink-0">The 4 Personas</h3>
                         <p class="text-muted text-sm mb-5">Based on where you fall on the Engagement (x-axis) and Politeness (y-axis) scales:</p>
-                        <!-- 2x2 Matrix - fixed height grid -->
-                        <div class="grid grid-cols-[auto_1fr_1fr] grid-rows-[auto_1fr_1fr] gap-2 text-center flex-1">
+                        <!-- 2x2 Matrix -->
+                        <div class="grid grid-cols-[auto_1fr_1fr] gap-2 text-center">
                             <!-- Header row -->
                             <div></div>
                             <div class="text-muted text-xs font-medium py-1">High Politeness</div>
@@ -1223,7 +1225,7 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
                     <div class="flex justify-between"><span class="text-muted">Night Owl</span><span>{t['night_owl_pct']}%</span></div>
                 </div>
                 <div class="space-y-1.5 border-b border-border pb-3 mb-3">
-                    <div class="flex justify-between"><span class="text-muted">"You're right"</span><span class="stat-accent">{yr['count']}x</span></div>
+                    <div class="flex justify-between"><span class="text-muted">"You're absolutely right"</span><span class="stat-accent">{yr['count']}x</span></div>
                 </div>
                 <div class="text-center pt-3">
                     <p class="font-bold mb-1">PERSONA: {p['name'].upper()}</p>
@@ -1325,33 +1327,59 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
 
 
 # === Main Build Pipeline ===
+def copy_claude_code_data(dest_path: Path) -> bool:
+    """Copy Claude Code data from ~/.claude/projects to data/claude_code/."""
+    import shutil
+    source_path = Path.home() / ".claude" / "projects"
+
+    if not source_path.exists():
+        print(f"  Error: Claude Code data not found at {source_path}")
+        return False
+
+    # Count files to copy
+    files_to_copy = list(source_path.rglob("*.jsonl"))
+    if not files_to_copy:
+        print(f"  Error: No .jsonl files found in {source_path}")
+        return False
+
+    print(f"  Found {len(files_to_copy)} conversation files")
+
+    # Copy directory structure
+    for jsonl_file in files_to_copy:
+        rel_path = jsonl_file.relative_to(source_path)
+        dest_file = dest_path / rel_path
+        dest_file.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(jsonl_file, dest_file)
+
+    print(f"  Copied to {dest_path}")
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="How I Prompt Wrapped 2025 - Build System",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python build.py                              # Full build
-  python build.py --metrics-only               # Only metrics.json
-  python build.py --claude-code ~/.claude/projects  # Custom data path
+  python build.py                    # Full build
+  python build.py --metrics-only     # Only metrics.json
+  python build.py --copy-claude-code # Copy Claude Code data, then build
         """
     )
     parser.add_argument("--metrics-only", action="store_true", help="Only compute metrics, skip HTML")
     parser.add_argument("--output", "-o", type=Path, help="Output directory")
-    parser.add_argument("--claude-code", type=Path, help="Path to Claude Code projects (default: data/claude_code/)")
-    parser.add_argument("--claude-ai", type=Path, help="Path to Claude.ai conversations.json (default: data/claude_ai/conversations.json)")
+    parser.add_argument("--copy-claude-code", action="store_true", help="Copy Claude Code data from ~/.claude/projects to data/claude_code/")
     args = parser.parse_args()
 
     config = load_config()
-
-    # Override paths from CLI if provided
-    if args.claude_code:
-        config.claude_code_path = args.claude_code.expanduser().resolve()
-    if args.claude_ai:
-        config.claude_ai_path = args.claude_ai.expanduser().resolve()
-
     output_dir = args.output or config.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Handle --copy-claude-code flag
+    if args.copy_claude_code:
+        print("\n[0/3] Copying Claude Code data...")
+        if not copy_claude_code_data(config.claude_code_path):
+            sys.exit(1)
 
     print("=" * 50)
     print("How I Prompt Wrapped 2025 - Build")
@@ -1405,6 +1433,13 @@ Examples:
     print(f"\nOutput:")
     print(f"  {metrics_path}")
     print(f"  {html_path}")
+
+    # Copy to docs/ for GitHub Pages
+    import shutil
+    docs_path = PROJECT_ROOT / "docs" / "index.html"
+    if docs_path.parent.exists():
+        shutil.copy2(html_path, docs_path)
+        print(f"  {docs_path} (GitHub Pages)")
 
 
 if __name__ == "__main__":
