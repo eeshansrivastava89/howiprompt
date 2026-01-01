@@ -549,25 +549,33 @@ def generate_header(branding: dict, personas: dict) -> str:
     return f'''
     <!-- Header -->
     <header class="fixed top-0 left-0 right-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border">
-        <nav class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-            <a href="{branding['site_url']}" class="text-text hover:text-muted transition-colors font-serif text-base sm:text-lg">
-                <span class="font-normal text-muted">Sidequest by</span> <span class="font-semibold">{branding['site_name']}</span>
-            </a>
-            <div class="flex items-center gap-3 sm:gap-5">
-                <button onclick="openMethodology()" class="text-muted hover:text-text transition-colors text-sm hidden sm:block">Methodology</button>
-                <a href="{branding['github_repo']}" target="_blank" class="text-muted hover:text-text transition-colors text-sm hidden sm:block">Build Your Own</a>
-                <a href="{branding['newsletter_url']}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium bg-[#FF6719] text-white rounded-full hover:bg-[#E55A15] transition-colors">
-                    <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"></path></svg>
-                    Subscribe
+        <nav class="max-w-5xl mx-auto px-4 sm:px-6 py-2 sm:py-3">
+            <!-- Row 1: Branding + Subscribe + Theme -->
+            <div class="flex items-center justify-between">
+                <a href="{branding['site_url']}" class="text-text hover:text-muted transition-colors font-serif text-base sm:text-lg">
+                    <span class="font-normal text-muted">Sidequest by</span> <span class="font-semibold">{branding['site_name']}</span>
                 </a>
-                <button id="themeToggle" class="p-1.5 rounded-md border border-border hover:bg-surface transition-all duration-200" aria-label="Toggle theme">
-                    <svg class="w-4 h-4 text-muted dark:block hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <svg class="w-4 h-4 text-muted dark:hidden block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    </svg>
-                </button>
+                <div class="flex items-center gap-2 sm:gap-5">
+                    <button onclick="openMethodology()" class="text-muted hover:text-text transition-colors text-sm hidden sm:block">Methodology</button>
+                    <a href="{branding['github_repo']}" target="_blank" class="text-muted hover:text-text transition-colors text-sm hidden sm:block">Build Your Own</a>
+                    <a href="{branding['newsletter_url']}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium bg-[#FF6719] text-white rounded-full hover:bg-[#E55A15] transition-colors">
+                        <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"></path></svg>
+                        Subscribe
+                    </a>
+                    <button id="themeToggle" class="p-1.5 rounded-md border border-border hover:bg-surface transition-all duration-200" aria-label="Toggle theme">
+                        <svg class="w-4 h-4 text-muted dark:block hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                        <svg class="w-4 h-4 text-muted dark:hidden block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Row 2: Mobile-only nav links -->
+            <div class="flex items-center justify-center gap-6 pt-2 sm:hidden">
+                <button onclick="openMethodology()" class="text-muted hover:text-text transition-colors text-sm">Methodology</button>
+                <a href="{branding['github_repo']}" target="_blank" class="text-muted hover:text-text transition-colors text-sm">Build Your Own</a>
             </div>
         </nav>
     </header>
