@@ -801,10 +801,12 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
     heatmap_json = json.dumps(t["heatmap"])
 
     html = f'''<!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <script>if(location.protocol !== 'https:' && location.hostname !== 'localhost') location.replace('https:' + location.href.substring(location.protocol.length));</script>
     <title>How I Prompt: 2025</title>
 
     <!-- Open Graph -->
@@ -1282,8 +1284,8 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
 
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
-        if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: light)').matches)) {{
-            html.classList.remove('dark');
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {{
+            html.classList.add('dark');
         }}
         themeToggle.addEventListener('click', () => {{
             html.classList.toggle('dark');
