@@ -25,3 +25,6 @@ venv/
 # IDE
 .vscode/
 .idea/
+
+# Claude Code local settings
+.claude/
