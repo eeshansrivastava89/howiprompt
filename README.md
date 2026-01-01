@@ -4,6 +4,8 @@ A "year in review" visualization of your Claude AI conversations. Analyze your p
 
 I first ran this for my 2025 review, but you can run this at any time. You bring your data and are responsible for privacy concerns. By default, this script does not read memories.json, users.json or projects.json. Only reads conversations.json from Claude AI export. You can choose to not include any sensitive files / conversations in the data folder.
 
+I made this only for Mac users right now. 
+
 ## Quick Start
 
 ```bash
