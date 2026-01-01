@@ -910,9 +910,9 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
                 <h1 class="text-4xl md:text-6xl font-bold">How I <span class="gradient-text">Prompt</span></h1>
             </div>
         </div>
-        <div class="absolute bottom-12 scroll-hint">
+        <div id="scrollHint" class="absolute bottom-12 transition-opacity duration-300">
             <p class="text-muted text-sm mb-2">Scroll</p>
-            <svg class="w-5 h-5 mx-auto text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 mx-auto text-muted animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
             </svg>
         </div>
@@ -1211,50 +1211,58 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
     </section>
 
     <!-- Section 7: Final Diagnostic (includes footer for proper scroll-snap) -->
-    <section class="min-h-screen flex flex-col items-center px-6 py-16">
+    <section class="min-h-screen flex flex-col items-center px-4 sm:px-6 py-8 sm:py-16">
         <div class="max-w-md w-full flex flex-col justify-center flex-1">
-            <div class="card p-6 font-mono text-sm">
-                <div class="text-center border-b border-border pb-3 mb-3">
-                    <p class="text-base font-bold">HOW I PROMPT</p>
-                    <p class="text-muted text-xs">2025 SUMMARY</p>
+            <div class="card p-4 sm:p-6 font-mono text-xs sm:text-sm">
+                <div class="text-center border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
+                    <p class="text-sm sm:text-base font-bold">HOW I PROMPT</p>
+                    <p class="text-muted text-[10px] sm:text-xs">2025 SUMMARY</p>
                 </div>
-                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
+                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <div class="flex justify-between"><span class="text-muted">Prompts</span><span>{v['total_human']:,}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Conversations</span><span>{v['total_conversations']}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Words Typed</span><span>{v['total_words_human'] // 1000}K</span></div>
                 </div>
-                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
+                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <div class="flex justify-between"><span class="text-muted">Avg Turns</span><span>{cd.get('avg_turns', 0)}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Longest</span><span class="stat-accent">{cd.get('max_turns', 0)} turns</span></div>
                     <div class="flex justify-between"><span class="text-muted">Deep Dives</span><span>{cd.get('deep_dives', 0)}</span></div>
                 </div>
-                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
+                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <div class="flex justify-between"><span class="text-muted">Peak Hour</span><span>{peak_hour_12h}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Peak Day</span><span>{t['peak_day']}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Night Owl</span><span>{t['night_owl_pct']}%</span></div>
                 </div>
-                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
+                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <div class="flex justify-between"><span class="text-muted">"You're absolutely right"</span><span class="stat-accent">{yr['count']}x</span></div>
                 </div>
-                <div class="text-center pt-3">
-                    <p class="font-bold mb-1">PERSONA: {p['name'].upper()}</p>
-                    <p class="text-muted text-xs">{' • '.join(p['traits'])}</p>
+                <div class="text-center pt-2 sm:pt-3">
+                    <p class="font-bold text-xs sm:text-sm mb-1">PERSONA: {p['name'].upper()}</p>
+                    <p class="text-muted text-[10px] sm:text-xs">{' • '.join(p['traits'])}</p>
                 </div>
-                <div class="text-center mt-4 pt-3 border-t border-border">
-                    <p class="text-muted text-xs">{date_display}</p>
+                <div class="text-center mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-border">
+                    <p class="text-muted text-[10px] sm:text-xs">{date_display}</p>
                     {author_line}
                 </div>
             </div>
-            <div class="mt-8 text-center">
-                <p class="text-muted text-base mb-3">"Based on this analysis, you spend too much time talking to AI."</p>
-                <p class="font-serif text-xl italic stat-accent mb-1">"You're absolutely right."</p>
-                <p class="text-muted text-sm">— You, apparently</p>
+            <div class="mt-4 sm:mt-8 text-center">
+                <p class="text-muted text-sm sm:text-base mb-2 sm:mb-3">"Based on this analysis, you spend too much time talking to AI."</p>
+                <p class="font-serif text-lg sm:text-xl italic stat-accent mb-1">"You're absolutely right."</p>
+                <p class="text-muted text-xs sm:text-sm">— You, apparently</p>
             </div>
         </div>
 {generate_footer_content(branding) if branding else ''}
     </section>
 
     <script>
+        // Hide scroll hint on any scroll
+        const scrollHint = document.getElementById('scrollHint');
+        if (scrollHint) {{
+            window.addEventListener('scroll', () => {{
+                scrollHint.style.opacity = '0';
+            }}, {{ once: true }});
+        }}
+
         const heatmapData = {heatmap_json};
         const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         const maxVal = Math.max(...heatmapData.flat());
