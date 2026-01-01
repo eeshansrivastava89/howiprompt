@@ -1,0 +1,27 @@
+# Output (generated files - we copy index.html to docs/ manually)
+output/
+
+# Internal docs (spec, planning - not for public)
+internal/
+
+# Data (user's private data)
+data/claude_code/*
+data/claude_ai/*
+!data/claude_code/.gitkeep
+!data/claude_ai/.gitkeep
+
+# Branding (personal config - use branding.example.json as template)
+branding.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
