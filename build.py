@@ -859,6 +859,7 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
             --border: #e5e5e5;
             --text: #171717;
             --muted: #737373;
+            --header-height: 100px;
         }}
         .dark {{
             --bg: #0a0a0a;
@@ -867,7 +868,11 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
             --text: #e5e5e5;
             --muted: #737373;
         }}
+        @media (min-width: 640px) {{
+            :root {{ --header-height: 56px; }}
+        }}
         html {{ scroll-snap-type: y mandatory; scroll-behavior: smooth; }}
+        body {{ scroll-padding-top: var(--header-height); }}
         section {{ scroll-snap-align: start; scroll-snap-stop: always; }}
         @keyframes fadeIn {{ from {{ opacity: 0; }} to {{ opacity: 1; }} }}
         @keyframes fadeInUp {{ from {{ opacity: 0; transform: translateY(30px); }} to {{ opacity: 1; transform: translateY(0); }} }}
@@ -883,9 +888,14 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
         .scroll-hint {{ animation: bounce 2s infinite; }}
         @keyframes bounce {{ 0%, 100% {{ transform: translateY(0); }} 50% {{ transform: translateY(8px); }} }}
         .tabular-nums {{ font-variant-numeric: tabular-nums; }}
+        /* Mobile: Hide decorative quotes on overflow sections */
+        @media (max-width: 639px) {{
+            .mobile-hide {{ display: none; }}
+            .scroll-hint {{ display: none; }}
+        }}
     </style>
 </head>
-<body class="bg-bg text-text font-sans antialiased transition-colors duration-300{' pt-14' if branding else ''}">
+<body class="bg-bg text-text font-sans antialiased transition-colors duration-300{' pt-24 sm:pt-14' if branding else ''}">
 
     {generate_header(branding, PERSONAS) if branding else '''
     <!-- Theme Toggle (standalone when no branding) -->
@@ -919,51 +929,51 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
     </section>
 
     <!-- Section 2: The Numbers -->
-    <section class="min-h-screen flex items-center justify-center px-6 py-20">
+    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20">
         <div class="max-w-3xl w-full">
-            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">The Numbers</p>
-            <div class="text-center mb-12">
-                <div class="text-7xl md:text-8xl font-bold gradient-text counter" data-target="{v['total_human']}">{v['total_human']:,}</div>
-                <p class="text-2xl text-text/80 mt-2">prompts sent</p>
+            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">The Numbers</p>
+            <div class="text-center mb-6 sm:mb-12">
+                <div class="text-5xl sm:text-7xl md:text-8xl font-bold gradient-text counter" data-target="{v['total_human']}">{v['total_human']:,}</div>
+                <p class="text-lg sm:text-2xl text-text/80 mt-2">prompts sent</p>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                <div class="card p-4 text-center">
-                    <p class="text-2xl font-bold text-text">{v['total_conversations']:,}</p>
-                    <p class="text-muted text-xs mt-1">conversations</p>
+            <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+                <div class="card p-3 sm:p-4 text-center">
+                    <p class="text-lg sm:text-2xl font-bold text-text">{v['total_conversations']:,}</p>
+                    <p class="text-muted text-[10px] sm:text-xs mt-1">convos</p>
                 </div>
-                <div class="card p-4 text-center">
-                    <p class="text-2xl font-bold text-text">{v['total_words_human'] // 1000}K</p>
-                    <p class="text-muted text-xs mt-1">words typed</p>
+                <div class="card p-3 sm:p-4 text-center">
+                    <p class="text-lg sm:text-2xl font-bold text-text">{v['total_words_human'] // 1000}K</p>
+                    <p class="text-muted text-[10px] sm:text-xs mt-1">words</p>
                 </div>
-                <div class="card p-4 text-center">
-                    <p class="text-2xl font-bold text-text">{cd.get('avg_turns', 0)}</p>
-                    <p class="text-muted text-xs mt-1">avg turns</p>
+                <div class="card p-3 sm:p-4 text-center">
+                    <p class="text-lg sm:text-2xl font-bold text-text">{cd.get('avg_turns', 0)}</p>
+                    <p class="text-muted text-[10px] sm:text-xs mt-1">avg turns</p>
                 </div>
-                <div class="card p-4 text-center">
-                    <p class="text-2xl font-bold text-text">{rr}x</p>
-                    <p class="text-muted text-xs mt-1">response ratio</p>
+                <div class="card p-3 sm:p-4 text-center">
+                    <p class="text-lg sm:text-2xl font-bold text-text">{rr}x</p>
+                    <p class="text-muted text-[10px] sm:text-xs mt-1">ratio</p>
                 </div>
-                <div class="card p-4 text-center">
-                    <p class="text-2xl font-bold text-text">{cd.get('max_turns', 0)}</p>
-                    <p class="text-muted text-xs mt-1">longest session</p>
+                <div class="card p-3 sm:p-4 text-center">
+                    <p class="text-lg sm:text-2xl font-bold text-text">{cd.get('max_turns', 0)}</p>
+                    <p class="text-muted text-[10px] sm:text-xs mt-1">longest</p>
                 </div>
-                <div class="card p-4 text-center">
-                    <p class="text-2xl font-bold text-text">{cd.get('deep_dives', 0)}</p>
-                    <p class="text-muted text-xs mt-1">deep dives</p>
+                <div class="card p-3 sm:p-4 text-center">
+                    <p class="text-lg sm:text-2xl font-bold text-text">{cd.get('deep_dives', 0)}</p>
+                    <p class="text-muted text-[10px] sm:text-xs mt-1">deep dives</p>
                 </div>
             </div>
-            <div class="card p-6 mt-8 text-center">
+            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
                 <p class="text-muted font-serif italic">"That's a lot of 'actually, wait...'"</p>
             </div>
         </div>
     </section>
 
     <!-- Section 3: Temporal Patterns -->
-    <section class="min-h-screen flex items-center justify-center px-6 py-20">
+    <section class="min-h-screen flex items-start sm:items-center justify-center px-4 sm:px-6 pt-8 pb-6 sm:py-20">
         <div class="max-w-4xl w-full">
-            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">When You Prompt</p>
-            <div class="card p-4 md:p-8 mb-8 overflow-x-auto">
-                <p class="text-sm text-muted mb-6">Activity by Hour × Day</p>
+            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-3 sm:mb-8 text-center">When You Prompt</p>
+            <div class="card p-2 sm:p-4 md:p-8 mb-3 sm:mb-8 overflow-x-auto">
+                <p class="text-[10px] sm:text-sm text-muted mb-2 sm:mb-6">Activity by Hour × Day</p>
                 <div class="min-w-[500px] md:min-w-0 w-full">
                     <div class="flex mb-2 ml-12">
                         <div class="flex-1 grid grid-cols-24 gap-[2px]">
@@ -996,260 +1006,260 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
                     <div id="heatmap" class="space-y-[2px]"></div>
                 </div>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div class="card p-6 text-center">
-                    <p class="text-4xl font-bold stat-accent">{peak_hour_12h}</p>
-                    <p class="text-muted text-sm mt-1">Peak hour</p>
-                    <p class="text-muted text-xs">{t['peak_hour_count']} prompts</p>
+            <div class="grid grid-cols-3 gap-2 sm:gap-4">
+                <div class="card p-2 sm:p-6 text-center">
+                    <p class="text-xl sm:text-4xl font-bold stat-accent">{peak_hour_12h}</p>
+                    <p class="text-muted text-[10px] sm:text-sm mt-0.5 sm:mt-1">Peak hour</p>
+                    <p class="text-muted text-[10px] sm:text-xs hidden sm:block">{t['peak_hour_count']} prompts</p>
                 </div>
-                <div class="card p-6 text-center">
-                    <p class="text-4xl font-bold text-text">{t['night_owl_pct']}%</p>
-                    <p class="text-muted text-sm mt-1">Night Owl Index</p>
-                    <p class="text-muted text-xs">11pm - 4am</p>
+                <div class="card p-2 sm:p-6 text-center">
+                    <p class="text-xl sm:text-4xl font-bold text-text">{t['night_owl_pct']}%</p>
+                    <p class="text-muted text-[10px] sm:text-sm mt-0.5 sm:mt-1">Night Owl</p>
+                    <p class="text-muted text-[10px] sm:text-xs hidden sm:block">11pm - 4am</p>
                 </div>
-                <div class="card p-6 text-center col-span-2 md:col-span-1">
-                    <p class="text-4xl font-bold text-text">{t['peak_day']}</p>
-                    <p class="text-muted text-sm mt-1">Most active day</p>
-                    <p class="text-muted text-xs">{t['peak_day_count']} prompts</p>
+                <div class="card p-2 sm:p-6 text-center">
+                    <p class="text-xl sm:text-4xl font-bold text-text">{t['peak_day']}</p>
+                    <p class="text-muted text-[10px] sm:text-sm mt-0.5 sm:mt-1">Peak day</p>
+                    <p class="text-muted text-[10px] sm:text-xs hidden sm:block">{t['peak_day_count']} prompts</p>
                 </div>
             </div>
-            <div class="card p-6 mt-8 text-center">
+            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
                 <p class="text-muted font-serif italic">"Just one more fix..."</p>
             </div>
         </div>
     </section>
 
     <!-- Section 4: Prompt Style -->
-    <section class="min-h-screen flex items-center justify-center px-6 py-20">
+    <section class="min-h-screen flex items-start sm:items-center justify-center px-4 sm:px-6 pt-8 pb-6 sm:py-20">
         <div class="max-w-4xl w-full">
-            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">Prompt Style</p>
-            <div class="grid md:grid-cols-2 gap-6">
+            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">Prompt Style</p>
+            <div class="grid grid-cols-2 gap-2 sm:gap-6">
                 <!-- Politeness Index -->
-                <div class="card p-6">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-semibold">Politeness Index</h3>
-                        <span class="text-2xl font-bold stat-accent">{pol['per_100_prompts']}</span>
+                <div class="card p-3 sm:p-6">
+                    <div class="flex justify-between items-center mb-1 sm:mb-2">
+                        <h3 class="text-sm sm:text-lg font-semibold">Politeness</h3>
+                        <span class="text-lg sm:text-2xl font-bold stat-accent">{pol['per_100_prompts']}</span>
                     </div>
-                    <p class="text-muted text-xs mb-4">per 100 prompts</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-3">
-                            <span class="w-16 text-muted text-xs">"please"</span>
-                            <div class="flex-1 h-2 bg-border rounded-full overflow-hidden">
+                    <p class="text-muted text-[10px] sm:text-xs mb-2 sm:mb-4">per 100 prompts</p>
+                    <div class="space-y-1 sm:space-y-2">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <span class="w-12 sm:w-16 text-muted text-[10px] sm:text-xs">"please"</span>
+                            <div class="flex-1 h-1.5 sm:h-2 bg-border rounded-full overflow-hidden">
                                 <div class="h-full bg-accent rounded-full" style="width: {pol_please_pct}%"></div>
                             </div>
-                            <span class="text-xs font-mono w-8 text-right">{pol['counts'].get('please', 0)}</span>
+                            <span class="text-[10px] sm:text-xs font-mono w-6 sm:w-8 text-right">{pol['counts'].get('please', 0)}</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="w-16 text-muted text-xs">"sorry"</span>
-                            <div class="flex-1 h-2 bg-border rounded-full overflow-hidden">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <span class="w-12 sm:w-16 text-muted text-[10px] sm:text-xs">"sorry"</span>
+                            <div class="flex-1 h-1.5 sm:h-2 bg-border rounded-full overflow-hidden">
                                 <div class="h-full bg-accent/60 rounded-full" style="width: {pol_sorry_pct}%"></div>
                             </div>
-                            <span class="text-xs font-mono w-8 text-right">{pol['counts'].get('sorry', 0)}</span>
+                            <span class="text-[10px] sm:text-xs font-mono w-6 sm:w-8 text-right">{pol['counts'].get('sorry', 0)}</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="w-16 text-muted text-xs">"thanks"</span>
-                            <div class="flex-1 h-2 bg-border rounded-full overflow-hidden">
+                        <div class="flex items-center gap-2 sm:gap-3 hidden sm:flex">
+                            <span class="w-12 sm:w-16 text-muted text-[10px] sm:text-xs">"thanks"</span>
+                            <div class="flex-1 h-1.5 sm:h-2 bg-border rounded-full overflow-hidden">
                                 <div class="h-full bg-accent/40 rounded-full" style="width: {pol_thanks_pct}%"></div>
                             </div>
-                            <span class="text-xs font-mono w-8 text-right">{pol['counts'].get('thanks', 0)}</span>
+                            <span class="text-[10px] sm:text-xs font-mono w-6 sm:w-8 text-right">{pol['counts'].get('thanks', 0)}</span>
                         </div>
                     </div>
-                    <p class="text-muted text-[10px] mt-3 italic">Says "please" but rarely "thanks"</p>
+                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic hidden sm:block">Says "please" but rarely "thanks"</p>
                 </div>
 
                 <!-- Backtrack Index -->
-                <div class="card p-6">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-semibold">Backtrack Index</h3>
-                        <span class="text-2xl font-bold text-purple-400">{back['per_100_prompts']}</span>
+                <div class="card p-3 sm:p-6">
+                    <div class="flex justify-between items-center mb-1 sm:mb-2">
+                        <h3 class="text-sm sm:text-lg font-semibold">Backtrack</h3>
+                        <span class="text-lg sm:text-2xl font-bold text-purple-400">{back['per_100_prompts']}</span>
                     </div>
-                    <p class="text-muted text-xs mb-4">per 100 prompts</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-3">
-                            <span class="w-16 text-muted text-xs">"actually"</span>
-                            <div class="flex-1 h-2 bg-border rounded-full overflow-hidden">
+                    <p class="text-muted text-[10px] sm:text-xs mb-2 sm:mb-4">per 100 prompts</p>
+                    <div class="space-y-1 sm:space-y-2">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <span class="w-12 sm:w-16 text-muted text-[10px] sm:text-xs">"actually"</span>
+                            <div class="flex-1 h-1.5 sm:h-2 bg-border rounded-full overflow-hidden">
                                 <div class="h-full bg-purple-500 rounded-full" style="width: {back_actually_pct}%"></div>
                             </div>
-                            <span class="text-xs font-mono w-8 text-right">{back['counts'].get('actually', 0)}</span>
+                            <span class="text-[10px] sm:text-xs font-mono w-6 sm:w-8 text-right">{back['counts'].get('actually', 0)}</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="w-16 text-muted text-xs">"wait"</span>
-                            <div class="flex-1 h-2 bg-border rounded-full overflow-hidden">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <span class="w-12 sm:w-16 text-muted text-[10px] sm:text-xs">"wait"</span>
+                            <div class="flex-1 h-1.5 sm:h-2 bg-border rounded-full overflow-hidden">
                                 <div class="h-full bg-purple-400/60 rounded-full" style="width: {back_wait_pct}%"></div>
                             </div>
-                            <span class="text-xs font-mono w-8 text-right">{back['counts'].get('wait', 0)}</span>
+                            <span class="text-[10px] sm:text-xs font-mono w-6 sm:w-8 text-right">{back['counts'].get('wait', 0)}</span>
                         </div>
                     </div>
-                    <p class="text-muted text-[10px] mt-3 italic">Course-corrects frequently</p>
+                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic hidden sm:block">Course-corrects frequently</p>
                 </div>
 
                 <!-- Question Rate -->
-                <div class="card p-6">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-semibold">Question Rate</h3>
-                        <span class="text-2xl font-bold text-blue-500">{q['rate']}%</span>
+                <div class="card p-3 sm:p-6">
+                    <div class="flex justify-between items-center mb-1 sm:mb-2">
+                        <h3 class="text-sm sm:text-lg font-semibold">Questions</h3>
+                        <span class="text-lg sm:text-2xl font-bold text-blue-500">{q['rate']}%</span>
                     </div>
-                    <p class="text-muted text-xs mb-4">of prompts are questions</p>
-                    <div class="mt-4">
-                        <div class="h-3 bg-border rounded-full overflow-hidden">
+                    <p class="text-muted text-[10px] sm:text-xs mb-2 sm:mb-4">of prompts</p>
+                    <div class="mt-2 sm:mt-4">
+                        <div class="h-2 sm:h-3 bg-border rounded-full overflow-hidden">
                             <div class="h-full bg-blue-500 rounded-full" style="width: {q['rate']}%"></div>
                         </div>
-                        <div class="flex justify-between mt-2">
-                            <span class="text-xs text-muted">{q['count']} questions</span>
-                            <span class="text-xs text-muted">of {v['total_human']:,} prompts</span>
+                        <div class="flex justify-between mt-1 sm:mt-2">
+                            <span class="text-[10px] sm:text-xs text-muted">{q['count']}</span>
+                            <span class="text-[10px] sm:text-xs text-muted hidden sm:inline">of {v['total_human']:,}</span>
                         </div>
                     </div>
-                    <p class="text-muted text-[10px] mt-3 italic">Sometimes asks, mostly tells</p>
+                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic hidden sm:block">Sometimes asks, mostly tells</p>
                 </div>
 
                 <!-- Command Rate -->
-                <div class="card p-6">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-semibold">Direct Commands</h3>
-                        <span class="text-2xl font-bold text-green-500">{cmd['rate']}%</span>
+                <div class="card p-3 sm:p-6">
+                    <div class="flex justify-between items-center mb-1 sm:mb-2">
+                        <h3 class="text-sm sm:text-lg font-semibold">Commands</h3>
+                        <span class="text-lg sm:text-2xl font-bold text-green-500">{cmd['rate']}%</span>
                     </div>
-                    <p class="text-muted text-xs mb-4">start with action verbs</p>
-                    <div class="mt-4">
-                        <div class="h-3 bg-border rounded-full overflow-hidden">
+                    <p class="text-muted text-[10px] sm:text-xs mb-2 sm:mb-4">action verbs</p>
+                    <div class="mt-2 sm:mt-4">
+                        <div class="h-2 sm:h-3 bg-border rounded-full overflow-hidden">
                             <div class="h-full bg-green-500 rounded-full" style="width: {cmd['rate']}%"></div>
                         </div>
-                        <div class="flex justify-between mt-2">
-                            <span class="text-xs text-muted">{cmd['count']} commands</span>
-                            <span class="text-xs text-muted">fix, add, create...</span>
+                        <div class="flex justify-between mt-1 sm:mt-2">
+                            <span class="text-[10px] sm:text-xs text-muted">{cmd['count']}</span>
+                            <span class="text-[10px] sm:text-xs text-muted hidden sm:inline">fix, add...</span>
                         </div>
                     </div>
-                    <p class="text-muted text-[10px] mt-3 italic">Prefers context over commands</p>
+                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic hidden sm:block">Prefers context over commands</p>
                 </div>
             </div>
-            <div class="card p-6 mt-8 text-center">
+            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
                 <p class="text-muted font-serif italic">"The robots will remember this."</p>
             </div>
         </div>
     </section>
 
     <!-- Section 5: Conversation Patterns -->
-    <section class="min-h-screen flex items-center justify-center px-6 py-20">
+    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20">
         <div class="max-w-3xl w-full">
-            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">Patterns</p>
-            <h2 class="text-3xl font-bold text-center mb-12">How You Use AI</h2>
+            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">Patterns</p>
+            <h2 class="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-12">How You Use AI</h2>
             <!-- Distribution breakdown -->
-            <div class="grid grid-cols-3 gap-4 mb-8">
-                <div class="card p-6 text-center">
-                    <p class="text-4xl font-bold text-blue-400">{cd.get('quick_asks', 0)}</p>
-                    <p class="text-muted text-sm mt-1">Quick Asks</p>
-                    <p class="text-muted text-xs">1-3 turns</p>
+            <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-8">
+                <div class="card p-3 sm:p-6 text-center">
+                    <p class="text-2xl sm:text-4xl font-bold text-blue-400">{cd.get('quick_asks', 0)}</p>
+                    <p class="text-muted text-xs sm:text-sm mt-1">Quick Asks</p>
+                    <p class="text-muted text-[10px] sm:text-xs">1-3 turns</p>
                 </div>
-                <div class="card p-6 text-center">
-                    <p class="text-4xl font-bold text-accent">{cd.get('working_sessions', 0)}</p>
-                    <p class="text-muted text-sm mt-1">Working Sessions</p>
-                    <p class="text-muted text-xs">4-10 turns</p>
+                <div class="card p-3 sm:p-6 text-center">
+                    <p class="text-2xl sm:text-4xl font-bold text-accent">{cd.get('working_sessions', 0)}</p>
+                    <p class="text-muted text-xs sm:text-sm mt-1">Sessions</p>
+                    <p class="text-muted text-[10px] sm:text-xs">4-10 turns</p>
                 </div>
-                <div class="card p-6 text-center">
-                    <p class="text-4xl font-bold text-purple-400">{cd.get('deep_dives', 0)}</p>
-                    <p class="text-muted text-sm mt-1">Deep Dives</p>
-                    <p class="text-muted text-xs">11+ turns</p>
+                <div class="card p-3 sm:p-6 text-center">
+                    <p class="text-2xl sm:text-4xl font-bold text-purple-400">{cd.get('deep_dives', 0)}</p>
+                    <p class="text-muted text-xs sm:text-sm mt-1">Deep Dives</p>
+                    <p class="text-muted text-[10px] sm:text-xs">11+ turns</p>
                 </div>
             </div>
             <!-- Key stats -->
-            <div class="grid md:grid-cols-2 gap-6 mb-8">
-                <div class="card p-8">
-                    <p class="text-muted text-sm uppercase tracking-wider mb-4">Conversation Depth</p>
-                    <div class="flex items-baseline gap-2">
-                        <p class="text-5xl font-bold">{cd.get('avg_turns', 0)}</p>
-                        <p class="text-xl text-muted">avg turns</p>
+            <div class="grid grid-cols-2 gap-3 sm:gap-6 mb-4 sm:mb-8">
+                <div class="card p-4 sm:p-8">
+                    <p class="text-muted text-[10px] sm:text-sm uppercase tracking-wider mb-2 sm:mb-4">Conversation Depth</p>
+                    <div class="flex items-baseline gap-1 sm:gap-2">
+                        <p class="text-3xl sm:text-5xl font-bold">{cd.get('avg_turns', 0)}</p>
+                        <p class="text-sm sm:text-xl text-muted">avg</p>
                     </div>
-                    <p class="text-muted text-sm mt-4">Longest marathon: <span class="text-text font-semibold">{cd.get('max_turns', 0)} turns</span></p>
+                    <p class="text-muted text-[10px] sm:text-sm mt-2 sm:mt-4">Longest: <span class="text-text font-semibold">{cd.get('max_turns', 0)}</span></p>
                 </div>
-                <div class="card p-8">
-                    <p class="text-muted text-sm uppercase tracking-wider mb-4">Response Ratio</p>
-                    <div class="flex items-baseline gap-2">
-                        <p class="text-5xl font-bold">{rr}x</p>
-                        <p class="text-xl text-muted">Claude's output</p>
+                <div class="card p-4 sm:p-8">
+                    <p class="text-muted text-[10px] sm:text-sm uppercase tracking-wider mb-2 sm:mb-4">Response Ratio</p>
+                    <div class="flex items-baseline gap-1 sm:gap-2">
+                        <p class="text-3xl sm:text-5xl font-bold">{rr}x</p>
+                        <p class="text-sm sm:text-xl text-muted">output</p>
                     </div>
-                    <p class="text-muted text-sm mt-4">For every word you type, Claude writes <span class="text-text font-semibold">{rr}</span></p>
+                    <p class="text-muted text-[10px] sm:text-sm mt-2 sm:mt-4 hidden sm:block">For every word you type, Claude writes <span class="text-text font-semibold">{rr}</span></p>
                 </div>
             </div>
-            <div class="card p-6 mt-8 text-center">
+            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
                 <p class="text-muted font-serif italic">"More collaborator than commander."</p>
             </div>
         </div>
     </section>
 
     <!-- Section 6: Your AI Persona -->
-    <section class="min-h-screen flex items-center justify-center px-6 py-20">
+    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20">
         <div class="max-w-3xl w-full">
-            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">Diagnosis</p>
-            <div class="card p-10 text-center">
-                <p class="text-muted text-sm mb-4">Based on your metrics, you are...</p>
-                <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-4">{p['name']}</h2>
-                <p class="text-xl text-text/80 max-w-lg mx-auto mb-8">{p['description']}</p>
-                <div class="flex flex-wrap justify-center gap-3 mb-10">
-                    {''.join(f'<span class="px-4 py-2 bg-border rounded-full text-sm font-medium">{trait}</span>' for trait in p['traits'])}
+            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">Diagnosis</p>
+            <div class="card p-5 sm:p-10 text-center">
+                <p class="text-muted text-xs sm:text-sm mb-2 sm:mb-4">Based on your metrics, you are...</p>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-2 sm:mb-4">{p['name']}</h2>
+                <p class="text-base sm:text-xl text-text/80 max-w-lg mx-auto mb-4 sm:mb-8">{p['description']}</p>
+                <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-10">
+                    {''.join(f'<span class="px-3 sm:px-4 py-1.5 sm:py-2 bg-border rounded-full text-xs sm:text-sm font-medium">{trait}</span>' for trait in p['traits'])}
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center">
                     <div>
-                        <p class="text-2xl font-bold stat-accent">{p['scores']['politeness']}</p>
-                        <p class="text-muted text-xs">Politeness</p>
+                        <p class="text-lg sm:text-2xl font-bold stat-accent">{p['scores']['politeness']}</p>
+                        <p class="text-muted text-[10px] sm:text-xs">Polite</p>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-purple-400">{p['scores']['backtrack']}</p>
-                        <p class="text-muted text-xs">Backtrack</p>
+                        <p class="text-lg sm:text-2xl font-bold text-purple-400">{p['scores']['backtrack']}</p>
+                        <p class="text-muted text-[10px] sm:text-xs">Backtrack</p>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-blue-400">{p['scores']['question_rate']}%</p>
-                        <p class="text-muted text-xs">Questions</p>
+                        <p class="text-lg sm:text-2xl font-bold text-blue-400">{p['scores']['question_rate']}%</p>
+                        <p class="text-muted text-[10px] sm:text-xs">Questions</p>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-green-400">{p['scores']['command_rate']}%</p>
-                        <p class="text-muted text-xs">Commands</p>
+                        <p class="text-lg sm:text-2xl font-bold text-green-400">{p['scores']['command_rate']}%</p>
+                        <p class="text-muted text-[10px] sm:text-xs">Commands</p>
                     </div>
                 </div>
             </div>
-            <div class="card p-6 mt-8 text-center">
+            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
                 <p class="text-muted font-serif italic">"Efficient. Almost suspiciously so."</p>
             </div>
         </div>
     </section>
 
     <!-- Section 7: Final Diagnostic (includes footer for proper scroll-snap) -->
-    <section class="min-h-screen flex flex-col items-center px-6 py-16">
+    <section class="min-h-screen flex flex-col items-center px-4 sm:px-6 py-10 sm:py-16">
         <div class="max-w-md w-full flex flex-col justify-center flex-1">
-            <div class="card p-6 font-mono text-sm">
-                <div class="text-center border-b border-border pb-3 mb-3">
-                    <p class="text-base font-bold">HOW I PROMPT</p>
-                    <p class="text-muted text-xs">2025 SUMMARY</p>
+            <div class="card p-4 sm:p-6 font-mono text-xs sm:text-sm">
+                <div class="text-center border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
+                    <p class="text-sm sm:text-base font-bold">HOW I PROMPT</p>
+                    <p class="text-muted text-[10px] sm:text-xs">2025 SUMMARY</p>
                 </div>
-                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
+                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <div class="flex justify-between"><span class="text-muted">Prompts</span><span>{v['total_human']:,}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Conversations</span><span>{v['total_conversations']}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Words Typed</span><span>{v['total_words_human'] // 1000}K</span></div>
                 </div>
-                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
+                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <div class="flex justify-between"><span class="text-muted">Avg Turns</span><span>{cd.get('avg_turns', 0)}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Longest</span><span class="stat-accent">{cd.get('max_turns', 0)} turns</span></div>
                     <div class="flex justify-between"><span class="text-muted">Deep Dives</span><span>{cd.get('deep_dives', 0)}</span></div>
                 </div>
-                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
+                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <div class="flex justify-between"><span class="text-muted">Peak Hour</span><span>{peak_hour_12h}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Peak Day</span><span>{t['peak_day']}</span></div>
                     <div class="flex justify-between"><span class="text-muted">Night Owl</span><span>{t['night_owl_pct']}%</span></div>
                 </div>
-                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
+                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <div class="flex justify-between"><span class="text-muted">"You're absolutely right"</span><span class="stat-accent">{yr['count']}x</span></div>
                 </div>
-                <div class="text-center pt-3">
-                    <p class="font-bold mb-1">PERSONA: {p['name'].upper()}</p>
-                    <p class="text-muted text-xs">{' • '.join(p['traits'])}</p>
+                <div class="text-center pt-2 sm:pt-3">
+                    <p class="font-bold text-xs sm:text-sm mb-1">PERSONA: {p['name'].upper()}</p>
+                    <p class="text-muted text-[10px] sm:text-xs">{' • '.join(p['traits'])}</p>
                 </div>
-                <div class="text-center mt-4 pt-3 border-t border-border">
-                    <p class="text-muted text-xs">{date_display}</p>
+                <div class="text-center mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-border">
+                    <p class="text-muted text-[10px] sm:text-xs">{date_display}</p>
                     {author_line}
                 </div>
             </div>
-            <div class="mt-8 text-center">
-                <p class="text-muted text-base mb-3">"Based on this analysis, you spend too much time talking to AI."</p>
-                <p class="font-serif text-xl italic stat-accent mb-1">"You're absolutely right."</p>
-                <p class="text-muted text-sm">— You, apparently</p>
+            <div class="mt-4 sm:mt-8 text-center">
+                <p class="text-muted text-sm sm:text-base mb-2 sm:mb-3">"Based on this analysis, you spend too much time talking to AI."</p>
+                <p class="font-serif text-lg sm:text-xl italic stat-accent mb-1">"You're absolutely right."</p>
+                <p class="text-muted text-xs sm:text-sm">— You, apparently</p>
             </div>
         </div>
 {generate_footer_content(branding) if branding else ''}
