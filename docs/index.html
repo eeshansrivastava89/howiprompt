@@ -49,7 +49,6 @@
             --border: #e5e5e5;
             --text: #171717;
             --muted: #737373;
-            --header-height: 100px;
         }
         .dark {
             --bg: #0a0a0a;
@@ -58,11 +57,7 @@
             --text: #e5e5e5;
             --muted: #737373;
         }
-        @media (min-width: 640px) {
-            :root { --header-height: 56px; }
-        }
         html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
-        body { scroll-padding-top: var(--header-height); }
         section { scroll-snap-align: start; scroll-snap-stop: always; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
@@ -78,14 +73,9 @@
         .scroll-hint { animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
         .tabular-nums { font-variant-numeric: tabular-nums; }
-        /* Mobile: Hide decorative quotes on overflow sections */
-        @media (max-width: 639px) {
-            .mobile-hide { display: none; }
-            .scroll-hint { display: none; }
-        }
     </style>
 </head>
-<body class="bg-bg text-text font-sans antialiased transition-colors duration-300 pt-24 sm:pt-14">
+<body class="bg-bg text-text font-sans antialiased transition-colors duration-300 pt-14">
 
     
     <!-- Header -->
@@ -309,51 +299,51 @@
     </section>
 
     <!-- Section 2: The Numbers -->
-    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20">
+    <section class="min-h-screen flex items-center justify-center px-6 py-20">
         <div class="max-w-3xl w-full">
-            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">The Numbers</p>
-            <div class="text-center mb-6 sm:mb-12">
-                <div class="text-5xl sm:text-7xl md:text-8xl font-bold gradient-text counter" data-target="2391">2,391</div>
-                <p class="text-lg sm:text-2xl text-text/80 mt-2">prompts sent</p>
+            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">The Numbers</p>
+            <div class="text-center mb-12">
+                <div class="text-7xl md:text-8xl font-bold gradient-text counter" data-target="2391">2,391</div>
+                <p class="text-2xl text-text/80 mt-2">prompts sent</p>
             </div>
-            <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
-                <div class="card p-3 sm:p-4 text-center">
-                    <p class="text-lg sm:text-2xl font-bold text-text">444</p>
-                    <p class="text-muted text-[10px] sm:text-xs mt-1">convos</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold text-text">444</p>
+                    <p class="text-muted text-xs mt-1">conversations</p>
                 </div>
-                <div class="card p-3 sm:p-4 text-center">
-                    <p class="text-lg sm:text-2xl font-bold text-text">128K</p>
-                    <p class="text-muted text-[10px] sm:text-xs mt-1">words</p>
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold text-text">128K</p>
+                    <p class="text-muted text-xs mt-1">words typed</p>
                 </div>
-                <div class="card p-3 sm:p-4 text-center">
-                    <p class="text-lg sm:text-2xl font-bold text-text">15.4</p>
-                    <p class="text-muted text-[10px] sm:text-xs mt-1">avg turns</p>
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold text-text">15.4</p>
+                    <p class="text-muted text-xs mt-1">avg turns</p>
                 </div>
-                <div class="card p-3 sm:p-4 text-center">
-                    <p class="text-lg sm:text-2xl font-bold text-text">5.2x</p>
-                    <p class="text-muted text-[10px] sm:text-xs mt-1">ratio</p>
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold text-text">5.2x</p>
+                    <p class="text-muted text-xs mt-1">response ratio</p>
                 </div>
-                <div class="card p-3 sm:p-4 text-center">
-                    <p class="text-lg sm:text-2xl font-bold text-text">455</p>
-                    <p class="text-muted text-[10px] sm:text-xs mt-1">longest</p>
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold text-text">455</p>
+                    <p class="text-muted text-xs mt-1">longest session</p>
                 </div>
-                <div class="card p-3 sm:p-4 text-center">
-                    <p class="text-lg sm:text-2xl font-bold text-text">98</p>
-                    <p class="text-muted text-[10px] sm:text-xs mt-1">deep dives</p>
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold text-text">98</p>
+                    <p class="text-muted text-xs mt-1">deep dives</p>
                 </div>
             </div>
-            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
+            <div class="card p-6 mt-8 text-center">
                 <p class="text-muted font-serif italic">"That's a lot of 'actually, wait...'"</p>
             </div>
         </div>
     </section>
 
     <!-- Section 3: Temporal Patterns -->
-    <section class="min-h-screen flex items-start sm:items-center justify-center px-4 sm:px-6 pt-8 pb-6 sm:py-20">
+    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-20">
         <div class="max-w-4xl w-full">
-            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-3 sm:mb-8 text-center">When You Prompt</p>
-            <div class="card p-2 sm:p-4 md:p-8 mb-3 sm:mb-8 overflow-x-auto">
-                <p class="text-[10px] sm:text-sm text-muted mb-2 sm:mb-6">Activity by Hour × Day</p>
+            <p class="text-muted text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">When You Prompt</p>
+            <div class="card p-3 sm:p-4 md:p-8 mb-4 sm:mb-8 overflow-x-auto">
+                <p class="text-sm text-muted mb-6">Activity by Hour × Day</p>
                 <div class="min-w-[500px] md:min-w-0 w-full">
                     <div class="flex mb-2 ml-12">
                         <div class="flex-1 grid grid-cols-24 gap-[2px]">
@@ -387,38 +377,38 @@
                 </div>
             </div>
             <div class="grid grid-cols-3 gap-2 sm:gap-4">
-                <div class="card p-2 sm:p-6 text-center">
-                    <p class="text-xl sm:text-4xl font-bold stat-accent">11pm</p>
-                    <p class="text-muted text-[10px] sm:text-sm mt-0.5 sm:mt-1">Peak hour</p>
-                    <p class="text-muted text-[10px] sm:text-xs hidden sm:block">301 prompts</p>
+                <div class="card p-3 sm:p-6 text-center">
+                    <p class="text-2xl sm:text-4xl font-bold stat-accent">11pm</p>
+                    <p class="text-muted text-xs sm:text-sm mt-1">Peak hour</p>
+                    <p class="text-muted text-[10px] sm:text-xs">301 prompts</p>
                 </div>
-                <div class="card p-2 sm:p-6 text-center">
-                    <p class="text-xl sm:text-4xl font-bold text-text">24.2%</p>
-                    <p class="text-muted text-[10px] sm:text-sm mt-0.5 sm:mt-1">Night Owl</p>
-                    <p class="text-muted text-[10px] sm:text-xs hidden sm:block">11pm - 4am</p>
+                <div class="card p-3 sm:p-6 text-center">
+                    <p class="text-2xl sm:text-4xl font-bold text-text">24.2%</p>
+                    <p class="text-muted text-xs sm:text-sm mt-1">Night Owl</p>
+                    <p class="text-muted text-[10px] sm:text-xs">11pm - 4am</p>
                 </div>
-                <div class="card p-2 sm:p-6 text-center">
-                    <p class="text-xl sm:text-4xl font-bold text-text">Sunday</p>
-                    <p class="text-muted text-[10px] sm:text-sm mt-0.5 sm:mt-1">Peak day</p>
-                    <p class="text-muted text-[10px] sm:text-xs hidden sm:block">511 prompts</p>
+                <div class="card p-3 sm:p-6 text-center">
+                    <p class="text-2xl sm:text-4xl font-bold text-text">Sunday</p>
+                    <p class="text-muted text-xs sm:text-sm mt-1">Peak day</p>
+                    <p class="text-muted text-[10px] sm:text-xs">511 prompts</p>
                 </div>
             </div>
-            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
-                <p class="text-muted font-serif italic">"Just one more fix..."</p>
+            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center">
+                <p class="text-muted font-serif italic text-sm sm:text-base">"Just one more fix..."</p>
             </div>
         </div>
     </section>
 
     <!-- Section 4: Prompt Style -->
-    <section class="min-h-screen flex items-start sm:items-center justify-center px-4 sm:px-6 pt-8 pb-6 sm:py-20">
+    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-20">
         <div class="max-w-4xl w-full">
-            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">Prompt Style</p>
+            <p class="text-muted text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">Prompt Style</p>
             <div class="grid grid-cols-2 gap-2 sm:gap-6">
                 <!-- Politeness Index -->
                 <div class="card p-3 sm:p-6">
                     <div class="flex justify-between items-center mb-1 sm:mb-2">
                         <h3 class="text-sm sm:text-lg font-semibold">Politeness</h3>
-                        <span class="text-lg sm:text-2xl font-bold stat-accent">8.9</span>
+                        <span class="text-xl sm:text-2xl font-bold stat-accent">8.9</span>
                     </div>
                     <p class="text-muted text-[10px] sm:text-xs mb-2 sm:mb-4">per 100 prompts</p>
                     <div class="space-y-1 sm:space-y-2">
@@ -436,7 +426,7 @@
                             </div>
                             <span class="text-[10px] sm:text-xs font-mono w-6 sm:w-8 text-right">9</span>
                         </div>
-                        <div class="flex items-center gap-2 sm:gap-3 hidden sm:flex">
+                        <div class="flex items-center gap-2 sm:gap-3">
                             <span class="w-12 sm:w-16 text-muted text-[10px] sm:text-xs">"thanks"</span>
                             <div class="flex-1 h-1.5 sm:h-2 bg-border rounded-full overflow-hidden">
                                 <div class="h-full bg-accent/40 rounded-full" style="width: 4%"></div>
@@ -444,14 +434,14 @@
                             <span class="text-[10px] sm:text-xs font-mono w-6 sm:w-8 text-right">8</span>
                         </div>
                     </div>
-                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic hidden sm:block">Says "please" but rarely "thanks"</p>
+                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic">Says "please" but rarely "thanks"</p>
                 </div>
 
                 <!-- Backtrack Index -->
                 <div class="card p-3 sm:p-6">
                     <div class="flex justify-between items-center mb-1 sm:mb-2">
                         <h3 class="text-sm sm:text-lg font-semibold">Backtrack</h3>
-                        <span class="text-lg sm:text-2xl font-bold text-purple-400">5.6</span>
+                        <span class="text-xl sm:text-2xl font-bold text-purple-400">5.6</span>
                     </div>
                     <p class="text-muted text-[10px] sm:text-xs mb-2 sm:mb-4">per 100 prompts</p>
                     <div class="space-y-1 sm:space-y-2">
@@ -470,14 +460,14 @@
                             <span class="text-[10px] sm:text-xs font-mono w-6 sm:w-8 text-right">25</span>
                         </div>
                     </div>
-                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic hidden sm:block">Course-corrects frequently</p>
+                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic">Course-corrects frequently</p>
                 </div>
 
                 <!-- Question Rate -->
                 <div class="card p-3 sm:p-6">
                     <div class="flex justify-between items-center mb-1 sm:mb-2">
                         <h3 class="text-sm sm:text-lg font-semibold">Questions</h3>
-                        <span class="text-lg sm:text-2xl font-bold text-blue-500">18.7%</span>
+                        <span class="text-xl sm:text-2xl font-bold text-blue-500">18.7%</span>
                     </div>
                     <p class="text-muted text-[10px] sm:text-xs mb-2 sm:mb-4">of prompts</p>
                     <div class="mt-2 sm:mt-4">
@@ -485,18 +475,18 @@
                             <div class="h-full bg-blue-500 rounded-full" style="width: 18.7%"></div>
                         </div>
                         <div class="flex justify-between mt-1 sm:mt-2">
-                            <span class="text-[10px] sm:text-xs text-muted">446</span>
-                            <span class="text-[10px] sm:text-xs text-muted hidden sm:inline">of 2,391</span>
+                            <span class="text-[10px] sm:text-xs text-muted">446 questions</span>
+                            <span class="text-[10px] sm:text-xs text-muted">of 2,391</span>
                         </div>
                     </div>
-                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic hidden sm:block">Sometimes asks, mostly tells</p>
+                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic">Sometimes asks, mostly tells</p>
                 </div>
 
                 <!-- Command Rate -->
                 <div class="card p-3 sm:p-6">
                     <div class="flex justify-between items-center mb-1 sm:mb-2">
                         <h3 class="text-sm sm:text-lg font-semibold">Commands</h3>
-                        <span class="text-lg sm:text-2xl font-bold text-green-500">7.7%</span>
+                        <span class="text-xl sm:text-2xl font-bold text-green-500">7.7%</span>
                     </div>
                     <p class="text-muted text-[10px] sm:text-xs mb-2 sm:mb-4">action verbs</p>
                     <div class="mt-2 sm:mt-4">
@@ -504,142 +494,141 @@
                             <div class="h-full bg-green-500 rounded-full" style="width: 7.7%"></div>
                         </div>
                         <div class="flex justify-between mt-1 sm:mt-2">
-                            <span class="text-[10px] sm:text-xs text-muted">183</span>
-                            <span class="text-[10px] sm:text-xs text-muted hidden sm:inline">fix, add...</span>
+                            <span class="text-[10px] sm:text-xs text-muted">183 commands</span>
+                            <span class="text-[10px] sm:text-xs text-muted">fix, add...</span>
                         </div>
                     </div>
-                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic hidden sm:block">Prefers context over commands</p>
+                    <p class="text-muted text-[10px] mt-2 sm:mt-3 italic">Prefers context over commands</p>
                 </div>
             </div>
-            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
-                <p class="text-muted font-serif italic">"The robots will remember this."</p>
+            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center">
+                <p class="text-muted font-serif italic text-sm sm:text-base">"The robots will remember this."</p>
             </div>
         </div>
     </section>
 
     <!-- Section 5: Conversation Patterns -->
-    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20">
+    <section class="min-h-screen flex items-center justify-center px-6 py-20">
         <div class="max-w-3xl w-full">
-            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">Patterns</p>
-            <h2 class="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-12">How You Use AI</h2>
+            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">How You Use AI</p>
             <!-- Distribution breakdown -->
-            <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-8">
-                <div class="card p-3 sm:p-6 text-center">
-                    <p class="text-2xl sm:text-4xl font-bold text-blue-400">260</p>
-                    <p class="text-muted text-xs sm:text-sm mt-1">Quick Asks</p>
-                    <p class="text-muted text-[10px] sm:text-xs">1-3 turns</p>
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <div class="card p-6 text-center">
+                    <p class="text-4xl font-bold text-blue-400">260</p>
+                    <p class="text-muted text-sm mt-1">Quick Asks</p>
+                    <p class="text-muted text-xs">1-3 turns</p>
                 </div>
-                <div class="card p-3 sm:p-6 text-center">
-                    <p class="text-2xl sm:text-4xl font-bold text-accent">86</p>
-                    <p class="text-muted text-xs sm:text-sm mt-1">Sessions</p>
-                    <p class="text-muted text-[10px] sm:text-xs">4-10 turns</p>
+                <div class="card p-6 text-center">
+                    <p class="text-4xl font-bold text-accent">86</p>
+                    <p class="text-muted text-sm mt-1">Working Sessions</p>
+                    <p class="text-muted text-xs">4-10 turns</p>
                 </div>
-                <div class="card p-3 sm:p-6 text-center">
-                    <p class="text-2xl sm:text-4xl font-bold text-purple-400">98</p>
-                    <p class="text-muted text-xs sm:text-sm mt-1">Deep Dives</p>
-                    <p class="text-muted text-[10px] sm:text-xs">11+ turns</p>
+                <div class="card p-6 text-center">
+                    <p class="text-4xl font-bold text-purple-400">98</p>
+                    <p class="text-muted text-sm mt-1">Deep Dives</p>
+                    <p class="text-muted text-xs">11+ turns</p>
                 </div>
             </div>
             <!-- Key stats -->
-            <div class="grid grid-cols-2 gap-3 sm:gap-6 mb-4 sm:mb-8">
-                <div class="card p-4 sm:p-8">
-                    <p class="text-muted text-[10px] sm:text-sm uppercase tracking-wider mb-2 sm:mb-4">Conversation Depth</p>
-                    <div class="flex items-baseline gap-1 sm:gap-2">
-                        <p class="text-3xl sm:text-5xl font-bold">15.4</p>
-                        <p class="text-sm sm:text-xl text-muted">avg</p>
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="card p-8">
+                    <p class="text-muted text-sm uppercase tracking-wider mb-4">Conversation Depth</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-5xl font-bold">15.4</p>
+                        <p class="text-xl text-muted">avg turns</p>
                     </div>
-                    <p class="text-muted text-[10px] sm:text-sm mt-2 sm:mt-4">Longest: <span class="text-text font-semibold">455</span></p>
+                    <p class="text-muted text-sm mt-4">Longest marathon: <span class="text-text font-semibold">455 turns</span></p>
                 </div>
-                <div class="card p-4 sm:p-8">
-                    <p class="text-muted text-[10px] sm:text-sm uppercase tracking-wider mb-2 sm:mb-4">Response Ratio</p>
-                    <div class="flex items-baseline gap-1 sm:gap-2">
-                        <p class="text-3xl sm:text-5xl font-bold">5.2x</p>
-                        <p class="text-sm sm:text-xl text-muted">output</p>
+                <div class="card p-8">
+                    <p class="text-muted text-sm uppercase tracking-wider mb-4">Response Ratio</p>
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-5xl font-bold">5.2x</p>
+                        <p class="text-xl text-muted">Claude's output</p>
                     </div>
-                    <p class="text-muted text-[10px] sm:text-sm mt-2 sm:mt-4 hidden sm:block">For every word you type, Claude writes <span class="text-text font-semibold">5.2</span></p>
+                    <p class="text-muted text-sm mt-4">For every word you type, Claude writes <span class="text-text font-semibold">5.2</span></p>
                 </div>
             </div>
-            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
+            <div class="card p-6 mt-8 text-center">
                 <p class="text-muted font-serif italic">"More collaborator than commander."</p>
             </div>
         </div>
     </section>
 
     <!-- Section 6: Your AI Persona -->
-    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20">
+    <section class="min-h-screen flex items-center justify-center px-6 py-20">
         <div class="max-w-3xl w-full">
-            <p class="text-muted text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">Diagnosis</p>
-            <div class="card p-5 sm:p-10 text-center">
-                <p class="text-muted text-xs sm:text-sm mb-2 sm:mb-4">Based on your metrics, you are...</p>
-                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-2 sm:mb-4">The Collaborator</h2>
-                <p class="text-base sm:text-xl text-text/80 max-w-lg mx-auto mb-4 sm:mb-8">You ask questions politely. AI is your partner, not your tool.</p>
-                <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-10">
-                    <span class="px-3 sm:px-4 py-1.5 sm:py-2 bg-border rounded-full text-xs sm:text-sm font-medium">Inquisitive</span><span class="px-3 sm:px-4 py-1.5 sm:py-2 bg-border rounded-full text-xs sm:text-sm font-medium">Courteous</span><span class="px-3 sm:px-4 py-1.5 sm:py-2 bg-border rounded-full text-xs sm:text-sm font-medium">Partnership-oriented</span>
+            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">Diagnosis</p>
+            <div class="card p-10 text-center">
+                <p class="text-muted text-sm mb-4">Based on your metrics, you are...</p>
+                <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-4">The Collaborator</h2>
+                <p class="text-xl text-text/80 max-w-lg mx-auto mb-8">You ask questions politely. AI is your partner, not your tool.</p>
+                <div class="flex flex-wrap justify-center gap-3 mb-10">
+                    <span class="px-4 py-2 bg-border rounded-full text-sm font-medium">Inquisitive</span><span class="px-4 py-2 bg-border rounded-full text-sm font-medium">Courteous</span><span class="px-4 py-2 bg-border rounded-full text-sm font-medium">Partnership-oriented</span>
                 </div>
-                <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <div>
-                        <p class="text-lg sm:text-2xl font-bold stat-accent">8.9</p>
-                        <p class="text-muted text-[10px] sm:text-xs">Polite</p>
+                        <p class="text-2xl font-bold stat-accent">8.9</p>
+                        <p class="text-muted text-xs">Politeness</p>
                     </div>
                     <div>
-                        <p class="text-lg sm:text-2xl font-bold text-purple-400">5.6</p>
-                        <p class="text-muted text-[10px] sm:text-xs">Backtrack</p>
+                        <p class="text-2xl font-bold text-purple-400">5.6</p>
+                        <p class="text-muted text-xs">Backtrack</p>
                     </div>
                     <div>
-                        <p class="text-lg sm:text-2xl font-bold text-blue-400">18.7%</p>
-                        <p class="text-muted text-[10px] sm:text-xs">Questions</p>
+                        <p class="text-2xl font-bold text-blue-400">18.7%</p>
+                        <p class="text-muted text-xs">Questions</p>
                     </div>
                     <div>
-                        <p class="text-lg sm:text-2xl font-bold text-green-400">7.7%</p>
-                        <p class="text-muted text-[10px] sm:text-xs">Commands</p>
+                        <p class="text-2xl font-bold text-green-400">7.7%</p>
+                        <p class="text-muted text-xs">Commands</p>
                     </div>
                 </div>
             </div>
-            <div class="card p-4 sm:p-6 mt-4 sm:mt-8 text-center mobile-hide">
+            <div class="card p-6 mt-8 text-center">
                 <p class="text-muted font-serif italic">"Efficient. Almost suspiciously so."</p>
             </div>
         </div>
     </section>
 
     <!-- Section 7: Final Diagnostic (includes footer for proper scroll-snap) -->
-    <section class="min-h-screen flex flex-col items-center px-4 sm:px-6 py-10 sm:py-16">
+    <section class="min-h-screen flex flex-col items-center px-6 py-16">
         <div class="max-w-md w-full flex flex-col justify-center flex-1">
-            <div class="card p-4 sm:p-6 font-mono text-xs sm:text-sm">
-                <div class="text-center border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
-                    <p class="text-sm sm:text-base font-bold">HOW I PROMPT</p>
-                    <p class="text-muted text-[10px] sm:text-xs">2025 SUMMARY</p>
+            <div class="card p-6 font-mono text-sm">
+                <div class="text-center border-b border-border pb-3 mb-3">
+                    <p class="text-base font-bold">HOW I PROMPT</p>
+                    <p class="text-muted text-xs">2025 SUMMARY</p>
                 </div>
-                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
+                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
                     <div class="flex justify-between"><span class="text-muted">Prompts</span><span>2,391</span></div>
                     <div class="flex justify-between"><span class="text-muted">Conversations</span><span>444</span></div>
                     <div class="flex justify-between"><span class="text-muted">Words Typed</span><span>128K</span></div>
                 </div>
-                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
+                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
                     <div class="flex justify-between"><span class="text-muted">Avg Turns</span><span>15.4</span></div>
                     <div class="flex justify-between"><span class="text-muted">Longest</span><span class="stat-accent">455 turns</span></div>
                     <div class="flex justify-between"><span class="text-muted">Deep Dives</span><span>98</span></div>
                 </div>
-                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
+                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
                     <div class="flex justify-between"><span class="text-muted">Peak Hour</span><span>11pm</span></div>
                     <div class="flex justify-between"><span class="text-muted">Peak Day</span><span>Sunday</span></div>
                     <div class="flex justify-between"><span class="text-muted">Night Owl</span><span>24.2%</span></div>
                 </div>
-                <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
+                <div class="space-y-1.5 border-b border-border pb-3 mb-3">
                     <div class="flex justify-between"><span class="text-muted">"You're absolutely right"</span><span class="stat-accent">205x</span></div>
                 </div>
-                <div class="text-center pt-2 sm:pt-3">
-                    <p class="font-bold text-xs sm:text-sm mb-1">PERSONA: THE COLLABORATOR</p>
-                    <p class="text-muted text-[10px] sm:text-xs">Inquisitive • Courteous • Partnership-oriented</p>
+                <div class="text-center pt-3">
+                    <p class="font-bold mb-1">PERSONA: THE COLLABORATOR</p>
+                    <p class="text-muted text-xs">Inquisitive • Courteous • Partnership-oriented</p>
                 </div>
-                <div class="text-center mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-border">
-                    <p class="text-muted text-[10px] sm:text-xs">Generated Jan 01, 2026</p>
+                <div class="text-center mt-4 pt-3 border-t border-border">
+                    <p class="text-muted text-xs">Generated Jan 01, 2026</p>
                     <p class="text-muted text-xs">eeshans.com</p>
                 </div>
             </div>
-            <div class="mt-4 sm:mt-8 text-center">
-                <p class="text-muted text-sm sm:text-base mb-2 sm:mb-3">"Based on this analysis, you spend too much time talking to AI."</p>
-                <p class="font-serif text-lg sm:text-xl italic stat-accent mb-1">"You're absolutely right."</p>
-                <p class="text-muted text-xs sm:text-sm">— You, apparently</p>
+            <div class="mt-8 text-center">
+                <p class="text-muted text-base mb-3">"Based on this analysis, you spend too much time talking to AI."</p>
+                <p class="font-serif text-xl italic stat-accent mb-1">"You're absolutely right."</p>
+                <p class="text-muted text-sm">— You, apparently</p>
             </div>
         </div>
 
