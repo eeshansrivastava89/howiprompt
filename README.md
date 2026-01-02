@@ -1,10 +1,27 @@
+> **Disclaimer:** This is an independent personal project, **not affiliated with, endorsed by, or connected to Anthropic or Claude** in any way. This is a non-commercial, open-source tool created for personal use and educational purposes only.
+
 # How I Prompt: Wrapped
 
 A "year in review" visualization of your Claude AI conversations. Analyze your prompting style, discover your AI persona, and generate a shareable wrapped-style report.
 
-I first ran this for my 2025 review, but you can run this at any time. You bring your data and are responsible for privacy concerns. By default, this script does not read memories.json, users.json or projects.json. Only reads conversations.json from Claude AI export. You can choose to not include any sensitive files / conversations in the data folder.
+Mac users only. Python 3.10+ required. No external dependencies.
 
-I made this only for Mac users right now. 
+---
+
+## ⚠️ Privacy & Data Warning
+
+**This tool processes your personal AI conversation data. Please read carefully:**
+
+| | |
+|---|---|
+| **Your data stays local** | Nothing is uploaded, transmitted, or shared. All processing happens on your machine. |
+| **You control what's included** | Exclude sensitive conversations by not copying them to the `data/` folder. |
+| **Review before sharing** | The generated report contains aggregate statistics only (no conversation text), but review it before posting publicly. |
+| **Your responsibility** | You are solely responsible for any data you choose to process and any reports you choose to share. |
+
+**By default, this script does NOT read:** `memories.json`, `users.json`, or `projects.json`. It only reads conversation data you explicitly provide.
+
+---
 
 ## Quick Start
 
@@ -60,3 +77,11 @@ Your prompting style is classified using a 2x2 matrix:
 
 - Python 3.10+
 - No external dependencies (stdlib only)
+
+---
+
+## License
+
+MIT License - See [LICENSE](LICENSE) file.
+
+*This is a personal, non-commercial project. Not affiliated with Anthropic.*
