@@ -2,9 +2,9 @@
 
 # How I Prompt: Wrapped
 
-A "year in review" visualization of your Claude AI conversations. Analyze your prompting style, discover your AI persona, and generate a shareable wrapped-style report.
+I made this little "year in review" style visualization of my Claude AI conversations. You can clone and try it out for your conversations too. Analyze your prompting style, discover your AI persona, and generate a shareable wrapped-style report.
 
-Mac users only. Python 3.10+ required. No external dependencies.
+Made on a mac but should be configurable for Windows too with a bit of tweaking. Python 3.10+ required. No external dependencies.
 
 ---
 
