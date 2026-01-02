@@ -910,9 +910,9 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
                 <h1 class="text-4xl md:text-6xl font-bold">How I <span class="gradient-text">Prompt</span></h1>
             </div>
         </div>
-        <div id="scrollHint" class="absolute bottom-12 transition-opacity duration-300">
+        <div class="absolute bottom-12">
             <p class="text-muted text-sm mb-2">Scroll</p>
-            <svg class="w-5 h-5 mx-auto text-muted animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 mx-auto text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
             </svg>
         </div>
@@ -1245,24 +1245,11 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
                     {author_line}
                 </div>
             </div>
-            <div class="mt-4 sm:mt-8 text-center">
-                <p class="text-muted text-sm sm:text-base mb-2 sm:mb-3">"Based on this analysis, you spend too much time talking to AI."</p>
-                <p class="font-serif text-lg sm:text-xl italic stat-accent mb-1">"You're absolutely right."</p>
-                <p class="text-muted text-xs sm:text-sm">— You, apparently</p>
-            </div>
         </div>
 {generate_footer_content(branding) if branding else ''}
     </section>
 
     <script>
-        // Hide scroll hint on any scroll
-        const scrollHint = document.getElementById('scrollHint');
-        if (scrollHint) {{
-            window.addEventListener('scroll', () => {{
-                scrollHint.style.opacity = '0';
-            }}, {{ once: true }});
-        }}
-
         const heatmapData = {heatmap_json};
         const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         const maxVal = Math.max(...heatmapData.flat());
