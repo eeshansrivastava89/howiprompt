@@ -6,6 +6,9 @@ I made this little "year in review" style visualization of my Claude AI conversa
 
 Made on a mac but should be configurable for Windows too with a bit of tweaking. Python 3.10+ required. No external dependencies.
 
+<img width="611" height="382" alt="image" src="https://github.com/user-attachments/assets/1defc38a-789b-44f7-93a1-fe2b6130a2fa" />
+<img width="458" height="576" alt="image" src="https://github.com/user-attachments/assets/6ed8a18e-ce8d-4fa7-8d29-2db640adb59d" />
+
 ---
 
 ## ⚠️ Privacy & Data Warning
