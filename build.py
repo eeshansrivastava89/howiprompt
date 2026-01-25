@@ -803,6 +803,15 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
     # Date display
     from datetime import datetime as dt
     date_display = f"Generated {dt.now().strftime('%b %d, %Y')}"
+
+    # Date range from data
+    dr = m.get("date_range", {})
+    if dr:
+        first_date = dt.fromisoformat(dr["first"]).strftime("%b %d, %Y")
+        last_date = dt.fromisoformat(dr["last"]).strftime("%b %d, %Y")
+        date_range_display = f"{first_date} – {last_date}"
+    else:
+        date_range_display = "2025"
     author_line = '<p class="text-muted text-xs">eeshans.com</p>'
 
     # Heatmap JSON
@@ -815,10 +824,10 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <script>if(location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') location.replace('https:' + location.href.substring(location.protocol.length));</script>
-    <title>How I Prompt: 2025</title>
+    <title>How I Prompt: {date_range_display}</title>
 
     <!-- Open Graph -->
-    <meta property="og:title" content="How I Prompt: 2025">
+    <meta property="og:title" content="How I Prompt: {date_range_display}">
     <meta property="og:description" content="{v['total_human']:,} prompts. {yr['count']} times Claude said 'You're absolutely right.' A year in AI conversations.">
     <meta property="og:type" content="website">
 
@@ -906,7 +915,7 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
             <p class="text-muted text-lg mt-6 animate-fade-in delay-1">— Claude, <span class="stat-accent font-semibold">{yr['count']}</span> times this year</p>
             <p class="text-muted/60 text-sm mt-2 animate-fade-in delay-1">That's <span class="text-text/80">{yr['per_conversation']}×</span> per conversation</p>
             <div class="mt-16 animate-fade-in delay-2">
-                <p class="text-muted text-sm uppercase tracking-widest mb-2">2025</p>
+                <p class="text-muted text-sm uppercase tracking-widest mb-2">{date_range_display}</p>
                 <h1 class="text-4xl md:text-6xl font-bold">How I <span class="gradient-text">Prompt</span></h1>
             </div>
         </div>
@@ -1216,7 +1225,7 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
             <div class="card p-4 sm:p-6 font-mono text-xs sm:text-sm">
                 <div class="text-center border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <p class="text-sm sm:text-base font-bold">HOW I PROMPT</p>
-                    <p class="text-muted text-[10px] sm:text-xs">2025 SUMMARY</p>
+                    <p class="text-muted text-[10px] sm:text-xs">{date_range_display.upper()} SUMMARY</p>
                 </div>
                 <div class="space-y-1 sm:space-y-1.5 border-b border-border pb-2 sm:pb-3 mb-2 sm:mb-3">
                     <div class="flex justify-between"><span class="text-muted">Prompts</span><span>{v['total_human']:,}</span></div>
