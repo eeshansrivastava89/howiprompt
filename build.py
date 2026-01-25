@@ -556,6 +556,10 @@ def generate_header(branding: dict, personas: dict) -> str:
                     <span class="font-normal text-muted">Sidequest by</span> <span class="font-semibold">{branding['site_name']}</span>
                 </a>
                 <div class="flex items-center gap-2 sm:gap-5">
+                    <a href="/" class="dashboard-link hidden sm:inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium text-accent bg-accent/10 rounded-full hover:bg-accent/20 transition-all" id="dashboardLink">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        Back to Dashboard
+                    </a>
                     <button onclick="openMethodology()" class="text-muted hover:text-text transition-colors text-sm hidden sm:block">Methodology</button>
                     <a href="{branding['github_repo']}" target="_blank" class="text-muted hover:text-text transition-colors text-sm hidden sm:block">Build Your Own</a>
                     <a href="{branding['newsletter_url']}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium bg-[#FF6719] text-white rounded-full hover:bg-[#E55A15] transition-colors">
@@ -574,6 +578,7 @@ def generate_header(branding: dict, personas: dict) -> str:
             </div>
             <!-- Row 2: Mobile-only nav links -->
             <div class="flex items-center justify-center gap-6 pt-2 sm:hidden">
+                <a href="/" class="dashboard-link text-accent text-sm font-medium" id="dashboardLinkMobile">Back to Dashboard</a>
                 <button onclick="openMethodology()" class="text-muted hover:text-text transition-colors text-sm">Methodology</button>
                 <a href="{branding['github_repo']}" target="_blank" class="text-muted hover:text-text transition-colors text-sm">Build Your Own</a>
             </div>
@@ -1259,6 +1264,23 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
     </section>
 
     <script>
+        // Fix dashboard link for local vs production
+        const isLocal = location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        if (isLocal) {{
+            document.querySelectorAll('.dashboard-link').forEach(link => {{
+                const currentPath = location.pathname;
+                const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                // Check if we're in /wrapped subfolder (docs structure) or not (output structure)
+                if (basePath.endsWith('/wrapped')) {{
+                    // docs folder: go up to parent's index.html
+                    link.href = basePath.replace('/wrapped', '') + '/index.html';
+                }} else {{
+                    // output folder: go to dashboard.html in same folder
+                    link.href = basePath + '/dashboard.html';
+                }}
+            }});
+        }}
+
         const heatmapData = {heatmap_json};
         const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         const maxVal = Math.max(...heatmapData.flat());
@@ -1332,6 +1354,1364 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
             }});
         }}, {{ threshold: 0.3 }});
         document.querySelectorAll('section > div').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>'''
+
+    return html
+
+
+# === Dashboard HTML Generation ===
+def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
+    """Generate single-page dashboard HTML from metrics."""
+
+    m = metrics
+    v = m["volume"]
+    t = m["temporal"]
+    pol = m["politeness"]
+    back = m["backtrack"]
+    q = m["question"]
+    cmd = m["command"]
+    yr = m["youre_right"]
+    p = m["persona"]
+    cd = m.get("conversation_depth", {})
+    rr = m.get("response_ratio", 0)
+
+    # Date range
+    from datetime import datetime as dt
+    dr = m.get("date_range", {})
+    if dr:
+        first_date = dt.fromisoformat(dr["first"]).strftime("%b %d, %Y")
+        last_date = dt.fromisoformat(dr["last"]).strftime("%b %d, %Y")
+        date_range_display = f"{first_date} – {last_date}"
+    else:
+        date_range_display = "2025"
+
+    # Format peak hour
+    peak_hour = t['peak_hour']
+    peak_hour_12h = f"{peak_hour % 12 or 12}{'am' if peak_hour < 12 else 'pm'}"
+
+    # Heatmap data for JS
+    heatmap_json = json.dumps(t["heatmap"])
+
+    # Conversation depth percentages
+    total_convos = cd.get('quick_asks', 0) + cd.get('working_sessions', 0) + cd.get('deep_dives', 0)
+    if total_convos > 0:
+        quick_pct = round(cd.get('quick_asks', 0) / total_convos * 100)
+        working_pct = round(cd.get('working_sessions', 0) / total_convos * 100)
+        deep_pct = round(cd.get('deep_dives', 0) / total_convos * 100)
+    else:
+        quick_pct = working_pct = deep_pct = 0
+
+    # Branding
+    site_url = branding.get('site_url', 'https://eeshans.com') if branding else 'https://eeshans.com'
+    site_name = branding.get('site_name', 'eeshans.com') if branding else 'eeshans.com'
+    github_repo = branding.get('github_repo', 'https://github.com/eeshansrivastava89/howiprompt') if branding else 'https://github.com/eeshansrivastava89/howiprompt'
+    newsletter_url = branding.get('newsletter_url', 'https://0to1datascience.substack.com') if branding else 'https://0to1datascience.substack.com'
+
+    html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>How I Prompt: Dashboard</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="How I Prompt: Dashboard">
+    <meta property="og:description" content="{v['total_human']:,} prompts analyzed. A condensed view of AI conversation patterns.">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+
+        :root {{
+            --bg: #f5f5f7;
+            --card: #ffffff;
+            --text: #1d1d1f;
+            --text-muted: #86868b;
+            --border: #d2d2d7;
+            --accent: #f97316;
+            --accent-light: #fff7ed;
+            --success: #34c759;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.1), 0 8px 24px rgba(0,0,0,0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }}
+
+        .dark {{
+            --bg: #000000;
+            --card: #1c1c1e;
+            --text: #f5f5f7;
+            --text-muted: #86868b;
+            --border: #38383a;
+            --accent: #f97316;
+            --accent-light: #1a1207;
+            --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.3);
+        }}
+
+        body {{
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }}
+
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 16px 48px;
+        }}
+
+        @media (min-width: 640px) {{
+            .container {{
+                padding: 32px 24px 64px;
+            }}
+        }}
+
+        /* Header */
+        .header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }}
+
+        .header-left {{
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }}
+
+        .header h1 {{
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }}
+
+        .header h1 span {{
+            color: var(--accent);
+        }}
+
+        .date-range {{
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }}
+
+        .header-right {{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }}
+
+        .theme-toggle {{
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--card);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }}
+
+        .theme-toggle:hover {{
+            border-color: var(--text-muted);
+        }}
+
+        .theme-toggle svg {{
+            width: 18px;
+            height: 18px;
+            color: var(--text);
+        }}
+
+        .dark .theme-toggle .sun {{ display: none; }}
+        .theme-toggle .moon {{ display: none; }}
+        .dark .theme-toggle .moon {{ display: block; }}
+
+        /* Grid */
+        .grid {{
+            display: grid;
+            gap: 16px;
+            grid-template-columns: 1fr;
+        }}
+
+        @media (min-width: 640px) {{
+            .grid {{
+                grid-template-columns: repeat(2, 1fr);
+            }}
+        }}
+
+        @media (min-width: 1024px) {{
+            .grid {{
+                grid-template-columns: repeat(4, 1fr);
+            }}
+        }}
+
+        /* Cards */
+        .card {{
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+        }}
+
+        .card:hover {{
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }}
+
+        .card-label {{
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }}
+
+        .card-value {{
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }}
+
+        .card-value.accent {{
+            color: var(--accent);
+        }}
+
+        .card-subtitle {{
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }}
+
+        /* Stat cards row */
+        .stat-cards {{
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(2, 1fr);
+            margin-bottom: 16px;
+        }}
+
+        @media (min-width: 640px) {{
+            .stat-cards {{
+                grid-template-columns: repeat(4, 1fr);
+            }}
+        }}
+
+        /* Wide cards */
+        .card-wide {{
+            grid-column: span 1;
+        }}
+
+        @media (min-width: 640px) {{
+            .card-wide {{
+                grid-column: span 2;
+            }}
+        }}
+
+        /* Heatmap */
+        .heatmap-container {{
+            overflow-x: auto;
+            margin: 12px 0;
+        }}
+
+        .heatmap {{
+            display: grid;
+            grid-template-columns: 40px repeat(24, 1fr);
+            gap: 3px;
+            min-width: 500px;
+        }}
+
+        .heatmap-label {{
+            font-size: 10px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }}
+
+        .heatmap-cell {{
+            aspect-ratio: 1;
+            border-radius: 3px;
+            background: var(--border);
+            min-width: 14px;
+        }}
+
+        .heatmap-cell.l1 {{ background: rgba(249, 115, 22, 0.2); }}
+        .heatmap-cell.l2 {{ background: rgba(249, 115, 22, 0.4); }}
+        .heatmap-cell.l3 {{ background: rgba(249, 115, 22, 0.6); }}
+        .heatmap-cell.l4 {{ background: rgba(249, 115, 22, 0.8); }}
+        .heatmap-cell.l5 {{ background: rgba(249, 115, 22, 1.0); }}
+
+        .heatmap-hours {{
+            display: contents;
+        }}
+
+        .heatmap-hours span {{
+            font-size: 9px;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: 500;
+        }}
+
+        .peak-stats {{
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }}
+
+        .peak-stat {{
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }}
+
+        .peak-stat-label {{
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }}
+
+        .peak-stat-value {{
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }}
+
+        /* Progress bars */
+        .progress-item {{
+            margin-bottom: 12px;
+        }}
+
+        .progress-item:last-child {{
+            margin-bottom: 0;
+        }}
+
+        .progress-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }}
+
+        .progress-label {{
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }}
+
+        .progress-value {{
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }}
+
+        .progress-bar {{
+            height: 8px;
+            background: var(--bg);
+            border-radius: 4px;
+            overflow: hidden;
+        }}
+
+        .progress-fill {{
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #fb923c);
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }}
+
+        /* Style metrics grid */
+        .style-grid {{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }}
+
+        .style-item {{
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            text-align: center;
+        }}
+
+        .dark .style-item {{
+            background: rgba(255,255,255,0.05);
+        }}
+
+        .style-value {{
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }}
+
+        .style-label {{
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }}
+
+        .style-detail {{
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }}
+
+        /* Persona card */
+        .persona-card {{
+            grid-column: 1 / -1;
+            display: grid;
+            gap: 24px;
+        }}
+
+        @media (min-width: 768px) {{
+            .persona-card {{
+                grid-template-columns: 1fr 1fr;
+            }}
+        }}
+
+        .persona-main {{
+            display: flex;
+            flex-direction: column;
+        }}
+
+        .persona-name {{
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }}
+
+        .persona-desc {{
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }}
+
+        .persona-traits {{
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }}
+
+        .trait {{
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            background: var(--accent-light);
+            color: var(--accent);
+            border-radius: 20px;
+        }}
+
+        .persona-stats {{
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }}
+
+        .quadrant-scores {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }}
+
+        .quadrant-item {{
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            text-align: center;
+        }}
+
+        .dark .quadrant-item {{
+            background: rgba(255,255,255,0.05);
+        }}
+
+        .quadrant-value {{
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }}
+
+        .quadrant-label {{
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }}
+
+        .quadrant-tag {{
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 6px;
+            display: inline-block;
+        }}
+
+        .quadrant-tag.high {{
+            background: rgba(52, 199, 89, 0.15);
+            color: var(--success);
+        }}
+
+        .quadrant-tag.low {{
+            background: rgba(134, 134, 139, 0.15);
+            color: var(--text-muted);
+        }}
+
+        /* Signature metric */
+        .signature {{
+            background: var(--accent-light);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
+        }}
+
+        .signature-quote {{
+            font-size: 16px;
+            font-style: italic;
+            color: var(--text);
+            margin-bottom: 8px;
+        }}
+
+        .signature-count {{
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+        }}
+
+        .signature-label {{
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }}
+
+        /* Footer */
+        .footer {{
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }}
+
+        @media (min-width: 640px) {{
+            .footer {{
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }}
+        }}
+
+        .footer-left {{
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+        }}
+
+        @media (min-width: 640px) {{
+            .footer-left {{
+                text-align: left;
+            }}
+        }}
+
+        .footer-center {{
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+        }}
+
+        .footer-right {{
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }}
+
+        .footer-link {{
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }}
+
+        .footer-link:hover {{
+            color: var(--accent);
+        }}
+
+        .footer-link svg {{
+            width: 14px;
+            height: 14px;
+        }}
+
+        /* Header nav links */
+        .nav-link {{
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+        }}
+
+        .nav-link:hover {{
+            color: var(--text);
+        }}
+
+        .accent-link {{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--accent);
+            background: rgba(249, 115, 22, 0.1);
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }}
+
+        .accent-link:hover {{
+            background: rgba(249, 115, 22, 0.2);
+        }}
+
+        .accent-link svg {{
+            width: 14px;
+            height: 14px;
+        }}
+
+        /* Hide desktop nav on mobile, show mobile nav */
+        .desktop-nav {{
+            display: none;
+        }}
+
+        .mobile-nav {{
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }}
+
+        @media (min-width: 640px) {{
+            .desktop-nav {{
+                display: flex;
+            }}
+            .mobile-nav {{
+                display: none;
+            }}
+        }}
+
+        .subscribe-btn {{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #FF6719;
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }}
+
+        .subscribe-btn:hover {{
+            background: #E55A15;
+        }}
+
+        .subscribe-btn svg {{
+            width: 14px;
+            height: 14px;
+        }}
+
+        /* Methodology Modal */
+        .modal-overlay {{
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }}
+
+        .modal-overlay.active {{
+            display: flex;
+        }}
+
+        .modal-content {{
+            background: var(--card);
+            border-radius: var(--radius);
+            width: calc(100% - 32px);
+            height: calc(100% - 32px);
+            max-width: 1200px;
+            max-height: 800px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }}
+
+        @media (min-width: 768px) {{
+            .modal-content {{
+                width: calc(100% - 48px);
+                height: calc(100% - 48px);
+            }}
+        }}
+
+        @media (min-width: 1024px) {{
+            .modal-content {{
+                width: calc(100% - 64px);
+                height: calc(100% - 64px);
+            }}
+        }}
+
+        .modal-header {{
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }}
+
+        .modal-header h2 {{
+            font-size: 18px;
+            font-weight: 700;
+        }}
+
+        .modal-close {{
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }}
+
+        .modal-close:hover {{
+            background: var(--border);
+        }}
+
+        .modal-close svg {{
+            width: 18px;
+            height: 18px;
+            color: var(--text);
+        }}
+
+        .modal-body {{
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }}
+
+        @media (min-width: 768px) {{
+            .modal-body {{
+                padding: 32px;
+            }}
+        }}
+
+        .modal-grid {{
+            display: grid;
+            gap: 24px;
+            grid-template-columns: 1fr;
+            height: 100%;
+        }}
+
+        @media (min-width: 768px) {{
+            .modal-grid {{
+                grid-template-columns: repeat(3, 1fr);
+                gap: 28px;
+            }}
+        }}
+
+        .modal-section {{
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }}
+
+        @media (min-width: 768px) {{
+            .modal-section {{
+                padding: 24px;
+            }}
+        }}
+
+        .dark .modal-section {{
+            background: rgba(255,255,255,0.05);
+        }}
+
+        .modal-section h3 {{
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }}
+
+        .step-item {{
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }}
+
+        .step-item:last-child {{
+            margin-bottom: 0;
+        }}
+
+        .step-num {{
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }}
+
+        .step-content h4 {{
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }}
+
+        .step-content p {{
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }}
+
+        .metric-group {{
+            margin-bottom: 20px;
+        }}
+
+        .metric-group:last-child {{
+            margin-bottom: 0;
+        }}
+
+        .metric-group h4 {{
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text);
+            margin-bottom: 8px;
+        }}
+
+        .metric-group p {{
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }}
+
+        .metric-group span {{
+            color: var(--text);
+        }}
+
+        .persona-matrix {{
+            display: grid;
+            grid-template-columns: auto 1fr 1fr;
+            gap: 12px;
+            font-size: 13px;
+        }}
+
+        .persona-cell {{
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 12px;
+            text-align: center;
+        }}
+
+        .persona-cell.highlight {{
+            background: rgba(249, 115, 22, 0.1);
+            border-color: var(--accent);
+        }}
+
+        .persona-cell strong {{
+            display: block;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }}
+
+        .persona-cell.highlight strong {{
+            color: var(--accent);
+        }}
+
+        .matrix-label {{
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }}
+
+        /* Animations */
+        @keyframes fadeIn {{
+            from {{ opacity: 0; transform: translateY(10px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+
+        .animate {{
+            animation: fadeIn 0.4s ease forwards;
+        }}
+
+        .delay-1 {{ animation-delay: 0.05s; opacity: 0; }}
+        .delay-2 {{ animation-delay: 0.1s; opacity: 0; }}
+        .delay-3 {{ animation-delay: 0.15s; opacity: 0; }}
+        .delay-4 {{ animation-delay: 0.2s; opacity: 0; }}
+        .delay-5 {{ animation-delay: 0.25s; opacity: 0; }}
+        .delay-6 {{ animation-delay: 0.3s; opacity: 0; }}
+        .delay-7 {{ animation-delay: 0.35s; opacity: 0; }}
+        .delay-8 {{ animation-delay: 0.4s; opacity: 0; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header animate">
+            <div class="header-left">
+                <h1>How I <span>Prompt</span></h1>
+                <span class="date-range">{date_range_display}</span>
+            </div>
+            <div class="header-right">
+                <div class="desktop-nav" style="gap: 20px; align-items: center;">
+                    <a href="/wrapped" class="accent-link">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                        Wrapped Experience
+                    </a>
+                    <button onclick="openMethodology()" class="nav-link">Methodology</button>
+                    <a href="{github_repo}" target="_blank" class="nav-link">Build Your Own</a>
+                </div>
+                <a href="{newsletter_url}" target="_blank" class="subscribe-btn">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"></path></svg>
+                    Subscribe
+                </a>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <svg class="sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <svg class="moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+        <!-- Mobile nav links -->
+        <div class="mobile-nav animate">
+            <a href="/wrapped" class="accent-link" style="padding: 4px 12px; font-size: 13px;">Wrapped</a>
+            <button onclick="openMethodology()" class="nav-link">Methodology</button>
+            <a href="{github_repo}" target="_blank" class="nav-link">Build Your Own</a>
+        </div>
+
+        <!-- Hero Stats -->
+        <div class="stat-cards">
+            <div class="card animate delay-1">
+                <div class="card-label">Prompts</div>
+                <div class="card-value">{v['total_human']:,}</div>
+                <div class="card-subtitle">{v['avg_words_per_prompt']} words avg</div>
+            </div>
+            <div class="card animate delay-2">
+                <div class="card-label">Conversations</div>
+                <div class="card-value">{v['total_conversations']:,}</div>
+                <div class="card-subtitle">{cd.get('avg_turns', 0)} turns avg</div>
+            </div>
+            <div class="card animate delay-3">
+                <div class="card-label">Words Typed</div>
+                <div class="card-value">{v['total_words_human'] // 1000}K</div>
+                <div class="card-subtitle">{v['total_words_assistant'] // 1000}K from Claude</div>
+            </div>
+            <div class="card animate delay-4">
+                <div class="card-label">Night Owl</div>
+                <div class="card-value accent">{t['night_owl_pct']}%</div>
+                <div class="card-subtitle">prompts 11pm–4am</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid">
+            <!-- Heatmap -->
+            <div class="card card-wide animate delay-5">
+                <div class="card-label">Activity Heatmap</div>
+                <div class="heatmap-container">
+                    <div class="heatmap" id="heatmap">
+                        <!-- Hours header -->
+                        <div></div>
+                        <div class="heatmap-hours">
+                            <span>0</span><span></span><span></span><span>3</span><span></span><span></span>
+                            <span>6</span><span></span><span></span><span>9</span><span></span><span></span>
+                            <span>12</span><span></span><span></span><span>15</span><span></span><span></span>
+                            <span>18</span><span></span><span></span><span>21</span><span></span><span></span>
+                        </div>
+                        <!-- Rows will be added by JS -->
+                    </div>
+                </div>
+                <div class="peak-stats">
+                    <div class="peak-stat">
+                        <span class="peak-stat-label">Peak Hour</span>
+                        <span class="peak-stat-value">{peak_hour_12h}</span>
+                    </div>
+                    <div class="peak-stat">
+                        <span class="peak-stat-label">Peak Day</span>
+                        <span class="peak-stat-value">{t['peak_day']}</span>
+                    </div>
+                    <div class="peak-stat">
+                        <span class="peak-stat-label">Response Ratio</span>
+                        <span class="peak-stat-value">{rr}x</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversation Depth -->
+            <div class="card card-wide animate delay-6">
+                <div class="card-label">Conversation Depth</div>
+                <div style="margin-top: 12px;">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Quick Asks (1-3 turns)</span>
+                            <span class="progress-value">{cd.get('quick_asks', 0)}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {quick_pct}%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Working Sessions (4-10)</span>
+                            <span class="progress-value">{cd.get('working_sessions', 0)}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {working_pct}%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Deep Dives (11+)</span>
+                            <span class="progress-value">{cd.get('deep_dives', 0)}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {deep_pct}%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="peak-stats" style="margin-top: 16px;">
+                    <div class="peak-stat">
+                        <span class="peak-stat-label">Longest Session</span>
+                        <span class="peak-stat-value">{cd.get('max_turns', 0)} turns</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prompt Style -->
+            <div class="card card-wide animate delay-7">
+                <div class="card-label">Prompt Style</div>
+                <div class="style-grid" style="margin-top: 12px;">
+                    <div class="style-item">
+                        <div class="style-value">{pol['per_100_prompts']}</div>
+                        <div class="style-label">Politeness</div>
+                        <div class="style-detail">please: {pol['counts']['please']} · thanks: {pol['counts']['thanks']}</div>
+                    </div>
+                    <div class="style-item">
+                        <div class="style-value">{back['per_100_prompts']}</div>
+                        <div class="style-label">Backtrack</div>
+                        <div class="style-detail">actually: {back['counts']['actually']} · wait: {back['counts']['wait']}</div>
+                    </div>
+                    <div class="style-item">
+                        <div class="style-value">{q['rate']}%</div>
+                        <div class="style-label">Questions</div>
+                        <div class="style-detail">{q['count']} total</div>
+                    </div>
+                    <div class="style-item">
+                        <div class="style-value">{cmd['rate']}%</div>
+                        <div class="style-label">Commands</div>
+                        <div class="style-detail">{cmd['count']} total</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persona -->
+            <div class="card card-wide animate delay-8">
+                <div class="card-label">Your AI Persona</div>
+                <div class="persona-card" style="margin-top: 12px;">
+                    <div class="persona-main">
+                        <div class="persona-name">{p['name']}</div>
+                        <div class="persona-desc">{p['description']}</div>
+                        <div class="persona-traits">
+                            {''.join(f'<span class="trait">{trait}</span>' for trait in p['traits'])}
+                        </div>
+                    </div>
+                    <div class="persona-stats">
+                        <div class="quadrant-scores">
+                            <div class="quadrant-item">
+                                <div class="quadrant-value">{p['quadrant']['engagement_score']}</div>
+                                <div class="quadrant-label">Engagement</div>
+                                <span class="quadrant-tag {'high' if p['quadrant']['high_engagement'] else 'low'}">
+                                    {'High' if p['quadrant']['high_engagement'] else 'Low'}
+                                </span>
+                            </div>
+                            <div class="quadrant-item">
+                                <div class="quadrant-value">{p['quadrant']['politeness_score']}</div>
+                                <div class="quadrant-label">Politeness</div>
+                                <span class="quadrant-tag {'high' if p['quadrant']['high_politeness'] else 'low'}">
+                                    {'High' if p['quadrant']['high_politeness'] else 'Low'}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="signature">
+                            <div class="signature-quote">"You're absolutely right."</div>
+                            <div class="signature-count">×{yr['count']}</div>
+                            <div class="signature-label">{yr['per_conversation']}× per conversation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-left">© 2025 Eeshan Srivastava</div>
+            <div class="footer-center">Personal project · MIT License · Non-commercial</div>
+            <div class="footer-right">
+                <a href="{github_repo}" target="_blank" class="footer-link">
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Source
+                </a>
+                <a href="https://www.linkedin.com/in/eeshans/" target="_blank" class="footer-link">
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.06 2.06 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0z"/></svg>
+                    LinkedIn
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Methodology Modal -->
+    <div class="modal-overlay" id="methodologyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Methodology</h2>
+                <button class="modal-close" onclick="closeMethodology()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-grid">
+                    <!-- How It Works -->
+                    <div class="modal-section">
+                        <h3>How It Works</h3>
+                        <div class="step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-content">
+                                <h4>Data Collection</h4>
+                                <p>Reads JSONL logs from Claude Code and parses conversations.json from Claude.ai exports.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-content">
+                                <h4>Message Extraction</h4>
+                                <p>Filters to human-authored prompts. Excludes system commands and tool outputs.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">3</div>
+                            <div class="step-content">
+                                <h4>Metric Computation</h4>
+                                <p>Regex pattern matching to count politeness markers, questions, and commands.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">4</div>
+                            <div class="step-content">
+                                <h4>Persona Classification</h4>
+                                <p>Maps Engagement and Politeness scores onto a 2×2 matrix.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- All Metrics -->
+                    <div class="modal-section">
+                        <h3>All Metrics</h3>
+                        <div class="metric-group">
+                            <h4>Volume</h4>
+                            <p><span>Prompts</span> — your messages · <span>Conversations</span> — chat sessions · <span>Words</span> — total typed</p>
+                        </div>
+                        <div class="metric-group">
+                            <h4>Conversation</h4>
+                            <p><span>Avg Turns</span> — per convo · <span>Quick Asks</span> — 1-3 turns · <span>Deep Dives</span> — 11+ turns</p>
+                        </div>
+                        <div class="metric-group">
+                            <h4>Temporal</h4>
+                            <p><span>Peak Hour/Day</span> — most active · <span>Night Owl</span> — 11pm-4am %</p>
+                        </div>
+                        <div class="metric-group">
+                            <h4>Style (per 100)</h4>
+                            <p><span>Politeness</span> — please/thanks · <span>Backtrack</span> — actually/wait · <span>Questions</span> — ending ? · <span>Commands</span> — action verbs</p>
+                        </div>
+                        <div class="metric-group">
+                            <h4>Composite Scores</h4>
+                            <p><span>Engagement</span> = (Question + Backtrack) ÷ 2<br/><span>Politeness</span> = Index − (Command × 0.5)</p>
+                        </div>
+                    </div>
+
+                    <!-- The 4 Personas -->
+                    <div class="modal-section">
+                        <h3>The 4 Personas</h3>
+                        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">Based on where you fall on the Engagement (x-axis) and Politeness (y-axis) scales:</p>
+                        <div class="persona-matrix">
+                            <div></div>
+                            <div class="matrix-label">High Polite</div>
+                            <div class="matrix-label">Low Polite</div>
+                            <div class="matrix-label">High<br/>Engage</div>
+                            <div class="persona-cell highlight">
+                                <strong>Collaborator</strong>
+                                You ask politely. AI is your partner, not your tool.
+                            </div>
+                            <div class="persona-cell">
+                                <strong>Explorer</strong>
+                                You question, iterate, and dig deeper. Thinking out loud.
+                            </div>
+                            <div class="matrix-label">Low<br/>Engage</div>
+                            <div class="persona-cell">
+                                <strong>Efficient</strong>
+                                Polite but focused. You know what you want and ask nicely.
+                            </div>
+                            <div class="persona-cell">
+                                <strong>Pragmatist</strong>
+                                Balanced and practical. No frills, just results.
+                            </div>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">Thresholds: Engagement ≥ 12, Politeness Score ≥ 4.5</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fix wrapped link for local vs production
+        const isLocal = location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        if (isLocal) {{
+            document.querySelectorAll('a[href="/wrapped"]').forEach(link => {{
+                const currentPath = location.pathname;
+                const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                const fileName = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+                // Check if we're dashboard.html (output structure) or index.html (docs structure)
+                if (fileName === 'dashboard.html') {{
+                    // output folder: go to index.html
+                    link.href = basePath + '/index.html';
+                }} else {{
+                    // docs folder: go to wrapped/index.html
+                    link.href = basePath + '/wrapped/index.html';
+                }}
+            }});
+        }}
+
+        // Theme toggle
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('dashboard-theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {{
+            html.classList.add('dark');
+        }}
+        themeToggle.addEventListener('click', () => {{
+            html.classList.toggle('dark');
+            localStorage.setItem('dashboard-theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }});
+
+        // Methodology modal
+        function openMethodology() {{
+            document.getElementById('methodologyModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }}
+        function closeMethodology() {{
+            document.getElementById('methodologyModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }}
+        document.getElementById('methodologyModal').addEventListener('click', (e) => {{
+            if (e.target === e.currentTarget) closeMethodology();
+        }});
+        document.addEventListener('keydown', (e) => {{
+            if (e.key === 'Escape') closeMethodology();
+        }});
+
+        // Heatmap
+        const heatmapData = {heatmap_json};
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const heatmap = document.getElementById('heatmap');
+
+        // Find max value for scaling
+        const maxVal = Math.max(...heatmapData.flat());
+
+        days.forEach((day, dayIndex) => {{
+            const label = document.createElement('div');
+            label.className = 'heatmap-label';
+            label.textContent = day;
+            heatmap.appendChild(label);
+
+            heatmapData[dayIndex].forEach(value => {{
+                const cell = document.createElement('div');
+                cell.className = 'heatmap-cell';
+                if (value > 0) {{
+                    const intensity = Math.ceil((value / maxVal) * 5);
+                    cell.classList.add('l' + Math.min(intensity, 5));
+                }}
+                heatmap.appendChild(cell);
+            }});
+        }});
     </script>
 </body>
 </html>'''
@@ -1428,11 +2808,20 @@ Examples:
     branding = load_branding()
     if branding:
         print(f"  Branding: {branding['site_name']}")
+
+    # Main experience
     html = generate_html(metrics, branding)
     html_path = output_dir / "index.html"
     with open(html_path, 'w') as f:
         f.write(html)
     print(f"  Saved: {html_path}")
+
+    # Dashboard (single-page view)
+    dashboard_html = generate_dashboard_html(metrics, branding)
+    dashboard_path = output_dir / "dashboard.html"
+    with open(dashboard_path, 'w') as f:
+        f.write(dashboard_html)
+    print(f"  Saved: {dashboard_path}")
 
     # Summary
     print("\n" + "=" * 50)
@@ -1446,13 +2835,24 @@ Examples:
     print(f"\nOutput:")
     print(f"  {metrics_path}")
     print(f"  {html_path}")
+    print(f"  {dashboard_path}")
 
     # Copy to docs/ for GitHub Pages
+    # Dashboard → main page (howiprompt.eeshans.com)
+    # Full experience → /wrapped (howiprompt.eeshans.com/wrapped)
     import shutil
-    docs_path = PROJECT_ROOT / "docs" / "index.html"
-    if docs_path.parent.exists():
-        shutil.copy2(html_path, docs_path)
-        print(f"  {docs_path} (GitHub Pages)")
+    docs_dir = PROJECT_ROOT / "docs"
+    wrapped_dir = docs_dir / "wrapped"
+    wrapped_dir.mkdir(parents=True, exist_ok=True)
+
+    if docs_dir.exists():
+        # Dashboard becomes the main index
+        shutil.copy2(dashboard_path, docs_dir / "index.html")
+        print(f"  {docs_dir / 'index.html'} (Dashboard → howiprompt.eeshans.com)")
+
+        # Full experience goes to /wrapped
+        shutil.copy2(html_path, wrapped_dir / "index.html")
+        print(f"  {wrapped_dir / 'index.html'} (Full → /wrapped)")
 
 
 if __name__ == "__main__":
