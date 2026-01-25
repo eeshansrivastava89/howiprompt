@@ -1,90 +1,76 @@
-> **Disclaimer:** This is an independent personal project, **not affiliated with, endorsed by, or connected to Anthropic or Claude** in any way. This is a non-commercial, open-source tool created for personal use and educational purposes only.
+# How I Prompt
 
-# How I Prompt: Wrapped
+A personal analytics dashboard for your Claude AI conversations. See your prompting patterns at a glance.
 
-I made this little "year in review" style visualization of my Claude AI conversations. You can clone and try it out for your conversations too. Analyze your prompting style, discover your AI persona, and generate a shareable wrapped-style report. If you have more expertise in text analysis, then there are a lot of possiblities in building new metrics or personas. Feel free to fork or let me know if you have any ideas. 
+**[View Live Demo →](https://howiprompt.eeshans.com)**
 
-Made on a mac but should be configurable for Windows too with a bit of tweaking. Python 3.10+ required. No external dependencies.
-
-<img width="611" height="382" alt="image" src="https://github.com/user-attachments/assets/1defc38a-789b-44f7-93a1-fe2b6130a2fa" />
-<img width="458" height="576" alt="image" src="https://github.com/user-attachments/assets/6ed8a18e-ce8d-4fa7-8d29-2db640adb59d" />
+<img width="800" alt="Dashboard" src="https://github.com/user-attachments/assets/1defc38a-789b-44f7-93a1-fe2b6130a2fa" />
 
 ---
 
-## ⚠️ Privacy & Data Warning
+## What You Get
 
-**This tool processes your personal AI conversation data. Please read carefully:**
+| Dashboard | Full Experience |
+|-----------|-----------------|
+| One-page overview of all your stats | Scroll-through "Wrapped" style presentation |
+| [howiprompt.eeshans.com](https://howiprompt.eeshans.com) | [howiprompt.eeshans.com/wrapped](https://howiprompt.eeshans.com/wrapped) |
 
-| | |
-|---|---|
-| **Your data stays local** | Nothing is uploaded, transmitted, or shared. All processing happens on your machine. |
-| **You control what's included** | Exclude sensitive conversations by not copying them to the `data/` folder. |
-| **Review before sharing** | The generated report contains aggregate statistics only (no conversation text), but review it before posting publicly. |
-| **Your responsibility** | You are solely responsible for any data you choose to process and any reports you choose to share. |
-
-**By default, this script does NOT read:** `memories.json`, `users.json`, or `projects.json`. It only reads conversation data you explicitly provide.
+**Metrics include:** Total prompts, word counts, conversation depth, activity heatmap, prompt style analysis, and your AI persona classification.
 
 ---
 
-## Quick Start
+## Build Your Own
 
 ```bash
-# 1. Add your data
-python build.py --copy-claude-code                    # Copies from ~/.claude/projects
-cp ~/Downloads/claude-export/conversations.json data/claude_ai/
+# 1. Clone
+git clone https://github.com/eeshansrivastava89/howiprompt.git
+cd howiprompt
 
-# 2. Build
+# 2. Add your data
+python build.py --copy-claude-code                    # Claude Code logs
+cp ~/Downloads/claude-export/conversations.json data/claude_ai/  # Claude.ai export
+
+# 3. Build & open
 python build.py
-
-# 3. Open
-open output/index.html
+open output/dashboard.html   # Dashboard view
+open output/index.html       # Full wrapped experience
 ```
 
-## Data Sources
+### Data Sources
 
-| Source | How to Get It | Where to Put It |
-|--------|---------------|-----------------|
-| **Claude Code** | Run `--copy-claude-code` OR manually copy from `~/.claude/projects/` | `data/claude_code/` |
-| **Claude.ai** | Settings → Export Data → Download | `data/claude_ai/conversations.json` |
+| Source | How to Get It |
+|--------|---------------|
+| **Claude Code** | Auto-copied with `--copy-claude-code` from `~/.claude/projects/` |
+| **Claude.ai** | Settings → Export Data → Download → copy `conversations.json` to `data/claude_ai/` |
 
-## CLI Options
+---
 
-```bash
-python build.py                    # Full build (reads from data/ folder)
-python build.py --copy-claude-code # Copy Claude Code data, then build
-python build.py --metrics-only     # Only compute metrics.json
-python build.py -o ./dist          # Custom output directory
-```
+## Privacy
 
-## Output
+- **100% local** — Nothing leaves your machine
+- **You control the data** — Only processes files you explicitly add
+- **No conversation text in output** — Only aggregate statistics
 
-```
-output/
-├── metrics.json       # Computed metrics (JSON)
-└── index.html         # Your wrapped report
-```
+---
 
 ## The 4 Personas
 
-Your prompting style is classified using a 2x2 matrix:
+Your style is classified on two axes: **Engagement** (questions + iteration) and **Politeness** (courtesy - commands).
 
 |                    | High Politeness | Low Politeness |
 |--------------------|-----------------|----------------|
-| **High Engagement** | The Collaborator | The Explorer |
-| **Low Engagement**  | The Efficient | The Pragmatist |
+| **High Engagement** | Collaborator | Explorer |
+| **Low Engagement**  | Efficient | Pragmatist |
 
-- **Engagement** = (question rate + backtrack rate) / 2
-- **Politeness** = polite phrases - (command rate × 0.5)
+---
 
 ## Requirements
 
-- Python 3.10+
-- No external dependencies (stdlib only)
+- Python 3.10+ (no external dependencies)
+- macOS or Linux (Windows with minor tweaks)
 
 ---
 
 ## License
 
-MIT License - See [LICENSE](LICENSE) file.
-
-*This is a personal, non-commercial project. Not affiliated with Anthropic.*
+MIT License — Not affiliated with Anthropic.
