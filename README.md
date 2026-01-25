@@ -1,3 +1,5 @@
+> **Disclaimer:** This is an independent personal project, **not affiliated with, endorsed by, or connected to Anthropic or Claude** in any way. This is a non-commercial, open-source tool created for personal use and educational purposes only.
+
 # How I Prompt
 
 A personal analytics dashboard for your Claude AI conversations. See your prompting patterns at a glance.
