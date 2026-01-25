@@ -6,7 +6,7 @@ A personal analytics dashboard for your Claude AI conversations. See your prompt
 
 **[View Live Demo →](https://howiprompt.eeshans.com)**
 
-<img width="800" alt="Dashboard" src="https://github.com/user-attachments/assets/1defc38a-789b-44f7-93a1-fe2b6130a2fa" />
+<img width="1179" height="859" alt="image" src="https://github.com/user-attachments/assets/12c6fc86-0d08-45c1-b94b-39c3bfbff93d" />
 
 ---
 
