@@ -1419,6 +1419,8 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
     source_views.setdefault("codex", None)
 
     default_source = metrics.get("default_view", "both")
+    if default_source == "claude" and source_views.get("claude_code") is not None:
+        default_source = "claude_code"
     if source_views.get(default_source) is None:
         for candidate in ("both", "claude_code", "codex"):
             if source_views.get(candidate) is not None:

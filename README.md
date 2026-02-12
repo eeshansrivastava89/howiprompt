@@ -65,6 +65,14 @@ Your style is classified on two axes: **Engagement** (questions + iteration) and
 
 ---
 
+## Testing
+
+```bash
+python -m unittest discover -s tests -p "test_*.py" -v
+```
+
+---
+
 ## Requirements
 
 - Python 3.10+ (no external dependencies)
