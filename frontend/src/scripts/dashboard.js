@@ -402,8 +402,6 @@ function renderView(sourceKey) {
     if (youreRightLabel) youreRightLabel.textContent = `${youreRight.per_conversation ?? 0}× per conversation`;
 
     renderHeatmap(temporal.heatmap);
-    renderTrendBand(view);
-    renderLaunchKit(sourceKey, view);
 }
 
 // === Source filter ===

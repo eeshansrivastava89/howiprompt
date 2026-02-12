@@ -3074,6 +3074,9 @@ Examples:
 
     if args.no_open:
         print("\n[4/4] Skipped opening browser (--no-open).")
+    elif use_astro:
+        print("\n[4/4] Astro frontend requires a local server to preview.")
+        print("  Run: npx serve docs")
     else:
         print("\n[4/4] Opening dashboard...")
         if open_in_browser(dashboard_path):

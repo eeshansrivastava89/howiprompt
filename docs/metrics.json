@@ -1,20 +1,20 @@
 {
-  "generated_at": "2026-02-12T07:09:52.131244+00:00",
+  "generated_at": "2026-02-12T07:54:10.190145+00:00",
   "volume": {
-    "total_messages": 15733,
-    "total_human": 4874,
-    "total_assistant": 10859,
-    "total_words_human": 432622,
-    "total_words_assistant": 982288,
-    "total_conversations": 1121,
-    "avg_words_per_prompt": 88.8
+    "total_messages": 15871,
+    "total_human": 4907,
+    "total_assistant": 10964,
+    "total_words_human": 434100,
+    "total_words_assistant": 986719,
+    "total_conversations": 1125,
+    "avg_words_per_prompt": 88.5
   },
   "conversation_depth": {
-    "avg_turns": 14.0,
+    "avg_turns": 14.1,
     "max_turns": 455,
-    "quick_asks": 777,
-    "working_sessions": 116,
-    "deep_dives": 228
+    "quick_asks": 778,
+    "working_sessions": 117,
+    "deep_dives": 230
   },
   "response_ratio": 2.3,
   "temporal": {
@@ -94,8 +94,8 @@
         6,
         22,
         49,
-        68,
-        78
+        75,
+        104
       ],
       [
         51,
@@ -202,14 +202,14 @@
         65
       ]
     ],
-    "night_owl_pct": 26.0,
+    "night_owl_pct": 26.4,
     "peak_hour": 23,
-    "peak_hour_count": 577,
+    "peak_hour_count": 603,
     "peak_day": "Sunday",
     "peak_day_count": 1635,
     "hour_counts": {
-      "22": 468,
-      "23": 577,
+      "22": 475,
+      "23": 603,
       "8": 90,
       "20": 328,
       "21": 358,
@@ -238,28 +238,28 @@
       "sorry": 22
     },
     "total": 399,
-    "per_100_prompts": 8.2
+    "per_100_prompts": 8.1
   },
   "backtrack": {
     "counts": {
-      "actually": 298,
+      "actually": 300,
       "wait": 72,
       "never_mind": 3,
       "scratch_that": 0
     },
-    "total": 373,
-    "per_100_prompts": 7.7
+    "total": 375,
+    "per_100_prompts": 7.6
   },
   "question": {
-    "count": 810,
+    "count": 816,
     "rate": 16.6
   },
   "command": {
-    "count": 361,
+    "count": 362,
     "rate": 7.4
   },
   "youre_right": {
-    "count": 277,
+    "count": 280,
     "per_conversation": 0.2
   },
   "persona": {
@@ -273,28 +273,28 @@
     ],
     "quadrant": {
       "engagement_score": 12.1,
-      "politeness_score": 4.5,
+      "politeness_score": 4.4,
       "high_engagement": true,
       "high_politeness": false
     },
     "scores": {
-      "politeness": 8.2,
-      "backtrack": 7.7,
+      "politeness": 8.1,
+      "backtrack": 7.6,
       "question_rate": 16.6,
       "command_rate": 7.4
     }
   },
   "platform_stats": {
     "claude_code": {
-      "messages": 4874,
-      "words": 432622,
-      "conversations": 1104,
+      "messages": 4907,
+      "words": 434100,
+      "conversations": 1108,
       "first_message": "2025-12-12T06:07:04.054000+00:00"
     }
   },
   "model_usage": {
     "coverage": {
-      "total_human_prompts": 4874,
+      "total_human_prompts": 4907,
       "prompts_with_model_metadata": 0,
       "metadata_coverage_pct": 0.0
     },
@@ -1426,9 +1426,9 @@
       },
       {
         "date": "2026-02-11",
-        "prompts": 66,
+        "prompts": 99,
         "source_counts": {
-          "claude_code": 66,
+          "claude_code": 99,
           "codex": 0
         },
         "source_share_pct": {
@@ -1436,10 +1436,10 @@
           "codex": 0.0
         },
         "style": {
-          "politeness_per_100": 6.1,
-          "backtrack_per_100": 4.5,
-          "question_rate_pct": 13.6,
-          "command_rate_pct": 15.2
+          "politeness_per_100": 4.0,
+          "backtrack_per_100": 5.1,
+          "question_rate_pct": 15.2,
+          "command_rate_pct": 11.1
         },
         "model_prompts": 0,
         "models": {}
@@ -1628,9 +1628,9 @@
       },
       {
         "week_start": "2026-02-09",
-        "prompts": 110,
+        "prompts": 143,
         "source_counts": {
-          "claude_code": 110,
+          "claude_code": 143,
           "codex": 0
         },
         "source_share_pct": {
@@ -1638,10 +1638,10 @@
           "codex": 0.0
         },
         "style": {
-          "politeness_per_100": 3.6,
-          "backtrack_per_100": 4.5,
-          "question_rate_pct": 12.7,
-          "command_rate_pct": 13.6
+          "politeness_per_100": 2.8,
+          "backtrack_per_100": 4.9,
+          "question_rate_pct": 14.0,
+          "command_rate_pct": 11.2
         },
         "model_prompts": 0,
         "models": {}
@@ -1649,9 +1649,9 @@
     ],
     "deltas_7d_vs_30d": {
       "prompts_per_day": {
-        "avg_7d": 100.7,
-        "avg_30d": 82.0,
-        "delta_pct": 22.8
+        "avg_7d": 105.4,
+        "avg_30d": 83.1,
+        "delta_pct": 26.8
       },
       "codex_share_pct": {
         "avg_7d": 0.0,
@@ -1659,24 +1659,24 @@
         "delta_pct": null
       },
       "politeness_per_100": {
-        "avg_7d": 4.5,
-        "avg_30d": 5.9,
-        "delta_pct": -23.7
+        "avg_7d": 4.2,
+        "avg_30d": 5.8,
+        "delta_pct": -27.6
       },
       "backtrack_per_100": {
-        "avg_7d": 7.4,
+        "avg_7d": 7.5,
         "avg_30d": 7.3,
-        "delta_pct": 1.4
+        "delta_pct": 2.7
       },
       "question_rate_pct": {
-        "avg_7d": 14.2,
+        "avg_7d": 14.4,
         "avg_30d": 20.0,
-        "delta_pct": -29.0
+        "delta_pct": -28.0
       },
       "command_rate_pct": {
-        "avg_7d": 11.7,
-        "avg_30d": 9.5,
-        "delta_pct": 23.2
+        "avg_7d": 11.1,
+        "avg_30d": 9.4,
+        "delta_pct": 18.1
       },
       "model_coverage_pct": {
         "avg_7d": 0.0,
@@ -1781,33 +1781,33 @@
     "intent": {
       "method": "deterministic_rules_v1",
       "counts": {
-        "other": 2874,
-        "build_feature": 662,
+        "other": 2894,
+        "build_feature": 664,
         "analysis_research": 405,
-        "ops_commands": 342,
-        "debug_fix": 333,
-        "explanation_learning": 131,
-        "planning_strategy": 127
+        "ops_commands": 345,
+        "debug_fix": 337,
+        "explanation_learning": 132,
+        "planning_strategy": 130
       },
       "rates_pct": {
         "other": 59.0,
-        "build_feature": 13.6,
+        "build_feature": 13.5,
         "analysis_research": 8.3,
         "ops_commands": 7.0,
-        "debug_fix": 6.8,
+        "debug_fix": 6.9,
         "explanation_learning": 2.7,
         "planning_strategy": 2.6
       },
       "top_intents": [
         {
           "intent": "other",
-          "count": 2874,
+          "count": 2894,
           "rate_pct": 59.0
         },
         {
           "intent": "build_feature",
-          "count": 662,
-          "rate_pct": 13.6
+          "count": 664,
+          "rate_pct": 13.5
         },
         {
           "intent": "analysis_research",
@@ -1827,9 +1827,9 @@
       "p50_score": 2.1,
       "p90_score": 4.9,
       "distribution": {
-        "low": 2804,
-        "medium": 940,
-        "high": 1130
+        "low": 2829,
+        "medium": 947,
+        "high": 1131
       },
       "confidence": {
         "mean": 0.74,
@@ -1841,9 +1841,9 @@
       "method": "iteration_markers_v1",
       "avg_score": 11.6,
       "distribution": {
-        "low": 3901,
-        "medium": 784,
-        "high": 189
+        "low": 3931,
+        "medium": 786,
+        "high": 190
       },
       "style": "direct",
       "confidence": {
@@ -1855,26 +1855,26 @@
   },
   "date_range": {
     "first": "2025-12-12T06:07:04.054000+00:00",
-    "last": "2026-02-12T06:28:40.782000+00:00"
+    "last": "2026-02-12T07:53:48.414000+00:00"
   },
   "source_views": {
     "both": {
-      "generated_at": "2026-02-12T07:09:50.761973+00:00",
+      "generated_at": "2026-02-12T07:54:08.847005+00:00",
       "volume": {
-        "total_messages": 16501,
-        "total_human": 5642,
-        "total_assistant": 10859,
-        "total_words_human": 474033,
-        "total_words_assistant": 982288,
-        "total_conversations": 1153,
-        "avg_words_per_prompt": 84.0
+        "total_messages": 16639,
+        "total_human": 5675,
+        "total_assistant": 10964,
+        "total_words_human": 475511,
+        "total_words_assistant": 986719,
+        "total_conversations": 1157,
+        "avg_words_per_prompt": 83.8
       },
       "conversation_depth": {
-        "avg_turns": 14.3,
+        "avg_turns": 14.4,
         "max_turns": 455,
-        "quick_asks": 786,
-        "working_sessions": 124,
-        "deep_dives": 243
+        "quick_asks": 787,
+        "working_sessions": 125,
+        "deep_dives": 245
       },
       "response_ratio": 2.1,
       "temporal": {
@@ -1954,8 +1954,8 @@
             7,
             34,
             57,
-            76,
-            78
+            83,
+            104
           ],
           [
             51,
@@ -2062,14 +2062,14 @@
             78
           ]
         ],
-        "night_owl_pct": 28.1,
+        "night_owl_pct": 28.4,
         "peak_hour": 23,
-        "peak_hour_count": 697,
+        "peak_hour_count": 723,
         "peak_day": "Sunday",
         "peak_day_count": 1832,
         "hour_counts": {
-          "22": 533,
-          "23": 697,
+          "22": 540,
+          "23": 723,
           "8": 116,
           "20": 362,
           "21": 412,
@@ -2102,24 +2102,24 @@
       },
       "backtrack": {
         "counts": {
-          "actually": 363,
+          "actually": 365,
           "wait": 87,
           "never_mind": 4,
           "scratch_that": 1
         },
-        "total": 455,
+        "total": 457,
         "per_100_prompts": 8.1
       },
       "question": {
-        "count": 953,
+        "count": 959,
         "rate": 16.9
       },
       "command": {
-        "count": 421,
-        "rate": 7.5
+        "count": 422,
+        "rate": 7.4
       },
       "youre_right": {
-        "count": 277,
+        "count": 280,
         "per_conversation": 0.2
       },
       "persona": {
@@ -2141,14 +2141,14 @@
           "politeness": 8.1,
           "backtrack": 8.1,
           "question_rate": 16.9,
-          "command_rate": 7.5
+          "command_rate": 7.4
         }
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 4874,
-          "words": 432622,
-          "conversations": 1104,
+          "messages": 4907,
+          "words": 434100,
+          "conversations": 1108,
           "first_message": "2025-12-12T06:07:04.054000+00:00"
         },
         "codex": {
@@ -2160,9 +2160,9 @@
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 5642,
+          "total_human_prompts": 5675,
           "prompts_with_model_metadata": 768,
-          "metadata_coverage_pct": 13.6
+          "metadata_coverage_pct": 13.5
         },
         "by_model": [
           {
@@ -3560,20 +3560,20 @@
           },
           {
             "date": "2026-02-11",
-            "prompts": 118,
+            "prompts": 151,
             "source_counts": {
-              "claude_code": 66,
+              "claude_code": 99,
               "codex": 52
             },
             "source_share_pct": {
-              "claude_code": 55.9,
-              "codex": 44.1
+              "claude_code": 65.6,
+              "codex": 34.4
             },
             "style": {
-              "politeness_per_100": 5.1,
-              "backtrack_per_100": 8.5,
-              "question_rate_pct": 17.8,
-              "command_rate_pct": 12.7
+              "politeness_per_100": 4.0,
+              "backtrack_per_100": 7.9,
+              "question_rate_pct": 17.9,
+              "command_rate_pct": 10.6
             },
             "model_prompts": 52,
             "models": {
@@ -3779,20 +3779,20 @@
           },
           {
             "week_start": "2026-02-09",
-            "prompts": 204,
+            "prompts": 237,
             "source_counts": {
-              "claude_code": 110,
+              "claude_code": 143,
               "codex": 94
             },
             "source_share_pct": {
-              "claude_code": 53.9,
-              "codex": 46.1
+              "claude_code": 60.3,
+              "codex": 39.7
             },
             "style": {
-              "politeness_per_100": 3.9,
-              "backtrack_per_100": 7.8,
+              "politeness_per_100": 3.4,
+              "backtrack_per_100": 7.6,
               "question_rate_pct": 18.1,
-              "command_rate_pct": 12.7
+              "command_rate_pct": 11.4
             },
             "model_prompts": 94,
             "models": {
@@ -3802,24 +3802,24 @@
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 121.6,
-            "avg_30d": 96.0,
-            "delta_pct": 26.7
+            "avg_7d": 126.3,
+            "avg_30d": 97.1,
+            "delta_pct": 30.1
           },
           "codex_share_pct": {
-            "avg_7d": 25.5,
-            "avg_30d": 11.3,
-            "delta_pct": 125.7
+            "avg_7d": 24.1,
+            "avg_30d": 11.0,
+            "delta_pct": 119.1
           },
           "politeness_per_100": {
-            "avg_7d": 5.5,
-            "avg_30d": 6.3,
-            "delta_pct": -12.7
+            "avg_7d": 5.3,
+            "avg_30d": 6.2,
+            "delta_pct": -14.5
           },
           "backtrack_per_100": {
-            "avg_7d": 7.3,
-            "avg_30d": 7.8,
-            "delta_pct": -6.4
+            "avg_7d": 7.2,
+            "avg_30d": 7.7,
+            "delta_pct": -6.5
           },
           "question_rate_pct": {
             "avg_7d": 16.8,
@@ -3827,14 +3827,14 @@
             "delta_pct": -18.4
           },
           "command_rate_pct": {
-            "avg_7d": 9.2,
+            "avg_7d": 8.9,
             "avg_30d": 8.5,
-            "delta_pct": 8.2
+            "delta_pct": 4.7
           },
           "model_coverage_pct": {
-            "avg_7d": 25.5,
-            "avg_30d": 11.3,
-            "delta_pct": 125.7
+            "avg_7d": 24.1,
+            "avg_30d": 11.0,
+            "delta_pct": 119.1
           }
         },
         "shift_markers": [
@@ -3934,33 +3934,33 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 3326,
-            "build_feature": 761,
+            "other": 3346,
+            "build_feature": 763,
             "analysis_research": 469,
-            "ops_commands": 371,
-            "debug_fix": 369,
-            "planning_strategy": 175,
-            "explanation_learning": 171
+            "ops_commands": 374,
+            "debug_fix": 373,
+            "planning_strategy": 178,
+            "explanation_learning": 172
           },
           "rates_pct": {
             "other": 59.0,
-            "build_feature": 13.5,
+            "build_feature": 13.4,
             "analysis_research": 8.3,
             "ops_commands": 6.6,
-            "debug_fix": 6.5,
+            "debug_fix": 6.6,
             "planning_strategy": 3.1,
             "explanation_learning": 3.0
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 3326,
+              "count": 3346,
               "rate_pct": 59.0
             },
             {
               "intent": "build_feature",
-              "count": 761,
-              "rate_pct": 13.5
+              "count": 763,
+              "rate_pct": 13.4
             },
             {
               "intent": "analysis_research",
@@ -3980,9 +3980,9 @@
           "p50_score": 1.9,
           "p90_score": 4.7,
           "distribution": {
-            "low": 3267,
-            "medium": 1094,
-            "high": 1281
+            "low": 3292,
+            "medium": 1101,
+            "high": 1282
           },
           "confidence": {
             "mean": 0.74,
@@ -3994,9 +3994,9 @@
           "method": "iteration_markers_v1",
           "avg_score": 11.4,
           "distribution": {
-            "low": 4536,
-            "medium": 895,
-            "high": 211
+            "low": 4566,
+            "medium": 897,
+            "high": 212
           },
           "style": "direct",
           "confidence": {
@@ -4008,26 +4008,26 @@
       },
       "date_range": {
         "first": "2025-12-12T06:07:04.054000+00:00",
-        "last": "2026-02-12T06:28:40.782000+00:00"
+        "last": "2026-02-12T07:53:48.414000+00:00"
       }
     },
     "claude_code": {
-      "generated_at": "2026-02-12T07:09:52.131244+00:00",
+      "generated_at": "2026-02-12T07:54:10.190145+00:00",
       "volume": {
-        "total_messages": 15733,
-        "total_human": 4874,
-        "total_assistant": 10859,
-        "total_words_human": 432622,
-        "total_words_assistant": 982288,
-        "total_conversations": 1121,
-        "avg_words_per_prompt": 88.8
+        "total_messages": 15871,
+        "total_human": 4907,
+        "total_assistant": 10964,
+        "total_words_human": 434100,
+        "total_words_assistant": 986719,
+        "total_conversations": 1125,
+        "avg_words_per_prompt": 88.5
       },
       "conversation_depth": {
-        "avg_turns": 14.0,
+        "avg_turns": 14.1,
         "max_turns": 455,
-        "quick_asks": 777,
-        "working_sessions": 116,
-        "deep_dives": 228
+        "quick_asks": 778,
+        "working_sessions": 117,
+        "deep_dives": 230
       },
       "response_ratio": 2.3,
       "temporal": {
@@ -4107,8 +4107,8 @@
             6,
             22,
             49,
-            68,
-            78
+            75,
+            104
           ],
           [
             51,
@@ -4215,14 +4215,14 @@
             65
           ]
         ],
-        "night_owl_pct": 26.0,
+        "night_owl_pct": 26.4,
         "peak_hour": 23,
-        "peak_hour_count": 577,
+        "peak_hour_count": 603,
         "peak_day": "Sunday",
         "peak_day_count": 1635,
         "hour_counts": {
-          "22": 468,
-          "23": 577,
+          "22": 475,
+          "23": 603,
           "8": 90,
           "20": 328,
           "21": 358,
@@ -4251,28 +4251,28 @@
           "sorry": 22
         },
         "total": 399,
-        "per_100_prompts": 8.2
+        "per_100_prompts": 8.1
       },
       "backtrack": {
         "counts": {
-          "actually": 298,
+          "actually": 300,
           "wait": 72,
           "never_mind": 3,
           "scratch_that": 0
         },
-        "total": 373,
-        "per_100_prompts": 7.7
+        "total": 375,
+        "per_100_prompts": 7.6
       },
       "question": {
-        "count": 810,
+        "count": 816,
         "rate": 16.6
       },
       "command": {
-        "count": 361,
+        "count": 362,
         "rate": 7.4
       },
       "youre_right": {
-        "count": 277,
+        "count": 280,
         "per_conversation": 0.2
       },
       "persona": {
@@ -4286,28 +4286,28 @@
         ],
         "quadrant": {
           "engagement_score": 12.1,
-          "politeness_score": 4.5,
+          "politeness_score": 4.4,
           "high_engagement": true,
           "high_politeness": false
         },
         "scores": {
-          "politeness": 8.2,
-          "backtrack": 7.7,
+          "politeness": 8.1,
+          "backtrack": 7.6,
           "question_rate": 16.6,
           "command_rate": 7.4
         }
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 4874,
-          "words": 432622,
-          "conversations": 1104,
+          "messages": 4907,
+          "words": 434100,
+          "conversations": 1108,
           "first_message": "2025-12-12T06:07:04.054000+00:00"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 4874,
+          "total_human_prompts": 4907,
           "prompts_with_model_metadata": 0,
           "metadata_coverage_pct": 0.0
         },
@@ -5439,9 +5439,9 @@
           },
           {
             "date": "2026-02-11",
-            "prompts": 66,
+            "prompts": 99,
             "source_counts": {
-              "claude_code": 66,
+              "claude_code": 99,
               "codex": 0
             },
             "source_share_pct": {
@@ -5449,10 +5449,10 @@
               "codex": 0.0
             },
             "style": {
-              "politeness_per_100": 6.1,
-              "backtrack_per_100": 4.5,
-              "question_rate_pct": 13.6,
-              "command_rate_pct": 15.2
+              "politeness_per_100": 4.0,
+              "backtrack_per_100": 5.1,
+              "question_rate_pct": 15.2,
+              "command_rate_pct": 11.1
             },
             "model_prompts": 0,
             "models": {}
@@ -5641,9 +5641,9 @@
           },
           {
             "week_start": "2026-02-09",
-            "prompts": 110,
+            "prompts": 143,
             "source_counts": {
-              "claude_code": 110,
+              "claude_code": 143,
               "codex": 0
             },
             "source_share_pct": {
@@ -5651,10 +5651,10 @@
               "codex": 0.0
             },
             "style": {
-              "politeness_per_100": 3.6,
-              "backtrack_per_100": 4.5,
-              "question_rate_pct": 12.7,
-              "command_rate_pct": 13.6
+              "politeness_per_100": 2.8,
+              "backtrack_per_100": 4.9,
+              "question_rate_pct": 14.0,
+              "command_rate_pct": 11.2
             },
             "model_prompts": 0,
             "models": {}
@@ -5662,9 +5662,9 @@
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 100.7,
-            "avg_30d": 82.0,
-            "delta_pct": 22.8
+            "avg_7d": 105.4,
+            "avg_30d": 83.1,
+            "delta_pct": 26.8
           },
           "codex_share_pct": {
             "avg_7d": 0.0,
@@ -5672,24 +5672,24 @@
             "delta_pct": null
           },
           "politeness_per_100": {
-            "avg_7d": 4.5,
-            "avg_30d": 5.9,
-            "delta_pct": -23.7
+            "avg_7d": 4.2,
+            "avg_30d": 5.8,
+            "delta_pct": -27.6
           },
           "backtrack_per_100": {
-            "avg_7d": 7.4,
+            "avg_7d": 7.5,
             "avg_30d": 7.3,
-            "delta_pct": 1.4
+            "delta_pct": 2.7
           },
           "question_rate_pct": {
-            "avg_7d": 14.2,
+            "avg_7d": 14.4,
             "avg_30d": 20.0,
-            "delta_pct": -29.0
+            "delta_pct": -28.0
           },
           "command_rate_pct": {
-            "avg_7d": 11.7,
-            "avg_30d": 9.5,
-            "delta_pct": 23.2
+            "avg_7d": 11.1,
+            "avg_30d": 9.4,
+            "delta_pct": 18.1
           },
           "model_coverage_pct": {
             "avg_7d": 0.0,
@@ -5794,33 +5794,33 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 2874,
-            "build_feature": 662,
+            "other": 2894,
+            "build_feature": 664,
             "analysis_research": 405,
-            "ops_commands": 342,
-            "debug_fix": 333,
-            "explanation_learning": 131,
-            "planning_strategy": 127
+            "ops_commands": 345,
+            "debug_fix": 337,
+            "explanation_learning": 132,
+            "planning_strategy": 130
           },
           "rates_pct": {
             "other": 59.0,
-            "build_feature": 13.6,
+            "build_feature": 13.5,
             "analysis_research": 8.3,
             "ops_commands": 7.0,
-            "debug_fix": 6.8,
+            "debug_fix": 6.9,
             "explanation_learning": 2.7,
             "planning_strategy": 2.6
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 2874,
+              "count": 2894,
               "rate_pct": 59.0
             },
             {
               "intent": "build_feature",
-              "count": 662,
-              "rate_pct": 13.6
+              "count": 664,
+              "rate_pct": 13.5
             },
             {
               "intent": "analysis_research",
@@ -5840,9 +5840,9 @@
           "p50_score": 2.1,
           "p90_score": 4.9,
           "distribution": {
-            "low": 2804,
-            "medium": 940,
-            "high": 1130
+            "low": 2829,
+            "medium": 947,
+            "high": 1131
           },
           "confidence": {
             "mean": 0.74,
@@ -5854,9 +5854,9 @@
           "method": "iteration_markers_v1",
           "avg_score": 11.6,
           "distribution": {
-            "low": 3901,
-            "medium": 784,
-            "high": 189
+            "low": 3931,
+            "medium": 786,
+            "high": 190
           },
           "style": "direct",
           "confidence": {
@@ -5868,11 +5868,11 @@
       },
       "date_range": {
         "first": "2025-12-12T06:07:04.054000+00:00",
-        "last": "2026-02-12T06:28:40.782000+00:00"
+        "last": "2026-02-12T07:53:48.414000+00:00"
       }
     },
     "codex": {
-      "generated_at": "2026-02-12T07:09:52.296741+00:00",
+      "generated_at": "2026-02-12T07:54:10.351294+00:00",
       "volume": {
         "total_messages": 768,
         "total_human": 768,
@@ -7369,18 +7369,18 @@
   "launch_packets": {
     "both": {
       "source_label": "Claude Code + Codex",
-      "summary": "How I Prompt v2 snapshot (Claude Code + Codex)\nDate range: Dec 12, 2025 - Feb 12, 2026\nPrompts: 5,642 across 1,153 conversations\nPersona: The Explorer\nAvg prompt length: 84.0 words | Codex share: 13.6%\nTop model: gpt-5.2-codex | Iteration style: direct | Complexity: 2.4/5\nSource + build: https://github.com/eeshansrivastava89/howiprompt",
+      "summary": "How I Prompt v2 snapshot (Claude Code + Codex)\nDate range: Dec 12, 2025 - Feb 12, 2026\nPrompts: 5,675 across 1,157 conversations\nPersona: The Explorer\nAvg prompt length: 83.8 words | Codex share: 13.5%\nTop model: gpt-5.2-codex | Iteration style: direct | Complexity: 2.4/5\nSource + build: https://github.com/eeshansrivastava89/howiprompt",
       "release_notes": "How I Prompt v2 - Release Notes\n\nScope view: Claude Code + Codex\n- Date range covered: Dec 12, 2025 - Feb 12, 2026\n- Active data sources: Claude Code + Codex\n- Added model attribution from Codex session metadata\n- Added trend analytics (daily/weekly rollups, 7d vs 30d deltas, shift markers)\n- Added deterministic NLP metrics with confidence (intent, complexity, iteration style)\n- Added dashboard launch-kit sharing actions (summary + HN + LinkedIn copy)\n\nMigration note: Claude.ai exports are deprecated and ignored by the v2 pipeline.\nGitHub: https://github.com/eeshansrivastava89/howiprompt\nLive: https://eeshans.com",
-      "hn_post": "Show HN: How I Prompt v2 (local analytics for Claude Code + Codex)\n\nI built a local-first dashboard to analyze my prompting patterns (Claude Code + Codex).\nIt currently covers 5,642 prompts across 1,153 conversations (Dec 12, 2025 - Feb 12, 2026).\nv2 adds model attribution, trend analytics, and deterministic NLP metrics.\nMigration note: Claude.ai exports are deprecated in v2; active pipeline is Claude Code + Codex.\nRepo: https://github.com/eeshansrivastava89/howiprompt\nLive demo: https://eeshans.com\n\nWould love feedback on which metrics are most useful for daily AI workflows.",
-      "linkedin_post": "Shipped How I Prompt v2 for Claude Code + Codex.\nAnalyzed 5,642 prompts across 1,153 conversations (Dec 12, 2025 - Feb 12, 2026).\nHighlights: model attribution, trend analytics, deterministic NLP metrics, and a new launch sharing kit.\nMigration note: Claude.ai exports are deprecated in v2; active sources are Claude Code + Codex.\nOpen source: https://github.com/eeshansrivastava89/howiprompt\nLive demo: https://eeshans.com\n\n#buildinpublic #ai #developertools #analytics",
+      "hn_post": "Show HN: How I Prompt v2 (local analytics for Claude Code + Codex)\n\nI built a local-first dashboard to analyze my prompting patterns (Claude Code + Codex).\nIt currently covers 5,675 prompts across 1,157 conversations (Dec 12, 2025 - Feb 12, 2026).\nv2 adds model attribution, trend analytics, and deterministic NLP metrics.\nMigration note: Claude.ai exports are deprecated in v2; active pipeline is Claude Code + Codex.\nRepo: https://github.com/eeshansrivastava89/howiprompt\nLive demo: https://eeshans.com\n\nWould love feedback on which metrics are most useful for daily AI workflows.",
+      "linkedin_post": "Shipped How I Prompt v2 for Claude Code + Codex.\nAnalyzed 5,675 prompts across 1,157 conversations (Dec 12, 2025 - Feb 12, 2026).\nHighlights: model attribution, trend analytics, deterministic NLP metrics, and a new launch sharing kit.\nMigration note: Claude.ai exports are deprecated in v2; active sources are Claude Code + Codex.\nOpen source: https://github.com/eeshansrivastava89/howiprompt\nLive demo: https://eeshans.com\n\n#buildinpublic #ai #developertools #analytics",
       "attribution_url": "https://github.com/eeshansrivastava89/howiprompt"
     },
     "claude_code": {
       "source_label": "Claude Code",
-      "summary": "How I Prompt v2 snapshot (Claude Code)\nDate range: Dec 12, 2025 - Feb 12, 2026\nPrompts: 4,874 across 1,121 conversations\nPersona: The Explorer\nAvg prompt length: 88.8 words | Codex share: 0.0%\nTop model: n/a | Iteration style: direct | Complexity: 2.4/5\nSource + build: https://github.com/eeshansrivastava89/howiprompt",
+      "summary": "How I Prompt v2 snapshot (Claude Code)\nDate range: Dec 12, 2025 - Feb 12, 2026\nPrompts: 4,907 across 1,125 conversations\nPersona: The Explorer\nAvg prompt length: 88.5 words | Codex share: 0.0%\nTop model: n/a | Iteration style: direct | Complexity: 2.4/5\nSource + build: https://github.com/eeshansrivastava89/howiprompt",
       "release_notes": "How I Prompt v2 - Release Notes\n\nScope view: Claude Code\n- Date range covered: Dec 12, 2025 - Feb 12, 2026\n- Active data sources: Claude Code + Codex\n- Added model attribution from Codex session metadata\n- Added trend analytics (daily/weekly rollups, 7d vs 30d deltas, shift markers)\n- Added deterministic NLP metrics with confidence (intent, complexity, iteration style)\n- Added dashboard launch-kit sharing actions (summary + HN + LinkedIn copy)\n\nMigration note: Claude.ai exports are deprecated and ignored by the v2 pipeline.\nGitHub: https://github.com/eeshansrivastava89/howiprompt\nLive: https://eeshans.com",
-      "hn_post": "Show HN: How I Prompt v2 (local analytics for Claude Code + Codex)\n\nI built a local-first dashboard to analyze my prompting patterns (Claude Code).\nIt currently covers 4,874 prompts across 1,121 conversations (Dec 12, 2025 - Feb 12, 2026).\nv2 adds model attribution, trend analytics, and deterministic NLP metrics.\nMigration note: Claude.ai exports are deprecated in v2; active pipeline is Claude Code + Codex.\nRepo: https://github.com/eeshansrivastava89/howiprompt\nLive demo: https://eeshans.com\n\nWould love feedback on which metrics are most useful for daily AI workflows.",
-      "linkedin_post": "Shipped How I Prompt v2 for Claude Code.\nAnalyzed 4,874 prompts across 1,121 conversations (Dec 12, 2025 - Feb 12, 2026).\nHighlights: model attribution, trend analytics, deterministic NLP metrics, and a new launch sharing kit.\nMigration note: Claude.ai exports are deprecated in v2; active sources are Claude Code + Codex.\nOpen source: https://github.com/eeshansrivastava89/howiprompt\nLive demo: https://eeshans.com\n\n#buildinpublic #ai #developertools #analytics",
+      "hn_post": "Show HN: How I Prompt v2 (local analytics for Claude Code + Codex)\n\nI built a local-first dashboard to analyze my prompting patterns (Claude Code).\nIt currently covers 4,907 prompts across 1,125 conversations (Dec 12, 2025 - Feb 12, 2026).\nv2 adds model attribution, trend analytics, and deterministic NLP metrics.\nMigration note: Claude.ai exports are deprecated in v2; active pipeline is Claude Code + Codex.\nRepo: https://github.com/eeshansrivastava89/howiprompt\nLive demo: https://eeshans.com\n\nWould love feedback on which metrics are most useful for daily AI workflows.",
+      "linkedin_post": "Shipped How I Prompt v2 for Claude Code.\nAnalyzed 4,907 prompts across 1,125 conversations (Dec 12, 2025 - Feb 12, 2026).\nHighlights: model attribution, trend analytics, deterministic NLP metrics, and a new launch sharing kit.\nMigration note: Claude.ai exports are deprecated in v2; active sources are Claude Code + Codex.\nOpen source: https://github.com/eeshansrivastava89/howiprompt\nLive demo: https://eeshans.com\n\n#buildinpublic #ai #developertools #analytics",
       "attribution_url": "https://github.com/eeshansrivastava89/howiprompt"
     },
     "codex": {
