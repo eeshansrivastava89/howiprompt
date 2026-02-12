@@ -20,6 +20,7 @@ Data setup:
        (auto-copied from ~/.claude/projects by default)
     2. Copy your Codex history to: data/codex/history.jsonl
        (auto-copied from ~/.codex/history.jsonl by default)
+    3. Codex model metadata is read from: ~/.codex/sessions/*.jsonl
 
 Migration note:
     Claude.ai exports are deprecated in v2 and ignored by this pipeline.
@@ -34,10 +35,10 @@ import subprocess
 import sys
 import webbrowser
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
-from collections import defaultdict
+from collections import Counter, defaultdict
 from typing import Iterator
 
 # === Logging Setup ===
@@ -46,6 +47,19 @@ logging.basicConfig(
     format="%(message)s"
 )
 logger = logging.getLogger(__name__)
+
+POLITENESS_PATTERNS = {
+    "please": r"\bplease\b",
+    "thanks": r"\b(thanks|thank you|thx)\b",
+    "sorry": r"\b(sorry|apologies|apologize)\b",
+}
+BACKTRACK_PATTERNS = {
+    "actually": r"\bactually\b",
+    "wait": r"\bwait\b",
+    "never_mind": r"\b(never\s*mind|nevermind)\b",
+    "scratch_that": r"\b(scratch that|ignore that)\b",
+}
+COMMAND_PATTERN = r"^(please\s+)?(do|make|create|write|build|add|fix|update|change|remove|delete|show|run|help|can you|could you|would you|tell|explain|find|search|get|set|check|test|debug|implement|refactor)\b"
 
 # === Configuration ===
 # Project root (where build.py lives)
@@ -59,6 +73,7 @@ class Config:
     # Data sources - always read from data/ folder
     claude_code_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "claude_code")
     codex_history_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "codex" / "history.jsonl")
+    codex_sessions_path: Path = field(default_factory=lambda: Path.home() / ".codex" / "sessions")
 
     # Output directory (relative to project root)
     output_dir: Path = field(default_factory=lambda: PROJECT_ROOT / "output")
@@ -107,6 +122,8 @@ class Message:
     content: str
     conversation_id: str
     word_count: int
+    model_id: str | None = None
+    model_provider: str | None = None
 
 
 class PersonaType(str, Enum):
@@ -236,7 +253,86 @@ def parse_claude_code(source_path: Path) -> Iterator[Message]:
     logger.info(f"  Claude Code: {messages_parsed} messages from {files_parsed} files")
 
 
-def parse_codex_history(source_path: Path) -> Iterator[Message]:
+def parse_codex_session_metadata(sessions_path: Path) -> dict[str, dict[str, str | None]]:
+    """
+    Parse Codex session logs and map session_id to model metadata.
+
+    Metadata sources:
+      - session_meta.payload.id
+      - session_meta.payload.model_provider
+      - session_meta/turn_context payload.model
+    """
+    if not sessions_path.exists():
+        logger.warning(f"Codex sessions path not found: {sessions_path}")
+        return {}
+
+    session_models: dict[str, dict[str, str | None]] = {}
+    files_parsed = 0
+
+    for jsonl_file in sessions_path.rglob("*.jsonl"):
+        files_parsed += 1
+        session_id: str | None = None
+        model_id: str | None = None
+        model_provider: str | None = None
+
+        with open(jsonl_file, 'r') as f:
+            for idx, line in enumerate(f):
+                try:
+                    entry = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+
+                entry_type = entry.get("type")
+                payload = entry.get("payload", {})
+                if not isinstance(payload, dict):
+                    continue
+
+                if entry_type == "session_meta":
+                    session_meta_id = payload.get("id")
+                    if isinstance(session_meta_id, str) and session_meta_id.strip():
+                        session_id = session_meta_id.strip()
+
+                    provider = payload.get("model_provider")
+                    if isinstance(provider, str) and provider.strip():
+                        model_provider = provider.strip()
+
+                    model = payload.get("model")
+                    if isinstance(model, str) and model.strip():
+                        model_id = model.strip()
+
+                if entry_type == "turn_context":
+                    model = payload.get("model")
+                    if isinstance(model, str) and model.strip():
+                        model_id = model.strip()
+
+                if session_id and model_id and model_provider:
+                    break
+
+                # Session metadata is near the top; avoid scanning huge files.
+                if idx > 400:
+                    break
+
+        if session_id:
+            existing = session_models.get(
+                session_id,
+                {"model_id": None, "model_provider": None},
+            )
+            if model_id and not existing.get("model_id"):
+                existing["model_id"] = model_id
+            if model_provider and not existing.get("model_provider"):
+                existing["model_provider"] = model_provider
+            session_models[session_id] = existing
+
+    logger.info(
+        f"  Codex sessions: model metadata for {len(session_models)} sessions from {files_parsed} files"
+    )
+    return session_models
+
+
+def parse_codex_history(
+    source_path: Path,
+    session_models: dict[str, dict[str, str | None]] | None = None,
+) -> Iterator[Message]:
     """Parse Codex history.jsonl (user prompts only)."""
     if not source_path or not source_path.exists():
         logger.warning(f"Codex history not found: {source_path}")
@@ -267,13 +363,18 @@ def parse_codex_history(source_path: Path) -> Iterator[Message]:
                 continue
 
             messages_parsed += 1
+            model_data = session_models.get(session_id, {}) if session_models else {}
+            model_id = model_data.get("model_id")
+            model_provider = model_data.get("model_provider")
             yield Message(
                 timestamp=timestamp,
                 platform=Platform.CODEX,
                 role=Role.HUMAN,
                 content=text,
                 conversation_id=session_id,
-                word_count=len(text.split())
+                word_count=len(text.split()),
+                model_id=model_id if isinstance(model_id, str) else None,
+                model_provider=model_provider if isinstance(model_provider, str) else None,
             )
 
     logger.info(f"  Codex: {messages_parsed} messages from history.jsonl")
@@ -342,6 +443,307 @@ def classify_persona(
     }
 
 
+def compute_model_usage(human_msgs: list[Message]) -> dict:
+    """Aggregate model usage across source and time for human prompts."""
+    total_human = len(human_msgs)
+    model_msgs = [m for m in human_msgs if m.model_id or m.model_provider]
+    with_metadata = len(model_msgs)
+    coverage_pct = round((with_metadata / total_human * 100), 1) if total_human else 0.0
+
+    by_model: dict[tuple[str, str], dict] = {}
+    model_conversations: dict[tuple[str, str], set[str]] = defaultdict(set)
+    by_provider: dict[str, dict] = {}
+    provider_conversations: dict[str, set[str]] = defaultdict(set)
+    by_source_date: dict[str, dict[str, dict[str, int]]] = defaultdict(
+        lambda: defaultdict(lambda: defaultdict(int))
+    )
+
+    for msg in model_msgs:
+        model_id = msg.model_id or "unknown"
+        provider = msg.model_provider or "unknown"
+        source = msg.platform.value
+        date_key = msg.timestamp.astimezone().date().isoformat()
+
+        model_key = (model_id, provider)
+        model_stats = by_model.setdefault(
+            model_key,
+            {
+                "model_id": model_id,
+                "model_provider": provider,
+                "prompts": 0,
+                "words": 0,
+                "sources": defaultdict(int),
+            },
+        )
+        model_stats["prompts"] += 1
+        model_stats["words"] += msg.word_count
+        model_stats["sources"][source] += 1
+        model_conversations[model_key].add(msg.conversation_id)
+
+        provider_stats = by_provider.setdefault(
+            provider,
+            {"model_provider": provider, "prompts": 0, "words": 0, "sources": defaultdict(int)},
+        )
+        provider_stats["prompts"] += 1
+        provider_stats["words"] += msg.word_count
+        provider_stats["sources"][source] += 1
+        provider_conversations[provider].add(msg.conversation_id)
+
+        by_source_date[source][date_key][model_id] += 1
+
+    by_model_list = []
+    for model_key, stats in by_model.items():
+        by_model_list.append(
+            {
+                "model_id": stats["model_id"],
+                "model_provider": stats["model_provider"],
+                "prompts": stats["prompts"],
+                "words": stats["words"],
+                "conversations": len(model_conversations[model_key]),
+                "sources": dict(sorted(stats["sources"].items())),
+            }
+        )
+    by_model_list.sort(key=lambda item: (-item["prompts"], item["model_id"], item["model_provider"]))
+
+    by_provider_list = []
+    for provider, stats in by_provider.items():
+        by_provider_list.append(
+            {
+                "model_provider": provider,
+                "prompts": stats["prompts"],
+                "words": stats["words"],
+                "conversations": len(provider_conversations[provider]),
+                "sources": dict(sorted(stats["sources"].items())),
+            }
+        )
+    by_provider_list.sort(key=lambda item: (-item["prompts"], item["model_provider"]))
+
+    time_series_by_source = {}
+    for source, day_map in by_source_date.items():
+        source_series = []
+        for date_key in sorted(day_map.keys()):
+            model_counts = day_map[date_key]
+            source_series.append(
+                {
+                    "date": date_key,
+                    "total_prompts": sum(model_counts.values()),
+                    "models": dict(sorted(model_counts.items(), key=lambda kv: (-kv[1], kv[0]))),
+                }
+            )
+        time_series_by_source[source] = source_series
+
+    return {
+        "coverage": {
+            "total_human_prompts": total_human,
+            "prompts_with_model_metadata": with_metadata,
+            "metadata_coverage_pct": coverage_pct,
+        },
+        "by_model": by_model_list,
+        "by_provider": by_provider_list,
+        "time_series_by_source": time_series_by_source,
+    }
+
+
+def compute_style_snapshot(messages: list[Message]) -> dict:
+    """Compute style rates for a message bucket."""
+    total = len(messages)
+    if total == 0:
+        return {
+            "politeness_per_100": 0.0,
+            "backtrack_per_100": 0.0,
+            "question_rate_pct": 0.0,
+            "command_rate_pct": 0.0,
+        }
+
+    politeness_count = 0
+    for pattern in POLITENESS_PATTERNS.values():
+        politeness_count += sum(
+            len(re.findall(pattern, msg.content, re.IGNORECASE))
+            for msg in messages
+        )
+
+    backtrack_count = 0
+    for pattern in BACKTRACK_PATTERNS.values():
+        backtrack_count += sum(
+            len(re.findall(pattern, msg.content, re.IGNORECASE))
+            for msg in messages
+        )
+
+    question_count = sum(1 for msg in messages if msg.content.strip().endswith("?"))
+    command_count = sum(
+        1 for msg in messages if re.match(COMMAND_PATTERN, msg.content.strip(), re.IGNORECASE)
+    )
+
+    return {
+        "politeness_per_100": round((politeness_count / total) * 100, 1),
+        "backtrack_per_100": round((backtrack_count / total) * 100, 1),
+        "question_rate_pct": round((question_count / total) * 100, 1),
+        "command_rate_pct": round((command_count / total) * 100, 1),
+    }
+
+
+def build_trend_rollups(bucket_map: dict[str, list[Message]], bucket_key: str) -> list[dict]:
+    """Build ordered trend rollups for daily or weekly buckets."""
+    rollups = []
+    for key in sorted(bucket_map.keys()):
+        bucket_msgs = bucket_map[key]
+        total_prompts = len(bucket_msgs)
+        source_counts = Counter(msg.platform.value for msg in bucket_msgs)
+        model_counts = Counter(
+            msg.model_id or "unknown"
+            for msg in bucket_msgs
+            if msg.model_id or msg.model_provider
+        )
+
+        source_share_pct = {}
+        for source in (Platform.CLAUDE_CODE.value, Platform.CODEX.value):
+            count = source_counts.get(source, 0)
+            source_share_pct[source] = round((count / total_prompts) * 100, 1) if total_prompts else 0.0
+
+        rollups.append(
+            {
+                bucket_key: key,
+                "prompts": total_prompts,
+                "source_counts": {
+                    Platform.CLAUDE_CODE.value: source_counts.get(Platform.CLAUDE_CODE.value, 0),
+                    Platform.CODEX.value: source_counts.get(Platform.CODEX.value, 0),
+                },
+                "source_share_pct": source_share_pct,
+                "style": compute_style_snapshot(bucket_msgs),
+                "model_prompts": sum(model_counts.values()),
+                "models": dict(sorted(model_counts.items(), key=lambda kv: (-kv[1], kv[0]))),
+            }
+        )
+
+    return rollups
+
+
+def compute_trend_deltas(daily_rollups: list[dict]) -> dict:
+    """Compare 7-day and 30-day windows for key trend metrics."""
+    if not daily_rollups:
+        return {}
+
+    latest_date = datetime.fromisoformat(daily_rollups[-1]["date"]).date()
+
+    def window_rollups(days: int) -> list[dict]:
+        start = latest_date - timedelta(days=days - 1)
+        return [
+            item
+            for item in daily_rollups
+            if datetime.fromisoformat(item["date"]).date() >= start
+        ]
+
+    def window_avg(items: list[dict], selector) -> float | None:
+        if not items:
+            return None
+        values = [selector(item) for item in items]
+        return round(sum(values) / len(values), 1)
+
+    recent_7 = window_rollups(7)
+    recent_30 = window_rollups(30)
+
+    metric_selectors = {
+        "prompts_per_day": lambda item: item["prompts"],
+        "codex_share_pct": lambda item: item["source_share_pct"][Platform.CODEX.value],
+        "politeness_per_100": lambda item: item["style"]["politeness_per_100"],
+        "backtrack_per_100": lambda item: item["style"]["backtrack_per_100"],
+        "question_rate_pct": lambda item: item["style"]["question_rate_pct"],
+        "command_rate_pct": lambda item: item["style"]["command_rate_pct"],
+        "model_coverage_pct": lambda item: round(
+            (item["model_prompts"] / item["prompts"] * 100), 1
+        ) if item["prompts"] else 0.0,
+    }
+
+    deltas = {}
+    for name, selector in metric_selectors.items():
+        avg_7 = window_avg(recent_7, selector)
+        avg_30 = window_avg(recent_30, selector)
+        if avg_7 is None or avg_30 is None or avg_30 == 0:
+            delta_pct = None
+        else:
+            delta_pct = round(((avg_7 - avg_30) / avg_30) * 100, 1)
+
+        deltas[name] = {
+            "avg_7d": avg_7,
+            "avg_30d": avg_30,
+            "delta_pct": delta_pct,
+        }
+
+    return deltas
+
+
+def detect_shift_markers(daily_rollups: list[dict]) -> list[dict]:
+    """Identify major day-over-day changes in prompting behavior."""
+    if len(daily_rollups) < 2:
+        return []
+
+    avg_prompts = sum(item["prompts"] for item in daily_rollups) / len(daily_rollups)
+    min_prompt_shift = max(10, int(avg_prompts * 0.35))
+    markers = []
+
+    for i in range(1, len(daily_rollups)):
+        prev_day = daily_rollups[i - 1]
+        curr_day = daily_rollups[i]
+
+        prompt_delta = curr_day["prompts"] - prev_day["prompts"]
+        if abs(prompt_delta) >= min_prompt_shift:
+            markers.append(
+                {
+                    "date": curr_day["date"],
+                    "type": "prompt_shift",
+                    "direction": "up" if prompt_delta > 0 else "down",
+                    "delta_prompts": prompt_delta,
+                    "prev_prompts": prev_day["prompts"],
+                    "curr_prompts": curr_day["prompts"],
+                    "magnitude": abs(prompt_delta),
+                }
+            )
+
+        codex_share_delta = round(
+            curr_day["source_share_pct"][Platform.CODEX.value]
+            - prev_day["source_share_pct"][Platform.CODEX.value],
+            1,
+        )
+        if abs(codex_share_delta) >= 20:
+            markers.append(
+                {
+                    "date": curr_day["date"],
+                    "type": "source_share_shift",
+                    "direction": "up" if codex_share_delta > 0 else "down",
+                    "delta_codex_share_pct": codex_share_delta,
+                    "prev_codex_share_pct": prev_day["source_share_pct"][Platform.CODEX.value],
+                    "curr_codex_share_pct": curr_day["source_share_pct"][Platform.CODEX.value],
+                    "magnitude": abs(codex_share_delta),
+                }
+            )
+
+    markers.sort(key=lambda item: (-item["magnitude"], item["date"]))
+    return markers[:10]
+
+
+def compute_trend_metrics(human_msgs: list[Message]) -> dict:
+    """Build daily/weekly trend data plus 7d/30d deltas and shift markers."""
+    daily_buckets: dict[str, list[Message]] = defaultdict(list)
+    weekly_buckets: dict[str, list[Message]] = defaultdict(list)
+
+    for msg in human_msgs:
+        local_date = msg.timestamp.astimezone().date()
+        day_key = local_date.isoformat()
+        week_start = (local_date - timedelta(days=local_date.weekday())).isoformat()
+        daily_buckets[day_key].append(msg)
+        weekly_buckets[week_start].append(msg)
+
+    daily_rollups = build_trend_rollups(daily_buckets, "date")
+    weekly_rollups = build_trend_rollups(weekly_buckets, "week_start")
+
+    return {
+        "daily_rollups": daily_rollups,
+        "weekly_rollups": weekly_rollups,
+        "deltas_7d_vs_30d": compute_trend_deltas(daily_rollups),
+        "shift_markers": detect_shift_markers(daily_rollups),
+    }
+
+
 # === Metrics Computation ===
 def compute_metrics(messages: list[Message], config: Config) -> dict:
     """Compute all metrics from unified message stream."""
@@ -407,13 +809,8 @@ def compute_metrics(messages: list[Message], config: Config) -> dict:
     day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
     # === Politeness Index ===
-    politeness_patterns = {
-        "please": r"\bplease\b",
-        "thanks": r"\b(thanks|thank you|thx)\b",
-        "sorry": r"\b(sorry|apologies|apologize)\b",
-    }
     politeness_counts = {}
-    for word, pattern in politeness_patterns.items():
+    for word, pattern in POLITENESS_PATTERNS.items():
         count = sum(
             len(re.findall(pattern, m.content, re.IGNORECASE))
             for m in human_msgs
@@ -424,14 +821,8 @@ def compute_metrics(messages: list[Message], config: Config) -> dict:
     politeness_per_100 = (total_politeness / total_human * 100)
 
     # === Backtrack Index ===
-    backtrack_patterns = {
-        "actually": r"\bactually\b",
-        "wait": r"\bwait\b",
-        "never_mind": r"\b(never\s*mind|nevermind)\b",
-        "scratch_that": r"\b(scratch that|ignore that)\b",
-    }
     backtrack_counts = {}
-    for word, pattern in backtrack_patterns.items():
+    for word, pattern in BACKTRACK_PATTERNS.items():
         count = sum(
             len(re.findall(pattern, m.content, re.IGNORECASE))
             for m in human_msgs
@@ -446,10 +837,9 @@ def compute_metrics(messages: list[Message], config: Config) -> dict:
     question_rate = (question_count / total_human * 100)
 
     # === Command Rate ===
-    command_pattern = r"^(please\s+)?(do|make|create|write|build|add|fix|update|change|remove|delete|show|run|help|can you|could you|would you|tell|explain|find|search|get|set|check|test|debug|implement|refactor)\b"
     command_count = sum(
         1 for m in human_msgs
-        if re.match(command_pattern, m.content.strip(), re.IGNORECASE)
+        if re.match(COMMAND_PATTERN, m.content.strip(), re.IGNORECASE)
     )
     command_rate = (command_count / total_human * 100)
 
@@ -485,6 +875,8 @@ def compute_metrics(messages: list[Message], config: Config) -> dict:
     # === Date range ===
     first_msg = min(m.timestamp for m in human_msgs)
     last_msg = max(m.timestamp for m in human_msgs)
+    model_usage = compute_model_usage(human_msgs)
+    trends = compute_trend_metrics(human_msgs)
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -538,6 +930,8 @@ def compute_metrics(messages: list[Message], config: Config) -> dict:
         },
         "persona": persona,
         "platform_stats": platform_stats,
+        "model_usage": model_usage,
+        "trends": trends,
         "date_range": {
             "first": first_msg.isoformat(),
             "last": last_msg.isoformat(),
@@ -1692,6 +2086,77 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
             }}
         }}
 
+        /* Trend band */
+        .trend-grid {{
+            display: grid;
+            gap: 16px;
+            grid-template-columns: 1fr;
+            margin-bottom: 16px;
+        }}
+
+        @media (min-width: 1024px) {{
+            .trend-grid {{
+                grid-template-columns: repeat(3, 1fr);
+            }}
+            .trend-grid .card-wide {{
+                grid-column: 1 / -1;
+            }}
+        }}
+
+        .trend-sparkline {{
+            width: 100%;
+            height: 64px;
+            margin-top: 8px;
+        }}
+
+        .trend-sparkline path {{
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }}
+
+        .trend-note {{
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }}
+
+        .trend-list {{
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }}
+
+        .trend-row {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }}
+
+        .trend-row strong {{
+            font-size: 12px;
+            letter-spacing: 0.02em;
+        }}
+
+        .trend-delta.up {{
+            color: #16a34a;
+            font-weight: 600;
+        }}
+
+        .trend-delta.down {{
+            color: #dc2626;
+            font-weight: 600;
+        }}
+
+        .trend-delta.flat {{
+            color: var(--text-muted);
+            font-weight: 600;
+        }}
+
         /* Wide cards */
         .card-wide {{
             grid-column: span 1;
@@ -2485,6 +2950,27 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
             </div>
         </div>
 
+        <!-- Trend Band -->
+        <div class="trend-grid">
+            <div class="card animate delay-4">
+                <div class="card-label">Source Share Trend</div>
+                <svg class="trend-sparkline" id="sourceShareSparkline" viewBox="0 0 100 30" preserveAspectRatio="none"></svg>
+                <div class="trend-note" id="sourceShareSummary">Codex share over time</div>
+            </div>
+            <div class="card animate delay-5">
+                <div class="card-label">Style Trend (7d vs 30d)</div>
+                <div class="trend-list" id="styleTrendList"></div>
+            </div>
+            <div class="card animate delay-6">
+                <div class="card-label">Model Usage (Recent)</div>
+                <div class="trend-list" id="modelUsageList"></div>
+            </div>
+            <div class="card card-wide animate delay-7">
+                <div class="card-label">Narrative Callouts</div>
+                <div class="trend-list" id="trendCalloutsList"></div>
+            </div>
+        </div>
+
         <!-- Main Grid -->
         <div class="grid">
             <!-- Heatmap -->
@@ -2872,6 +3358,131 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
             }});
         }}
 
+        function formatDelta(deltaPct) {{
+            if (deltaPct === null || deltaPct === undefined || Number.isNaN(deltaPct)) {{
+                return {{ text: 'n/a', cls: 'flat' }};
+            }}
+            if (Math.abs(deltaPct) < 0.1) {{
+                return {{ text: '0.0%', cls: 'flat' }};
+            }}
+            if (deltaPct > 0) {{
+                return {{ text: `+${{deltaPct}}%`, cls: 'up' }};
+            }}
+            return {{ text: `${{deltaPct}}%`, cls: 'down' }};
+        }}
+
+        function renderSourceShareSparkline(trends) {{
+            const spark = document.getElementById('sourceShareSparkline');
+            const summary = document.getElementById('sourceShareSummary');
+            const daily = (trends && trends.daily_rollups) ? trends.daily_rollups.slice(-30) : [];
+
+            if (daily.length < 2) {{
+                spark.innerHTML = '';
+                summary.textContent = 'Not enough trend data yet';
+                return;
+            }}
+
+            const values = daily.map((row) => Number(row.source_share_pct?.codex ?? 0));
+            const points = values.map((value, index) => {{
+                const x = (index / (values.length - 1)) * 100;
+                const y = 30 - (Math.max(0, Math.min(100, value)) / 100) * 30;
+                return `${{x.toFixed(2)}},${{y.toFixed(2)}}`;
+            }});
+
+            spark.innerHTML = `<path d="M${{points.join(' L')}}" />`;
+            const first = values[0];
+            const last = values[values.length - 1];
+            const delta = Math.round((last - first) * 10) / 10;
+            const trendWord = delta > 0 ? 'up' : (delta < 0 ? 'down' : 'flat');
+            summary.textContent = `Codex share is ${{trendWord}} (${{delta > 0 ? '+' : ''}}${{delta}} pts, 30d window)`;
+        }}
+
+        function renderStyleTrend(deltas) {{
+            const container = document.getElementById('styleTrendList');
+            container.innerHTML = '';
+            const rows = [
+                ['Question Rate', deltas?.question_rate_pct],
+                ['Command Rate', deltas?.command_rate_pct],
+                ['Politeness', deltas?.politeness_per_100],
+                ['Backtrack', deltas?.backtrack_per_100],
+            ];
+
+            rows.forEach(([label, stats]) => {{
+                const delta = formatDelta(stats?.delta_pct);
+                const row = document.createElement('div');
+                row.className = 'trend-row';
+                row.innerHTML = `
+                    <span><strong>${{label}}</strong> <span class="trend-note">7d: ${{stats?.avg_7d ?? 'n/a'}} · 30d: ${{stats?.avg_30d ?? 'n/a'}}</span></span>
+                    <span class="trend-delta ${{delta.cls}}">${{delta.text}}</span>
+                `;
+                container.appendChild(row);
+            }});
+        }}
+
+        function renderModelUsage(modelUsage) {{
+            const container = document.getElementById('modelUsageList');
+            container.innerHTML = '';
+            const byModel = modelUsage?.by_model || [];
+            const topModels = byModel.slice(0, 4);
+            if (topModels.length === 0) {{
+                container.innerHTML = '<div class="trend-note">No model metadata available for this view</div>';
+                return;
+            }}
+
+            topModels.forEach((item) => {{
+                const row = document.createElement('div');
+                row.className = 'trend-row';
+                row.innerHTML = `
+                    <span><strong>${{item.model_id}}</strong> <span class="trend-note">${{item.model_provider}}</span></span>
+                    <span>${{item.prompts}} prompts</span>
+                `;
+                container.appendChild(row);
+            }});
+
+            const coverage = modelUsage?.coverage?.metadata_coverage_pct ?? 0;
+            const coverageNote = document.createElement('div');
+            coverageNote.className = 'trend-note';
+            coverageNote.textContent = `Metadata coverage: ${{coverage}}% of prompts`;
+            container.appendChild(coverageNote);
+        }}
+
+        function renderTrendCallouts(trends, deltas) {{
+            const container = document.getElementById('trendCalloutsList');
+            container.innerHTML = '';
+            const notes = [];
+
+            const promptsDelta = formatDelta(deltas?.prompts_per_day?.delta_pct);
+            notes.push(`Prompt volume vs baseline: ${{promptsDelta.text}} (7d vs 30d)`); 
+
+            const codexDelta = formatDelta(deltas?.codex_share_pct?.delta_pct);
+            notes.push(`Codex share trend: ${{codexDelta.text}} (7d vs 30d)`);
+
+            const shifts = (trends?.shift_markers || []).slice(0, 3);
+            shifts.forEach((marker) => {{
+                if (marker.type === 'prompt_shift') {{
+                    notes.push(`${{marker.date}}: prompt volume ${{marker.direction}} by ${{marker.delta_prompts}}`);
+                }} else if (marker.type === 'source_share_shift') {{
+                    notes.push(`${{marker.date}}: Codex share ${{marker.direction}} ${{marker.delta_codex_share_pct}} pts`);
+                }}
+            }});
+
+            notes.forEach((note) => {{
+                const row = document.createElement('div');
+                row.className = 'trend-note';
+                row.textContent = `• ${{note}}`;
+                container.appendChild(row);
+            }});
+        }}
+
+        function renderTrendBand(view) {{
+            const trends = view?.trends || {{}};
+            const deltas = trends?.deltas_7d_vs_30d || {{}};
+            renderSourceShareSparkline(trends);
+            renderStyleTrend(deltas);
+            renderModelUsage(view?.model_usage || {{}});
+            renderTrendCallouts(trends, deltas);
+        }}
+
         function getView(sourceKey) {{
             return sourceViews[sourceKey] || null;
         }}
@@ -2947,6 +3558,7 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
             document.getElementById('youreRightLabel').textContent = `${{youreRight.per_conversation ?? 0}}× per conversation`;
 
             renderHeatmap(temporal.heatmap);
+            renderTrendBand(view);
         }}
 
         function syncSourceSelectors(value) {{
@@ -3107,7 +3719,8 @@ Examples:
     print("\n[1/3] Parsing data sources...")
     messages = []
     messages.extend(parse_claude_code(config.claude_code_path))
-    messages.extend(parse_codex_history(config.codex_history_path))
+    codex_session_models = parse_codex_session_metadata(config.codex_sessions_path)
+    messages.extend(parse_codex_history(config.codex_history_path, codex_session_models))
     messages.sort(key=lambda m: m.timestamp)
     print(f"  Total: {len(messages)} messages")
 
