@@ -60,6 +60,45 @@ BACKTRACK_PATTERNS = {
     "scratch_that": r"\b(scratch that|ignore that)\b",
 }
 COMMAND_PATTERN = r"^(please\s+)?(do|make|create|write|build|add|fix|update|change|remove|delete|show|run|help|can you|could you|would you|tell|explain|find|search|get|set|check|test|debug|implement|refactor)\b"
+INTENT_PATTERNS = {
+    "debug_fix": [
+        r"\b(debug|fix|error|bug|failing|broken|traceback|stack trace)\b",
+    ],
+    "build_feature": [
+        r"\b(build|create|implement|add|ship|feature|integrate)\b",
+    ],
+    "analysis_research": [
+        r"\b(analyze|audit|review|compare|benchmark|research|investigate)\b",
+    ],
+    "explanation_learning": [
+        r"\b(explain|why|how does|teach|walk me through|help me understand)\b",
+    ],
+    "planning_strategy": [
+        r"\b(plan|roadmap|milestone|phase|next steps|strategy)\b",
+    ],
+    "ops_commands": [
+        r"\b(run|execute|command|script|deploy|release|push|tag)\b",
+    ],
+}
+ITERATION_MARKERS = [
+    r"\bactually\b",
+    r"\bwait\b",
+    r"\binstead\b",
+    r"\bchange\b",
+    r"\bupdate\b",
+    r"\bfix\b",
+    r"\brevise\b",
+    r"\bretry\b",
+    r"\bagain\b",
+    r"\bdifferent\b",
+    r"\bscratch that\b",
+    r"\brework\b",
+]
+SOURCE_VIEW_LABELS = {
+    "both": "Claude Code + Codex",
+    "claude_code": "Claude Code",
+    "codex": "Codex",
+}
 
 # === Configuration ===
 # Project root (where build.py lives)
@@ -744,6 +783,315 @@ def compute_trend_metrics(human_msgs: list[Message]) -> dict:
     }
 
 
+def classify_intent(text: str) -> tuple[str, float]:
+    """Classify a prompt into deterministic intent categories with confidence."""
+    scores = {}
+    for intent, patterns in INTENT_PATTERNS.items():
+        score = 0
+        for pattern in patterns:
+            if re.search(pattern, text, re.IGNORECASE):
+                score += 1
+        scores[intent] = score
+
+    top_intent = max(scores.items(), key=lambda item: item[1])[0]
+    top_score = scores[top_intent]
+    second_score = sorted(scores.values(), reverse=True)[1] if len(scores) > 1 else 0
+
+    if top_score == 0:
+        return "other", 0.5
+
+    confidence = 0.6 + min(top_score, 3) * 0.1
+    if top_score > second_score:
+        confidence += 0.1
+    return top_intent, round(min(confidence, 0.95), 2)
+
+
+def compute_complexity_for_prompt(text: str) -> tuple[float, float]:
+    """Compute deterministic complexity score and confidence for a prompt."""
+    content = text.strip()
+    words = len(content.split())
+    score = 1.0
+
+    # Word count contribution
+    if words >= 15:
+        score += 0.7
+    if words >= 35:
+        score += 0.8
+    if words >= 70:
+        score += 0.8
+
+    # Structural and constraint signals
+    if "\n" in content:
+        score += 0.5
+    if content.count(",") >= 2 or ";" in content:
+        score += 0.4
+    if re.search(r"[{{}}`]|--|\.\/|=|->", content):
+        score += 0.5
+
+    constraint_hits = len(
+        re.findall(
+            r"\b(must|should|without|exactly|at least|at most|step|checklist|constraint)\b",
+            content,
+            re.IGNORECASE,
+        )
+    )
+    score += min(constraint_hits, 3) * 0.2
+
+    final_score = round(min(score, 5.0), 1)
+    confidence = 0.65
+    if words >= 20:
+        confidence += 0.1
+    if constraint_hits > 0:
+        confidence += 0.1
+    if "\n" in content or re.search(r"[{{}}`]|--|\.\/|=|->", content):
+        confidence += 0.05
+
+    return final_score, round(min(confidence, 0.95), 2)
+
+
+def compute_iteration_style_for_prompt(text: str) -> tuple[float, float]:
+    """Compute deterministic iteration-style score and confidence."""
+    marker_hits = 0
+    for pattern in ITERATION_MARKERS:
+        marker_hits += len(re.findall(pattern, text, re.IGNORECASE))
+
+    score = marker_hits * 20
+    if "?" in text:
+        score += 8
+    if re.search(r"\b(again|retry|revise|change|update|different)\b", text, re.IGNORECASE):
+        score += 8
+
+    final_score = round(min(score, 100), 1)
+    confidence = 0.6 + min(marker_hits, 3) * 0.1
+    if "?" in text:
+        confidence += 0.05
+    return final_score, round(min(confidence, 0.95), 2)
+
+
+def compute_nlp_metrics(human_msgs: list[Message]) -> dict:
+    """Compute deterministic NLP enrichments with confidence metadata."""
+    total = len(human_msgs)
+    if total == 0:
+        return {
+            "intent": {
+                "method": "deterministic_rules_v1",
+                "counts": {},
+                "rates_pct": {},
+                "top_intents": [],
+                "confidence": {"mean": 0.0, "min": 0.0, "max": 0.0},
+            },
+            "complexity": {
+                "method": "heuristic_complexity_v1",
+                "avg_score": 0.0,
+                "p50_score": 0.0,
+                "p90_score": 0.0,
+                "distribution": {"low": 0, "medium": 0, "high": 0},
+                "confidence": {"mean": 0.0, "min": 0.0, "max": 0.0},
+            },
+            "iteration_style": {
+                "method": "iteration_markers_v1",
+                "avg_score": 0.0,
+                "distribution": {"low": 0, "medium": 0, "high": 0},
+                "style": "balanced",
+                "confidence": {"mean": 0.0, "min": 0.0, "max": 0.0},
+            },
+        }
+
+    intent_counts = Counter()
+    intent_confidences = []
+    complexity_scores = []
+    complexity_confidences = []
+    iteration_scores = []
+    iteration_confidences = []
+
+    for msg in human_msgs:
+        intent, intent_conf = classify_intent(msg.content)
+        intent_counts[intent] += 1
+        intent_confidences.append(intent_conf)
+
+        complexity, complexity_conf = compute_complexity_for_prompt(msg.content)
+        complexity_scores.append(complexity)
+        complexity_confidences.append(complexity_conf)
+
+        iteration_score, iteration_conf = compute_iteration_style_for_prompt(msg.content)
+        iteration_scores.append(iteration_score)
+        iteration_confidences.append(iteration_conf)
+
+    intent_rates = {
+        intent: round((count / total) * 100, 1)
+        for intent, count in sorted(intent_counts.items(), key=lambda kv: (-kv[1], kv[0]))
+    }
+    top_intents = [
+        {"intent": intent, "count": count, "rate_pct": intent_rates[intent]}
+        for intent, count in sorted(intent_counts.items(), key=lambda kv: (-kv[1], kv[0]))[:3]
+    ]
+
+    sorted_complexity = sorted(complexity_scores)
+    p50_idx = max(0, len(sorted_complexity) // 2 - (1 if len(sorted_complexity) % 2 == 0 else 0))
+    p90_idx = max(0, int(len(sorted_complexity) * 0.9) - 1)
+    complexity_distribution = {
+        "low": sum(1 for value in complexity_scores if value < 2.5),
+        "medium": sum(1 for value in complexity_scores if 2.5 <= value < 3.8),
+        "high": sum(1 for value in complexity_scores if value >= 3.8),
+    }
+    iteration_distribution = {
+        "low": sum(1 for value in iteration_scores if value < 25),
+        "medium": sum(1 for value in iteration_scores if 25 <= value < 60),
+        "high": sum(1 for value in iteration_scores if value >= 60),
+    }
+
+    avg_iteration = round(sum(iteration_scores) / len(iteration_scores), 1)
+    if avg_iteration >= 60:
+        iteration_style = "highly_iterative"
+    elif avg_iteration >= 30:
+        iteration_style = "balanced_iterative"
+    else:
+        iteration_style = "direct"
+
+    return {
+        "intent": {
+            "method": "deterministic_rules_v1",
+            "counts": dict(sorted(intent_counts.items(), key=lambda kv: (-kv[1], kv[0]))),
+            "rates_pct": intent_rates,
+            "top_intents": top_intents,
+            "confidence": {
+                "mean": round(sum(intent_confidences) / len(intent_confidences), 2),
+                "min": round(min(intent_confidences), 2),
+                "max": round(max(intent_confidences), 2),
+            },
+        },
+        "complexity": {
+            "method": "heuristic_complexity_v1",
+            "avg_score": round(sum(complexity_scores) / len(complexity_scores), 1),
+            "p50_score": round(sorted_complexity[p50_idx], 1),
+            "p90_score": round(sorted_complexity[p90_idx], 1),
+            "distribution": complexity_distribution,
+            "confidence": {
+                "mean": round(sum(complexity_confidences) / len(complexity_confidences), 2),
+                "min": round(min(complexity_confidences), 2),
+                "max": round(max(complexity_confidences), 2),
+            },
+        },
+        "iteration_style": {
+            "method": "iteration_markers_v1",
+            "avg_score": avg_iteration,
+            "distribution": iteration_distribution,
+            "style": iteration_style,
+            "confidence": {
+                "mean": round(sum(iteration_confidences) / len(iteration_confidences), 2),
+                "min": round(min(iteration_confidences), 2),
+                "max": round(max(iteration_confidences), 2),
+            },
+        },
+    }
+
+
+def format_date_range_display(date_range: dict | None) -> str:
+    """Return a short date range string for launch copy."""
+    if not date_range or not date_range.get("first") or not date_range.get("last"):
+        return "n/a"
+
+    first_date = datetime.fromisoformat(date_range["first"]).strftime("%b %d, %Y")
+    last_date = datetime.fromisoformat(date_range["last"]).strftime("%b %d, %Y")
+    return f"{first_date} - {last_date}"
+
+
+def build_launch_packet(view: dict, source_key: str, github_repo: str, site_url: str) -> dict:
+    """Create copy-ready launch text for summary, release notes, HN, and LinkedIn."""
+    source_label = SOURCE_VIEW_LABELS.get(source_key, source_key)
+    volume = view.get("volume", {})
+    persona = view.get("persona", {})
+    model_usage = view.get("model_usage", {})
+    platform_stats = view.get("platform_stats", {})
+    nlp = view.get("nlp", {})
+    date_range = format_date_range_display(view.get("date_range"))
+
+    total_prompts = int(volume.get("total_human", 0) or 0)
+    total_conversations = int(volume.get("total_conversations", 0) or 0)
+    avg_words = float(volume.get("avg_words_per_prompt", 0) or 0)
+
+    codex_prompts = int((platform_stats.get("codex") or {}).get("messages", 0) or 0)
+    codex_share_pct = round((codex_prompts / total_prompts) * 100, 1) if total_prompts else 0.0
+
+    top_model = None
+    by_model = model_usage.get("by_model", [])
+    if by_model:
+        top_model = by_model[0].get("model_id")
+    if not top_model:
+        top_model = "n/a"
+
+    complexity_avg = float((nlp.get("complexity") or {}).get("avg_score", 0.0) or 0.0)
+    iteration_style = (nlp.get("iteration_style") or {}).get("style", "n/a")
+    persona_name = persona.get("name", "n/a")
+
+    summary = "\n".join(
+        [
+            f"How I Prompt v2 snapshot ({source_label})",
+            f"Date range: {date_range}",
+            f"Prompts: {total_prompts:,} across {total_conversations:,} conversations",
+            f"Persona: {persona_name}",
+            f"Avg prompt length: {avg_words:.1f} words | Codex share: {codex_share_pct}%",
+            f"Top model: {top_model} | Iteration style: {iteration_style} | Complexity: {complexity_avg:.1f}/5",
+            f"Source + build: {github_repo}",
+        ]
+    )
+
+    release_notes = "\n".join(
+        [
+            "How I Prompt v2 - Release Notes",
+            "",
+            f"Scope view: {source_label}",
+            f"- Date range covered: {date_range}",
+            "- Active data sources: Claude Code + Codex",
+            "- Added model attribution from Codex session metadata",
+            "- Added trend analytics (daily/weekly rollups, 7d vs 30d deltas, shift markers)",
+            "- Added deterministic NLP metrics with confidence (intent, complexity, iteration style)",
+            "- Added dashboard launch-kit sharing actions (summary + HN + LinkedIn copy)",
+            "",
+            "Migration note: Claude.ai exports are deprecated and ignored by the v2 pipeline.",
+            f"GitHub: {github_repo}",
+            f"Live: {site_url}",
+        ]
+    )
+
+    hn_post = "\n".join(
+        [
+            "Show HN: How I Prompt v2 (local analytics for Claude Code + Codex)",
+            "",
+            f"I built a local-first dashboard to analyze my prompting patterns ({source_label}).",
+            f"It currently covers {total_prompts:,} prompts across {total_conversations:,} conversations ({date_range}).",
+            "v2 adds model attribution, trend analytics, and deterministic NLP metrics.",
+            "Migration note: Claude.ai exports are deprecated in v2; active pipeline is Claude Code + Codex.",
+            f"Repo: {github_repo}",
+            f"Live demo: {site_url}",
+            "",
+            "Would love feedback on which metrics are most useful for daily AI workflows.",
+        ]
+    )
+
+    linkedin_post = "\n".join(
+        [
+            f"Shipped How I Prompt v2 for {source_label}.",
+            f"Analyzed {total_prompts:,} prompts across {total_conversations:,} conversations ({date_range}).",
+            f"Highlights: model attribution, trend analytics, deterministic NLP metrics, and a new launch sharing kit.",
+            "Migration note: Claude.ai exports are deprecated in v2; active sources are Claude Code + Codex.",
+            f"Open source: {github_repo}",
+            f"Live demo: {site_url}",
+            "",
+            "#buildinpublic #ai #developertools #analytics",
+        ]
+    )
+
+    return {
+        "source_label": source_label,
+        "summary": summary,
+        "release_notes": release_notes,
+        "hn_post": hn_post,
+        "linkedin_post": linkedin_post,
+        "attribution_url": github_repo,
+    }
+
+
 # === Metrics Computation ===
 def compute_metrics(messages: list[Message], config: Config) -> dict:
     """Compute all metrics from unified message stream."""
@@ -877,6 +1225,7 @@ def compute_metrics(messages: list[Message], config: Config) -> dict:
     last_msg = max(m.timestamp for m in human_msgs)
     model_usage = compute_model_usage(human_msgs)
     trends = compute_trend_metrics(human_msgs)
+    nlp = compute_nlp_metrics(human_msgs)
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -932,6 +1281,7 @@ def compute_metrics(messages: list[Message], config: Config) -> dict:
         "platform_stats": platform_stats,
         "model_usage": model_usage,
         "trends": trends,
+        "nlp": nlp,
         "date_range": {
             "first": first_msg.isoformat(),
             "last": last_msg.isoformat(),
@@ -1834,23 +2184,29 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
     rr = m.get("response_ratio", 0)
 
     # Date range
-    from datetime import datetime as dt
     dr = m.get("date_range", {})
-    if dr:
-        first_date = dt.fromisoformat(dr["first"]).strftime("%b %d, %Y")
-        last_date = dt.fromisoformat(dr["last"]).strftime("%b %d, %Y")
-        date_range_display = f"{first_date} – {last_date}"
-    else:
-        date_range_display = "2025"
+    date_range_display = format_date_range_display(dr).replace(" - ", " – ")
 
     # Format peak hour
     peak_hour = t['peak_hour']
     peak_hour_12h = f"{peak_hour % 12 or 12}{'am' if peak_hour < 12 else 'pm'}"
 
+    # Branding
+    site_url = branding.get('site_url', 'https://eeshans.com') if branding else 'https://eeshans.com'
+    site_name = branding.get('site_name', 'eeshans.com') if branding else 'eeshans.com'
+    github_repo = branding.get('github_repo', 'https://github.com/eeshansrivastava89/howiprompt') if branding else 'https://github.com/eeshansrivastava89/howiprompt'
+    newsletter_url = branding.get('newsletter_url', 'https://0to1datascience.substack.com') if branding else 'https://0to1datascience.substack.com'
+
     # Heatmap data for JS
     heatmap_json = json.dumps(t["heatmap"])
     source_views_json = json.dumps(source_views)
     default_source_json = json.dumps(default_source)
+    launch_packets = {
+        source_key: build_launch_packet(view, source_key, github_repo, site_url)
+        for source_key, view in source_views.items()
+        if view is not None
+    }
+    launch_packets_json = json.dumps(launch_packets)
 
     # Conversation depth percentages
     total_convos = cd.get('quick_asks', 0) + cd.get('working_sessions', 0) + cd.get('deep_dives', 0)
@@ -1860,12 +2216,6 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
         deep_pct = round(cd.get('deep_dives', 0) / total_convos * 100)
     else:
         quick_pct = working_pct = deep_pct = 0
-
-    # Branding
-    site_url = branding.get('site_url', 'https://eeshans.com') if branding else 'https://eeshans.com'
-    site_name = branding.get('site_name', 'eeshans.com') if branding else 'eeshans.com'
-    github_repo = branding.get('github_repo', 'https://github.com/eeshansrivastava89/howiprompt') if branding else 'https://github.com/eeshansrivastava89/howiprompt'
-    newsletter_url = branding.get('newsletter_url', 'https://0to1datascience.substack.com') if branding else 'https://0to1datascience.substack.com'
 
     html = f'''<!DOCTYPE html>
 <html lang="en">
@@ -2155,6 +2505,65 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
         .trend-delta.flat {{
             color: var(--text-muted);
             font-weight: 600;
+        }}
+
+        .launch-kit {{
+            margin-bottom: 16px;
+        }}
+
+        .launch-preview {{
+            white-space: pre-wrap;
+            line-height: 1.5;
+            margin-top: 8px;
+        }}
+
+        .launch-actions {{
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }}
+
+        @media (min-width: 768px) {{
+            .launch-actions {{
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }}
+        }}
+
+        .launch-btn {{
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }}
+
+        .launch-btn:hover {{
+            border-color: var(--accent);
+            color: var(--accent);
+        }}
+
+        .launch-meta {{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }}
+
+        .launch-link {{
+            font-size: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+        }}
+
+        .launch-link:hover {{
+            color: var(--accent);
         }}
 
         /* Wide cards */
@@ -2971,6 +3380,22 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
             </div>
         </div>
 
+        <!-- Launch Kit -->
+        <div class="card card-wide launch-kit animate delay-8">
+            <div class="card-label">Launch Kit</div>
+            <div class="trend-note launch-preview" id="launchSummaryPreview">Copy-ready launch summary will appear here.</div>
+            <div class="launch-actions">
+                <button class="launch-btn" id="copyLaunchSummaryBtn" type="button">Copy Summary</button>
+                <button class="launch-btn" id="copyReleaseNotesBtn" type="button">Copy Release Notes</button>
+                <button class="launch-btn" id="copyHnPostBtn" type="button">Copy HN Post</button>
+                <button class="launch-btn" id="copyLinkedinPostBtn" type="button">Copy LinkedIn</button>
+            </div>
+            <div class="launch-meta">
+                <span class="trend-note" id="launchCopyStatus">Includes migration note + GitHub attribution.</span>
+                <a href="{github_repo}" target="_blank" class="launch-link">GitHub attribution</a>
+            </div>
+        </div>
+
         <!-- Main Grid -->
         <div class="grid">
             <!-- Heatmap -->
@@ -3280,11 +3705,14 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
         }});
 
         const sourceViews = {source_views_json};
+        const launchPackets = {launch_packets_json};
         const defaultSource = {default_source_json};
         const sourceFilter = document.getElementById('sourceFilter');
         const sourceFilterMobile = document.getElementById('sourceFilterMobile');
         const sourceStorageKey = 'dashboard-source-filter';
         const fallbackHeatmap = {heatmap_json};
+        let activeSourceKey = defaultSource;
+        let activeView = null;
 
         function formatNumber(value) {{
             return (Number(value) || 0).toLocaleString();
@@ -3483,6 +3911,63 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
             renderTrendCallouts(trends, deltas);
         }}
 
+        function getLaunchPacket(sourceKey) {{
+            return launchPackets[sourceKey] || launchPackets.both || null;
+        }}
+
+        async function copyTextToClipboard(text) {{
+            if (!text) return false;
+            if (navigator?.clipboard?.writeText) {{
+                try {{
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                }} catch (_) {{
+                    // Fall back to legacy copy path.
+                }}
+            }}
+
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            const copied = document.execCommand('copy');
+            document.body.removeChild(textarea);
+            return copied;
+        }}
+
+        async function copyLaunchText(kind) {{
+            const status = document.getElementById('launchCopyStatus');
+            const packet = getLaunchPacket(activeSourceKey);
+            if (!packet || !packet[kind]) {{
+                status.textContent = 'No launch text available for this source view yet.';
+                return;
+            }}
+
+            const copied = await copyTextToClipboard(packet[kind]);
+            status.textContent = copied
+                ? `Copied ${{kind.replace('_', ' ')}} for ${{packet.source_label}}.`
+                : 'Copy failed. Please copy manually from the preview.';
+        }}
+
+        function renderLaunchKit(sourceKey, view) {{
+            const preview = document.getElementById('launchSummaryPreview');
+            const status = document.getElementById('launchCopyStatus');
+            const packet = getLaunchPacket(sourceKey);
+
+            if (!packet) {{
+                preview.textContent = 'Launch packet unavailable for this source view.';
+                status.textContent = 'No share text available.';
+                return;
+            }}
+
+            const prompts = view?.volume?.total_human ?? 0;
+            preview.textContent = packet.summary;
+            status.textContent = `${{packet.source_label}} ready: ${{Number(prompts).toLocaleString()}} prompts included with GitHub attribution.`;
+        }}
+
         function getView(sourceKey) {{
             return sourceViews[sourceKey] || null;
         }}
@@ -3490,6 +3975,8 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
         function renderView(sourceKey) {{
             const view = getView(sourceKey);
             if (!view) return;
+            activeSourceKey = sourceKey;
+            activeView = view;
 
             const volume = view.volume || {{}};
             const temporal = view.temporal || {{}};
@@ -3559,6 +4046,7 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
 
             renderHeatmap(temporal.heatmap);
             renderTrendBand(view);
+            renderLaunchKit(sourceKey, view);
         }}
 
         function syncSourceSelectors(value) {{
@@ -3596,6 +4084,11 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
             sourceFilter.addEventListener('change', handleChange);
             sourceFilterMobile.addEventListener('change', handleChange);
         }}
+
+        document.getElementById('copyLaunchSummaryBtn').addEventListener('click', () => copyLaunchText('summary'));
+        document.getElementById('copyReleaseNotesBtn').addEventListener('click', () => copyLaunchText('release_notes'));
+        document.getElementById('copyHnPostBtn').addEventListener('click', () => copyLaunchText('hn_post'));
+        document.getElementById('copyLinkedinPostBtn').addEventListener('click', () => copyLaunchText('linkedin_post'));
 
         initSourceFilter();
     </script>
