@@ -29,6 +29,14 @@ def make_message(
     )
 
 
+def setup_db(messages: list[build.Message]):
+    """Insert messages into an in-memory DB and run NLP enrichment."""
+    conn = build.init_db()
+    build.insert_messages(conn, messages)
+    build.enrich_nlp(conn)
+    return conn
+
+
 class ParseCodexSessionMetadataTests(unittest.TestCase):
     def test_parse_codex_session_metadata_extracts_model_and_provider(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -133,7 +141,8 @@ class ModelUsageTests(unittest.TestCase):
             ),
         ]
 
-        metrics = build.compute_metrics(messages, config)
+        conn = setup_db(messages)
+        metrics = build.compute_metrics(conn, config)
         model_usage = metrics["model_usage"]
 
         self.assertEqual(model_usage["coverage"]["total_human_prompts"], 3)
@@ -185,7 +194,8 @@ class ModelUsageTests(unittest.TestCase):
             ),
         ]
 
-        metrics = build.compute_metrics(messages, config)
+        conn = setup_db(messages)
+        metrics = build.compute_metrics(conn, config)
         trends = metrics["trends"]
 
         self.assertEqual(len(trends["daily_rollups"]), 3)
@@ -223,7 +233,8 @@ class NlpMetricsTests(unittest.TestCase):
             ),
         ]
 
-        metrics = build.compute_metrics(messages, config)
+        conn = setup_db(messages)
+        metrics = build.compute_metrics(conn, config)
         nlp = metrics["nlp"]
 
         self.assertIn("intent", nlp)
@@ -266,7 +277,8 @@ class LaunchPacketTests(unittest.TestCase):
             ),
         ]
 
-        view = build.compute_metrics(messages, config)
+        conn = setup_db(messages)
+        view = build.compute_metrics(conn, config)
         packet = build.build_launch_packet(
             view,
             "both",
@@ -300,7 +312,8 @@ class LaunchPacketTests(unittest.TestCase):
                 model_provider="openai",
             ),
         ]
-        source_views, defaults = build.compute_source_views(messages, config)
+        conn = setup_db(messages)
+        source_views, defaults = build.compute_source_views(conn, config)
         metrics = dict(source_views["both"])
         metrics["source_views"] = source_views
         metrics["default_view"] = defaults["default_view"]
@@ -344,7 +357,8 @@ class SourceViewsTests(unittest.TestCase):
             ),
         ]
 
-        source_views, defaults = build.compute_source_views(messages, self.config)
+        conn = setup_db(messages)
+        source_views, defaults = build.compute_source_views(conn, self.config)
 
         self.assertEqual(defaults["default_view"], "both")
         self.assertEqual(set(source_views.keys()), {"both", "claude_code", "codex"})
@@ -373,7 +387,8 @@ class SourceViewsTests(unittest.TestCase):
             ),
         ]
 
-        source_views, defaults = build.compute_source_views(messages, self.config)
+        conn = setup_db(messages)
+        source_views, defaults = build.compute_source_views(conn, self.config)
 
         self.assertEqual(defaults["default_view"], "both")
         self.assertIsNotNone(source_views["both"])
@@ -391,7 +406,8 @@ class SourceViewsTests(unittest.TestCase):
             )
         ]
 
-        source_views, defaults = build.compute_source_views(messages, self.config)
+        conn = setup_db(messages)
+        source_views, defaults = build.compute_source_views(conn, self.config)
 
         self.assertEqual(defaults["default_view"], "both")
         self.assertIsNotNone(source_views["both"])
@@ -426,7 +442,8 @@ class DashboardCompatibilityTests(unittest.TestCase):
                 conversation_id="cx-1",
             ),
         ]
-        source_views, _ = build.compute_source_views(messages, config)
+        conn = setup_db(messages)
+        source_views, _ = build.compute_source_views(conn, config)
 
         metrics = dict(source_views["both"])
         metrics["source_views"] = {
@@ -441,6 +458,78 @@ class DashboardCompatibilityTests(unittest.TestCase):
         self.assertIn('option value="claude_code" selected', html)
         self.assertIn('const defaultSource = "claude_code";', html)
         self.assertIn("selected === 'claude'", html)
+
+
+class DatabaseLayerTests(unittest.TestCase):
+    """Tests for the SQLite database layer."""
+
+    def test_init_db_creates_tables(self) -> None:
+        conn = build.init_db()
+        tables = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
+        ).fetchall()
+        table_names = [t[0] for t in tables]
+        self.assertIn("messages", table_names)
+        self.assertIn("nlp_enrichments", table_names)
+
+    def test_insert_and_query_roundtrip(self) -> None:
+        t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
+        messages = [
+            make_message(
+                ts=t0,
+                platform=build.Platform.CLAUDE_CODE,
+                role=build.Role.HUMAN,
+                content="hello world",
+                conversation_id="cc-1",
+            ),
+            make_message(
+                ts=t0,
+                platform=build.Platform.CODEX,
+                role=build.Role.HUMAN,
+                content="fix this bug",
+                conversation_id="cx-1",
+                model_id="gpt-5.3-codex",
+                model_provider="openai",
+            ),
+        ]
+        conn = build.init_db()
+        count = build.insert_messages(conn, messages)
+        self.assertEqual(count, 2)
+
+        retrieved = build.query_messages(conn, role=build.Role.HUMAN)
+        self.assertEqual(len(retrieved), 2)
+        self.assertEqual(retrieved[0].content, "hello world")
+        self.assertEqual(retrieved[1].model_id, "gpt-5.3-codex")
+
+    def test_query_messages_filters_by_platform(self) -> None:
+        t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
+        messages = [
+            make_message(ts=t0, platform=build.Platform.CLAUDE_CODE, role=build.Role.HUMAN,
+                         content="cc msg", conversation_id="cc-1"),
+            make_message(ts=t0, platform=build.Platform.CODEX, role=build.Role.HUMAN,
+                         content="codex msg", conversation_id="cx-1"),
+        ]
+        conn = build.init_db()
+        build.insert_messages(conn, messages)
+
+        cc_msgs = build.query_messages(conn, platform=build.Platform.CLAUDE_CODE)
+        self.assertEqual(len(cc_msgs), 1)
+        self.assertEqual(cc_msgs[0].content, "cc msg")
+
+    def test_nlp_enrichment_roundtrip(self) -> None:
+        t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
+        messages = [
+            make_message(ts=t0, platform=build.Platform.CLAUDE_CODE, role=build.Role.HUMAN,
+                         content="debug this failing test", conversation_id="cc-1"),
+        ]
+        conn = build.init_db()
+        build.insert_messages(conn, messages)
+        build.enrich_nlp(conn)
+
+        row = conn.execute("SELECT intent, complexity_score FROM nlp_enrichments").fetchone()
+        self.assertIsNotNone(row)
+        self.assertIsInstance(row[0], str)
+        self.assertGreater(row[1], 0)
 
 
 if __name__ == "__main__":

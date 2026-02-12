@@ -1,9 +1,11 @@
 """NLP classifiers: intent, complexity, iteration style with confidence metadata."""
 
 import re
+import sqlite3
 from collections import Counter
 
-from .models import Message
+from .db import insert_nlp_enrichments, platform_filter
+from .models import Message, Platform
 
 # === Regex Pattern Definitions ===
 POLITENESS_PATTERNS = {
@@ -139,9 +141,35 @@ def compute_iteration_style_for_prompt(text: str) -> tuple[float, float]:
     return final_score, round(min(confidence, 0.95), 2)
 
 
-def compute_nlp_metrics(human_msgs: list[Message]) -> dict:
-    """Compute deterministic NLP enrichments with confidence metadata."""
-    total = len(human_msgs)
+def enrich_nlp(conn: sqlite3.Connection) -> None:
+    """Run NLP classifiers on all human messages and store in nlp_enrichments."""
+    rows = conn.execute(
+        "SELECT id, content FROM messages WHERE role = 'human'"
+    ).fetchall()
+
+    enrichments = []
+    for msg_id, content in rows:
+        intent, intent_conf = classify_intent(content)
+        complexity, complexity_conf = compute_complexity_for_prompt(content)
+        iteration, iteration_conf = compute_iteration_style_for_prompt(content)
+        enrichments.append((
+            msg_id, intent, intent_conf, complexity, complexity_conf, iteration, iteration_conf,
+        ))
+
+    insert_nlp_enrichments(conn, enrichments)
+
+
+def compute_nlp_metrics(conn: sqlite3.Connection, platform: Platform | None = None) -> dict:
+    """Aggregate NLP enrichments from the database with optional platform filter."""
+    pf, pp = platform_filter(platform)
+
+    total = conn.execute(
+        f"SELECT COUNT(*) FROM nlp_enrichments e"
+        f" JOIN messages m ON e.message_id = m.id"
+        f" WHERE m.role = 'human'{pf}",
+        pp,
+    ).fetchone()[0]
+
     if total == 0:
         return {
             "intent": {
@@ -168,50 +196,69 @@ def compute_nlp_metrics(human_msgs: list[Message]) -> dict:
             },
         }
 
-    intent_counts = Counter()
-    intent_confidences = []
-    complexity_scores = []
-    complexity_confidences = []
-    iteration_scores = []
-    iteration_confidences = []
+    # === Intent ===
+    intent_rows = conn.execute(
+        f"SELECT e.intent, COUNT(*) as cnt"
+        f" FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id"
+        f" WHERE m.role = 'human'{pf}"
+        f" GROUP BY e.intent ORDER BY cnt DESC, e.intent",
+        pp,
+    ).fetchall()
 
-    for msg in human_msgs:
-        intent, intent_conf = classify_intent(msg.content)
-        intent_counts[intent] += 1
-        intent_confidences.append(intent_conf)
-
-        complexity, complexity_conf = compute_complexity_for_prompt(msg.content)
-        complexity_scores.append(complexity)
-        complexity_confidences.append(complexity_conf)
-
-        iteration_score, iteration_conf = compute_iteration_style_for_prompt(msg.content)
-        iteration_scores.append(iteration_score)
-        iteration_confidences.append(iteration_conf)
-
+    intent_counts = dict(intent_rows)
     intent_rates = {
         intent: round((count / total) * 100, 1)
-        for intent, count in sorted(intent_counts.items(), key=lambda kv: (-kv[1], kv[0]))
+        for intent, count in intent_rows
     }
     top_intents = [
         {"intent": intent, "count": count, "rate_pct": intent_rates[intent]}
-        for intent, count in sorted(intent_counts.items(), key=lambda kv: (-kv[1], kv[0]))[:3]
+        for intent, count in intent_rows[:3]
     ]
 
-    sorted_complexity = sorted(complexity_scores)
+    intent_conf = conn.execute(
+        f"SELECT AVG(e.intent_confidence), MIN(e.intent_confidence), MAX(e.intent_confidence)"
+        f" FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id"
+        f" WHERE m.role = 'human'{pf}",
+        pp,
+    ).fetchone()
+
+    # === Complexity ===
+    complexity_agg = conn.execute(
+        f"SELECT AVG(e.complexity_score),"
+        f" SUM(CASE WHEN e.complexity_score < 2.5 THEN 1 ELSE 0 END),"
+        f" SUM(CASE WHEN e.complexity_score >= 2.5 AND e.complexity_score < 3.8 THEN 1 ELSE 0 END),"
+        f" SUM(CASE WHEN e.complexity_score >= 3.8 THEN 1 ELSE 0 END),"
+        f" AVG(e.complexity_confidence), MIN(e.complexity_confidence), MAX(e.complexity_confidence)"
+        f" FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id"
+        f" WHERE m.role = 'human'{pf}",
+        pp,
+    ).fetchone()
+
+    sorted_complexity = [
+        r[0] for r in conn.execute(
+            f"SELECT e.complexity_score FROM nlp_enrichments e"
+            f" JOIN messages m ON e.message_id = m.id"
+            f" WHERE m.role = 'human'{pf}"
+            f" ORDER BY e.complexity_score",
+            pp,
+        ).fetchall()
+    ]
     p50_idx = max(0, len(sorted_complexity) // 2 - (1 if len(sorted_complexity) % 2 == 0 else 0))
     p90_idx = max(0, int(len(sorted_complexity) * 0.9) - 1)
-    complexity_distribution = {
-        "low": sum(1 for value in complexity_scores if value < 2.5),
-        "medium": sum(1 for value in complexity_scores if 2.5 <= value < 3.8),
-        "high": sum(1 for value in complexity_scores if value >= 3.8),
-    }
-    iteration_distribution = {
-        "low": sum(1 for value in iteration_scores if value < 25),
-        "medium": sum(1 for value in iteration_scores if 25 <= value < 60),
-        "high": sum(1 for value in iteration_scores if value >= 60),
-    }
 
-    avg_iteration = round(sum(iteration_scores) / len(iteration_scores), 1)
+    # === Iteration Style ===
+    iter_agg = conn.execute(
+        f"SELECT AVG(e.iteration_score),"
+        f" SUM(CASE WHEN e.iteration_score < 25 THEN 1 ELSE 0 END),"
+        f" SUM(CASE WHEN e.iteration_score >= 25 AND e.iteration_score < 60 THEN 1 ELSE 0 END),"
+        f" SUM(CASE WHEN e.iteration_score >= 60 THEN 1 ELSE 0 END),"
+        f" AVG(e.iteration_confidence), MIN(e.iteration_confidence), MAX(e.iteration_confidence)"
+        f" FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id"
+        f" WHERE m.role = 'human'{pf}",
+        pp,
+    ).fetchone()
+
+    avg_iteration = round(iter_agg[0], 1)
     if avg_iteration >= 60:
         iteration_style = "highly_iterative"
     elif avg_iteration >= 30:
@@ -222,36 +269,44 @@ def compute_nlp_metrics(human_msgs: list[Message]) -> dict:
     return {
         "intent": {
             "method": "deterministic_rules_v1",
-            "counts": dict(sorted(intent_counts.items(), key=lambda kv: (-kv[1], kv[0]))),
+            "counts": intent_counts,
             "rates_pct": intent_rates,
             "top_intents": top_intents,
             "confidence": {
-                "mean": round(sum(intent_confidences) / len(intent_confidences), 2),
-                "min": round(min(intent_confidences), 2),
-                "max": round(max(intent_confidences), 2),
+                "mean": round(intent_conf[0], 2),
+                "min": round(intent_conf[1], 2),
+                "max": round(intent_conf[2], 2),
             },
         },
         "complexity": {
             "method": "heuristic_complexity_v1",
-            "avg_score": round(sum(complexity_scores) / len(complexity_scores), 1),
+            "avg_score": round(complexity_agg[0], 1),
             "p50_score": round(sorted_complexity[p50_idx], 1),
             "p90_score": round(sorted_complexity[p90_idx], 1),
-            "distribution": complexity_distribution,
+            "distribution": {
+                "low": complexity_agg[1],
+                "medium": complexity_agg[2],
+                "high": complexity_agg[3],
+            },
             "confidence": {
-                "mean": round(sum(complexity_confidences) / len(complexity_confidences), 2),
-                "min": round(min(complexity_confidences), 2),
-                "max": round(max(complexity_confidences), 2),
+                "mean": round(complexity_agg[4], 2),
+                "min": round(complexity_agg[5], 2),
+                "max": round(complexity_agg[6], 2),
             },
         },
         "iteration_style": {
             "method": "iteration_markers_v1",
             "avg_score": avg_iteration,
-            "distribution": iteration_distribution,
+            "distribution": {
+                "low": iter_agg[1],
+                "medium": iter_agg[2],
+                "high": iter_agg[3],
+            },
             "style": iteration_style,
             "confidence": {
-                "mean": round(sum(iteration_confidences) / len(iteration_confidences), 2),
-                "min": round(min(iteration_confidences), 2),
-                "max": round(max(iteration_confidences), 2),
+                "mean": round(iter_agg[4], 2),
+                "min": round(iter_agg[5], 2),
+                "max": round(iter_agg[6], 2),
             },
         },
     }

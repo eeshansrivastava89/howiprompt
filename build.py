@@ -32,13 +32,14 @@ from pathlib import Path
 
 # === Module imports (analytics engine lives in src/) ===
 from src.config import PROJECT_ROOT, Config, load_branding, load_config, logger
+from src.db import init_db, insert_messages, query_messages
 from src.metrics import (
     build_launch_packet,
     compute_metrics,
     compute_model_usage,
     compute_source_views,
     format_date_range_display,
-    has_human_messages,
+    has_human_messages_db,
 )
 from src.models import (
     PERSONAS,
@@ -59,6 +60,7 @@ from src.nlp import (
     compute_complexity_for_prompt,
     compute_iteration_style_for_prompt,
     compute_nlp_metrics,
+    enrich_nlp,
 )
 from src.parsers import parse_claude_code, parse_codex_history, parse_codex_session_metadata
 from src.persona import classify_persona
@@ -2919,22 +2921,25 @@ Examples:
     print("How I Prompt Wrapped 2025 - Build")
     print("=" * 50)
 
-    # Step 1: Parse data
+    # Step 1: Parse data into SQLite
     print("\n[1/3] Parsing data sources...")
-    messages = []
-    messages.extend(parse_claude_code(config.claude_code_path))
+    conn = init_db()
+    msg_count = 0
+    msg_count += insert_messages(conn, parse_claude_code(config.claude_code_path))
     codex_session_models = parse_codex_session_metadata(config.codex_sessions_path)
-    messages.extend(parse_codex_history(config.codex_history_path, codex_session_models))
-    messages.sort(key=lambda m: m.timestamp)
-    print(f"  Total: {len(messages)} messages")
+    msg_count += insert_messages(conn, parse_codex_history(config.codex_history_path, codex_session_models))
+    print(f"  Total: {msg_count} messages")
 
-    if not messages:
+    if msg_count == 0:
         print("\nError: No messages found. Check your data paths.")
         sys.exit(1)
 
+    # Step 1b: NLP enrichment (classifiers run once, aggregation per-view)
+    enrich_nlp(conn)
+
     # Step 2: Compute metrics
     print("\n[2/3] Computing metrics...")
-    source_views, source_defaults = compute_source_views(messages, config)
+    source_views, source_defaults = compute_source_views(conn, config)
     dashboard_default_view = source_defaults["default_view"]
     wrapped_base_view = "claude_code" if source_views.get("claude_code") is not None else dashboard_default_view
 

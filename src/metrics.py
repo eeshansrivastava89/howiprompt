@@ -1,103 +1,142 @@
 """Metric computation: volume, depth, temporal, style, and source views."""
 
 import re
-from collections import Counter, defaultdict
+import sqlite3
+from collections import defaultdict
 from datetime import datetime, timezone
 
 from .config import Config
+from .db import platform_filter, query_messages
 from .models import Message, Platform, Role, SOURCE_VIEW_LABELS
 from .nlp import BACKTRACK_PATTERNS, COMMAND_PATTERN, POLITENESS_PATTERNS, compute_nlp_metrics
 from .persona import classify_persona
 from .trends import compute_trend_metrics
 
 
-def compute_model_usage(human_msgs: list[Message]) -> dict:
+def compute_model_usage(conn: sqlite3.Connection, platform: Platform | None = None) -> dict:
     """Aggregate model usage across source and time for human prompts."""
-    total_human = len(human_msgs)
-    model_msgs = [m for m in human_msgs if m.model_id or m.model_provider]
-    with_metadata = len(model_msgs)
+    pf, pp = platform_filter(platform)
+
+    # Coverage
+    total_human = conn.execute(
+        f"SELECT COUNT(*) FROM messages WHERE role = 'human'{pf}", pp,
+    ).fetchone()[0]
+    with_metadata = conn.execute(
+        f"SELECT COUNT(*) FROM messages"
+        f" WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL){pf}",
+        pp,
+    ).fetchone()[0]
     coverage_pct = round((with_metadata / total_human * 100), 1) if total_human else 0.0
 
-    by_model: dict[tuple[str, str], dict] = {}
-    model_conversations: dict[tuple[str, str], set[str]] = defaultdict(set)
-    by_provider: dict[str, dict] = {}
-    provider_conversations: dict[str, set[str]] = defaultdict(set)
-    by_source_date: dict[str, dict[str, dict[str, int]]] = defaultdict(
-        lambda: defaultdict(lambda: defaultdict(int))
-    )
+    # --- By model (with per-platform source breakdown) ---
+    model_source_rows = conn.execute(
+        f"SELECT COALESCE(model_id, 'unknown'), COALESCE(model_provider, 'unknown'),"
+        f" platform, COUNT(*), SUM(word_count)"
+        f" FROM messages"
+        f" WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL){pf}"
+        f" GROUP BY 1, 2, platform",
+        pp,
+    ).fetchall()
 
-    for msg in model_msgs:
-        model_id = msg.model_id or "unknown"
-        provider = msg.model_provider or "unknown"
-        source = msg.platform.value
-        date_key = msg.timestamp.astimezone().date().isoformat()
-
-        model_key = (model_id, provider)
-        model_stats = by_model.setdefault(
-            model_key,
-            {
-                "model_id": model_id,
-                "model_provider": provider,
-                "prompts": 0,
-                "words": 0,
-                "sources": defaultdict(int),
-            },
-        )
-        model_stats["prompts"] += 1
-        model_stats["words"] += msg.word_count
-        model_stats["sources"][source] += 1
-        model_conversations[model_key].add(msg.conversation_id)
-
-        provider_stats = by_provider.setdefault(
-            provider,
-            {"model_provider": provider, "prompts": 0, "words": 0, "sources": defaultdict(int)},
-        )
-        provider_stats["prompts"] += 1
-        provider_stats["words"] += msg.word_count
-        provider_stats["sources"][source] += 1
-        provider_conversations[provider].add(msg.conversation_id)
-
-        by_source_date[source][date_key][model_id] += 1
-
-    by_model_list = []
-    for model_key, stats in by_model.items():
-        by_model_list.append(
-            {
-                "model_id": stats["model_id"],
-                "model_provider": stats["model_provider"],
-                "prompts": stats["prompts"],
-                "words": stats["words"],
-                "conversations": len(model_conversations[model_key]),
-                "sources": dict(sorted(stats["sources"].items())),
+    by_model_map: dict[tuple, dict] = {}
+    for mid, mprov, plat, prompts, words in model_source_rows:
+        key = (mid, mprov)
+        if key not in by_model_map:
+            by_model_map[key] = {
+                "model_id": mid, "model_provider": mprov,
+                "prompts": 0, "words": 0, "sources": {},
             }
-        )
-    by_model_list.sort(key=lambda item: (-item["prompts"], item["model_id"], item["model_provider"]))
+        by_model_map[key]["prompts"] += prompts
+        by_model_map[key]["words"] += words
+        by_model_map[key]["sources"][plat] = prompts
 
-    by_provider_list = []
-    for provider, stats in by_provider.items():
-        by_provider_list.append(
-            {
-                "model_provider": provider,
-                "prompts": stats["prompts"],
-                "words": stats["words"],
-                "conversations": len(provider_conversations[provider]),
-                "sources": dict(sorted(stats["sources"].items())),
-            }
-        )
-    by_provider_list.sort(key=lambda item: (-item["prompts"], item["model_provider"]))
+    # Conversation counts per model
+    conv_rows = conn.execute(
+        f"SELECT COALESCE(model_id, 'unknown'), COALESCE(model_provider, 'unknown'),"
+        f" COUNT(DISTINCT conversation_id)"
+        f" FROM messages"
+        f" WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL){pf}"
+        f" GROUP BY 1, 2",
+        pp,
+    ).fetchall()
+    conv_map = {(r[0], r[1]): r[2] for r in conv_rows}
+
+    by_model_list = [
+        {
+            "model_id": stats["model_id"],
+            "model_provider": stats["model_provider"],
+            "prompts": stats["prompts"],
+            "words": stats["words"],
+            "conversations": conv_map.get(key, 0),
+            "sources": dict(sorted(stats["sources"].items())),
+        }
+        for key, stats in by_model_map.items()
+    ]
+    by_model_list.sort(key=lambda x: (-x["prompts"], x["model_id"], x["model_provider"]))
+
+    # --- By provider ---
+    prov_source_rows = conn.execute(
+        f"SELECT COALESCE(model_provider, 'unknown'), platform,"
+        f" COUNT(*), SUM(word_count)"
+        f" FROM messages"
+        f" WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL){pf}"
+        f" GROUP BY 1, platform",
+        pp,
+    ).fetchall()
+
+    by_provider_map: dict[str, dict] = {}
+    for mprov, plat, prompts, words in prov_source_rows:
+        if mprov not in by_provider_map:
+            by_provider_map[mprov] = {"model_provider": mprov, "prompts": 0, "words": 0, "sources": {}}
+        by_provider_map[mprov]["prompts"] += prompts
+        by_provider_map[mprov]["words"] += words
+        by_provider_map[mprov]["sources"][plat] = prompts
+
+    prov_conv_rows = conn.execute(
+        f"SELECT COALESCE(model_provider, 'unknown'), COUNT(DISTINCT conversation_id)"
+        f" FROM messages"
+        f" WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL){pf}"
+        f" GROUP BY 1",
+        pp,
+    ).fetchall()
+    prov_conv_map = {r[0]: r[1] for r in prov_conv_rows}
+
+    by_provider_list = [
+        {
+            "model_provider": stats["model_provider"],
+            "prompts": stats["prompts"],
+            "words": stats["words"],
+            "conversations": prov_conv_map.get(mprov, 0),
+            "sources": dict(sorted(stats["sources"].items())),
+        }
+        for mprov, stats in by_provider_map.items()
+    ]
+    by_provider_list.sort(key=lambda x: (-x["prompts"], x["model_provider"]))
+
+    # --- Time series by source ---
+    ts_rows = conn.execute(
+        f"SELECT platform, local_date, COALESCE(model_id, 'unknown'), COUNT(*)"
+        f" FROM messages"
+        f" WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL){pf}"
+        f" GROUP BY platform, local_date, 3"
+        f" ORDER BY platform, local_date",
+        pp,
+    ).fetchall()
+
+    by_source_date: dict[str, dict[str, dict[str, int]]] = defaultdict(lambda: defaultdict(dict))
+    for plat, date, mid, cnt in ts_rows:
+        by_source_date[plat][date][mid] = cnt
 
     time_series_by_source = {}
     for source, day_map in by_source_date.items():
         source_series = []
         for date_key in sorted(day_map.keys()):
             model_counts = day_map[date_key]
-            source_series.append(
-                {
-                    "date": date_key,
-                    "total_prompts": sum(model_counts.values()),
-                    "models": dict(sorted(model_counts.items(), key=lambda kv: (-kv[1], kv[0]))),
-                }
-            )
+            source_series.append({
+                "date": date_key,
+                "total_prompts": sum(model_counts.values()),
+                "models": dict(sorted(model_counts.items(), key=lambda kv: (-kv[1], kv[0]))),
+            })
         time_series_by_source[source] = source_series
 
     return {
@@ -112,139 +151,157 @@ def compute_model_usage(human_msgs: list[Message]) -> dict:
     }
 
 
-def compute_metrics(messages: list[Message], config: Config) -> dict:
-    """Compute all metrics from unified message stream."""
+def compute_metrics(conn: sqlite3.Connection, config: Config, platform: Platform | None = None) -> dict:
+    """Compute all metrics from the database."""
+    pf, pp = platform_filter(platform)
 
-    human_msgs = [m for m in messages if m.role == Role.HUMAN]
-    assistant_msgs = [m for m in messages if m.role == Role.ASSISTANT]
+    # === Volume Metrics (SQL) ===
+    vol = conn.execute(
+        f"SELECT"
+        f" COUNT(*),"
+        f" SUM(CASE WHEN role = 'human' THEN 1 ELSE 0 END),"
+        f" SUM(CASE WHEN role = 'assistant' THEN 1 ELSE 0 END),"
+        f" SUM(CASE WHEN role = 'human' THEN word_count ELSE 0 END),"
+        f" SUM(CASE WHEN role = 'assistant' THEN word_count ELSE 0 END),"
+        f" COUNT(DISTINCT conversation_id)"
+        f" FROM messages WHERE 1=1{pf}",
+        pp,
+    ).fetchone()
 
-    if not human_msgs:
+    total_messages = vol[0]
+    total_human = vol[1]
+    total_assistant = vol[2]
+    total_words_human = vol[3] or 0
+    total_words_assistant = vol[4] or 0
+    total_conversations = vol[5]
+
+    if not total_human:
         raise ValueError("No human messages found in data")
 
-    # === Volume Metrics ===
-    total_messages = len(messages)
-    total_human = len(human_msgs)
-    total_assistant = len(assistant_msgs)
-    total_words_human = sum(m.word_count for m in human_msgs)
-    total_words_assistant = sum(m.word_count for m in assistant_msgs)
-    total_conversations = len(set(m.conversation_id for m in messages))
     avg_words_per_prompt = total_words_human / total_human
 
-    # === Conversation Depth & Response Ratio ===
-    turns_per_convo = defaultdict(int)
-    for m in messages:
-        turns_per_convo[m.conversation_id] += 1
-    avg_turns = sum(turns_per_convo.values()) / len(turns_per_convo) if turns_per_convo else 0
-    max_turns = max(turns_per_convo.values()) if turns_per_convo else 0
+    # === Conversation Depth (SQL) ===
+    depth_rows = conn.execute(
+        f"SELECT conversation_id, COUNT(*) FROM messages WHERE 1=1{pf} GROUP BY conversation_id",
+        pp,
+    ).fetchall()
+
+    turns_values = [r[1] for r in depth_rows]
+    avg_turns = sum(turns_values) / len(turns_values) if turns_values else 0
+    max_turns = max(turns_values) if turns_values else 0
+    quick_asks = sum(1 for t in turns_values if t <= 3)
+    working_sessions = sum(1 for t in turns_values if 4 <= t <= 10)
+    deep_dives = sum(1 for t in turns_values if t > 10)
     response_ratio = total_words_assistant / total_words_human if total_words_human else 0
 
-    # Conversation distribution buckets
-    quick_asks = sum(1 for t in turns_per_convo.values() if t <= 3)
-    working_sessions = sum(1 for t in turns_per_convo.values() if 4 <= t <= 10)
-    deep_dives = sum(1 for t in turns_per_convo.values() if t > 10)
+    # === Temporal Metrics (SQL via pre-computed local_hour/local_weekday) ===
+    heatmap_rows = conn.execute(
+        f"SELECT local_weekday, local_hour, COUNT(*)"
+        f" FROM messages WHERE role = 'human'{pf}"
+        f" GROUP BY local_weekday, local_hour",
+        pp,
+    ).fetchall()
 
-    # === Temporal Metrics ===
     heatmap = defaultdict(lambda: defaultdict(int))
-    for m in human_msgs:
-        local_time = m.timestamp.astimezone()
-        hour = local_time.hour
-        dow = local_time.weekday()
-        heatmap[dow][hour] += 1
-
+    for dow, hour, count in heatmap_rows:
+        heatmap[dow][hour] = count
     heatmap_data = [[heatmap[dow][hour] for hour in range(24)] for dow in range(7)]
 
-    # Night Owl Index: % of prompts 11pm-4am
-    night_owl_count = sum(
-        1 for m in human_msgs
-        if m.timestamp.astimezone().hour >= 23 or m.timestamp.astimezone().hour < 4
-    )
+    night_owl_count = conn.execute(
+        f"SELECT COUNT(*) FROM messages"
+        f" WHERE role = 'human' AND (local_hour >= 23 OR local_hour < 4){pf}",
+        pp,
+    ).fetchone()[0]
     night_owl_pct = (night_owl_count / total_human * 100)
 
-    # Peak hour
-    hour_counts = defaultdict(int)
-    for m in human_msgs:
-        hour_counts[m.timestamp.astimezone().hour] += 1
-    peak_hour = max(hour_counts.items(), key=lambda x: x[1])[0] if hour_counts else 0
-    peak_hour_count = hour_counts[peak_hour]
+    hour_rows = conn.execute(
+        f"SELECT local_hour, COUNT(*) as cnt"
+        f" FROM messages WHERE role = 'human'{pf}"
+        f" GROUP BY local_hour",
+        pp,
+    ).fetchall()
+    hour_counts = {r[0]: r[1] for r in hour_rows}
+    peak_hour_row = max(hour_rows, key=lambda x: x[1]) if hour_rows else (0, 0)
+    peak_hour = peak_hour_row[0]
+    peak_hour_count = peak_hour_row[1]
 
-    # Most active day
-    day_counts = defaultdict(int)
-    for m in human_msgs:
-        day_counts[m.timestamp.astimezone().weekday()] += 1
-    peak_day = max(day_counts.items(), key=lambda x: x[1])[0] if day_counts else 0
-    peak_day_count = day_counts[peak_day]
+    day_rows = conn.execute(
+        f"SELECT local_weekday, COUNT(*) as cnt"
+        f" FROM messages WHERE role = 'human'{pf}"
+        f" GROUP BY local_weekday",
+        pp,
+    ).fetchall()
+    peak_day_row = max(day_rows, key=lambda x: x[1]) if day_rows else (0, 0)
+    peak_day = peak_day_row[0]
+    peak_day_count = peak_day_row[1]
     day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-    # === Politeness Index ===
+    # === Style Metrics (Python regex on DB content) ===
+    human_msgs = query_messages(conn, role=Role.HUMAN, platform=platform)
+    assistant_msgs = query_messages(conn, role=Role.ASSISTANT, platform=platform)
+
+    # Politeness
     politeness_counts = {}
     for word, pattern in POLITENESS_PATTERNS.items():
-        count = sum(
-            len(re.findall(pattern, m.content, re.IGNORECASE))
-            for m in human_msgs
-        )
+        count = sum(len(re.findall(pattern, m.content, re.IGNORECASE)) for m in human_msgs)
         politeness_counts[word] = count
-
     total_politeness = sum(politeness_counts.values())
     politeness_per_100 = (total_politeness / total_human * 100)
 
-    # === Backtrack Index ===
+    # Backtrack
     backtrack_counts = {}
     for word, pattern in BACKTRACK_PATTERNS.items():
-        count = sum(
-            len(re.findall(pattern, m.content, re.IGNORECASE))
-            for m in human_msgs
-        )
+        count = sum(len(re.findall(pattern, m.content, re.IGNORECASE)) for m in human_msgs)
         backtrack_counts[word] = count
-
     total_backtrack = sum(backtrack_counts.values())
     backtrack_per_100 = (total_backtrack / total_human * 100)
 
-    # === Question Rate ===
+    # Question / Command rates
     question_count = sum(1 for m in human_msgs if m.content.strip().endswith('?'))
     question_rate = (question_count / total_human * 100)
-
-    # === Command Rate ===
     command_count = sum(
-        1 for m in human_msgs
-        if re.match(COMMAND_PATTERN, m.content.strip(), re.IGNORECASE)
+        1 for m in human_msgs if re.match(COMMAND_PATTERN, m.content.strip(), re.IGNORECASE)
     )
     command_rate = (command_count / total_human * 100)
 
-    # === "You're absolutely right" count ===
+    # "You're absolutely right" count
     youre_right_count = sum(
         len(re.findall(r"you'?re (absolutely )?right", m.content, re.IGNORECASE))
         for m in assistant_msgs
     )
     youre_right_per_convo = youre_right_count / total_conversations if total_conversations else 0
 
-    # === Platform breakdown ===
+    # === Platform Stats (SQL) ===
+    plat_rows = conn.execute(
+        f"SELECT platform, COUNT(*), SUM(word_count),"
+        f" COUNT(DISTINCT conversation_id), MIN(timestamp)"
+        f" FROM messages WHERE role = 'human'{pf}"
+        f" GROUP BY platform",
+        pp,
+    ).fetchall()
+
     platform_stats = {}
-    for platform in Platform:
-        platform_msgs = [m for m in human_msgs if m.platform == platform]
-        if platform_msgs:
-            first_msg = min(m.timestamp for m in platform_msgs)
-            platform_stats[platform.value] = {
-                "messages": len(platform_msgs),
-                "words": sum(m.word_count for m in platform_msgs),
-                "conversations": len(set(m.conversation_id for m in platform_msgs)),
-                "first_message": first_msg.isoformat(),
-            }
+    for plat, msgs, words, convos, first_ts in plat_rows:
+        platform_stats[plat] = {
+            "messages": msgs,
+            "words": words,
+            "conversations": convos,
+            "first_message": first_ts,
+        }
 
     # === Persona Classification ===
-    persona = classify_persona(
-        politeness_per_100,
-        backtrack_per_100,
-        question_rate,
-        command_rate,
-        config
-    )
+    persona = classify_persona(politeness_per_100, backtrack_per_100, question_rate, command_rate, config)
 
-    # === Date range ===
-    first_msg = min(m.timestamp for m in human_msgs)
-    last_msg = max(m.timestamp for m in human_msgs)
-    model_usage = compute_model_usage(human_msgs)
-    trends = compute_trend_metrics(human_msgs)
-    nlp = compute_nlp_metrics(human_msgs)
+    # === Date Range (SQL) ===
+    date_range_row = conn.execute(
+        f"SELECT MIN(timestamp), MAX(timestamp) FROM messages WHERE role = 'human'{pf}",
+        pp,
+    ).fetchone()
+
+    # === Sub-module metrics ===
+    model_usage = compute_model_usage(conn, platform)
+    trends = compute_trend_metrics(conn, platform)
+    nlp = compute_nlp_metrics(conn, platform)
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -302,8 +359,8 @@ def compute_metrics(messages: list[Message], config: Config) -> dict:
         "trends": trends,
         "nlp": nlp,
         "date_range": {
-            "first": first_msg.isoformat(),
-            "last": last_msg.isoformat(),
+            "first": date_range_row[0],
+            "last": date_range_row[1],
         },
     }
 
@@ -414,12 +471,16 @@ def build_launch_packet(view: dict, source_key: str, github_repo: str, site_url:
     }
 
 
-def has_human_messages(messages: list[Message]) -> bool:
-    """Return True if the message list contains at least one human message."""
-    return any(m.role == Role.HUMAN for m in messages)
+def has_human_messages_db(conn: sqlite3.Connection, platform: Platform | None = None) -> bool:
+    """Return True if the DB contains at least one human message (optionally filtered by platform)."""
+    pf, pp = platform_filter(platform)
+    count = conn.execute(
+        f"SELECT COUNT(*) FROM messages WHERE role = 'human'{pf}", pp,
+    ).fetchone()[0]
+    return count > 0
 
 
-def compute_source_views(messages: list[Message], config: Config) -> tuple[dict, dict]:
+def compute_source_views(conn: sqlite3.Connection, config: Config) -> tuple[dict, dict]:
     """
     Build source-scoped metric views for dashboard filtering.
 
@@ -428,12 +489,17 @@ def compute_source_views(messages: list[Message], config: Config) -> tuple[dict,
       - claude_code: Claude Code only
       - codex: Codex only
     """
-    claude_code_messages = [m for m in messages if m.platform == Platform.CLAUDE_CODE]
-    codex_messages = [m for m in messages if m.platform == Platform.CODEX]
-
-    all_metrics = compute_metrics(messages, config)
-    claude_code_metrics = compute_metrics(claude_code_messages, config) if has_human_messages(claude_code_messages) else None
-    codex_metrics = compute_metrics(codex_messages, config) if has_human_messages(codex_messages) else None
+    all_metrics = compute_metrics(conn, config)
+    claude_code_metrics = (
+        compute_metrics(conn, config, Platform.CLAUDE_CODE)
+        if has_human_messages_db(conn, Platform.CLAUDE_CODE)
+        else None
+    )
+    codex_metrics = (
+        compute_metrics(conn, config, Platform.CODEX)
+        if has_human_messages_db(conn, Platform.CODEX)
+        else None
+    )
 
     source_views = {
         "both": all_metrics,

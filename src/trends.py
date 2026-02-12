@@ -1,10 +1,12 @@
 """Trend analytics: daily/weekly rollups, deltas, shift markers, style snapshots."""
 
 import re
+import sqlite3
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 
-from .models import Message, Platform
+from .db import query_messages
+from .models import Message, Platform, Role
 from .nlp import BACKTRACK_PATTERNS, COMMAND_PATTERN, POLITENESS_PATTERNS
 
 
@@ -185,8 +187,10 @@ def detect_shift_markers(daily_rollups: list[dict]) -> list[dict]:
     return markers[:10]
 
 
-def compute_trend_metrics(human_msgs: list[Message]) -> dict:
+def compute_trend_metrics(conn: sqlite3.Connection, platform: Platform | None = None) -> dict:
     """Build daily/weekly trend data plus 7d/30d deltas and shift markers."""
+    human_msgs = query_messages(conn, role=Role.HUMAN, platform=platform)
+
     daily_buckets: dict[str, list[Message]] = defaultdict(list)
     weekly_buckets: dict[str, list[Message]] = defaultdict(list)
 
