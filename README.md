@@ -2,7 +2,7 @@
 
 # How I Prompt
 
-A personal analytics dashboard for your Claude + Codex AI conversations. See your prompting patterns at a glance.
+A personal analytics dashboard for your Claude Code + Codex AI conversations. See your prompting patterns at a glance.
 
 **[View Live Demo →](https://howiprompt.eeshans.com)**
 
@@ -28,10 +28,7 @@ A personal analytics dashboard for your Claude + Codex AI conversations. See you
 git clone https://github.com/eeshansrivastava89/howiprompt.git
 cd howiprompt
 
-# 2. Add Claude.ai export once
-cp ~/Downloads/claude-export/conversations.json data/claude_ai/
-
-# 3. Build (auto-syncs Claude Code + Codex, then opens dashboard)
+# 2. Build (auto-syncs Claude Code + Codex, then opens dashboard)
 python build.py
 
 # Optional: skip browser auto-open
@@ -43,8 +40,9 @@ python build.py --no-open
 | Source | How to Get It |
 |--------|---------------|
 | **Claude Code** | Auto-copied from `~/.claude/projects/` on each build |
-| **Claude.ai** | Settings → Export Data → Download → copy `conversations.json` to `data/claude_ai/` |
 | **Codex** | Auto-copied from `~/.codex/history.jsonl` on each build |
+
+`v2` note: Claude.ai exports are deprecated and ignored by the active build pipeline.
 
 ---
 
