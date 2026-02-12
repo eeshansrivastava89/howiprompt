@@ -195,6 +195,125 @@ class ModelUsageTests(unittest.TestCase):
         self.assertIsInstance(trends["shift_markers"], list)
 
 
+class NlpMetricsTests(unittest.TestCase):
+    def test_compute_metrics_includes_nlp_outputs_with_confidence(self) -> None:
+        config = build.load_config()
+        t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
+        messages = [
+            make_message(
+                ts=t0,
+                platform=build.Platform.CLAUDE_CODE,
+                role=build.Role.HUMAN,
+                content="can you debug this failing test and fix the error?",
+                conversation_id="cc-1",
+            ),
+            make_message(
+                ts=t0,
+                platform=build.Platform.CLAUDE_CODE,
+                role=build.Role.HUMAN,
+                content="plan a release strategy with milestones and next steps",
+                conversation_id="cc-1",
+            ),
+            make_message(
+                ts=t0,
+                platform=build.Platform.CLAUDE_CODE,
+                role=build.Role.HUMAN,
+                content="please explain why this works and how to improve it",
+                conversation_id="cc-2",
+            ),
+        ]
+
+        metrics = build.compute_metrics(messages, config)
+        nlp = metrics["nlp"]
+
+        self.assertIn("intent", nlp)
+        self.assertIn("complexity", nlp)
+        self.assertIn("iteration_style", nlp)
+
+        intent_counts = nlp["intent"]["counts"]
+        self.assertEqual(sum(intent_counts.values()), 3)
+        self.assertGreaterEqual(nlp["intent"]["confidence"]["mean"], 0.5)
+        self.assertLessEqual(nlp["intent"]["confidence"]["max"], 0.95)
+
+        self.assertIn("avg_score", nlp["complexity"])
+        self.assertIn("p90_score", nlp["complexity"])
+        self.assertIn("confidence", nlp["complexity"])
+
+        self.assertIn(nlp["iteration_style"]["style"], {"direct", "balanced_iterative", "highly_iterative"})
+        self.assertIn("confidence", nlp["iteration_style"])
+
+
+class LaunchPacketTests(unittest.TestCase):
+    def test_build_launch_packet_includes_migration_and_attribution(self) -> None:
+        config = build.load_config()
+        t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
+        messages = [
+            make_message(
+                ts=t0,
+                platform=build.Platform.CLAUDE_CODE,
+                role=build.Role.HUMAN,
+                content="please explain this release plan",
+                conversation_id="cc-1",
+            ),
+            make_message(
+                ts=t0,
+                platform=build.Platform.CODEX,
+                role=build.Role.HUMAN,
+                content="run tests and push release branch",
+                conversation_id="cx-1",
+                model_id="gpt-5.3-codex",
+                model_provider="openai",
+            ),
+        ]
+
+        view = build.compute_metrics(messages, config)
+        packet = build.build_launch_packet(
+            view,
+            "both",
+            "https://github.com/example/howiprompt",
+            "https://example.com/howiprompt",
+        )
+
+        self.assertIn("Migration note: Claude.ai exports are deprecated", packet["release_notes"])
+        self.assertIn("https://github.com/example/howiprompt", packet["summary"])
+        self.assertIn("https://github.com/example/howiprompt", packet["hn_post"])
+        self.assertIn("https://github.com/example/howiprompt", packet["linkedin_post"])
+
+    def test_generate_dashboard_html_includes_launch_kit_controls(self) -> None:
+        config = build.load_config()
+        t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
+        messages = [
+            make_message(
+                ts=t0,
+                platform=build.Platform.CLAUDE_CODE,
+                role=build.Role.HUMAN,
+                content="please explain this?",
+                conversation_id="cc-1",
+            ),
+            make_message(
+                ts=t0,
+                platform=build.Platform.CODEX,
+                role=build.Role.HUMAN,
+                content="run tests",
+                conversation_id="cx-1",
+                model_id="gpt-5.2-codex",
+                model_provider="openai",
+            ),
+        ]
+        source_views, defaults = build.compute_source_views(messages, config)
+        metrics = dict(source_views["both"])
+        metrics["source_views"] = source_views
+        metrics["default_view"] = defaults["default_view"]
+
+        html = build.generate_dashboard_html(metrics)
+
+        self.assertIn('id="copyLaunchSummaryBtn"', html)
+        self.assertIn('id="copyReleaseNotesBtn"', html)
+        self.assertIn('id="copyHnPostBtn"', html)
+        self.assertIn('id="copyLinkedinPostBtn"', html)
+        self.assertIn("const launchPackets =", html)
+
+
 class SourceViewsTests(unittest.TestCase):
     def setUp(self) -> None:
         self.config = build.load_config()
