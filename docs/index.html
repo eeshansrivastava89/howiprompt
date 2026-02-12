@@ -8,7 +8,7 @@
 
     <!-- Open Graph -->
     <meta property="og:title" content="How I Prompt: Dashboard">
-    <meta property="og:description" content="5,759 prompts analyzed. A condensed view of AI conversation patterns.">
+    <meta property="og:description" content="5,531 prompts analyzed. A condensed view of AI conversation patterns.">
     <meta property="og:type" content="website">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -927,7 +927,7 @@
         <header class="header animate">
             <div class="header-left">
                 <h1>How I <span>Prompt</span></h1>
-                <span class="date-range" id="dateRange">Nov 13, 2025 – Feb 11, 2026</span>
+                <span class="date-range" id="dateRange">Dec 12, 2025 – Feb 11, 2026</span>
             </div>
             <div class="header-right">
                 <div class="relative">
@@ -937,7 +937,7 @@
                         class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 pr-8 text-xs sm:text-sm font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                         <option value="both" selected>Both</option>
-                        <option value="claude" >Claude</option>
+                        <option value="claude_code" >Claude Code</option>
                         <option value="codex" >Codex</option>
                     </select>
                     <svg class="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -974,7 +974,7 @@
                     class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1 pr-7 text-xs font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                     <option value="both" selected>Both</option>
-                    <option value="claude" >Claude</option>
+                    <option value="claude_code" >Claude Code</option>
                     <option value="codex" >Codex</option>
                 </select>
                 <svg class="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -990,22 +990,22 @@
         <div class="stat-cards">
             <div class="card animate delay-1">
                 <div class="card-label">Prompts</div>
-                <div class="card-value" id="promptsValue">5,759</div>
-                <div class="card-subtitle" id="promptsSubtitle">82.3 words avg</div>
+                <div class="card-value" id="promptsValue">5,531</div>
+                <div class="card-subtitle" id="promptsSubtitle">83.6 words avg</div>
             </div>
             <div class="card animate delay-2">
                 <div class="card-label">Conversations</div>
-                <div class="card-value" id="conversationsValue">1,160</div>
-                <div class="card-subtitle" id="conversationsSubtitle">14.4 turns avg</div>
+                <div class="card-value" id="conversationsValue">1,133</div>
+                <div class="card-subtitle" id="conversationsSubtitle">14.3 turns avg</div>
             </div>
             <div class="card animate delay-3">
                 <div class="card-label">Words Typed</div>
-                <div class="card-value" id="wordsTypedValue">474K</div>
-                <div class="card-subtitle" id="wordsTypedSubtitle">1088K from assistants</div>
+                <div class="card-value" id="wordsTypedValue">462K</div>
+                <div class="card-subtitle" id="wordsTypedSubtitle">966K from assistants</div>
             </div>
             <div class="card animate delay-4">
                 <div class="card-label">Night Owl</div>
-                <div class="card-value accent" id="nightOwlValue">27.9%</div>
+                <div class="card-value accent" id="nightOwlValue">28.6%</div>
                 <div class="card-subtitle">prompts 11pm–4am</div>
             </div>
         </div>
@@ -1039,7 +1039,7 @@
                     </div>
                     <div class="peak-stat">
                         <span class="peak-stat-label">Response Ratio</span>
-                        <span class="peak-stat-value" id="responseRatioValue">2.3x</span>
+                        <span class="peak-stat-value" id="responseRatioValue">2.1x</span>
                     </div>
                 </div>
             </div>
@@ -1051,25 +1051,25 @@
                     <div class="progress-item">
                         <div class="progress-header">
                             <span class="progress-label">Quick Asks (1-3 turns)</span>
-                            <span class="progress-value" id="quickAsksValue">777</span>
+                            <span class="progress-value" id="quickAsksValue">772</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" id="quickAsksFill" style="width: 67%"></div>
+                            <div class="progress-fill" id="quickAsksFill" style="width: 68%"></div>
                         </div>
                     </div>
                     <div class="progress-item">
                         <div class="progress-header">
                             <span class="progress-label">Working Sessions (4-10)</span>
-                            <span class="progress-value" id="workingSessionsValue">139</span>
+                            <span class="progress-value" id="workingSessionsValue">125</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" id="workingSessionsFill" style="width: 12%"></div>
+                            <div class="progress-fill" id="workingSessionsFill" style="width: 11%"></div>
                         </div>
                     </div>
                     <div class="progress-item">
                         <div class="progress-header">
                             <span class="progress-label">Deep Dives (11+)</span>
-                            <span class="progress-value" id="deepDivesValue">244</span>
+                            <span class="progress-value" id="deepDivesValue">236</span>
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill" id="deepDivesFill" style="width: 21%"></div>
@@ -1091,22 +1091,22 @@
                     <div class="style-item">
                         <div class="style-value" id="politenessValue">8.2</div>
                         <div class="style-label">Politeness</div>
-                        <div class="style-detail" id="politenessDetail">please: 406 · thanks: 39</div>
+                        <div class="style-detail" id="politenessDetail">please: 390 · thanks: 38</div>
                     </div>
                     <div class="style-item">
                         <div class="style-value" id="backtrackValue">8.0</div>
                         <div class="style-label">Backtrack</div>
-                        <div class="style-detail" id="backtrackDetail">actually: 369 · wait: 84</div>
+                        <div class="style-detail" id="backtrackDetail">actually: 357 · wait: 83</div>
                     </div>
                     <div class="style-item">
-                        <div class="style-value" id="questionsValue">17.2%</div>
+                        <div class="style-value" id="questionsValue">16.9%</div>
                         <div class="style-label">Questions</div>
-                        <div class="style-detail" id="questionsDetail">990 total</div>
+                        <div class="style-detail" id="questionsDetail">933 total</div>
                     </div>
                     <div class="style-item">
                         <div class="style-value" id="commandsValue">7.4%</div>
                         <div class="style-label">Commands</div>
-                        <div class="style-detail" id="commandsDetail">426 total</div>
+                        <div class="style-detail" id="commandsDetail">407 total</div>
                     </div>
                 </div>
             </div>
@@ -1125,7 +1125,7 @@
                     <div class="persona-stats">
                         <div class="quadrant-scores">
                             <div class="quadrant-item">
-                                <div class="quadrant-value" id="engagementScore">12.6</div>
+                                <div class="quadrant-value" id="engagementScore">12.5</div>
                                 <div class="quadrant-label">Engagement</div>
                                 <span class="quadrant-tag high" id="engagementTag">
                                     High
@@ -1141,8 +1141,8 @@
                         </div>
                         <div class="signature">
                             <div class="signature-quote">"You're absolutely right."</div>
-                            <div class="signature-count" id="youreRightCount">×307</div>
-                            <div class="signature-label" id="youreRightLabel">0.3× per conversation</div>
+                            <div class="signature-count" id="youreRightCount">×275</div>
+                            <div class="signature-label" id="youreRightLabel">0.2× per conversation</div>
                         </div>
                     </div>
                 </div>
@@ -1186,7 +1186,7 @@
                             <div class="step-num">1</div>
                             <div class="step-content">
                                 <h4>Data Collection</h4>
-                                <p>Reads Claude Code JSONL logs, Claude.ai export conversations.json, and Codex history.jsonl.</p>
+                                <p>Reads Claude Code JSONL logs and Codex history.jsonl from local machine paths.</p>
                             </div>
                         </div>
                         <div class="step-item">
@@ -1318,12 +1318,12 @@
             if (e.key === 'Escape') closeMethodology();
         });
 
-        const sourceViews = {"both": {"generated_at": "2026-02-11T08:10:25.826804+00:00", "volume": {"total_messages": 16680, "total_human": 5759, "total_assistant": 10921, "total_words_human": 474071, "total_words_assistant": 1088537, "total_conversations": 1160, "avg_words_per_prompt": 82.3}, "conversation_depth": {"avg_turns": 14.4, "max_turns": 455, "quick_asks": 777, "working_sessions": 139, "deep_dives": 244}, "response_ratio": 2.3, "temporal": {"heatmap": [[47, 3, 18, 1, 0, 0, 0, 11, 13, 19, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 73, 72, 59], [17, 0, 0, 0, 0, 0, 0, 10, 18, 10, 0, 5, 0, 19, 0, 9, 18, 10, 2, 17, 24, 25, 54, 107], [32, 18, 0, 0, 0, 0, 0, 3, 3, 2, 6, 11, 10, 0, 11, 15, 4, 4, 19, 46, 10, 22, 63, 78], [51, 44, 42, 3, 0, 0, 0, 4, 24, 10, 5, 11, 8, 21, 17, 18, 43, 34, 14, 30, 23, 58, 81, 120], [73, 34, 0, 0, 0, 0, 0, 2, 49, 13, 24, 13, 34, 9, 28, 27, 11, 19, 22, 51, 67, 72, 103, 113], [91, 79, 13, 0, 0, 0, 0, 0, 5, 5, 74, 38, 25, 35, 85, 115, 52, 48, 81, 101, 105, 69, 80, 145], [157, 99, 39, 41, 0, 2, 0, 0, 9, 15, 48, 144, 145, 128, 253, 155, 51, 92, 91, 93, 76, 69, 96, 82]], "night_owl_pct": 27.9, "peak_hour": 23, "peak_hour_count": 704, "peak_day": "Sunday", "peak_day_count": 1885, "hour_counts": {"19": 372, "12": 222, "23": 704, "5": 2, "8": 121, "0": 468, "1": 277, "10": 187, "9": 74, "3": 45, "21": 388, "22": 549, "20": 348, "11": 222, "13": 212, "14": 394, "15": 373, "16": 202, "17": 209, "18": 248, "7": 30, "2": 112}}, "politeness": {"counts": {"please": 406, "thanks": 39, "sorry": 26}, "total": 471, "per_100_prompts": 8.2}, "backtrack": {"counts": {"actually": 369, "wait": 84, "never_mind": 4, "scratch_that": 2}, "total": 459, "per_100_prompts": 8.0}, "question": {"count": 990, "rate": 17.2}, "command": {"count": 426, "rate": 7.4}, "youre_right": {"count": 307, "per_conversation": 0.3}, "persona": {"type": "explorer", "name": "The Explorer", "description": "You question, iterate, and dig deeper. Thinking out loud.", "traits": ["Curious", "Iterative", "Thorough"], "quadrant": {"engagement_score": 12.6, "politeness_score": 4.5, "high_engagement": true, "high_politeness": false}, "scores": {"politeness": 8.2, "backtrack": 8.0, "question_rate": 17.2, "command_rate": 7.4}}, "platform_stats": {"claude_code": {"messages": 4808, "words": 422027, "conversations": 1085, "first_message": "2025-12-12T06:07:04.054000+00:00"}, "claude_ai": {"messages": 228, "words": 11818, "conversations": 27, "first_message": "2025-11-13T03:25:41.719766+00:00"}, "codex": {"messages": 723, "words": 40226, "conversations": 31, "first_message": "2025-12-23T15:58:08+00:00"}}, "date_range": {"first": "2025-11-13T03:25:41.719766+00:00", "last": "2026-02-11T08:09:29+00:00"}}, "claude": {"generated_at": "2026-02-11T08:10:26.065364+00:00", "volume": {"total_messages": 15957, "total_human": 5036, "total_assistant": 10921, "total_words_human": 433845, "total_words_assistant": 1088537, "total_conversations": 1129, "avg_words_per_prompt": 86.1}, "conversation_depth": {"avg_turns": 14.1, "max_turns": 455, "quick_asks": 768, "working_sessions": 130, "deep_dives": 231}, "response_ratio": 2.5, "temporal": {"heatmap": [[35, 2, 4, 0, 0, 0, 0, 11, 13, 18, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 72, 69, 52], [17, 0, 0, 0, 0, 0, 0, 8, 13, 10, 0, 5, 0, 6, 0, 7, 17, 10, 2, 15, 17, 22, 48, 86], [20, 14, 0, 0, 0, 0, 0, 3, 2, 2, 6, 11, 10, 0, 11, 15, 3, 4, 19, 46, 10, 22, 55, 78], [51, 44, 42, 3, 0, 0, 0, 4, 24, 10, 5, 10, 5, 15, 10, 18, 33, 24, 9, 20, 22, 46, 57, 88], [58, 22, 0, 0, 0, 0, 0, 2, 49, 11, 21, 13, 34, 9, 28, 27, 11, 19, 22, 49, 59, 67, 97, 96], [76, 48, 7, 0, 0, 0, 0, 0, 5, 4, 54, 34, 25, 35, 65, 96, 45, 40, 67, 85, 99, 66, 73, 115], [108, 82, 37, 40, 0, 2, 0, 0, 1, 2, 36, 144, 131, 117, 253, 147, 50, 90, 84, 87, 76, 47, 85, 69]], "night_owl_pct": 25.7, "peak_hour": 23, "peak_hour_count": 584, "peak_day": "Sunday", "peak_day_count": 1688, "hour_counts": {"19": 336, "12": 205, "23": 584, "5": 2, "8": 107, "0": 365, "1": 212, "10": 152, "9": 57, "3": 43, "21": 342, "22": 484, "20": 326, "11": 217, "13": 182, "14": 367, "15": 344, "16": 182, "17": 189, "18": 222, "7": 28, "2": 90}}, "politeness": {"counts": {"please": 354, "thanks": 39, "sorry": 21}, "total": 414, "per_100_prompts": 8.2}, "backtrack": {"counts": {"actually": 310, "wait": 70, "never_mind": 3, "scratch_that": 1}, "total": 384, "per_100_prompts": 7.6}, "question": {"count": 858, "rate": 17.0}, "command": {"count": 370, "rate": 7.3}, "youre_right": {"count": 307, "per_conversation": 0.3}, "persona": {"type": "collaborator", "name": "The Collaborator", "description": "You ask questions politely. AI is your partner, not your tool.", "traits": ["Inquisitive", "Courteous", "Partnership-oriented"], "quadrant": {"engagement_score": 12.3, "politeness_score": 4.5, "high_engagement": true, "high_politeness": true}, "scores": {"politeness": 8.2, "backtrack": 7.6, "question_rate": 17.0, "command_rate": 7.3}}, "platform_stats": {"claude_code": {"messages": 4808, "words": 422027, "conversations": 1085, "first_message": "2025-12-12T06:07:04.054000+00:00"}, "claude_ai": {"messages": 228, "words": 11818, "conversations": 27, "first_message": "2025-11-13T03:25:41.719766+00:00"}}, "date_range": {"first": "2025-11-13T03:25:41.719766+00:00", "last": "2026-02-11T06:57:50.887000+00:00"}}, "codex": {"generated_at": "2026-02-11T08:10:26.091125+00:00", "volume": {"total_messages": 723, "total_human": 723, "total_assistant": 0, "total_words_human": 40226, "total_words_assistant": 0, "total_conversations": 31, "avg_words_per_prompt": 55.6}, "conversation_depth": {"avg_turns": 23.3, "max_turns": 136, "quick_asks": 9, "working_sessions": 9, "deep_dives": 13}, "response_ratio": 0.0, "temporal": {"heatmap": [[12, 1, 14, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 7], [0, 0, 0, 0, 0, 0, 0, 2, 5, 0, 0, 0, 0, 13, 0, 2, 1, 0, 0, 2, 7, 3, 6, 21], [12, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 8, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 7, 0, 10, 10, 5, 10, 1, 12, 24, 32], [15, 12, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8, 5, 6, 17], [15, 31, 6, 0, 0, 0, 0, 0, 0, 1, 20, 4, 0, 0, 20, 19, 7, 8, 14, 16, 6, 3, 7, 30], [49, 17, 2, 1, 0, 0, 0, 0, 8, 13, 12, 0, 14, 11, 0, 8, 1, 2, 7, 6, 0, 22, 11, 13]], "night_owl_pct": 43.2, "peak_hour": 23, "peak_hour_count": 120, "peak_day": "Saturday", "peak_day_count": 207, "hour_counts": {"7": 2, "8": 14, "16": 20, "19": 36, "20": 22, "22": 65, "23": 120, "0": 103, "1": 65, "11": 5, "12": 17, "13": 30, "14": 27, "17": 20, "18": 26, "21": 46, "9": 17, "10": 35, "2": 22, "15": 29, "3": 2}}, "politeness": {"counts": {"please": 52, "thanks": 0, "sorry": 5}, "total": 57, "per_100_prompts": 7.9}, "backtrack": {"counts": {"actually": 59, "wait": 14, "never_mind": 1, "scratch_that": 1}, "total": 75, "per_100_prompts": 10.4}, "question": {"count": 132, "rate": 18.3}, "command": {"count": 56, "rate": 7.7}, "youre_right": {"count": 0, "per_conversation": 0.0}, "persona": {"type": "explorer", "name": "The Explorer", "description": "You question, iterate, and dig deeper. Thinking out loud.", "traits": ["Curious", "Iterative", "Thorough"], "quadrant": {"engagement_score": 14.3, "politeness_score": 4.0, "high_engagement": true, "high_politeness": false}, "scores": {"politeness": 7.9, "backtrack": 10.4, "question_rate": 18.3, "command_rate": 7.7}}, "platform_stats": {"codex": {"messages": 723, "words": 40226, "conversations": 31, "first_message": "2025-12-23T15:58:08+00:00"}}, "date_range": {"first": "2025-12-23T15:58:08+00:00", "last": "2026-02-11T08:09:29+00:00"}}};
+        const sourceViews = {"both": {"generated_at": "2026-02-12T04:07:58.088169+00:00", "volume": {"total_messages": 16223, "total_human": 5531, "total_assistant": 10692, "total_words_human": 462253, "total_words_assistant": 966052, "total_conversations": 1133, "avg_words_per_prompt": 83.6}, "conversation_depth": {"avg_turns": 14.3, "max_turns": 455, "quick_asks": 772, "working_sessions": 125, "deep_dives": 236}, "response_ratio": 2.1, "temporal": {"heatmap": [[47, 3, 18, 1, 0, 0, 0, 5, 3, 19, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 73, 71, 59], [17, 0, 0, 0, 0, 0, 0, 9, 17, 4, 0, 5, 0, 19, 0, 8, 13, 10, 2, 14, 19, 25, 39, 107], [32, 18, 0, 0, 0, 0, 0, 3, 1, 2, 6, 11, 10, 0, 11, 15, 4, 4, 19, 6, 10, 22, 60, 78], [51, 40, 42, 2, 0, 0, 0, 4, 20, 9, 5, 11, 8, 21, 17, 18, 43, 34, 14, 30, 22, 52, 77, 120], [68, 31, 0, 0, 0, 0, 0, 2, 47, 13, 18, 12, 30, 6, 28, 27, 11, 17, 21, 45, 66, 72, 99, 113], [91, 79, 13, 0, 0, 0, 0, 0, 5, 5, 71, 37, 24, 35, 85, 115, 52, 48, 78, 97, 103, 69, 80, 142], [152, 99, 39, 41, 0, 0, 0, 0, 8, 15, 48, 144, 145, 120, 253, 155, 50, 76, 87, 92, 75, 64, 91, 78]], "night_owl_pct": 28.6, "peak_hour": 23, "peak_hour_count": 697, "peak_day": "Sunday", "peak_day_count": 1832, "hour_counts": {"22": 517, "23": 697, "8": 101, "20": 338, "21": 377, "0": 458, "11": 220, "12": 217, "13": 201, "14": 394, "15": 372, "16": 196, "19": 318, "1": 270, "10": 178, "17": 191, "18": 240, "7": 23, "9": 67, "2": 112, "3": 44}}, "politeness": {"counts": {"please": 390, "thanks": 38, "sorry": 24}, "total": 452, "per_100_prompts": 8.2}, "backtrack": {"counts": {"actually": 357, "wait": 83, "never_mind": 4, "scratch_that": 1}, "total": 445, "per_100_prompts": 8.0}, "question": {"count": 933, "rate": 16.9}, "command": {"count": 407, "rate": 7.4}, "youre_right": {"count": 275, "per_conversation": 0.2}, "persona": {"type": "explorer", "name": "The Explorer", "description": "You question, iterate, and dig deeper. Thinking out loud.", "traits": ["Curious", "Iterative", "Thorough"], "quadrant": {"engagement_score": 12.5, "politeness_score": 4.5, "high_engagement": true, "high_politeness": false}, "scores": {"politeness": 8.2, "backtrack": 8.0, "question_rate": 16.9, "command_rate": 7.4}}, "platform_stats": {"claude_code": {"messages": 4808, "words": 422027, "conversations": 1085, "first_message": "2025-12-12T06:07:04.054000+00:00"}, "codex": {"messages": 723, "words": 40226, "conversations": 31, "first_message": "2025-12-23T15:58:08+00:00"}}, "date_range": {"first": "2025-12-12T06:07:04.054000+00:00", "last": "2026-02-11T08:09:29+00:00"}}, "claude_code": {"generated_at": "2026-02-12T04:07:59.712829+00:00", "volume": {"total_messages": 15500, "total_human": 4808, "total_assistant": 10692, "total_words_human": 422027, "total_words_assistant": 966052, "total_conversations": 1102, "avg_words_per_prompt": 87.8}, "conversation_depth": {"avg_turns": 14.1, "max_turns": 455, "quick_asks": 763, "working_sessions": 116, "deep_dives": 223}, "response_ratio": 2.3, "temporal": {"heatmap": [[35, 2, 4, 0, 0, 0, 0, 5, 3, 18, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 72, 68, 52], [17, 0, 0, 0, 0, 0, 0, 7, 12, 4, 0, 5, 0, 6, 0, 6, 12, 10, 2, 12, 12, 22, 33, 86], [20, 14, 0, 0, 0, 0, 0, 3, 0, 2, 6, 11, 10, 0, 11, 15, 3, 4, 19, 6, 10, 22, 52, 78], [51, 40, 42, 2, 0, 0, 0, 4, 20, 9, 5, 10, 5, 15, 10, 18, 33, 24, 9, 20, 21, 40, 53, 88], [53, 19, 0, 0, 0, 0, 0, 2, 47, 11, 15, 12, 30, 6, 28, 27, 11, 17, 21, 43, 58, 67, 93, 96], [76, 48, 7, 0, 0, 0, 0, 0, 5, 4, 51, 33, 24, 35, 65, 96, 45, 40, 64, 81, 97, 66, 73, 112], [103, 82, 37, 40, 0, 0, 0, 0, 0, 2, 36, 144, 131, 109, 253, 147, 49, 74, 80, 86, 75, 42, 80, 65]], "night_owl_pct": 26.4, "peak_hour": 23, "peak_hour_count": 577, "peak_day": "Sunday", "peak_day_count": 1635, "hour_counts": {"22": 452, "23": 577, "8": 87, "20": 316, "21": 331, "0": 355, "11": 215, "12": 200, "13": 171, "14": 367, "15": 343, "16": 176, "19": 282, "1": 205, "10": 143, "17": 171, "18": 214, "7": 21, "9": 50, "2": 90, "3": 42}}, "politeness": {"counts": {"please": 338, "thanks": 38, "sorry": 19}, "total": 395, "per_100_prompts": 8.2}, "backtrack": {"counts": {"actually": 298, "wait": 69, "never_mind": 3, "scratch_that": 0}, "total": 370, "per_100_prompts": 7.7}, "question": {"count": 801, "rate": 16.7}, "command": {"count": 351, "rate": 7.3}, "youre_right": {"count": 275, "per_conversation": 0.2}, "persona": {"type": "collaborator", "name": "The Collaborator", "description": "You ask questions politely. AI is your partner, not your tool.", "traits": ["Inquisitive", "Courteous", "Partnership-oriented"], "quadrant": {"engagement_score": 12.2, "politeness_score": 4.6, "high_engagement": true, "high_politeness": true}, "scores": {"politeness": 8.2, "backtrack": 7.7, "question_rate": 16.7, "command_rate": 7.3}}, "platform_stats": {"claude_code": {"messages": 4808, "words": 422027, "conversations": 1085, "first_message": "2025-12-12T06:07:04.054000+00:00"}}, "date_range": {"first": "2025-12-12T06:07:04.054000+00:00", "last": "2026-02-11T06:57:50.887000+00:00"}}, "codex": {"generated_at": "2026-02-12T04:07:59.944019+00:00", "volume": {"total_messages": 723, "total_human": 723, "total_assistant": 0, "total_words_human": 40226, "total_words_assistant": 0, "total_conversations": 31, "avg_words_per_prompt": 55.6}, "conversation_depth": {"avg_turns": 23.3, "max_turns": 136, "quick_asks": 9, "working_sessions": 9, "deep_dives": 13}, "response_ratio": 0.0, "temporal": {"heatmap": [[12, 1, 14, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 7], [0, 0, 0, 0, 0, 0, 0, 2, 5, 0, 0, 0, 0, 13, 0, 2, 1, 0, 0, 2, 7, 3, 6, 21], [12, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 8, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 7, 0, 10, 10, 5, 10, 1, 12, 24, 32], [15, 12, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8, 5, 6, 17], [15, 31, 6, 0, 0, 0, 0, 0, 0, 1, 20, 4, 0, 0, 20, 19, 7, 8, 14, 16, 6, 3, 7, 30], [49, 17, 2, 1, 0, 0, 0, 0, 8, 13, 12, 0, 14, 11, 0, 8, 1, 2, 7, 6, 0, 22, 11, 13]], "night_owl_pct": 43.2, "peak_hour": 23, "peak_hour_count": 120, "peak_day": "Saturday", "peak_day_count": 207, "hour_counts": {"7": 2, "8": 14, "16": 20, "19": 36, "20": 22, "22": 65, "23": 120, "0": 103, "1": 65, "11": 5, "12": 17, "13": 30, "14": 27, "17": 20, "18": 26, "21": 46, "9": 17, "10": 35, "2": 22, "15": 29, "3": 2}}, "politeness": {"counts": {"please": 52, "thanks": 0, "sorry": 5}, "total": 57, "per_100_prompts": 7.9}, "backtrack": {"counts": {"actually": 59, "wait": 14, "never_mind": 1, "scratch_that": 1}, "total": 75, "per_100_prompts": 10.4}, "question": {"count": 132, "rate": 18.3}, "command": {"count": 56, "rate": 7.7}, "youre_right": {"count": 0, "per_conversation": 0.0}, "persona": {"type": "explorer", "name": "The Explorer", "description": "You question, iterate, and dig deeper. Thinking out loud.", "traits": ["Curious", "Iterative", "Thorough"], "quadrant": {"engagement_score": 14.3, "politeness_score": 4.0, "high_engagement": true, "high_politeness": false}, "scores": {"politeness": 7.9, "backtrack": 10.4, "question_rate": 18.3, "command_rate": 7.7}}, "platform_stats": {"codex": {"messages": 723, "words": 40226, "conversations": 31, "first_message": "2025-12-23T15:58:08+00:00"}}, "date_range": {"first": "2025-12-23T15:58:08+00:00", "last": "2026-02-11T08:09:29+00:00"}}};
         const defaultSource = "both";
         const sourceFilter = document.getElementById('sourceFilter');
         const sourceFilterMobile = document.getElementById('sourceFilterMobile');
         const sourceStorageKey = 'dashboard-source-filter';
-        const fallbackHeatmap = [[47, 3, 18, 1, 0, 0, 0, 11, 13, 19, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 73, 72, 59], [17, 0, 0, 0, 0, 0, 0, 10, 18, 10, 0, 5, 0, 19, 0, 9, 18, 10, 2, 17, 24, 25, 54, 107], [32, 18, 0, 0, 0, 0, 0, 3, 3, 2, 6, 11, 10, 0, 11, 15, 4, 4, 19, 46, 10, 22, 63, 78], [51, 44, 42, 3, 0, 0, 0, 4, 24, 10, 5, 11, 8, 21, 17, 18, 43, 34, 14, 30, 23, 58, 81, 120], [73, 34, 0, 0, 0, 0, 0, 2, 49, 13, 24, 13, 34, 9, 28, 27, 11, 19, 22, 51, 67, 72, 103, 113], [91, 79, 13, 0, 0, 0, 0, 0, 5, 5, 74, 38, 25, 35, 85, 115, 52, 48, 81, 101, 105, 69, 80, 145], [157, 99, 39, 41, 0, 2, 0, 0, 9, 15, 48, 144, 145, 128, 253, 155, 51, 92, 91, 93, 76, 69, 96, 82]];
+        const fallbackHeatmap = [[47, 3, 18, 1, 0, 0, 0, 5, 3, 19, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 73, 71, 59], [17, 0, 0, 0, 0, 0, 0, 9, 17, 4, 0, 5, 0, 19, 0, 8, 13, 10, 2, 14, 19, 25, 39, 107], [32, 18, 0, 0, 0, 0, 0, 3, 1, 2, 6, 11, 10, 0, 11, 15, 4, 4, 19, 6, 10, 22, 60, 78], [51, 40, 42, 2, 0, 0, 0, 4, 20, 9, 5, 11, 8, 21, 17, 18, 43, 34, 14, 30, 22, 52, 77, 120], [68, 31, 0, 0, 0, 0, 0, 2, 47, 13, 18, 12, 30, 6, 28, 27, 11, 17, 21, 45, 66, 72, 99, 113], [91, 79, 13, 0, 0, 0, 0, 0, 5, 5, 71, 37, 24, 35, 85, 115, 52, 48, 78, 97, 103, 69, 80, 142], [152, 99, 39, 41, 0, 0, 0, 0, 8, 15, 48, 144, 145, 120, 253, 155, 50, 76, 87, 92, 75, 64, 91, 78]];
 
         function formatNumber(value) {
             return (Number(value) || 0).toLocaleString();
@@ -1480,7 +1480,7 @@
         }
 
         function initSourceFilter() {
-            const available = ['both', 'claude', 'codex'].filter((key) => Boolean(getView(key)));
+            const available = ['both', 'claude_code', 'codex'].filter((key) => Boolean(getView(key)));
             [sourceFilter, sourceFilterMobile].forEach((select) => {
                 Array.from(select.options).forEach((option) => {
                     option.disabled = !available.includes(option.value);
@@ -1488,6 +1488,9 @@
             });
 
             let selected = localStorage.getItem(sourceStorageKey) || defaultSource;
+            if (selected === 'claude' && available.includes('claude_code')) {
+                selected = 'claude_code';
+            }
             if (!available.includes(selected)) {
                 selected = available[0] || 'both';
             }

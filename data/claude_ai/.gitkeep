@@ -1,3 +1,3 @@
-# Place your Claude.ai export here
+# Legacy folder (Claude.ai is deprecated in v2 and ignored by build.py)
 # Get it from: claude.ai → Settings → Export Data
 # Expected file: conversations.json

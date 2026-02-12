@@ -3,7 +3,7 @@
 How I Prompt Wrapped 2025 - Build System
 
 One-click command to:
-1. Parse Claude Code + Claude.ai conversations
+1. Parse Claude Code + Codex conversations
 2. Compute all metrics
 3. Classify into 1 of 4 personas (algorithmic 2x2 matrix)
 4. Generate index.html
@@ -16,11 +16,13 @@ Usage:
     python build.py --no-open          # Build only; do not open dashboard in browser
 
 Data setup:
-    1. Copy your Claude.ai export to: data/claude_ai/conversations.json
-    2. Copy your Claude Code data to: data/claude_code/
+    1. Copy your Claude Code data to: data/claude_code/
        (auto-copied from ~/.claude/projects by default)
-    3. Copy your Codex history to: data/codex/history.jsonl
+    2. Copy your Codex history to: data/codex/history.jsonl
        (auto-copied from ~/.codex/history.jsonl by default)
+
+Migration note:
+    Claude.ai exports are deprecated in v2 and ignored by this pipeline.
 """
 
 import argparse
@@ -56,7 +58,6 @@ class Config:
 
     # Data sources - always read from data/ folder
     claude_code_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "claude_code")
-    claude_ai_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "claude_ai" / "conversations.json")
     codex_history_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "codex" / "history.jsonl")
 
     # Output directory (relative to project root)
@@ -89,7 +90,6 @@ def load_branding() -> dict | None:
 # === Data Models ===
 class Platform(str, Enum):
     CLAUDE_CODE = "claude_code"
-    CLAUDE_AI = "claude_ai"
     CODEX = "codex"
 
 
@@ -234,56 +234,6 @@ def parse_claude_code(source_path: Path) -> Iterator[Message]:
                     )
 
     logger.info(f"  Claude Code: {messages_parsed} messages from {files_parsed} files")
-
-
-def parse_claude_ai(source_path: Path) -> Iterator[Message]:
-    """Parse Claude.ai conversations export."""
-    if not source_path or not source_path.exists():
-        logger.warning(f"Claude.ai export not found: {source_path}")
-        return
-
-    with open(source_path, 'r') as f:
-        conversations = json.load(f)
-
-    messages_parsed = 0
-
-    for conv in conversations:
-        conv_id = conv.get("uuid", "unknown")
-        chat_messages = conv.get("chat_messages", [])
-
-        for msg in chat_messages:
-            sender = msg.get("sender", "")
-            text = msg.get("text", "")
-
-            if not text or not text.strip():
-                continue
-
-            if sender == "human":
-                role = Role.HUMAN
-            elif sender == "assistant":
-                role = Role.ASSISTANT
-            else:
-                continue
-
-            created_at = msg.get("created_at")
-            if not created_at:
-                continue
-            try:
-                timestamp = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
-            except (ValueError, AttributeError):
-                continue
-
-            messages_parsed += 1
-            yield Message(
-                timestamp=timestamp,
-                platform=Platform.CLAUDE_AI,
-                role=role,
-                content=text,
-                conversation_id=conv_id,
-                word_count=len(text.split())
-            )
-
-    logger.info(f"  Claude.ai: {messages_parsed} messages from {len(conversations)} conversations")
 
 
 def parse_codex_history(source_path: Path) -> Iterator[Message]:
@@ -605,29 +555,26 @@ def compute_source_views(messages: list[Message], config: Config) -> tuple[dict,
     Build source-scoped metric views for dashboard filtering.
 
     Source semantics:
-      - both: Claude + Codex
-      - claude: Claude Code + Claude.ai
+      - both: Claude Code + Codex
+      - claude_code: Claude Code only
       - codex: Codex only
     """
-    claude_messages = [
-        m for m in messages
-        if m.platform in (Platform.CLAUDE_CODE, Platform.CLAUDE_AI)
-    ]
+    claude_code_messages = [m for m in messages if m.platform == Platform.CLAUDE_CODE]
     codex_messages = [m for m in messages if m.platform == Platform.CODEX]
 
     all_metrics = compute_metrics(messages, config)
-    claude_metrics = compute_metrics(claude_messages, config) if has_human_messages(claude_messages) else None
+    claude_code_metrics = compute_metrics(claude_code_messages, config) if has_human_messages(claude_code_messages) else None
     codex_metrics = compute_metrics(codex_messages, config) if has_human_messages(codex_messages) else None
 
     source_views = {
         "both": all_metrics,
-        "claude": claude_metrics,
+        "claude_code": claude_code_metrics,
         "codex": codex_metrics,
     }
 
     default_view = "both"
     if source_views[default_view] is None:
-        for candidate in ("claude", "codex"):
+        for candidate in ("claude_code", "codex"):
             if source_views[candidate] is not None:
                 default_view = candidate
                 break
@@ -701,7 +648,7 @@ def generate_header(branding: dict, personas: dict) -> str:
                                 <div class="w-7 h-7 shrink-0 rounded-full bg-accent/20 text-accent flex items-center justify-center text-sm font-bold">1</div>
                                 <div>
                                     <p class="font-semibold text-base">Data Collection</p>
-                                    <p class="text-muted text-sm leading-relaxed">Reads JSONL conversation logs from Claude Code (~/.claude/projects/) and parses the conversations.json export from Claude.ai.</p>
+                                    <p class="text-muted text-sm leading-relaxed">Reads JSONL conversation logs from Claude Code (~/.claude/projects/) and Codex history from ~/.codex/history.jsonl.</p>
                                 </div>
                             </div>
                             <div class="flex gap-3">
@@ -1463,14 +1410,17 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
 def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
     """Generate single-page dashboard HTML from metrics."""
 
-    source_views = metrics.get("source_views", {"both": metrics, "claude": None, "codex": None})
+    source_views = metrics.get("source_views", {"both": metrics, "claude_code": None, "codex": None})
+    # Backward-compat for older artifacts that used "claude" as a view key.
+    if "claude_code" not in source_views and "claude" in source_views:
+        source_views["claude_code"] = source_views["claude"]
     source_views.setdefault("both", metrics)
-    source_views.setdefault("claude", None)
+    source_views.setdefault("claude_code", None)
     source_views.setdefault("codex", None)
 
     default_source = metrics.get("default_view", "both")
     if source_views.get(default_source) is None:
-        for candidate in ("both", "claude", "codex"):
+        for candidate in ("both", "claude_code", "codex"):
             if source_views.get(candidate) is not None:
                 default_source = candidate
                 break
@@ -2460,7 +2410,7 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
                         class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 pr-8 text-xs sm:text-sm font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                         <option value="both" {'selected' if default_source == 'both' else ''}>Both</option>
-                        <option value="claude" {'selected' if default_source == 'claude' else ''}>Claude</option>
+                        <option value="claude_code" {'selected' if default_source == 'claude_code' else ''}>Claude Code</option>
                         <option value="codex" {'selected' if default_source == 'codex' else ''}>Codex</option>
                     </select>
                     <svg class="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -2497,7 +2447,7 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
                     class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1 pr-7 text-xs font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                     <option value="both" {'selected' if default_source == 'both' else ''}>Both</option>
-                    <option value="claude" {'selected' if default_source == 'claude' else ''}>Claude</option>
+                    <option value="claude_code" {'selected' if default_source == 'claude_code' else ''}>Claude Code</option>
                     <option value="codex" {'selected' if default_source == 'codex' else ''}>Codex</option>
                 </select>
                 <svg class="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -2709,7 +2659,7 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
                             <div class="step-num">1</div>
                             <div class="step-content">
                                 <h4>Data Collection</h4>
-                                <p>Reads Claude Code JSONL logs, Claude.ai export conversations.json, and Codex history.jsonl.</p>
+                                <p>Reads Claude Code JSONL logs and Codex history.jsonl from local machine paths.</p>
                             </div>
                         </div>
                         <div class="step-item">
@@ -3003,7 +2953,7 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
         }}
 
         function initSourceFilter() {{
-            const available = ['both', 'claude', 'codex'].filter((key) => Boolean(getView(key)));
+            const available = ['both', 'claude_code', 'codex'].filter((key) => Boolean(getView(key)));
             [sourceFilter, sourceFilterMobile].forEach((select) => {{
                 Array.from(select.options).forEach((option) => {{
                     option.disabled = !available.includes(option.value);
@@ -3011,6 +2961,9 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
             }});
 
             let selected = localStorage.getItem(sourceStorageKey) || defaultSource;
+            if (selected === 'claude' && available.includes('claude_code')) {{
+                selected = 'claude_code';
+            }}
             if (!available.includes(selected)) {{
                 selected = available[0] || 'both';
             }}
@@ -3152,7 +3105,6 @@ Examples:
     print("\n[1/3] Parsing data sources...")
     messages = []
     messages.extend(parse_claude_code(config.claude_code_path))
-    messages.extend(parse_claude_ai(config.claude_ai_path))
     messages.extend(parse_codex_history(config.codex_history_path))
     messages.sort(key=lambda m: m.timestamp)
     print(f"  Total: {len(messages)} messages")
@@ -3165,7 +3117,7 @@ Examples:
     print("\n[2/3] Computing metrics...")
     source_views, source_defaults = compute_source_views(messages, config)
     dashboard_default_view = source_defaults["default_view"]
-    wrapped_base_view = "claude" if source_views.get("claude") is not None else dashboard_default_view
+    wrapped_base_view = "claude_code" if source_views.get("claude_code") is not None else dashboard_default_view
 
     metrics = dict(source_views[wrapped_base_view])
     metrics["source_views"] = source_views
