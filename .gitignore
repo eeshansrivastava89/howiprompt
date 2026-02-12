@@ -7,8 +7,10 @@ internal/
 # Data (user's private data)
 data/claude_code/*
 data/claude_ai/*
+data/codex/*
 !data/claude_code/.gitkeep
 !data/claude_ai/.gitkeep
+!data/codex/.gitkeep
 
 # Branding (personal config - use branding.example.json as template)
 branding.json

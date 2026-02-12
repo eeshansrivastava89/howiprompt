@@ -11,19 +11,26 @@ One-click command to:
 Usage:
     python build.py                    # Full build (reads from data/ folder)
     python build.py --metrics-only     # Only compute metrics.json
-    python build.py --copy-claude-code # Copy Claude Code data from ~/.claude/projects
+    python build.py --skip-copy-claude-code # Skip auto-sync for Claude Code logs
+    python build.py --skip-copy-codex  # Skip auto-sync for Codex history
+    python build.py --no-open          # Build only; do not open dashboard in browser
 
 Data setup:
     1. Copy your Claude.ai export to: data/claude_ai/conversations.json
     2. Copy your Claude Code data to: data/claude_code/
-       OR run: python build.py --copy-claude-code
+       (auto-copied from ~/.claude/projects by default)
+    3. Copy your Codex history to: data/codex/history.jsonl
+       (auto-copied from ~/.codex/history.jsonl by default)
 """
 
 import argparse
 import json
 import logging
 import re
+import shutil
+import subprocess
 import sys
+import webbrowser
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -50,6 +57,7 @@ class Config:
     # Data sources - always read from data/ folder
     claude_code_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "claude_code")
     claude_ai_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "claude_ai" / "conversations.json")
+    codex_history_path: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "codex" / "history.jsonl")
 
     # Output directory (relative to project root)
     output_dir: Path = field(default_factory=lambda: PROJECT_ROOT / "output")
@@ -82,6 +90,7 @@ def load_branding() -> dict | None:
 class Platform(str, Enum):
     CLAUDE_CODE = "claude_code"
     CLAUDE_AI = "claude_ai"
+    CODEX = "codex"
 
 
 class Role(str, Enum):
@@ -275,6 +284,49 @@ def parse_claude_ai(source_path: Path) -> Iterator[Message]:
             )
 
     logger.info(f"  Claude.ai: {messages_parsed} messages from {len(conversations)} conversations")
+
+
+def parse_codex_history(source_path: Path) -> Iterator[Message]:
+    """Parse Codex history.jsonl (user prompts only)."""
+    if not source_path or not source_path.exists():
+        logger.warning(f"Codex history not found: {source_path}")
+        return
+
+    messages_parsed = 0
+
+    with open(source_path, 'r') as f:
+        for line in f:
+            try:
+                entry = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+
+            text = entry.get("text", "")
+            if not isinstance(text, str) or not text.strip():
+                continue
+
+            ts = entry.get("ts")
+            if not isinstance(ts, (int, float)):
+                continue
+
+            session_id = str(entry.get("session_id", "unknown"))
+
+            try:
+                timestamp = datetime.fromtimestamp(ts, tz=timezone.utc)
+            except (ValueError, OSError):
+                continue
+
+            messages_parsed += 1
+            yield Message(
+                timestamp=timestamp,
+                platform=Platform.CODEX,
+                role=Role.HUMAN,
+                content=text,
+                conversation_id=session_id,
+                word_count=len(text.split())
+            )
+
+    logger.info(f"  Codex: {messages_parsed} messages from history.jsonl")
 
 
 # === Persona Classification (2x2 Matrix Algorithm) ===
@@ -541,6 +593,46 @@ def compute_metrics(messages: list[Message], config: Config) -> dict:
             "last": last_msg.isoformat(),
         },
     }
+
+
+def has_human_messages(messages: list[Message]) -> bool:
+    """Return True if the message list contains at least one human message."""
+    return any(m.role == Role.HUMAN for m in messages)
+
+
+def compute_source_views(messages: list[Message], config: Config) -> tuple[dict, dict]:
+    """
+    Build source-scoped metric views for dashboard filtering.
+
+    Source semantics:
+      - both: Claude + Codex
+      - claude: Claude Code + Claude.ai
+      - codex: Codex only
+    """
+    claude_messages = [
+        m for m in messages
+        if m.platform in (Platform.CLAUDE_CODE, Platform.CLAUDE_AI)
+    ]
+    codex_messages = [m for m in messages if m.platform == Platform.CODEX]
+
+    all_metrics = compute_metrics(messages, config)
+    claude_metrics = compute_metrics(claude_messages, config) if has_human_messages(claude_messages) else None
+    codex_metrics = compute_metrics(codex_messages, config) if has_human_messages(codex_messages) else None
+
+    source_views = {
+        "both": all_metrics,
+        "claude": claude_metrics,
+        "codex": codex_metrics,
+    }
+
+    default_view = "both"
+    if source_views[default_view] is None:
+        for candidate in ("claude", "codex"):
+            if source_views[candidate] is not None:
+                default_view = candidate
+                break
+
+    return source_views, {"default_view": default_view}
 
 
 # === HTML Generation ===
@@ -1371,7 +1463,19 @@ def generate_html(metrics: dict, branding: dict | None = None) -> str:
 def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
     """Generate single-page dashboard HTML from metrics."""
 
-    m = metrics
+    source_views = metrics.get("source_views", {"both": metrics, "claude": None, "codex": None})
+    source_views.setdefault("both", metrics)
+    source_views.setdefault("claude", None)
+    source_views.setdefault("codex", None)
+
+    default_source = metrics.get("default_view", "both")
+    if source_views.get(default_source) is None:
+        for candidate in ("both", "claude", "codex"):
+            if source_views.get(candidate) is not None:
+                default_source = candidate
+                break
+
+    m = source_views.get(default_source) or metrics
     v = m["volume"]
     t = m["temporal"]
     pol = m["politeness"]
@@ -1399,6 +1503,8 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
 
     # Heatmap data for JS
     heatmap_json = json.dumps(t["heatmap"])
+    source_views_json = json.dumps(source_views)
+    default_source_json = json.dumps(default_source)
 
     # Conversation depth percentages
     total_convos = cd.get('quick_asks', 0) + cd.get('working_sessions', 0) + cd.get('deep_dives', 0)
@@ -1431,6 +1537,14 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {{
+            corePlugins: {{
+                preflight: false
+            }}
+        }};
+    </script>
 
     <style>
         * {{
@@ -2336,9 +2450,23 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
         <header class="header animate">
             <div class="header-left">
                 <h1>How I <span>Prompt</span></h1>
-                <span class="date-range">{date_range_display}</span>
+                <span class="date-range" id="dateRange">{date_range_display}</span>
             </div>
             <div class="header-right">
+                <div class="relative">
+                    <label for="sourceFilter" class="sr-only">Data source</label>
+                    <select
+                        id="sourceFilter"
+                        class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 pr-8 text-xs sm:text-sm font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    >
+                        <option value="both" {'selected' if default_source == 'both' else ''}>Both</option>
+                        <option value="claude" {'selected' if default_source == 'claude' else ''}>Claude</option>
+                        <option value="codex" {'selected' if default_source == 'codex' else ''}>Codex</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.157l3.71-3.928a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </div>
                 <div class="desktop-nav" style="gap: 20px; align-items: center;">
                     <a href="/wrapped" class="accent-link">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
@@ -2363,6 +2491,19 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
         </header>
         <!-- Mobile nav links -->
         <div class="mobile-nav animate">
+            <div class="relative">
+                <select
+                    id="sourceFilterMobile"
+                    class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1 pr-7 text-xs font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                    <option value="both" {'selected' if default_source == 'both' else ''}>Both</option>
+                    <option value="claude" {'selected' if default_source == 'claude' else ''}>Claude</option>
+                    <option value="codex" {'selected' if default_source == 'codex' else ''}>Codex</option>
+                </select>
+                <svg class="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.157l3.71-3.928a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                </svg>
+            </div>
             <a href="/wrapped" class="accent-link" style="padding: 4px 12px; font-size: 13px;">Wrapped</a>
             <button onclick="openMethodology()" class="nav-link">Methodology</button>
             <a href="{github_repo}" target="_blank" class="nav-link">Build Your Own</a>
@@ -2372,22 +2513,22 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
         <div class="stat-cards">
             <div class="card animate delay-1">
                 <div class="card-label">Prompts</div>
-                <div class="card-value">{v['total_human']:,}</div>
-                <div class="card-subtitle">{v['avg_words_per_prompt']} words avg</div>
+                <div class="card-value" id="promptsValue">{v['total_human']:,}</div>
+                <div class="card-subtitle" id="promptsSubtitle">{v['avg_words_per_prompt']} words avg</div>
             </div>
             <div class="card animate delay-2">
                 <div class="card-label">Conversations</div>
-                <div class="card-value">{v['total_conversations']:,}</div>
-                <div class="card-subtitle">{cd.get('avg_turns', 0)} turns avg</div>
+                <div class="card-value" id="conversationsValue">{v['total_conversations']:,}</div>
+                <div class="card-subtitle" id="conversationsSubtitle">{cd.get('avg_turns', 0)} turns avg</div>
             </div>
             <div class="card animate delay-3">
                 <div class="card-label">Words Typed</div>
-                <div class="card-value">{v['total_words_human'] // 1000}K</div>
-                <div class="card-subtitle">{v['total_words_assistant'] // 1000}K from Claude</div>
+                <div class="card-value" id="wordsTypedValue">{v['total_words_human'] // 1000}K</div>
+                <div class="card-subtitle" id="wordsTypedSubtitle">{v['total_words_assistant'] // 1000}K from assistants</div>
             </div>
             <div class="card animate delay-4">
                 <div class="card-label">Night Owl</div>
-                <div class="card-value accent">{t['night_owl_pct']}%</div>
+                <div class="card-value accent" id="nightOwlValue">{t['night_owl_pct']}%</div>
                 <div class="card-subtitle">prompts 11pm–4am</div>
             </div>
         </div>
@@ -2413,15 +2554,15 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
                 <div class="peak-stats">
                     <div class="peak-stat">
                         <span class="peak-stat-label">Peak Hour</span>
-                        <span class="peak-stat-value">{peak_hour_12h}</span>
+                        <span class="peak-stat-value" id="peakHourValue">{peak_hour_12h}</span>
                     </div>
                     <div class="peak-stat">
                         <span class="peak-stat-label">Peak Day</span>
-                        <span class="peak-stat-value">{t['peak_day']}</span>
+                        <span class="peak-stat-value" id="peakDayValue">{t['peak_day']}</span>
                     </div>
                     <div class="peak-stat">
                         <span class="peak-stat-label">Response Ratio</span>
-                        <span class="peak-stat-value">{rr}x</span>
+                        <span class="peak-stat-value" id="responseRatioValue">{rr}x</span>
                     </div>
                 </div>
             </div>
@@ -2433,35 +2574,35 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
                     <div class="progress-item">
                         <div class="progress-header">
                             <span class="progress-label">Quick Asks (1-3 turns)</span>
-                            <span class="progress-value">{cd.get('quick_asks', 0)}</span>
+                            <span class="progress-value" id="quickAsksValue">{cd.get('quick_asks', 0)}</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: {quick_pct}%"></div>
+                            <div class="progress-fill" id="quickAsksFill" style="width: {quick_pct}%"></div>
                         </div>
                     </div>
                     <div class="progress-item">
                         <div class="progress-header">
                             <span class="progress-label">Working Sessions (4-10)</span>
-                            <span class="progress-value">{cd.get('working_sessions', 0)}</span>
+                            <span class="progress-value" id="workingSessionsValue">{cd.get('working_sessions', 0)}</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: {working_pct}%"></div>
+                            <div class="progress-fill" id="workingSessionsFill" style="width: {working_pct}%"></div>
                         </div>
                     </div>
                     <div class="progress-item">
                         <div class="progress-header">
                             <span class="progress-label">Deep Dives (11+)</span>
-                            <span class="progress-value">{cd.get('deep_dives', 0)}</span>
+                            <span class="progress-value" id="deepDivesValue">{cd.get('deep_dives', 0)}</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: {deep_pct}%"></div>
+                            <div class="progress-fill" id="deepDivesFill" style="width: {deep_pct}%"></div>
                         </div>
                     </div>
                 </div>
                 <div class="peak-stats" style="margin-top: 16px;">
                     <div class="peak-stat">
                         <span class="peak-stat-label">Longest Session</span>
-                        <span class="peak-stat-value">{cd.get('max_turns', 0)} turns</span>
+                        <span class="peak-stat-value" id="longestSessionValue">{cd.get('max_turns', 0)} turns</span>
                     </div>
                 </div>
             </div>
@@ -2471,24 +2612,24 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
                 <div class="card-label">Prompt Style</div>
                 <div class="style-grid" style="margin-top: 12px;">
                     <div class="style-item">
-                        <div class="style-value">{pol['per_100_prompts']}</div>
+                        <div class="style-value" id="politenessValue">{pol['per_100_prompts']}</div>
                         <div class="style-label">Politeness</div>
-                        <div class="style-detail">please: {pol['counts']['please']} · thanks: {pol['counts']['thanks']}</div>
+                        <div class="style-detail" id="politenessDetail">please: {pol['counts']['please']} · thanks: {pol['counts']['thanks']}</div>
                     </div>
                     <div class="style-item">
-                        <div class="style-value">{back['per_100_prompts']}</div>
+                        <div class="style-value" id="backtrackValue">{back['per_100_prompts']}</div>
                         <div class="style-label">Backtrack</div>
-                        <div class="style-detail">actually: {back['counts']['actually']} · wait: {back['counts']['wait']}</div>
+                        <div class="style-detail" id="backtrackDetail">actually: {back['counts']['actually']} · wait: {back['counts']['wait']}</div>
                     </div>
                     <div class="style-item">
-                        <div class="style-value">{q['rate']}%</div>
+                        <div class="style-value" id="questionsValue">{q['rate']}%</div>
                         <div class="style-label">Questions</div>
-                        <div class="style-detail">{q['count']} total</div>
+                        <div class="style-detail" id="questionsDetail">{q['count']} total</div>
                     </div>
                     <div class="style-item">
-                        <div class="style-value">{cmd['rate']}%</div>
+                        <div class="style-value" id="commandsValue">{cmd['rate']}%</div>
                         <div class="style-label">Commands</div>
-                        <div class="style-detail">{cmd['count']} total</div>
+                        <div class="style-detail" id="commandsDetail">{cmd['count']} total</div>
                     </div>
                 </div>
             </div>
@@ -2498,33 +2639,33 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
                 <div class="card-label">Your AI Persona</div>
                 <div class="persona-card" style="margin-top: 12px;">
                     <div class="persona-main">
-                        <div class="persona-name">{p['name']}</div>
-                        <div class="persona-desc">{p['description']}</div>
-                        <div class="persona-traits">
+                        <div class="persona-name" id="personaName">{p['name']}</div>
+                        <div class="persona-desc" id="personaDescription">{p['description']}</div>
+                        <div class="persona-traits" id="personaTraits">
                             {''.join(f'<span class="trait">{trait}</span>' for trait in p['traits'])}
                         </div>
                     </div>
                     <div class="persona-stats">
                         <div class="quadrant-scores">
                             <div class="quadrant-item">
-                                <div class="quadrant-value">{p['quadrant']['engagement_score']}</div>
+                                <div class="quadrant-value" id="engagementScore">{p['quadrant']['engagement_score']}</div>
                                 <div class="quadrant-label">Engagement</div>
-                                <span class="quadrant-tag {'high' if p['quadrant']['high_engagement'] else 'low'}">
+                                <span class="quadrant-tag {'high' if p['quadrant']['high_engagement'] else 'low'}" id="engagementTag">
                                     {'High' if p['quadrant']['high_engagement'] else 'Low'}
                                 </span>
                             </div>
                             <div class="quadrant-item">
-                                <div class="quadrant-value">{p['quadrant']['politeness_score']}</div>
+                                <div class="quadrant-value" id="politenessScore">{p['quadrant']['politeness_score']}</div>
                                 <div class="quadrant-label">Politeness</div>
-                                <span class="quadrant-tag {'high' if p['quadrant']['high_politeness'] else 'low'}">
+                                <span class="quadrant-tag {'high' if p['quadrant']['high_politeness'] else 'low'}" id="politenessTag">
                                     {'High' if p['quadrant']['high_politeness'] else 'Low'}
                                 </span>
                             </div>
                         </div>
                         <div class="signature">
                             <div class="signature-quote">"You're absolutely right."</div>
-                            <div class="signature-count">×{yr['count']}</div>
-                            <div class="signature-label">{yr['per_conversation']}× per conversation</div>
+                            <div class="signature-count" id="youreRightCount">×{yr['count']}</div>
+                            <div class="signature-label" id="youreRightLabel">{yr['per_conversation']}× per conversation</div>
                         </div>
                     </div>
                 </div>
@@ -2568,7 +2709,7 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
                             <div class="step-num">1</div>
                             <div class="step-content">
                                 <h4>Data Collection</h4>
-                                <p>Reads JSONL logs from Claude Code and parses conversations.json from Claude.ai exports.</p>
+                                <p>Reads Claude Code JSONL logs, Claude.ai export conversations.json, and Codex history.jsonl.</p>
                             </div>
                         </div>
                         <div class="step-item">
@@ -2700,30 +2841,196 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
             if (e.key === 'Escape') closeMethodology();
         }});
 
-        // Heatmap
-        const heatmapData = {heatmap_json};
-        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const heatmap = document.getElementById('heatmap');
+        const sourceViews = {source_views_json};
+        const defaultSource = {default_source_json};
+        const sourceFilter = document.getElementById('sourceFilter');
+        const sourceFilterMobile = document.getElementById('sourceFilterMobile');
+        const sourceStorageKey = 'dashboard-source-filter';
+        const fallbackHeatmap = {heatmap_json};
 
-        // Find max value for scaling
-        const maxVal = Math.max(...heatmapData.flat());
+        function formatNumber(value) {{
+            return (Number(value) || 0).toLocaleString();
+        }}
 
-        days.forEach((day, dayIndex) => {{
-            const label = document.createElement('div');
-            label.className = 'heatmap-label';
-            label.textContent = day;
-            heatmap.appendChild(label);
+        function formatCompactK(value) {{
+            return `${{Math.round((Number(value) || 0) / 1000)}}K`;
+        }}
 
-            heatmapData[dayIndex].forEach(value => {{
-                const cell = document.createElement('div');
-                cell.className = 'heatmap-cell';
-                if (value > 0) {{
-                    const intensity = Math.ceil((value / maxVal) * 5);
-                    cell.classList.add('l' + Math.min(intensity, 5));
-                }}
-                heatmap.appendChild(cell);
+        function formatHour12(hour) {{
+            const h = Number(hour) || 0;
+            return `${{h % 12 || 12}}${{h < 12 ? 'am' : 'pm'}}`;
+        }}
+
+        function formatDateRange(dateRange) {{
+            if (!dateRange || !dateRange.first || !dateRange.last) return '2025';
+            const first = new Date(dateRange.first);
+            const last = new Date(dateRange.last);
+            const opts = {{ month: 'short', day: '2-digit', year: 'numeric' }};
+            return `${{first.toLocaleDateString('en-US', opts)}} – ${{last.toLocaleDateString('en-US', opts)}}`;
+        }}
+
+        function setTagState(el, isHigh) {{
+            el.classList.remove('high', 'low');
+            el.classList.add(isHigh ? 'high' : 'low');
+            el.textContent = isHigh ? 'High' : 'Low';
+        }}
+
+        function renderTraits(traits) {{
+            const container = document.getElementById('personaTraits');
+            container.innerHTML = '';
+            (traits || []).forEach((trait) => {{
+                const chip = document.createElement('span');
+                chip.className = 'trait';
+                chip.textContent = trait;
+                container.appendChild(chip);
             }});
-        }});
+        }}
+
+        function renderHeatmap(heatmapData) {{
+            const data = Array.isArray(heatmapData) ? heatmapData : fallbackHeatmap;
+            const heatmap = document.getElementById('heatmap');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+            heatmap.innerHTML = `
+                <div></div>
+                <div class="heatmap-hours">
+                    <span>0</span><span></span><span></span><span>3</span><span></span><span></span>
+                    <span>6</span><span></span><span></span><span>9</span><span></span><span></span>
+                    <span>12</span><span></span><span></span><span>15</span><span></span><span></span>
+                    <span>18</span><span></span><span></span><span>21</span><span></span><span></span>
+                </div>
+            `;
+
+            const maxVal = Math.max(1, ...data.flat());
+            days.forEach((day, dayIndex) => {{
+                const label = document.createElement('div');
+                label.className = 'heatmap-label';
+                label.textContent = day;
+                heatmap.appendChild(label);
+
+                (data[dayIndex] || []).forEach((value) => {{
+                    const cell = document.createElement('div');
+                    cell.className = 'heatmap-cell';
+                    if (value > 0) {{
+                        const intensity = Math.ceil((value / maxVal) * 5);
+                        cell.classList.add('l' + Math.min(intensity, 5));
+                    }}
+                    heatmap.appendChild(cell);
+                }});
+            }});
+        }}
+
+        function getView(sourceKey) {{
+            return sourceViews[sourceKey] || null;
+        }}
+
+        function renderView(sourceKey) {{
+            const view = getView(sourceKey);
+            if (!view) return;
+
+            const volume = view.volume || {{}};
+            const temporal = view.temporal || {{}};
+            const convo = view.conversation_depth || {{}};
+            const politeness = view.politeness || {{}};
+            const backtrack = view.backtrack || {{}};
+            const question = view.question || {{}};
+            const command = view.command || {{}};
+            const persona = view.persona || {{}};
+            const quadrant = persona.quadrant || {{}};
+            const youreRight = view.youre_right || {{}};
+            const responseRatio = view.response_ratio || 0;
+
+            document.getElementById('dateRange').textContent = formatDateRange(view.date_range);
+
+            document.getElementById('promptsValue').textContent = formatNumber(volume.total_human);
+            document.getElementById('promptsSubtitle').textContent = `${{volume.avg_words_per_prompt ?? 0}} words avg`;
+
+            document.getElementById('conversationsValue').textContent = formatNumber(volume.total_conversations);
+            document.getElementById('conversationsSubtitle').textContent = `${{convo.avg_turns ?? 0}} turns avg`;
+
+            document.getElementById('wordsTypedValue').textContent = formatCompactK(volume.total_words_human);
+            document.getElementById('wordsTypedSubtitle').textContent = `${{formatCompactK(volume.total_words_assistant)}} from assistants`;
+
+            document.getElementById('nightOwlValue').textContent = `${{temporal.night_owl_pct ?? 0}}%`;
+            document.getElementById('peakHourValue').textContent = formatHour12(temporal.peak_hour);
+            document.getElementById('peakDayValue').textContent = temporal.peak_day || 'N/A';
+            document.getElementById('responseRatioValue').textContent = `${{responseRatio}}x`;
+
+            const quick = convo.quick_asks || 0;
+            const working = convo.working_sessions || 0;
+            const deep = convo.deep_dives || 0;
+            const totalConvos = quick + working + deep;
+            const quickPct = totalConvos ? Math.round((quick / totalConvos) * 100) : 0;
+            const workingPct = totalConvos ? Math.round((working / totalConvos) * 100) : 0;
+            const deepPct = totalConvos ? Math.round((deep / totalConvos) * 100) : 0;
+
+            document.getElementById('quickAsksValue').textContent = quick;
+            document.getElementById('workingSessionsValue').textContent = working;
+            document.getElementById('deepDivesValue').textContent = deep;
+            document.getElementById('quickAsksFill').style.width = `${{quickPct}}%`;
+            document.getElementById('workingSessionsFill').style.width = `${{workingPct}}%`;
+            document.getElementById('deepDivesFill').style.width = `${{deepPct}}%`;
+            document.getElementById('longestSessionValue').textContent = `${{convo.max_turns || 0}} turns`;
+
+            const politenessCounts = politeness.counts || {{}};
+            const backtrackCounts = backtrack.counts || {{}};
+            document.getElementById('politenessValue').textContent = politeness.per_100_prompts ?? 0;
+            document.getElementById('politenessDetail').textContent = `please: ${{politenessCounts.please || 0}} · thanks: ${{politenessCounts.thanks || 0}}`;
+            document.getElementById('backtrackValue').textContent = backtrack.per_100_prompts ?? 0;
+            document.getElementById('backtrackDetail').textContent = `actually: ${{backtrackCounts.actually || 0}} · wait: ${{backtrackCounts.wait || 0}}`;
+            document.getElementById('questionsValue').textContent = `${{question.rate ?? 0}}%`;
+            document.getElementById('questionsDetail').textContent = `${{question.count || 0}} total`;
+            document.getElementById('commandsValue').textContent = `${{command.rate ?? 0}}%`;
+            document.getElementById('commandsDetail').textContent = `${{command.count || 0}} total`;
+
+            document.getElementById('personaName').textContent = persona.name || 'No Persona';
+            document.getElementById('personaDescription').textContent = persona.description || 'Not enough data for persona classification.';
+            renderTraits(persona.traits || []);
+            document.getElementById('engagementScore').textContent = quadrant.engagement_score ?? 0;
+            document.getElementById('politenessScore').textContent = quadrant.politeness_score ?? 0;
+            setTagState(document.getElementById('engagementTag'), Boolean(quadrant.high_engagement));
+            setTagState(document.getElementById('politenessTag'), Boolean(quadrant.high_politeness));
+
+            document.getElementById('youreRightCount').textContent = `×${{youreRight.count || 0}}`;
+            document.getElementById('youreRightLabel').textContent = `${{youreRight.per_conversation ?? 0}}× per conversation`;
+
+            renderHeatmap(temporal.heatmap);
+        }}
+
+        function syncSourceSelectors(value) {{
+            sourceFilter.value = value;
+            sourceFilterMobile.value = value;
+        }}
+
+        function initSourceFilter() {{
+            const available = ['both', 'claude', 'codex'].filter((key) => Boolean(getView(key)));
+            [sourceFilter, sourceFilterMobile].forEach((select) => {{
+                Array.from(select.options).forEach((option) => {{
+                    option.disabled = !available.includes(option.value);
+                }});
+            }});
+
+            let selected = localStorage.getItem(sourceStorageKey) || defaultSource;
+            if (!available.includes(selected)) {{
+                selected = available[0] || 'both';
+            }}
+
+            syncSourceSelectors(selected);
+            renderView(selected);
+
+            const handleChange = (event) => {{
+                const next = event.target.value;
+                if (!available.includes(next)) return;
+                syncSourceSelectors(next);
+                localStorage.setItem(sourceStorageKey, next);
+                renderView(next);
+            }};
+
+            sourceFilter.addEventListener('change', handleChange);
+            sourceFilterMobile.addEventListener('change', handleChange);
+        }}
+
+        initSourceFilter();
     </script>
 </body>
 </html>'''
@@ -2734,7 +3041,6 @@ def generate_dashboard_html(metrics: dict, branding: dict | None = None) -> str:
 # === Main Build Pipeline ===
 def copy_claude_code_data(dest_path: Path) -> bool:
     """Copy Claude Code data from ~/.claude/projects to data/claude_code/."""
-    import shutil
     source_path = Path.home() / ".claude" / "projects"
 
     if not source_path.exists():
@@ -2760,6 +3066,40 @@ def copy_claude_code_data(dest_path: Path) -> bool:
     return True
 
 
+def copy_codex_data(dest_path: Path) -> bool:
+    """Copy Codex history from ~/.codex/history.jsonl to data/codex/history.jsonl."""
+    source_path = Path.home() / ".codex" / "history.jsonl"
+
+    if not source_path.exists():
+        print(f"  Error: Codex history not found at {source_path}")
+        return False
+
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source_path, dest_path)
+    print(f"  Copied to {dest_path}")
+    return True
+
+
+def open_in_browser(path: Path) -> bool:
+    """Open a local HTML file in the default browser."""
+    resolved = path.resolve()
+    try:
+        # Prefer native open command on macOS.
+        if sys.platform == "darwin" and shutil.which("open"):
+            result = subprocess.run(
+                ["open", str(resolved)],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            return result.returncode == 0
+
+        # Fallback to Python's browser integration on other platforms.
+        return webbrowser.open(resolved.as_uri())
+    except Exception:
+        return False
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="How I Prompt Wrapped 2025 - Build System",
@@ -2768,23 +3108,41 @@ def main():
 Examples:
   python build.py                    # Full build
   python build.py --metrics-only     # Only metrics.json
-  python build.py --copy-claude-code # Copy Claude Code data, then build
+  python build.py --no-open          # Build without opening dashboard in browser
+  python build.py --skip-copy-codex  # Skip Codex auto-sync for this run
         """
     )
     parser.add_argument("--metrics-only", action="store_true", help="Only compute metrics, skip HTML")
     parser.add_argument("--output", "-o", type=Path, help="Output directory")
-    parser.add_argument("--copy-claude-code", action="store_true", help="Copy Claude Code data from ~/.claude/projects to data/claude_code/")
+    parser.add_argument("--copy-claude-code", action="store_true", help=argparse.SUPPRESS)  # legacy alias
+    parser.add_argument("--copy-codex", action="store_true", help=argparse.SUPPRESS)  # legacy alias
+    parser.add_argument("--skip-copy-claude-code", action="store_true", help="Skip Claude Code auto-sync from ~/.claude/projects")
+    parser.add_argument("--skip-copy-codex", action="store_true", help="Skip Codex auto-sync from ~/.codex/history.jsonl")
+    parser.add_argument("--no-open", action="store_true", help="Do not auto-open dashboard HTML in browser")
     args = parser.parse_args()
 
     config = load_config()
     output_dir = args.output or config.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Handle --copy-claude-code flag
-    if args.copy_claude_code:
-        print("\n[0/3] Copying Claude Code data...")
+    auto_sync_claude = (not args.skip_copy_claude_code) or args.copy_claude_code
+    auto_sync_codex = (not args.skip_copy_codex) or args.copy_codex
+
+    # Step 0: Sync local source data by default.
+    print("\n[0/3] Syncing local data sources...")
+    if auto_sync_claude:
+        print("  Claude Code...")
         if not copy_claude_code_data(config.claude_code_path):
-            sys.exit(1)
+            print("  Warning: Claude Code sync failed; continuing with existing data.")
+    else:
+        print("  Skipped Claude Code sync")
+
+    if auto_sync_codex:
+        print("  Codex...")
+        if not copy_codex_data(config.codex_history_path):
+            print("  Warning: Codex sync failed; continuing with existing data.")
+    else:
+        print("  Skipped Codex sync")
 
     print("=" * 50)
     print("How I Prompt Wrapped 2025 - Build")
@@ -2795,6 +3153,7 @@ Examples:
     messages = []
     messages.extend(parse_claude_code(config.claude_code_path))
     messages.extend(parse_claude_ai(config.claude_ai_path))
+    messages.extend(parse_codex_history(config.codex_history_path))
     messages.sort(key=lambda m: m.timestamp)
     print(f"  Total: {len(messages)} messages")
 
@@ -2804,7 +3163,13 @@ Examples:
 
     # Step 2: Compute metrics
     print("\n[2/3] Computing metrics...")
-    metrics = compute_metrics(messages, config)
+    source_views, source_defaults = compute_source_views(messages, config)
+    dashboard_default_view = source_defaults["default_view"]
+    wrapped_base_view = "claude" if source_views.get("claude") is not None else dashboard_default_view
+
+    metrics = dict(source_views[wrapped_base_view])
+    metrics["source_views"] = source_views
+    metrics["default_view"] = dashboard_default_view
 
     metrics_path = output_dir / "metrics.json"
     with open(metrics_path, 'w') as f:
@@ -2852,7 +3217,6 @@ Examples:
     # Copy to docs/ for GitHub Pages
     # Dashboard → main page (howiprompt.eeshans.com)
     # Full experience → /wrapped (howiprompt.eeshans.com/wrapped)
-    import shutil
     docs_dir = PROJECT_ROOT / "docs"
     wrapped_dir = docs_dir / "wrapped"
     wrapped_dir.mkdir(parents=True, exist_ok=True)
@@ -2865,6 +3229,15 @@ Examples:
         # Full experience goes to /wrapped
         shutil.copy2(html_path, wrapped_dir / "index.html")
         print(f"  {wrapped_dir / 'index.html'} (Full → /wrapped)")
+
+    if args.no_open:
+        print("\n[4/4] Skipped opening browser (--no-open).")
+    else:
+        print("\n[4/4] Opening dashboard...")
+        if open_in_browser(dashboard_path):
+            print(f"  Opened: {dashboard_path}")
+        else:
+            print(f"  Could not open automatically: {dashboard_path}")
 
 
 if __name__ == "__main__":
