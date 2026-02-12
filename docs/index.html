@@ -8,12 +8,20 @@
 
     <!-- Open Graph -->
     <meta property="og:title" content="How I Prompt: Dashboard">
-    <meta property="og:description" content="4,887 prompts analyzed. A condensed view of AI conversation patterns.">
+    <meta property="og:description" content="5,759 prompts analyzed. A condensed view of AI conversation patterns.">
     <meta property="og:type" content="website">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false
+            }
+        };
+    </script>
 
     <style>
         * {
@@ -919,9 +927,23 @@
         <header class="header animate">
             <div class="header-left">
                 <h1>How I <span>Prompt</span></h1>
-                <span class="date-range">Nov 13, 2025 – Feb 08, 2026</span>
+                <span class="date-range" id="dateRange">Nov 13, 2025 – Feb 11, 2026</span>
             </div>
             <div class="header-right">
+                <div class="relative">
+                    <label for="sourceFilter" class="sr-only">Data source</label>
+                    <select
+                        id="sourceFilter"
+                        class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 pr-8 text-xs sm:text-sm font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    >
+                        <option value="both" selected>Both</option>
+                        <option value="claude" >Claude</option>
+                        <option value="codex" >Codex</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.157l3.71-3.928a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </div>
                 <div class="desktop-nav" style="gap: 20px; align-items: center;">
                     <a href="/wrapped" class="accent-link">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
@@ -946,6 +968,19 @@
         </header>
         <!-- Mobile nav links -->
         <div class="mobile-nav animate">
+            <div class="relative">
+                <select
+                    id="sourceFilterMobile"
+                    class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1 pr-7 text-xs font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                    <option value="both" selected>Both</option>
+                    <option value="claude" >Claude</option>
+                    <option value="codex" >Codex</option>
+                </select>
+                <svg class="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.157l3.71-3.928a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                </svg>
+            </div>
             <a href="/wrapped" class="accent-link" style="padding: 4px 12px; font-size: 13px;">Wrapped</a>
             <button onclick="openMethodology()" class="nav-link">Methodology</button>
             <a href="https://github.com/eeshansrivastava89/howiprompt" target="_blank" class="nav-link">Build Your Own</a>
@@ -955,22 +990,22 @@
         <div class="stat-cards">
             <div class="card animate delay-1">
                 <div class="card-label">Prompts</div>
-                <div class="card-value">4,887</div>
-                <div class="card-subtitle">85.2 words avg</div>
+                <div class="card-value" id="promptsValue">5,759</div>
+                <div class="card-subtitle" id="promptsSubtitle">82.3 words avg</div>
             </div>
             <div class="card animate delay-2">
                 <div class="card-label">Conversations</div>
-                <div class="card-value">1,091</div>
-                <div class="card-subtitle">14.2 turns avg</div>
+                <div class="card-value" id="conversationsValue">1,160</div>
+                <div class="card-subtitle" id="conversationsSubtitle">14.4 turns avg</div>
             </div>
             <div class="card animate delay-3">
                 <div class="card-label">Words Typed</div>
-                <div class="card-value">416K</div>
-                <div class="card-subtitle">1050K from Claude</div>
+                <div class="card-value" id="wordsTypedValue">474K</div>
+                <div class="card-subtitle" id="wordsTypedSubtitle">1088K from assistants</div>
             </div>
             <div class="card animate delay-4">
                 <div class="card-label">Night Owl</div>
-                <div class="card-value accent">26.0%</div>
+                <div class="card-value accent" id="nightOwlValue">27.9%</div>
                 <div class="card-subtitle">prompts 11pm–4am</div>
             </div>
         </div>
@@ -996,15 +1031,15 @@
                 <div class="peak-stats">
                     <div class="peak-stat">
                         <span class="peak-stat-label">Peak Hour</span>
-                        <span class="peak-stat-value">11pm</span>
+                        <span class="peak-stat-value" id="peakHourValue">11pm</span>
                     </div>
                     <div class="peak-stat">
                         <span class="peak-stat-label">Peak Day</span>
-                        <span class="peak-stat-value">Sunday</span>
+                        <span class="peak-stat-value" id="peakDayValue">Sunday</span>
                     </div>
                     <div class="peak-stat">
                         <span class="peak-stat-label">Response Ratio</span>
-                        <span class="peak-stat-value">2.5x</span>
+                        <span class="peak-stat-value" id="responseRatioValue">2.3x</span>
                     </div>
                 </div>
             </div>
@@ -1016,35 +1051,35 @@
                     <div class="progress-item">
                         <div class="progress-header">
                             <span class="progress-label">Quick Asks (1-3 turns)</span>
-                            <span class="progress-value">740</span>
+                            <span class="progress-value" id="quickAsksValue">777</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: 68%"></div>
+                            <div class="progress-fill" id="quickAsksFill" style="width: 67%"></div>
                         </div>
                     </div>
                     <div class="progress-item">
                         <div class="progress-header">
                             <span class="progress-label">Working Sessions (4-10)</span>
-                            <span class="progress-value">128</span>
+                            <span class="progress-value" id="workingSessionsValue">139</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: 12%"></div>
+                            <div class="progress-fill" id="workingSessionsFill" style="width: 12%"></div>
                         </div>
                     </div>
                     <div class="progress-item">
                         <div class="progress-header">
                             <span class="progress-label">Deep Dives (11+)</span>
-                            <span class="progress-value">223</span>
+                            <span class="progress-value" id="deepDivesValue">244</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: 20%"></div>
+                            <div class="progress-fill" id="deepDivesFill" style="width: 21%"></div>
                         </div>
                     </div>
                 </div>
                 <div class="peak-stats" style="margin-top: 16px;">
                     <div class="peak-stat">
                         <span class="peak-stat-label">Longest Session</span>
-                        <span class="peak-stat-value">455 turns</span>
+                        <span class="peak-stat-value" id="longestSessionValue">455 turns</span>
                     </div>
                 </div>
             </div>
@@ -1054,24 +1089,24 @@
                 <div class="card-label">Prompt Style</div>
                 <div class="style-grid" style="margin-top: 12px;">
                     <div class="style-item">
-                        <div class="style-value">8.4</div>
+                        <div class="style-value" id="politenessValue">8.2</div>
                         <div class="style-label">Politeness</div>
-                        <div class="style-detail">please: 352 · thanks: 38</div>
+                        <div class="style-detail" id="politenessDetail">please: 406 · thanks: 39</div>
                     </div>
                     <div class="style-item">
-                        <div class="style-value">7.6</div>
+                        <div class="style-value" id="backtrackValue">8.0</div>
                         <div class="style-label">Backtrack</div>
-                        <div class="style-detail">actually: 299 · wait: 70</div>
+                        <div class="style-detail" id="backtrackDetail">actually: 369 · wait: 84</div>
                     </div>
                     <div class="style-item">
-                        <div class="style-value">17.1%</div>
+                        <div class="style-value" id="questionsValue">17.2%</div>
                         <div class="style-label">Questions</div>
-                        <div class="style-detail">834 total</div>
+                        <div class="style-detail" id="questionsDetail">990 total</div>
                     </div>
                     <div class="style-item">
-                        <div class="style-value">7.3%</div>
+                        <div class="style-value" id="commandsValue">7.4%</div>
                         <div class="style-label">Commands</div>
-                        <div class="style-detail">359 total</div>
+                        <div class="style-detail" id="commandsDetail">426 total</div>
                     </div>
                 </div>
             </div>
@@ -1081,33 +1116,33 @@
                 <div class="card-label">Your AI Persona</div>
                 <div class="persona-card" style="margin-top: 12px;">
                     <div class="persona-main">
-                        <div class="persona-name">The Collaborator</div>
-                        <div class="persona-desc">You ask questions politely. AI is your partner, not your tool.</div>
-                        <div class="persona-traits">
-                            <span class="trait">Inquisitive</span><span class="trait">Courteous</span><span class="trait">Partnership-oriented</span>
+                        <div class="persona-name" id="personaName">The Explorer</div>
+                        <div class="persona-desc" id="personaDescription">You question, iterate, and dig deeper. Thinking out loud.</div>
+                        <div class="persona-traits" id="personaTraits">
+                            <span class="trait">Curious</span><span class="trait">Iterative</span><span class="trait">Thorough</span>
                         </div>
                     </div>
                     <div class="persona-stats">
                         <div class="quadrant-scores">
                             <div class="quadrant-item">
-                                <div class="quadrant-value">12.3</div>
+                                <div class="quadrant-value" id="engagementScore">12.6</div>
                                 <div class="quadrant-label">Engagement</div>
-                                <span class="quadrant-tag high">
+                                <span class="quadrant-tag high" id="engagementTag">
                                     High
                                 </span>
                             </div>
                             <div class="quadrant-item">
-                                <div class="quadrant-value">4.7</div>
+                                <div class="quadrant-value" id="politenessScore">4.5</div>
                                 <div class="quadrant-label">Politeness</div>
-                                <span class="quadrant-tag high">
-                                    High
+                                <span class="quadrant-tag low" id="politenessTag">
+                                    Low
                                 </span>
                             </div>
                         </div>
                         <div class="signature">
                             <div class="signature-quote">"You're absolutely right."</div>
-                            <div class="signature-count">×304</div>
-                            <div class="signature-label">0.3× per conversation</div>
+                            <div class="signature-count" id="youreRightCount">×307</div>
+                            <div class="signature-label" id="youreRightLabel">0.3× per conversation</div>
                         </div>
                     </div>
                 </div>
@@ -1151,7 +1186,7 @@
                             <div class="step-num">1</div>
                             <div class="step-content">
                                 <h4>Data Collection</h4>
-                                <p>Reads JSONL logs from Claude Code and parses conversations.json from Claude.ai exports.</p>
+                                <p>Reads Claude Code JSONL logs, Claude.ai export conversations.json, and Codex history.jsonl.</p>
                             </div>
                         </div>
                         <div class="step-item">
@@ -1283,30 +1318,196 @@
             if (e.key === 'Escape') closeMethodology();
         });
 
-        // Heatmap
-        const heatmapData = [[31, 2, 4, 0, 0, 0, 0, 11, 13, 18, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 70, 44, 45], [17, 0, 0, 0, 0, 0, 0, 6, 13, 10, 0, 5, 0, 6, 0, 7, 17, 10, 2, 15, 17, 20, 46, 86], [20, 14, 0, 0, 0, 0, 0, 3, 2, 2, 6, 11, 10, 0, 11, 15, 3, 4, 19, 46, 10, 22, 55, 78], [51, 44, 42, 3, 0, 0, 0, 4, 24, 10, 5, 10, 5, 15, 10, 18, 33, 24, 9, 20, 22, 46, 57, 88], [58, 22, 0, 0, 0, 0, 0, 2, 49, 11, 21, 13, 34, 9, 28, 27, 11, 19, 22, 49, 59, 67, 97, 96], [76, 48, 7, 0, 0, 0, 0, 0, 5, 4, 54, 34, 25, 35, 65, 96, 45, 40, 67, 85, 99, 66, 73, 115], [108, 82, 37, 40, 0, 2, 0, 0, 1, 2, 36, 144, 131, 115, 231, 147, 29, 75, 75, 86, 76, 44, 67, 55]];
-        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const heatmap = document.getElementById('heatmap');
+        const sourceViews = {"both": {"generated_at": "2026-02-11T08:10:25.826804+00:00", "volume": {"total_messages": 16680, "total_human": 5759, "total_assistant": 10921, "total_words_human": 474071, "total_words_assistant": 1088537, "total_conversations": 1160, "avg_words_per_prompt": 82.3}, "conversation_depth": {"avg_turns": 14.4, "max_turns": 455, "quick_asks": 777, "working_sessions": 139, "deep_dives": 244}, "response_ratio": 2.3, "temporal": {"heatmap": [[47, 3, 18, 1, 0, 0, 0, 11, 13, 19, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 73, 72, 59], [17, 0, 0, 0, 0, 0, 0, 10, 18, 10, 0, 5, 0, 19, 0, 9, 18, 10, 2, 17, 24, 25, 54, 107], [32, 18, 0, 0, 0, 0, 0, 3, 3, 2, 6, 11, 10, 0, 11, 15, 4, 4, 19, 46, 10, 22, 63, 78], [51, 44, 42, 3, 0, 0, 0, 4, 24, 10, 5, 11, 8, 21, 17, 18, 43, 34, 14, 30, 23, 58, 81, 120], [73, 34, 0, 0, 0, 0, 0, 2, 49, 13, 24, 13, 34, 9, 28, 27, 11, 19, 22, 51, 67, 72, 103, 113], [91, 79, 13, 0, 0, 0, 0, 0, 5, 5, 74, 38, 25, 35, 85, 115, 52, 48, 81, 101, 105, 69, 80, 145], [157, 99, 39, 41, 0, 2, 0, 0, 9, 15, 48, 144, 145, 128, 253, 155, 51, 92, 91, 93, 76, 69, 96, 82]], "night_owl_pct": 27.9, "peak_hour": 23, "peak_hour_count": 704, "peak_day": "Sunday", "peak_day_count": 1885, "hour_counts": {"19": 372, "12": 222, "23": 704, "5": 2, "8": 121, "0": 468, "1": 277, "10": 187, "9": 74, "3": 45, "21": 388, "22": 549, "20": 348, "11": 222, "13": 212, "14": 394, "15": 373, "16": 202, "17": 209, "18": 248, "7": 30, "2": 112}}, "politeness": {"counts": {"please": 406, "thanks": 39, "sorry": 26}, "total": 471, "per_100_prompts": 8.2}, "backtrack": {"counts": {"actually": 369, "wait": 84, "never_mind": 4, "scratch_that": 2}, "total": 459, "per_100_prompts": 8.0}, "question": {"count": 990, "rate": 17.2}, "command": {"count": 426, "rate": 7.4}, "youre_right": {"count": 307, "per_conversation": 0.3}, "persona": {"type": "explorer", "name": "The Explorer", "description": "You question, iterate, and dig deeper. Thinking out loud.", "traits": ["Curious", "Iterative", "Thorough"], "quadrant": {"engagement_score": 12.6, "politeness_score": 4.5, "high_engagement": true, "high_politeness": false}, "scores": {"politeness": 8.2, "backtrack": 8.0, "question_rate": 17.2, "command_rate": 7.4}}, "platform_stats": {"claude_code": {"messages": 4808, "words": 422027, "conversations": 1085, "first_message": "2025-12-12T06:07:04.054000+00:00"}, "claude_ai": {"messages": 228, "words": 11818, "conversations": 27, "first_message": "2025-11-13T03:25:41.719766+00:00"}, "codex": {"messages": 723, "words": 40226, "conversations": 31, "first_message": "2025-12-23T15:58:08+00:00"}}, "date_range": {"first": "2025-11-13T03:25:41.719766+00:00", "last": "2026-02-11T08:09:29+00:00"}}, "claude": {"generated_at": "2026-02-11T08:10:26.065364+00:00", "volume": {"total_messages": 15957, "total_human": 5036, "total_assistant": 10921, "total_words_human": 433845, "total_words_assistant": 1088537, "total_conversations": 1129, "avg_words_per_prompt": 86.1}, "conversation_depth": {"avg_turns": 14.1, "max_turns": 455, "quick_asks": 768, "working_sessions": 130, "deep_dives": 231}, "response_ratio": 2.5, "temporal": {"heatmap": [[35, 2, 4, 0, 0, 0, 0, 11, 13, 18, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 72, 69, 52], [17, 0, 0, 0, 0, 0, 0, 8, 13, 10, 0, 5, 0, 6, 0, 7, 17, 10, 2, 15, 17, 22, 48, 86], [20, 14, 0, 0, 0, 0, 0, 3, 2, 2, 6, 11, 10, 0, 11, 15, 3, 4, 19, 46, 10, 22, 55, 78], [51, 44, 42, 3, 0, 0, 0, 4, 24, 10, 5, 10, 5, 15, 10, 18, 33, 24, 9, 20, 22, 46, 57, 88], [58, 22, 0, 0, 0, 0, 0, 2, 49, 11, 21, 13, 34, 9, 28, 27, 11, 19, 22, 49, 59, 67, 97, 96], [76, 48, 7, 0, 0, 0, 0, 0, 5, 4, 54, 34, 25, 35, 65, 96, 45, 40, 67, 85, 99, 66, 73, 115], [108, 82, 37, 40, 0, 2, 0, 0, 1, 2, 36, 144, 131, 117, 253, 147, 50, 90, 84, 87, 76, 47, 85, 69]], "night_owl_pct": 25.7, "peak_hour": 23, "peak_hour_count": 584, "peak_day": "Sunday", "peak_day_count": 1688, "hour_counts": {"19": 336, "12": 205, "23": 584, "5": 2, "8": 107, "0": 365, "1": 212, "10": 152, "9": 57, "3": 43, "21": 342, "22": 484, "20": 326, "11": 217, "13": 182, "14": 367, "15": 344, "16": 182, "17": 189, "18": 222, "7": 28, "2": 90}}, "politeness": {"counts": {"please": 354, "thanks": 39, "sorry": 21}, "total": 414, "per_100_prompts": 8.2}, "backtrack": {"counts": {"actually": 310, "wait": 70, "never_mind": 3, "scratch_that": 1}, "total": 384, "per_100_prompts": 7.6}, "question": {"count": 858, "rate": 17.0}, "command": {"count": 370, "rate": 7.3}, "youre_right": {"count": 307, "per_conversation": 0.3}, "persona": {"type": "collaborator", "name": "The Collaborator", "description": "You ask questions politely. AI is your partner, not your tool.", "traits": ["Inquisitive", "Courteous", "Partnership-oriented"], "quadrant": {"engagement_score": 12.3, "politeness_score": 4.5, "high_engagement": true, "high_politeness": true}, "scores": {"politeness": 8.2, "backtrack": 7.6, "question_rate": 17.0, "command_rate": 7.3}}, "platform_stats": {"claude_code": {"messages": 4808, "words": 422027, "conversations": 1085, "first_message": "2025-12-12T06:07:04.054000+00:00"}, "claude_ai": {"messages": 228, "words": 11818, "conversations": 27, "first_message": "2025-11-13T03:25:41.719766+00:00"}}, "date_range": {"first": "2025-11-13T03:25:41.719766+00:00", "last": "2026-02-11T06:57:50.887000+00:00"}}, "codex": {"generated_at": "2026-02-11T08:10:26.091125+00:00", "volume": {"total_messages": 723, "total_human": 723, "total_assistant": 0, "total_words_human": 40226, "total_words_assistant": 0, "total_conversations": 31, "avg_words_per_prompt": 55.6}, "conversation_depth": {"avg_turns": 23.3, "max_turns": 136, "quick_asks": 9, "working_sessions": 9, "deep_dives": 13}, "response_ratio": 0.0, "temporal": {"heatmap": [[12, 1, 14, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 7], [0, 0, 0, 0, 0, 0, 0, 2, 5, 0, 0, 0, 0, 13, 0, 2, 1, 0, 0, 2, 7, 3, 6, 21], [12, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 8, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 7, 0, 10, 10, 5, 10, 1, 12, 24, 32], [15, 12, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8, 5, 6, 17], [15, 31, 6, 0, 0, 0, 0, 0, 0, 1, 20, 4, 0, 0, 20, 19, 7, 8, 14, 16, 6, 3, 7, 30], [49, 17, 2, 1, 0, 0, 0, 0, 8, 13, 12, 0, 14, 11, 0, 8, 1, 2, 7, 6, 0, 22, 11, 13]], "night_owl_pct": 43.2, "peak_hour": 23, "peak_hour_count": 120, "peak_day": "Saturday", "peak_day_count": 207, "hour_counts": {"7": 2, "8": 14, "16": 20, "19": 36, "20": 22, "22": 65, "23": 120, "0": 103, "1": 65, "11": 5, "12": 17, "13": 30, "14": 27, "17": 20, "18": 26, "21": 46, "9": 17, "10": 35, "2": 22, "15": 29, "3": 2}}, "politeness": {"counts": {"please": 52, "thanks": 0, "sorry": 5}, "total": 57, "per_100_prompts": 7.9}, "backtrack": {"counts": {"actually": 59, "wait": 14, "never_mind": 1, "scratch_that": 1}, "total": 75, "per_100_prompts": 10.4}, "question": {"count": 132, "rate": 18.3}, "command": {"count": 56, "rate": 7.7}, "youre_right": {"count": 0, "per_conversation": 0.0}, "persona": {"type": "explorer", "name": "The Explorer", "description": "You question, iterate, and dig deeper. Thinking out loud.", "traits": ["Curious", "Iterative", "Thorough"], "quadrant": {"engagement_score": 14.3, "politeness_score": 4.0, "high_engagement": true, "high_politeness": false}, "scores": {"politeness": 7.9, "backtrack": 10.4, "question_rate": 18.3, "command_rate": 7.7}}, "platform_stats": {"codex": {"messages": 723, "words": 40226, "conversations": 31, "first_message": "2025-12-23T15:58:08+00:00"}}, "date_range": {"first": "2025-12-23T15:58:08+00:00", "last": "2026-02-11T08:09:29+00:00"}}};
+        const defaultSource = "both";
+        const sourceFilter = document.getElementById('sourceFilter');
+        const sourceFilterMobile = document.getElementById('sourceFilterMobile');
+        const sourceStorageKey = 'dashboard-source-filter';
+        const fallbackHeatmap = [[47, 3, 18, 1, 0, 0, 0, 11, 13, 19, 30, 0, 0, 0, 0, 34, 23, 2, 19, 34, 43, 73, 72, 59], [17, 0, 0, 0, 0, 0, 0, 10, 18, 10, 0, 5, 0, 19, 0, 9, 18, 10, 2, 17, 24, 25, 54, 107], [32, 18, 0, 0, 0, 0, 0, 3, 3, 2, 6, 11, 10, 0, 11, 15, 4, 4, 19, 46, 10, 22, 63, 78], [51, 44, 42, 3, 0, 0, 0, 4, 24, 10, 5, 11, 8, 21, 17, 18, 43, 34, 14, 30, 23, 58, 81, 120], [73, 34, 0, 0, 0, 0, 0, 2, 49, 13, 24, 13, 34, 9, 28, 27, 11, 19, 22, 51, 67, 72, 103, 113], [91, 79, 13, 0, 0, 0, 0, 0, 5, 5, 74, 38, 25, 35, 85, 115, 52, 48, 81, 101, 105, 69, 80, 145], [157, 99, 39, 41, 0, 2, 0, 0, 9, 15, 48, 144, 145, 128, 253, 155, 51, 92, 91, 93, 76, 69, 96, 82]];
 
-        // Find max value for scaling
-        const maxVal = Math.max(...heatmapData.flat());
+        function formatNumber(value) {
+            return (Number(value) || 0).toLocaleString();
+        }
 
-        days.forEach((day, dayIndex) => {
-            const label = document.createElement('div');
-            label.className = 'heatmap-label';
-            label.textContent = day;
-            heatmap.appendChild(label);
+        function formatCompactK(value) {
+            return `${Math.round((Number(value) || 0) / 1000)}K`;
+        }
 
-            heatmapData[dayIndex].forEach(value => {
-                const cell = document.createElement('div');
-                cell.className = 'heatmap-cell';
-                if (value > 0) {
-                    const intensity = Math.ceil((value / maxVal) * 5);
-                    cell.classList.add('l' + Math.min(intensity, 5));
-                }
-                heatmap.appendChild(cell);
+        function formatHour12(hour) {
+            const h = Number(hour) || 0;
+            return `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`;
+        }
+
+        function formatDateRange(dateRange) {
+            if (!dateRange || !dateRange.first || !dateRange.last) return '2025';
+            const first = new Date(dateRange.first);
+            const last = new Date(dateRange.last);
+            const opts = { month: 'short', day: '2-digit', year: 'numeric' };
+            return `${first.toLocaleDateString('en-US', opts)} – ${last.toLocaleDateString('en-US', opts)}`;
+        }
+
+        function setTagState(el, isHigh) {
+            el.classList.remove('high', 'low');
+            el.classList.add(isHigh ? 'high' : 'low');
+            el.textContent = isHigh ? 'High' : 'Low';
+        }
+
+        function renderTraits(traits) {
+            const container = document.getElementById('personaTraits');
+            container.innerHTML = '';
+            (traits || []).forEach((trait) => {
+                const chip = document.createElement('span');
+                chip.className = 'trait';
+                chip.textContent = trait;
+                container.appendChild(chip);
             });
-        });
+        }
+
+        function renderHeatmap(heatmapData) {
+            const data = Array.isArray(heatmapData) ? heatmapData : fallbackHeatmap;
+            const heatmap = document.getElementById('heatmap');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+            heatmap.innerHTML = `
+                <div></div>
+                <div class="heatmap-hours">
+                    <span>0</span><span></span><span></span><span>3</span><span></span><span></span>
+                    <span>6</span><span></span><span></span><span>9</span><span></span><span></span>
+                    <span>12</span><span></span><span></span><span>15</span><span></span><span></span>
+                    <span>18</span><span></span><span></span><span>21</span><span></span><span></span>
+                </div>
+            `;
+
+            const maxVal = Math.max(1, ...data.flat());
+            days.forEach((day, dayIndex) => {
+                const label = document.createElement('div');
+                label.className = 'heatmap-label';
+                label.textContent = day;
+                heatmap.appendChild(label);
+
+                (data[dayIndex] || []).forEach((value) => {
+                    const cell = document.createElement('div');
+                    cell.className = 'heatmap-cell';
+                    if (value > 0) {
+                        const intensity = Math.ceil((value / maxVal) * 5);
+                        cell.classList.add('l' + Math.min(intensity, 5));
+                    }
+                    heatmap.appendChild(cell);
+                });
+            });
+        }
+
+        function getView(sourceKey) {
+            return sourceViews[sourceKey] || null;
+        }
+
+        function renderView(sourceKey) {
+            const view = getView(sourceKey);
+            if (!view) return;
+
+            const volume = view.volume || {};
+            const temporal = view.temporal || {};
+            const convo = view.conversation_depth || {};
+            const politeness = view.politeness || {};
+            const backtrack = view.backtrack || {};
+            const question = view.question || {};
+            const command = view.command || {};
+            const persona = view.persona || {};
+            const quadrant = persona.quadrant || {};
+            const youreRight = view.youre_right || {};
+            const responseRatio = view.response_ratio || 0;
+
+            document.getElementById('dateRange').textContent = formatDateRange(view.date_range);
+
+            document.getElementById('promptsValue').textContent = formatNumber(volume.total_human);
+            document.getElementById('promptsSubtitle').textContent = `${volume.avg_words_per_prompt ?? 0} words avg`;
+
+            document.getElementById('conversationsValue').textContent = formatNumber(volume.total_conversations);
+            document.getElementById('conversationsSubtitle').textContent = `${convo.avg_turns ?? 0} turns avg`;
+
+            document.getElementById('wordsTypedValue').textContent = formatCompactK(volume.total_words_human);
+            document.getElementById('wordsTypedSubtitle').textContent = `${formatCompactK(volume.total_words_assistant)} from assistants`;
+
+            document.getElementById('nightOwlValue').textContent = `${temporal.night_owl_pct ?? 0}%`;
+            document.getElementById('peakHourValue').textContent = formatHour12(temporal.peak_hour);
+            document.getElementById('peakDayValue').textContent = temporal.peak_day || 'N/A';
+            document.getElementById('responseRatioValue').textContent = `${responseRatio}x`;
+
+            const quick = convo.quick_asks || 0;
+            const working = convo.working_sessions || 0;
+            const deep = convo.deep_dives || 0;
+            const totalConvos = quick + working + deep;
+            const quickPct = totalConvos ? Math.round((quick / totalConvos) * 100) : 0;
+            const workingPct = totalConvos ? Math.round((working / totalConvos) * 100) : 0;
+            const deepPct = totalConvos ? Math.round((deep / totalConvos) * 100) : 0;
+
+            document.getElementById('quickAsksValue').textContent = quick;
+            document.getElementById('workingSessionsValue').textContent = working;
+            document.getElementById('deepDivesValue').textContent = deep;
+            document.getElementById('quickAsksFill').style.width = `${quickPct}%`;
+            document.getElementById('workingSessionsFill').style.width = `${workingPct}%`;
+            document.getElementById('deepDivesFill').style.width = `${deepPct}%`;
+            document.getElementById('longestSessionValue').textContent = `${convo.max_turns || 0} turns`;
+
+            const politenessCounts = politeness.counts || {};
+            const backtrackCounts = backtrack.counts || {};
+            document.getElementById('politenessValue').textContent = politeness.per_100_prompts ?? 0;
+            document.getElementById('politenessDetail').textContent = `please: ${politenessCounts.please || 0} · thanks: ${politenessCounts.thanks || 0}`;
+            document.getElementById('backtrackValue').textContent = backtrack.per_100_prompts ?? 0;
+            document.getElementById('backtrackDetail').textContent = `actually: ${backtrackCounts.actually || 0} · wait: ${backtrackCounts.wait || 0}`;
+            document.getElementById('questionsValue').textContent = `${question.rate ?? 0}%`;
+            document.getElementById('questionsDetail').textContent = `${question.count || 0} total`;
+            document.getElementById('commandsValue').textContent = `${command.rate ?? 0}%`;
+            document.getElementById('commandsDetail').textContent = `${command.count || 0} total`;
+
+            document.getElementById('personaName').textContent = persona.name || 'No Persona';
+            document.getElementById('personaDescription').textContent = persona.description || 'Not enough data for persona classification.';
+            renderTraits(persona.traits || []);
+            document.getElementById('engagementScore').textContent = quadrant.engagement_score ?? 0;
+            document.getElementById('politenessScore').textContent = quadrant.politeness_score ?? 0;
+            setTagState(document.getElementById('engagementTag'), Boolean(quadrant.high_engagement));
+            setTagState(document.getElementById('politenessTag'), Boolean(quadrant.high_politeness));
+
+            document.getElementById('youreRightCount').textContent = `×${youreRight.count || 0}`;
+            document.getElementById('youreRightLabel').textContent = `${youreRight.per_conversation ?? 0}× per conversation`;
+
+            renderHeatmap(temporal.heatmap);
+        }
+
+        function syncSourceSelectors(value) {
+            sourceFilter.value = value;
+            sourceFilterMobile.value = value;
+        }
+
+        function initSourceFilter() {
+            const available = ['both', 'claude', 'codex'].filter((key) => Boolean(getView(key)));
+            [sourceFilter, sourceFilterMobile].forEach((select) => {
+                Array.from(select.options).forEach((option) => {
+                    option.disabled = !available.includes(option.value);
+                });
+            });
+
+            let selected = localStorage.getItem(sourceStorageKey) || defaultSource;
+            if (!available.includes(selected)) {
+                selected = available[0] || 'both';
+            }
+
+            syncSourceSelectors(selected);
+            renderView(selected);
+
+            const handleChange = (event) => {
+                const next = event.target.value;
+                if (!available.includes(next)) return;
+                syncSourceSelectors(next);
+                localStorage.setItem(sourceStorageKey, next);
+                renderView(next);
+            };
+
+            sourceFilter.addEventListener('change', handleChange);
+            sourceFilterMobile.addEventListener('change', handleChange);
+        }
+
+        initSourceFilter();
     </script>
 </body>
 </html>
