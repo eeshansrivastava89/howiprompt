@@ -1,0 +1,106 @@
+---
+// Methodology modal: 3-column grid with full methodology content
+---
+<div class="modal-overlay" id="methodologyModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Methodology</h2>
+            <button class="modal-close" onclick="closeMethodology()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-grid">
+                <!-- How It Works -->
+                <div class="modal-section">
+                    <h3>How It Works</h3>
+                    <div class="step-item">
+                        <div class="step-num">1</div>
+                        <div class="step-content">
+                            <h4>Data Collection</h4>
+                            <p>Reads Claude Code JSONL logs and Codex history.jsonl from local machine paths.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">2</div>
+                        <div class="step-content">
+                            <h4>Message Extraction</h4>
+                            <p>Filters to human-authored prompts. Excludes system commands and tool outputs.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">3</div>
+                        <div class="step-content">
+                            <h4>Metric Computation</h4>
+                            <p>Regex pattern matching to count politeness markers, questions, and commands.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">4</div>
+                        <div class="step-content">
+                            <h4>Persona Classification</h4>
+                            <p>Maps Engagement and Politeness scores onto a 2×2 matrix.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Metrics -->
+                <div class="modal-section">
+                    <h3>All Metrics</h3>
+                    <div class="metric-group">
+                        <h4>Volume</h4>
+                        <p><span>Prompts</span> — your messages · <span>Conversations</span> — chat sessions · <span>Words</span> — total typed</p>
+                    </div>
+                    <div class="metric-group">
+                        <h4>Conversation</h4>
+                        <p><span>Avg Turns</span> — per convo · <span>Quick Asks</span> — 1-3 turns · <span>Deep Dives</span> — 11+ turns</p>
+                    </div>
+                    <div class="metric-group">
+                        <h4>Temporal</h4>
+                        <p><span>Peak Hour/Day</span> — most active · <span>Night Owl</span> — 11pm-4am %</p>
+                    </div>
+                    <div class="metric-group">
+                        <h4>Style (per 100)</h4>
+                        <p><span>Politeness</span> — please/thanks · <span>Backtrack</span> — actually/wait · <span>Questions</span> — ending ? · <span>Commands</span> — action verbs</p>
+                    </div>
+                    <div class="metric-group">
+                        <h4>Composite Scores</h4>
+                        <p><span>Engagement</span> = (Question + Backtrack) ÷ 2<br/><span>Politeness</span> = Index − (Command × 0.5)</p>
+                    </div>
+                </div>
+
+                <!-- The 4 Personas -->
+                <div class="modal-section">
+                    <h3>The 4 Personas</h3>
+                    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">Based on where you fall on the Engagement (x-axis) and Politeness (y-axis) scales:</p>
+                    <div class="persona-matrix">
+                        <div></div>
+                        <div class="matrix-label">High Polite</div>
+                        <div class="matrix-label">Low Polite</div>
+                        <div class="matrix-label">High<br/>Engage</div>
+                        <div class="persona-cell highlight">
+                            <strong>Collaborator</strong>
+                            You ask politely. AI is your partner, not your tool.
+                        </div>
+                        <div class="persona-cell">
+                            <strong>Explorer</strong>
+                            You question, iterate, and dig deeper. Thinking out loud.
+                        </div>
+                        <div class="matrix-label">Low<br/>Engage</div>
+                        <div class="persona-cell">
+                            <strong>Efficient</strong>
+                            Polite but focused. You know what you want and ask nicely.
+                        </div>
+                        <div class="persona-cell">
+                            <strong>Pragmatist</strong>
+                            Balanced and practical. No frills, just results.
+                        </div>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">Thresholds: Engagement ≥ 12, Politeness Score ≥ 4.5</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

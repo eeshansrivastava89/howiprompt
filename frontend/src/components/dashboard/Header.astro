@@ -1,0 +1,64 @@
+---
+// Dashboard header: title, source filter, nav links, theme toggle
+---
+<header class="header animate">
+    <div class="header-left">
+        <h1>How I <span>Prompt</span></h1>
+        <span class="date-range" id="dateRange">--</span>
+    </div>
+    <div class="header-right">
+        <div class="relative">
+            <label for="sourceFilter" class="sr-only">Data source</label>
+            <select
+                id="sourceFilter"
+                class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 pr-8 text-xs sm:text-sm font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+                <option value="both">Both</option>
+                <option value="claude_code">Claude Code</option>
+                <option value="codex">Codex</option>
+            </select>
+            <svg class="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.157l3.71-3.928a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+            </svg>
+        </div>
+        <div class="desktop-nav" style="gap: 20px; align-items: center;">
+            <a href="/wrapped" class="accent-link">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                Wrapped Experience
+            </a>
+            <button onclick="openMethodology()" class="nav-link">Methodology</button>
+            <a href="https://github.com/eeshansrivastava89/howiprompt" target="_blank" class="nav-link" id="buildYourOwnLink">Build Your Own</a>
+        </div>
+        <a href="https://0to1datascience.substack.com" target="_blank" class="subscribe-btn" id="subscribeLink">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"></path></svg>
+            Subscribe
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <svg class="sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <svg class="moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+        </button>
+    </div>
+</header>
+<!-- Mobile nav links -->
+<div class="mobile-nav animate">
+    <div class="relative">
+        <select
+            id="sourceFilterMobile"
+            class="appearance-none rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1 pr-7 text-xs font-medium text-[var(--text)] shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+        >
+            <option value="both">Both</option>
+            <option value="claude_code">Claude Code</option>
+            <option value="codex">Codex</option>
+        </select>
+        <svg class="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.157l3.71-3.928a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+    </div>
+    <a href="/wrapped" class="accent-link" style="padding: 4px 12px; font-size: 13px;">Wrapped</a>
+    <button onclick="openMethodology()" class="nav-link">Methodology</button>
+    <a href="https://github.com/eeshansrivastava89/howiprompt" target="_blank" class="nav-link" id="buildYourOwnMobileLink">Build Your Own</a>
+</div>

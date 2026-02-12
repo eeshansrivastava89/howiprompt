@@ -1,0 +1,33 @@
+---
+// Activity heatmap: 7×24 grid container + peak stats
+---
+<div class="card card-wide animate delay-5">
+    <div class="card-label">Activity Heatmap</div>
+    <div class="heatmap-container">
+        <div class="heatmap" id="heatmap">
+            <!-- Hours header -->
+            <div></div>
+            <div class="heatmap-hours">
+                <span>0</span><span></span><span></span><span>3</span><span></span><span></span>
+                <span>6</span><span></span><span></span><span>9</span><span></span><span></span>
+                <span>12</span><span></span><span></span><span>15</span><span></span><span></span>
+                <span>18</span><span></span><span></span><span>21</span><span></span><span></span>
+            </div>
+            <!-- Rows added by JS -->
+        </div>
+    </div>
+    <div class="peak-stats">
+        <div class="peak-stat">
+            <span class="peak-stat-label">Peak Hour</span>
+            <span class="peak-stat-value" id="peakHourValue">--</span>
+        </div>
+        <div class="peak-stat">
+            <span class="peak-stat-label">Peak Day</span>
+            <span class="peak-stat-value" id="peakDayValue">--</span>
+        </div>
+        <div class="peak-stat">
+            <span class="peak-stat-label">Response Ratio</span>
+            <span class="peak-stat-value" id="responseRatioValue">--</span>
+        </div>
+    </div>
+</div>

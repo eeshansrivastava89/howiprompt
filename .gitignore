@@ -28,5 +28,10 @@ venv/
 .vscode/
 .idea/
 
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.astro/
+
 # Claude Code local settings
 .claude/

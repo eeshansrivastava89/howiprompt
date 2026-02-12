@@ -2889,6 +2889,7 @@ Examples:
     parser.add_argument("--skip-copy-claude-code", action="store_true", help="Skip Claude Code auto-sync from ~/.claude/projects")
     parser.add_argument("--skip-copy-codex", action="store_true", help="Skip Codex auto-sync from ~/.codex/history.jsonl")
     parser.add_argument("--no-open", action="store_true", help="Do not auto-open dashboard HTML in browser")
+    parser.add_argument("--legacy-html", action="store_true", help="Generate HTML via Python f-strings instead of pre-built Astro frontend")
     args = parser.parse_args()
 
     config = load_config()
@@ -2941,6 +2942,18 @@ Examples:
     metrics["source_views"] = source_views
     metrics["default_view"] = dashboard_default_view
 
+    # Add branding and launch_packets for Astro frontend (Phase 4c)
+    branding = load_branding()
+    site_url = branding.get('site_url', 'https://eeshans.com') if branding else 'https://eeshans.com'
+    github_repo = branding.get('github_repo', 'https://github.com/eeshansrivastava89/howiprompt') if branding else 'https://github.com/eeshansrivastava89/howiprompt'
+
+    metrics["branding"] = branding or {}
+    metrics["launch_packets"] = {
+        source_key: build_launch_packet(view, source_key, github_repo, site_url)
+        for source_key, view in source_views.items()
+        if view is not None
+    }
+
     metrics_path = output_dir / "metrics.json"
     with open(metrics_path, 'w') as f:
         json.dump(metrics, f, indent=2, default=str)
@@ -2952,23 +2965,57 @@ Examples:
 
     # Step 3: Generate HTML
     print("\n[3/3] Generating HTML...")
-    branding = load_branding()
     if branding:
         print(f"  Branding: {branding['site_name']}")
 
-    # Main experience
-    html = generate_html(metrics, branding)
-    html_path = output_dir / "index.html"
-    with open(html_path, 'w') as f:
-        f.write(html)
-    print(f"  Saved: {html_path}")
+    frontend_dist = PROJECT_ROOT / "frontend" / "dist"
+    use_astro = not args.legacy_html and frontend_dist.exists() and (frontend_dist / "index.html").exists()
 
-    # Dashboard (single-page view)
-    dashboard_html = generate_dashboard_html(metrics, branding)
-    dashboard_path = output_dir / "dashboard.html"
-    with open(dashboard_path, 'w') as f:
-        f.write(dashboard_html)
-    print(f"  Saved: {dashboard_path}")
+    if use_astro:
+        # Copy pre-built Astro frontend to output/
+        print("  Using pre-built Astro frontend from frontend/dist/")
+
+        # Dashboard: frontend/dist/index.html → output/dashboard.html
+        dashboard_path = output_dir / "dashboard.html"
+        shutil.copy2(frontend_dist / "index.html", dashboard_path)
+        print(f"  Saved: {dashboard_path}")
+
+        # Wrapped: frontend/dist/wrapped/index.html → output/index.html
+        html_path = output_dir / "index.html"
+        wrapped_src = frontend_dist / "wrapped" / "index.html"
+        if wrapped_src.exists():
+            shutil.copy2(wrapped_src, html_path)
+            print(f"  Saved: {html_path}")
+        else:
+            print(f"  Warning: {wrapped_src} not found, skipping wrapped page")
+
+        # Copy JS/CSS assets
+        astro_assets = frontend_dist / "_astro"
+        if astro_assets.exists():
+            output_assets = output_dir / "_astro"
+            if output_assets.exists():
+                shutil.rmtree(output_assets)
+            shutil.copytree(astro_assets, output_assets)
+            print(f"  Saved: {output_assets}/ ({len(list(output_assets.iterdir()))} assets)")
+    else:
+        if args.legacy_html:
+            print("  Using legacy HTML generation (--legacy-html)")
+        else:
+            print("  Astro frontend not found, falling back to legacy HTML generation")
+            print("  Hint: run 'cd frontend && npm run build' to build the Astro frontend")
+
+        # Legacy: generate HTML via Python f-strings
+        html = generate_html(metrics, branding)
+        html_path = output_dir / "index.html"
+        with open(html_path, 'w') as f:
+            f.write(html)
+        print(f"  Saved: {html_path}")
+
+        dashboard_html = generate_dashboard_html(metrics, branding)
+        dashboard_path = output_dir / "dashboard.html"
+        with open(dashboard_path, 'w') as f:
+            f.write(dashboard_html)
+        print(f"  Saved: {dashboard_path}")
 
     # Summary
     print("\n" + "=" * 50)
@@ -2981,8 +3028,8 @@ Examples:
     print(f"  Politeness: {metrics['persona']['quadrant']['politeness_score']} ({'High' if metrics['persona']['quadrant']['high_politeness'] else 'Low'})")
     print(f"\nOutput:")
     print(f"  {metrics_path}")
-    print(f"  {html_path}")
-    print(f"  {dashboard_path}")
+    print(f"  {output_dir / 'index.html'}")
+    print(f"  {output_dir / 'dashboard.html'}")
 
     # Copy to docs/ for GitHub Pages
     # Dashboard → main page (howiprompt.eeshans.com)
@@ -2992,13 +3039,38 @@ Examples:
     wrapped_dir.mkdir(parents=True, exist_ok=True)
 
     if docs_dir.exists():
+        dashboard_out = output_dir / "dashboard.html"
+        html_out = output_dir / "index.html"
+
         # Dashboard becomes the main index
-        shutil.copy2(dashboard_path, docs_dir / "index.html")
-        print(f"  {docs_dir / 'index.html'} (Dashboard → howiprompt.eeshans.com)")
+        if dashboard_out.exists():
+            shutil.copy2(dashboard_out, docs_dir / "index.html")
+            print(f"  {docs_dir / 'index.html'} (Dashboard → howiprompt.eeshans.com)")
 
         # Full experience goes to /wrapped
-        shutil.copy2(html_path, wrapped_dir / "index.html")
-        print(f"  {wrapped_dir / 'index.html'} (Full → /wrapped)")
+        if html_out.exists():
+            shutil.copy2(html_out, wrapped_dir / "index.html")
+            print(f"  {wrapped_dir / 'index.html'} (Full → /wrapped)")
+
+        # Copy metrics.json to docs/ for Astro frontend fetch()
+        shutil.copy2(metrics_path, docs_dir / "metrics.json")
+        print(f"  {docs_dir / 'metrics.json'} (Runtime data)")
+        shutil.copy2(metrics_path, wrapped_dir / "metrics.json")
+        print(f"  {wrapped_dir / 'metrics.json'} (Runtime data for /wrapped)")
+
+        # Copy JS/CSS assets to docs/ if using Astro
+        if use_astro and astro_assets.exists():
+            docs_assets = docs_dir / "_astro"
+            if docs_assets.exists():
+                shutil.rmtree(docs_assets)
+            shutil.copytree(astro_assets, docs_assets)
+            print(f"  {docs_assets}/ (Frontend assets)")
+            # Also copy to wrapped dir
+            wrapped_assets = wrapped_dir / "_astro"
+            if wrapped_assets.exists():
+                shutil.rmtree(wrapped_assets)
+            shutil.copytree(astro_assets, wrapped_assets)
+            print(f"  {wrapped_assets}/ (Frontend assets for /wrapped)")
 
     if args.no_open:
         print("\n[4/4] Skipped opening browser (--no-open).")
