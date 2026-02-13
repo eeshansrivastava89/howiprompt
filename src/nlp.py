@@ -243,8 +243,16 @@ def compute_nlp_metrics(conn: sqlite3.Connection, platform: Platform | None = No
             pp,
         ).fetchall()
     ]
-    p50_idx = max(0, len(sorted_complexity) // 2 - (1 if len(sorted_complexity) % 2 == 0 else 0))
-    p90_idx = max(0, int(len(sorted_complexity) * 0.9) - 1)
+    n = len(sorted_complexity)
+    if n == 0:
+        p50_score = 0.0
+        p90_score = 0.0
+    elif n % 2 == 1:
+        p50_score = sorted_complexity[n // 2]
+        p90_score = sorted_complexity[max(0, int(n * 0.9) - 1)]
+    else:
+        p50_score = (sorted_complexity[n // 2 - 1] + sorted_complexity[n // 2]) / 2
+        p90_score = sorted_complexity[max(0, int(n * 0.9) - 1)]
 
     # === Iteration Style ===
     iter_agg = conn.execute(
@@ -281,8 +289,8 @@ def compute_nlp_metrics(conn: sqlite3.Connection, platform: Platform | None = No
         "complexity": {
             "method": "heuristic_complexity_v1",
             "avg_score": round(complexity_agg[0], 1),
-            "p50_score": round(sorted_complexity[p50_idx], 1),
-            "p90_score": round(sorted_complexity[p90_idx], 1),
+            "p50_score": round(p50_score, 1),
+            "p90_score": round(p90_score, 1),
             "distribution": {
                 "low": complexity_agg[1],
                 "medium": complexity_agg[2],
