@@ -67,9 +67,3 @@ PERSONAS: dict[PersonaType, PersonaDefinition] = {
         traits=["Balanced", "Practical", "Focused"]
     ),
 }
-
-SOURCE_VIEW_LABELS = {
-    "both": "Claude Code + Codex",
-    "claude_code": "Claude Code",
-    "codex": "Codex",
-}

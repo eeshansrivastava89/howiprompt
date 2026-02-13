@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 from .config import Config
 from .db import platform_filter, query_messages
-from .models import Message, Platform, Role, SOURCE_VIEW_LABELS
+from .models import Message, Platform, Role
 from .nlp import BACKTRACK_PATTERNS, COMMAND_PATTERN, POLITENESS_PATTERNS, compute_nlp_metrics
 from .persona import classify_persona
 from .trends import compute_trend_metrics
@@ -362,112 +362,6 @@ def compute_metrics(conn: sqlite3.Connection, config: Config, platform: Platform
             "first": date_range_row[0],
             "last": date_range_row[1],
         },
-    }
-
-
-def format_date_range_display(date_range: dict | None) -> str:
-    """Return a short date range string for display."""
-    if not date_range or not date_range.get("first") or not date_range.get("last"):
-        return "n/a"
-
-    first_date = datetime.fromisoformat(date_range["first"]).strftime("%b %d, %Y")
-    last_date = datetime.fromisoformat(date_range["last"]).strftime("%b %d, %Y")
-    return f"{first_date} - {last_date}"
-
-
-def build_launch_packet(view: dict, source_key: str, github_repo: str, site_url: str) -> dict:
-    """Create copy-ready launch text for summary, release notes, HN, and LinkedIn."""
-    source_label = SOURCE_VIEW_LABELS.get(source_key, source_key)
-    volume = view.get("volume", {})
-    persona = view.get("persona", {})
-    model_usage = view.get("model_usage", {})
-    platform_stats = view.get("platform_stats", {})
-    nlp = view.get("nlp", {})
-    date_range = format_date_range_display(view.get("date_range"))
-
-    total_prompts = int(volume.get("total_human", 0) or 0)
-    total_conversations = int(volume.get("total_conversations", 0) or 0)
-    avg_words = float(volume.get("avg_words_per_prompt", 0) or 0)
-
-    codex_prompts = int((platform_stats.get("codex") or {}).get("messages", 0) or 0)
-    codex_share_pct = round((codex_prompts / total_prompts) * 100, 1) if total_prompts else 0.0
-
-    top_model = None
-    by_model = model_usage.get("by_model", [])
-    if by_model:
-        top_model = by_model[0].get("model_id")
-    if not top_model:
-        top_model = "n/a"
-
-    complexity_avg = float((nlp.get("complexity") or {}).get("avg_score", 0.0) or 0.0)
-    iteration_style = (nlp.get("iteration_style") or {}).get("style", "n/a")
-    persona_name = persona.get("name", "n/a")
-
-    summary = "\n".join(
-        [
-            f"How I Prompt v2 snapshot ({source_label})",
-            f"Date range: {date_range}",
-            f"Prompts: {total_prompts:,} across {total_conversations:,} conversations",
-            f"Persona: {persona_name}",
-            f"Avg prompt length: {avg_words:.1f} words | Codex share: {codex_share_pct}%",
-            f"Top model: {top_model} | Iteration style: {iteration_style} | Complexity: {complexity_avg:.1f}/5",
-            f"Source + build: {github_repo}",
-        ]
-    )
-
-    release_notes = "\n".join(
-        [
-            "How I Prompt v2 - Release Notes",
-            "",
-            f"Scope view: {source_label}",
-            f"- Date range covered: {date_range}",
-            "- Active data sources: Claude Code + Codex",
-            "- Added model attribution from Codex session metadata",
-            "- Added trend analytics (daily/weekly rollups, 7d vs 30d deltas, shift markers)",
-            "- Added deterministic NLP metrics with confidence (intent, complexity, iteration style)",
-            "- Added dashboard launch-kit sharing actions (summary + HN + LinkedIn copy)",
-            "",
-            "Migration note: Claude.ai exports are deprecated and ignored by the v2 pipeline.",
-            f"GitHub: {github_repo}",
-            f"Live: {site_url}",
-        ]
-    )
-
-    hn_post = "\n".join(
-        [
-            "Show HN: How I Prompt v2 (local analytics for Claude Code + Codex)",
-            "",
-            f"I built a local-first dashboard to analyze my prompting patterns ({source_label}).",
-            f"It currently covers {total_prompts:,} prompts across {total_conversations:,} conversations ({date_range}).",
-            "v2 adds model attribution, trend analytics, and deterministic NLP metrics.",
-            "Migration note: Claude.ai exports are deprecated in v2; active pipeline is Claude Code + Codex.",
-            f"Repo: {github_repo}",
-            f"Live demo: {site_url}",
-            "",
-            "Would love feedback on which metrics are most useful for daily AI workflows.",
-        ]
-    )
-
-    linkedin_post = "\n".join(
-        [
-            f"Shipped How I Prompt v2 for {source_label}.",
-            f"Analyzed {total_prompts:,} prompts across {total_conversations:,} conversations ({date_range}).",
-            f"Highlights: model attribution, trend analytics, deterministic NLP metrics, and a new launch sharing kit.",
-            "Migration note: Claude.ai exports are deprecated in v2; active sources are Claude Code + Codex.",
-            f"Open source: {github_repo}",
-            f"Live demo: {site_url}",
-            "",
-            "#buildinpublic #ai #developertools #analytics",
-        ]
-    )
-
-    return {
-        "source_label": source_label,
-        "summary": summary,
-        "release_notes": release_notes,
-        "hn_post": hn_post,
-        "linkedin_post": linkedin_post,
-        "attribution_url": github_repo,
     }
 
 

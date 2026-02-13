@@ -90,11 +90,12 @@ function fixLocalLinks() {
     if (isLocal) {
         document.querySelectorAll('.dashboard-link').forEach(link => {
             const currentPath = location.pathname;
-            const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
-            if (basePath.endsWith('/wrapped')) {
-                link.href = basePath.replace('/wrapped', '') + '/index.html';
+            // Handle both /wrapped/ (trailing slash) and /wrapped (no trailing slash)
+            if (currentPath.includes('/wrapped')) {
+                const wrappedIdx = currentPath.indexOf('/wrapped');
+                link.href = currentPath.substring(0, wrappedIdx) + '/index.html';
             } else {
-                link.href = basePath + '/dashboard.html';
+                link.href = '/index.html';
             }
         });
     }

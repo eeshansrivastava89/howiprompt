@@ -1,22 +1,33 @@
 ---
-// Trend band: source share sparkline, style trends, model usage, narrative callouts
+// Trend band: 4 ECharts trend cards (question rate, command rate, politeness, backtrack)
 ---
-<div class="trend-grid">
-    <div class="card animate delay-4">
-        <div class="card-label">Source Share Trend</div>
-        <svg class="trend-sparkline" id="sourceShareSparkline" viewBox="0 0 100 30" preserveAspectRatio="none"></svg>
-        <div class="trend-note" id="sourceShareSummary">Codex share over time</div>
+<div class="trend-grid animate delay-4">
+    <div class="card trend-chart-card">
+        <div class="trend-chart-header">
+            <span class="card-label">Question Rate</span>
+            <span class="trend-badge" id="badgeQuestionRate"></span>
+        </div>
+        <div class="trend-chart" id="chartQuestionRate"></div>
     </div>
-    <div class="card animate delay-5">
-        <div class="card-label">Style Trend (7d vs 30d)</div>
-        <div class="trend-list" id="styleTrendList"></div>
+    <div class="card trend-chart-card">
+        <div class="trend-chart-header">
+            <span class="card-label">Command Rate</span>
+            <span class="trend-badge" id="badgeCommandRate"></span>
+        </div>
+        <div class="trend-chart" id="chartCommandRate"></div>
     </div>
-    <div class="card animate delay-6">
-        <div class="card-label">Model Usage (Recent)</div>
-        <div class="trend-list" id="modelUsageList"></div>
+    <div class="card trend-chart-card">
+        <div class="trend-chart-header">
+            <span class="card-label">Politeness</span>
+            <span class="trend-badge" id="badgePoliteness"></span>
+        </div>
+        <div class="trend-chart" id="chartPoliteness"></div>
     </div>
-    <div class="card card-wide animate delay-7">
-        <div class="card-label">Narrative Callouts</div>
-        <div class="trend-list" id="trendCalloutsList"></div>
+    <div class="card trend-chart-card">
+        <div class="trend-chart-header">
+            <span class="card-label">Backtrack</span>
+            <span class="trend-badge" id="badgeBacktrack"></span>
+        </div>
+        <div class="trend-chart" id="chartBacktrack"></div>
     </div>
 </div>

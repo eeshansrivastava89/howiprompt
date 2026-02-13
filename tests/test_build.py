@@ -4,20 +4,25 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-import build
+from src.config import load_config
+from src.db import init_db, insert_messages, query_messages
+from src.metrics import compute_metrics, compute_source_views
+from src.models import Message, Platform, Role
+from src.nlp import enrich_nlp
+from src.parsers import parse_claude_code, parse_codex_history, parse_codex_session_metadata
 
 
 def make_message(
     *,
     ts: datetime,
-    platform: build.Platform,
-    role: build.Role,
+    platform: Platform,
+    role: Role,
     content: str,
     conversation_id: str,
     model_id: str | None = None,
     model_provider: str | None = None,
-) -> build.Message:
-    return build.Message(
+) -> Message:
+    return Message(
         timestamp=ts,
         platform=platform,
         role=role,
@@ -29,11 +34,11 @@ def make_message(
     )
 
 
-def setup_db(messages: list[build.Message]):
+def setup_db(messages: list[Message]):
     """Insert messages into an in-memory DB and run NLP enrichment."""
-    conn = build.init_db()
-    build.insert_messages(conn, messages)
-    build.enrich_nlp(conn)
+    conn = init_db()
+    insert_messages(conn, messages)
+    enrich_nlp(conn)
     return conn
 
 
@@ -64,7 +69,7 @@ class ParseCodexSessionMetadataTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            result = build.parse_codex_session_metadata(sessions_root)
+            result = parse_codex_session_metadata(sessions_root)
 
         self.assertIn("s1", result)
         self.assertEqual(result["s1"]["model_provider"], "openai")
@@ -87,13 +92,13 @@ class ParseCodexHistoryTests(unittest.TestCase):
             session_models = {
                 "s3": {"model_id": "gpt-5.2-codex", "model_provider": "openai"}
             }
-            messages = list(build.parse_codex_history(history_path, session_models))
+            messages = list(parse_codex_history(history_path, session_models))
 
         self.assertEqual(len(messages), 2)
 
         first, second = messages
-        self.assertEqual(first.platform, build.Platform.CODEX)
-        self.assertEqual(first.role, build.Role.HUMAN)
+        self.assertEqual(first.platform, Platform.CODEX)
+        self.assertEqual(first.role, Role.HUMAN)
         self.assertEqual(first.conversation_id, "s3")
         self.assertEqual(first.word_count, 2)
         self.assertEqual(
@@ -111,13 +116,13 @@ class ParseCodexHistoryTests(unittest.TestCase):
 
 class ModelUsageTests(unittest.TestCase):
     def test_compute_metrics_includes_model_usage_aggregates(self) -> None:
-        config = build.load_config()
+        config = load_config()
         t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
         messages = [
             make_message(
                 ts=t0,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
+                platform=Platform.CODEX,
+                role=Role.HUMAN,
                 content="run tests",
                 conversation_id="cx-1",
                 model_id="gpt-5.3-codex",
@@ -125,8 +130,8 @@ class ModelUsageTests(unittest.TestCase):
             ),
             make_message(
                 ts=t0,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
+                platform=Platform.CODEX,
+                role=Role.HUMAN,
                 content="fix this",
                 conversation_id="cx-1",
                 model_id="gpt-5.3-codex",
@@ -134,15 +139,15 @@ class ModelUsageTests(unittest.TestCase):
             ),
             make_message(
                 ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.HUMAN,
                 content="please explain",
                 conversation_id="cc-1",
             ),
         ]
 
         conn = setup_db(messages)
-        metrics = build.compute_metrics(conn, config)
+        metrics = compute_metrics(conn, config)
         model_usage = metrics["model_usage"]
 
         self.assertEqual(model_usage["coverage"]["total_human_prompts"], 3)
@@ -162,22 +167,22 @@ class ModelUsageTests(unittest.TestCase):
         self.assertEqual(codex_series[0]["models"]["gpt-5.3-codex"], 2)
 
     def test_compute_metrics_includes_trend_rollups_and_deltas(self) -> None:
-        config = build.load_config()
+        config = load_config()
         t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
         t1 = datetime(2026, 2, 2, 12, 0, tzinfo=timezone.utc)
         t2 = datetime(2026, 2, 3, 12, 0, tzinfo=timezone.utc)
         messages = [
             make_message(
                 ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.HUMAN,
                 content="please explain this?",
                 conversation_id="cc-1",
             ),
             make_message(
                 ts=t1,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
+                platform=Platform.CODEX,
+                role=Role.HUMAN,
                 content="run tests",
                 conversation_id="cx-1",
                 model_id="gpt-5.2-codex",
@@ -185,8 +190,8 @@ class ModelUsageTests(unittest.TestCase):
             ),
             make_message(
                 ts=t2,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
+                platform=Platform.CODEX,
+                role=Role.HUMAN,
                 content="fix this",
                 conversation_id="cx-2",
                 model_id="gpt-5.3-codex",
@@ -195,7 +200,7 @@ class ModelUsageTests(unittest.TestCase):
         ]
 
         conn = setup_db(messages)
-        metrics = build.compute_metrics(conn, config)
+        metrics = compute_metrics(conn, config)
         trends = metrics["trends"]
 
         self.assertEqual(len(trends["daily_rollups"]), 3)
@@ -207,34 +212,34 @@ class ModelUsageTests(unittest.TestCase):
 
 class NlpMetricsTests(unittest.TestCase):
     def test_compute_metrics_includes_nlp_outputs_with_confidence(self) -> None:
-        config = build.load_config()
+        config = load_config()
         t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
         messages = [
             make_message(
                 ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.HUMAN,
                 content="can you debug this failing test and fix the error?",
                 conversation_id="cc-1",
             ),
             make_message(
                 ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.HUMAN,
                 content="plan a release strategy with milestones and next steps",
                 conversation_id="cc-1",
             ),
             make_message(
                 ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.HUMAN,
                 content="please explain why this works and how to improve it",
                 conversation_id="cc-2",
             ),
         ]
 
         conn = setup_db(messages)
-        metrics = build.compute_metrics(conn, config)
+        metrics = compute_metrics(conn, config)
         nlp = metrics["nlp"]
 
         self.assertIn("intent", nlp)
@@ -254,111 +259,38 @@ class NlpMetricsTests(unittest.TestCase):
         self.assertIn("confidence", nlp["iteration_style"])
 
 
-class LaunchPacketTests(unittest.TestCase):
-    def test_build_launch_packet_includes_migration_and_attribution(self) -> None:
-        config = build.load_config()
-        t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
-        messages = [
-            make_message(
-                ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
-                content="please explain this release plan",
-                conversation_id="cc-1",
-            ),
-            make_message(
-                ts=t0,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
-                content="run tests and push release branch",
-                conversation_id="cx-1",
-                model_id="gpt-5.3-codex",
-                model_provider="openai",
-            ),
-        ]
-
-        conn = setup_db(messages)
-        view = build.compute_metrics(conn, config)
-        packet = build.build_launch_packet(
-            view,
-            "both",
-            "https://github.com/example/howiprompt",
-            "https://example.com/howiprompt",
-        )
-
-        self.assertIn("Migration note: Claude.ai exports are deprecated", packet["release_notes"])
-        self.assertIn("https://github.com/example/howiprompt", packet["summary"])
-        self.assertIn("https://github.com/example/howiprompt", packet["hn_post"])
-        self.assertIn("https://github.com/example/howiprompt", packet["linkedin_post"])
-
-    def test_generate_dashboard_html_includes_launch_kit_controls(self) -> None:
-        config = build.load_config()
-        t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
-        messages = [
-            make_message(
-                ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
-                content="please explain this?",
-                conversation_id="cc-1",
-            ),
-            make_message(
-                ts=t0,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
-                content="run tests",
-                conversation_id="cx-1",
-                model_id="gpt-5.2-codex",
-                model_provider="openai",
-            ),
-        ]
-        conn = setup_db(messages)
-        source_views, defaults = build.compute_source_views(conn, config)
-        metrics = dict(source_views["both"])
-        metrics["source_views"] = source_views
-        metrics["default_view"] = defaults["default_view"]
-
-        html = build.generate_dashboard_html(metrics)
-
-        self.assertIn('id="copyLaunchSummaryBtn"', html)
-        self.assertIn('id="copyReleaseNotesBtn"', html)
-        self.assertIn('id="copyHnPostBtn"', html)
-        self.assertIn('id="copyLinkedinPostBtn"', html)
-        self.assertIn("const launchPackets =", html)
-
-
 class SourceViewsTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.config = build.load_config()
+        self.config = load_config()
         self.t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
 
     def test_compute_source_views_with_both_sources(self) -> None:
         messages = [
             make_message(
                 ts=self.t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.HUMAN,
                 content="please explain this?",
                 conversation_id="cc-1",
             ),
             make_message(
                 ts=self.t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.ASSISTANT,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.ASSISTANT,
                 content="you're absolutely right",
                 conversation_id="cc-1",
             ),
             make_message(
                 ts=self.t0,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
+                platform=Platform.CODEX,
+                role=Role.HUMAN,
                 content="run tests",
                 conversation_id="cx-1",
             ),
         ]
 
         conn = setup_db(messages)
-        source_views, defaults = build.compute_source_views(conn, self.config)
+        source_views, defaults = compute_source_views(conn, self.config)
 
         self.assertEqual(defaults["default_view"], "both")
         self.assertEqual(set(source_views.keys()), {"both", "claude_code", "codex"})
@@ -373,22 +305,22 @@ class SourceViewsTests(unittest.TestCase):
         messages = [
             make_message(
                 ts=self.t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.HUMAN,
                 content="please do this",
                 conversation_id="cc-1",
             ),
             make_message(
                 ts=self.t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.ASSISTANT,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.ASSISTANT,
                 content="done",
                 conversation_id="cc-1",
             ),
         ]
 
         conn = setup_db(messages)
-        source_views, defaults = build.compute_source_views(conn, self.config)
+        source_views, defaults = compute_source_views(conn, self.config)
 
         self.assertEqual(defaults["default_view"], "both")
         self.assertIsNotNone(source_views["both"])
@@ -399,15 +331,15 @@ class SourceViewsTests(unittest.TestCase):
         messages = [
             make_message(
                 ts=self.t0,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
+                platform=Platform.CODEX,
+                role=Role.HUMAN,
                 content="fix this",
                 conversation_id="cx-1",
             )
         ]
 
         conn = setup_db(messages)
-        source_views, defaults = build.compute_source_views(conn, self.config)
+        source_views, defaults = compute_source_views(conn, self.config)
 
         self.assertEqual(defaults["default_view"], "both")
         self.assertIsNotNone(source_views["both"])
@@ -415,56 +347,11 @@ class SourceViewsTests(unittest.TestCase):
         self.assertIsNotNone(source_views["codex"])
 
 
-class DashboardCompatibilityTests(unittest.TestCase):
-    def test_generate_dashboard_html_handles_legacy_claude_view_key(self) -> None:
-        config = build.load_config()
-        t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
-        messages = [
-            make_message(
-                ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
-                content="please explain this?",
-                conversation_id="cc-1",
-            ),
-            make_message(
-                ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.ASSISTANT,
-                content="you're right",
-                conversation_id="cc-1",
-            ),
-            make_message(
-                ts=t0,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
-                content="run tests",
-                conversation_id="cx-1",
-            ),
-        ]
-        conn = setup_db(messages)
-        source_views, _ = build.compute_source_views(conn, config)
-
-        metrics = dict(source_views["both"])
-        metrics["source_views"] = {
-            "both": source_views["both"],
-            "claude": source_views["claude_code"],
-            "codex": source_views["codex"],
-        }
-        metrics["default_view"] = "claude"
-
-        html = build.generate_dashboard_html(metrics)
-
-        self.assertIn('option value="claude_code" selected', html)
-        self.assertIn('const defaultSource = "claude_code";', html)
-        self.assertIn("selected === 'claude'", html)
-
-
 class DatabaseLayerTests(unittest.TestCase):
     """Tests for the SQLite database layer."""
 
     def test_init_db_creates_tables(self) -> None:
-        conn = build.init_db()
+        conn = init_db()
         tables = conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
         ).fetchall()
@@ -477,26 +364,26 @@ class DatabaseLayerTests(unittest.TestCase):
         messages = [
             make_message(
                 ts=t0,
-                platform=build.Platform.CLAUDE_CODE,
-                role=build.Role.HUMAN,
+                platform=Platform.CLAUDE_CODE,
+                role=Role.HUMAN,
                 content="hello world",
                 conversation_id="cc-1",
             ),
             make_message(
                 ts=t0,
-                platform=build.Platform.CODEX,
-                role=build.Role.HUMAN,
+                platform=Platform.CODEX,
+                role=Role.HUMAN,
                 content="fix this bug",
                 conversation_id="cx-1",
                 model_id="gpt-5.3-codex",
                 model_provider="openai",
             ),
         ]
-        conn = build.init_db()
-        count = build.insert_messages(conn, messages)
+        conn = init_db()
+        count = insert_messages(conn, messages)
         self.assertEqual(count, 2)
 
-        retrieved = build.query_messages(conn, role=build.Role.HUMAN)
+        retrieved = query_messages(conn, role=Role.HUMAN)
         self.assertEqual(len(retrieved), 2)
         self.assertEqual(retrieved[0].content, "hello world")
         self.assertEqual(retrieved[1].model_id, "gpt-5.3-codex")
@@ -504,27 +391,27 @@ class DatabaseLayerTests(unittest.TestCase):
     def test_query_messages_filters_by_platform(self) -> None:
         t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
         messages = [
-            make_message(ts=t0, platform=build.Platform.CLAUDE_CODE, role=build.Role.HUMAN,
+            make_message(ts=t0, platform=Platform.CLAUDE_CODE, role=Role.HUMAN,
                          content="cc msg", conversation_id="cc-1"),
-            make_message(ts=t0, platform=build.Platform.CODEX, role=build.Role.HUMAN,
+            make_message(ts=t0, platform=Platform.CODEX, role=Role.HUMAN,
                          content="codex msg", conversation_id="cx-1"),
         ]
-        conn = build.init_db()
-        build.insert_messages(conn, messages)
+        conn = init_db()
+        insert_messages(conn, messages)
 
-        cc_msgs = build.query_messages(conn, platform=build.Platform.CLAUDE_CODE)
+        cc_msgs = query_messages(conn, platform=Platform.CLAUDE_CODE)
         self.assertEqual(len(cc_msgs), 1)
         self.assertEqual(cc_msgs[0].content, "cc msg")
 
     def test_nlp_enrichment_roundtrip(self) -> None:
         t0 = datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc)
         messages = [
-            make_message(ts=t0, platform=build.Platform.CLAUDE_CODE, role=build.Role.HUMAN,
+            make_message(ts=t0, platform=Platform.CLAUDE_CODE, role=Role.HUMAN,
                          content="debug this failing test", conversation_id="cc-1"),
         ]
-        conn = build.init_db()
-        build.insert_messages(conn, messages)
-        build.enrich_nlp(conn)
+        conn = init_db()
+        insert_messages(conn, messages)
+        enrich_nlp(conn)
 
         row = conn.execute("SELECT intent, complexity_score FROM nlp_enrichments").fetchone()
         self.assertIsNotNone(row)

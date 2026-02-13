@@ -1,10 +1,9 @@
-// dashboard.js — Dashboard interactivity: source filtering, heatmap, trends, launch kit, modal
+// dashboard.js — Dashboard interactivity: source filtering, heatmap, ECharts trends, share, modal
 // Loads metrics.json via fetch() at runtime — no build-time data injection.
 
 import { initThemeToggle } from './theme.js';
 
 let sourceViews = {};
-let launchPackets = {};
 let defaultSource = 'both';
 let activeSourceKey = 'both';
 let activeView = null;
@@ -97,7 +96,9 @@ function renderHeatmap(heatmapData) {
     });
 }
 
-// === Trend rendering ===
+// === Trend rendering (ECharts) ===
+
+let chartInstances = {};
 
 function formatDelta(deltaPct) {
     if (deltaPct === null || deltaPct === undefined || Number.isNaN(deltaPct)) {
@@ -112,182 +113,181 @@ function formatDelta(deltaPct) {
     return { text: `${deltaPct}%`, cls: 'down' };
 }
 
-function renderSourceShareSparkline(trends) {
-    const spark = document.getElementById('sourceShareSparkline');
-    const summary = document.getElementById('sourceShareSummary');
-    if (!spark || !summary) return;
-    const daily = (trends && trends.daily_rollups) ? trends.daily_rollups.slice(-30) : [];
-
-    if (daily.length < 2) {
-        spark.innerHTML = '';
-        summary.textContent = 'Not enough trend data yet';
-        return;
-    }
-
-    const values = daily.map((row) => Number(row.source_share_pct?.codex ?? 0));
-    const points = values.map((value, index) => {
-        const x = (index / (values.length - 1)) * 100;
-        const y = 30 - (Math.max(0, Math.min(100, value)) / 100) * 30;
-        return `${x.toFixed(2)},${y.toFixed(2)}`;
-    });
-
-    spark.innerHTML = `<path d="M${points.join(' L')}" />`;
-    const first = values[0];
-    const last = values[values.length - 1];
-    const delta = Math.round((last - first) * 10) / 10;
-    const trendWord = delta > 0 ? 'up' : (delta < 0 ? 'down' : 'flat');
-    summary.textContent = `Codex share is ${trendWord} (${delta > 0 ? '+' : ''}${delta} pts, 30d window)`;
+function isDarkMode() {
+    return document.documentElement.classList.contains('dark');
 }
 
-function renderStyleTrend(deltas) {
-    const container = document.getElementById('styleTrendList');
-    if (!container) return;
-    container.innerHTML = '';
-    const rows = [
-        ['Question Rate', deltas?.question_rate_pct],
-        ['Command Rate', deltas?.command_rate_pct],
-        ['Politeness', deltas?.politeness_per_100],
-        ['Backtrack', deltas?.backtrack_per_100],
-    ];
-
-    rows.forEach(([label, stats]) => {
-        const delta = formatDelta(stats?.delta_pct);
-        const row = document.createElement('div');
-        row.className = 'trend-row';
-        row.innerHTML = `
-            <span><strong>${label}</strong> <span class="trend-note">7d: ${stats?.avg_7d ?? 'n/a'} · 30d: ${stats?.avg_30d ?? 'n/a'}</span></span>
-            <span class="trend-delta ${delta.cls}">${delta.text}</span>
-        `;
-        container.appendChild(row);
-    });
+function getChartColors() {
+    const dark = isDarkMode();
+    return {
+        lineColor: '#f97316',
+        areaStart: dark ? 'rgba(249, 115, 22, 0.3)' : 'rgba(249, 115, 22, 0.2)',
+        areaEnd: 'rgba(249, 115, 22, 0)',
+        textColor: dark ? '#86868b' : '#86868b',
+        tooltipBg: dark ? '#1c1c1e' : '#ffffff',
+        tooltipBorder: dark ? '#38383a' : '#d2d2d7',
+        tooltipText: dark ? '#f5f5f7' : '#1d1d1f',
+    };
 }
 
-function renderModelUsage(modelUsage) {
-    const container = document.getElementById('modelUsageList');
-    if (!container) return;
-    container.innerHTML = '';
-    const byModel = modelUsage?.by_model || [];
-    const topModels = byModel.slice(0, 4);
-    if (topModels.length === 0) {
-        container.innerHTML = '<div class="trend-note">No model metadata available for this view</div>';
-        return;
-    }
-
-    topModels.forEach((item) => {
-        const row = document.createElement('div');
-        row.className = 'trend-row';
-        row.innerHTML = `
-            <span><strong>${item.model_id}</strong> <span class="trend-note">${item.model_provider}</span></span>
-            <span>${item.prompts} prompts</span>
-        `;
-        container.appendChild(row);
-    });
-
-    const coverage = modelUsage?.coverage?.metadata_coverage_pct ?? 0;
-    const coverageNote = document.createElement('div');
-    coverageNote.className = 'trend-note';
-    coverageNote.textContent = `Metadata coverage: ${coverage}% of prompts`;
-    container.appendChild(coverageNote);
+function buildChartOption(dates, values, colors) {
+    return {
+        animation: true,
+        animationDuration: 600,
+        grid: { top: 8, right: 8, bottom: 24, left: 36 },
+        xAxis: {
+            type: 'category',
+            data: dates,
+            axisLine: { show: false },
+            axisTick: { show: false },
+            axisLabel: {
+                fontSize: 10,
+                color: colors.textColor,
+                formatter: (v) => {
+                    const d = new Date(v);
+                    return `${d.getMonth() + 1}/${d.getDate()}`;
+                },
+                interval: Math.max(0, Math.floor(dates.length / 5) - 1),
+            },
+        },
+        yAxis: {
+            type: 'value',
+            splitLine: { show: false },
+            axisLine: { show: false },
+            axisTick: { show: false },
+            axisLabel: { fontSize: 10, color: colors.textColor },
+        },
+        tooltip: {
+            trigger: 'axis',
+            backgroundColor: colors.tooltipBg,
+            borderColor: colors.tooltipBorder,
+            textStyle: { color: colors.tooltipText, fontSize: 12 },
+            formatter: (params) => {
+                const p = params[0];
+                return `<strong>${p.axisValue}</strong><br/>${p.value.toFixed(1)}`;
+            },
+        },
+        series: [{
+            type: 'line',
+            data: values,
+            smooth: true,
+            symbol: 'none',
+            lineStyle: { color: colors.lineColor, width: 2.5 },
+            areaStyle: {
+                color: {
+                    type: 'linear',
+                    x: 0, y: 0, x2: 0, y2: 1,
+                    colorStops: [
+                        { offset: 0, color: colors.areaStart },
+                        { offset: 1, color: colors.areaEnd },
+                    ],
+                },
+            },
+        }],
+    };
 }
 
-function renderTrendCallouts(trends, deltas) {
-    const container = document.getElementById('trendCalloutsList');
-    if (!container) return;
-    container.innerHTML = '';
-    const notes = [];
+function disposeTrendCharts() {
+    Object.values(chartInstances).forEach((chart) => {
+        if (chart && !chart.isDisposed()) chart.dispose();
+    });
+    chartInstances = {};
+}
 
-    const promptsDelta = formatDelta(deltas?.prompts_per_day?.delta_pct);
-    notes.push(`Prompt volume vs baseline: ${promptsDelta.text} (7d vs 30d)`);
+const TREND_CHART_CONFIG = [
+    { id: 'chartQuestionRate', badge: 'badgeQuestionRate', key: 'question_rate_pct', deltaKey: 'question_rate_pct' },
+    { id: 'chartCommandRate', badge: 'badgeCommandRate', key: 'command_rate_pct', deltaKey: 'command_rate_pct' },
+    { id: 'chartPoliteness', badge: 'badgePoliteness', key: 'politeness_per_100', deltaKey: 'politeness_per_100' },
+    { id: 'chartBacktrack', badge: 'badgeBacktrack', key: 'backtrack_per_100', deltaKey: 'backtrack_per_100' },
+];
 
-    const codexDelta = formatDelta(deltas?.codex_share_pct?.delta_pct);
-    notes.push(`Codex share trend: ${codexDelta.text} (7d vs 30d)`);
+function initTrendCharts(view) {
+    if (typeof echarts === 'undefined') return;
+    disposeTrendCharts();
 
-    const shifts = (trends?.shift_markers || []).slice(0, 3);
-    shifts.forEach((marker) => {
-        if (marker.type === 'prompt_shift') {
-            notes.push(`${marker.date}: prompt volume ${marker.direction} by ${marker.delta_prompts}`);
-        } else if (marker.type === 'source_share_shift') {
-            notes.push(`${marker.date}: Codex share ${marker.direction} ${marker.delta_codex_share_pct} pts`);
+    const trends = view?.trends || {};
+    const weekly = trends?.weekly_rollups || [];
+    const deltas = trends?.deltas_7d_vs_30d || {};
+    const colors = getChartColors();
+
+    if (weekly.length < 2) return;
+
+    const dates = weekly.map((r) => r.week_start);
+
+    TREND_CHART_CONFIG.forEach(({ id, badge, key, deltaKey }) => {
+        const container = document.getElementById(id);
+        if (!container) return;
+
+        const values = weekly.map((r) => Number(r.style?.[key] ?? 0));
+        const chart = echarts.init(container);
+        chart.setOption(buildChartOption(dates, values, colors));
+        chartInstances[id] = chart;
+
+        // Delta badge
+        const badgeEl = document.getElementById(badge);
+        if (badgeEl) {
+            const d = formatDelta(deltas?.[deltaKey]?.delta_pct);
+            badgeEl.textContent = d.text;
+            badgeEl.className = `trend-badge ${d.cls}`;
         }
     });
+}
 
-    notes.forEach((note) => {
-        const row = document.createElement('div');
-        row.className = 'trend-note';
-        row.textContent = `• ${note}`;
-        container.appendChild(row);
+function resizeTrendCharts() {
+    Object.values(chartInstances).forEach((chart) => {
+        if (chart && !chart.isDisposed()) chart.resize();
     });
 }
+
+window.addEventListener('resize', resizeTrendCharts);
 
 function renderTrendBand(view) {
-    const trends = view?.trends || {};
-    const deltas = trends?.deltas_7d_vs_30d || {};
-    renderSourceShareSparkline(trends);
-    renderStyleTrend(deltas);
-    renderModelUsage(view?.model_usage || {});
-    renderTrendCallouts(trends, deltas);
+    initTrendCharts(view);
 }
 
-// === Launch kit ===
+// === Share MVP ===
 
-function getLaunchPacket(sourceKey) {
-    return launchPackets[sourceKey] || launchPackets.both || null;
-}
-
-async function copyTextToClipboard(text) {
-    if (!text) return false;
-    if (navigator?.clipboard?.writeText) {
-        try {
-            await navigator.clipboard.writeText(text);
-            return true;
-        } catch (_) {
-            // Fall back to legacy copy path.
-        }
-    }
-
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.setAttribute('readonly', '');
-    textarea.style.position = 'absolute';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.select();
-    const copied = document.execCommand('copy');
-    document.body.removeChild(textarea);
-    return copied;
-}
-
-async function copyLaunchText(kind) {
-    const status = document.getElementById('launchCopyStatus');
-    const packet = getLaunchPacket(activeSourceKey);
-    if (!packet || !packet[kind]) {
-        if (status) status.textContent = 'No launch text available for this source view yet.';
-        return;
-    }
-
-    const copied = await copyTextToClipboard(packet[kind]);
-    if (status) {
-        status.textContent = copied
-            ? `Copied ${kind.replace('_', ' ')} for ${packet.source_label}.`
-            : 'Copy failed. Please copy manually from the preview.';
+async function captureAndShare(element) {
+    if (typeof html2canvas === 'undefined') return;
+    const toast = document.getElementById('shareToast');
+    try {
+        const canvas = await html2canvas(element, {
+            backgroundColor: isDarkMode() ? '#000000' : '#f5f5f7',
+            scale: 2,
+            useCORS: true,
+        });
+        canvas.toBlob(async (blob) => {
+            if (!blob) return;
+            const file = new File([blob], 'howiprompt-dashboard.png', { type: 'image/png' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({ files: [file], title: 'How I Prompt Dashboard' });
+                    return;
+                } catch (_) { /* user cancelled or not supported, fall through to download */ }
+            }
+            // Fallback: download
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'howiprompt-dashboard.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            }
+        }, 'image/png');
+    } catch (err) {
+        console.warn('Share capture failed:', err.message);
     }
 }
 
-function renderLaunchKit(sourceKey, view) {
-    const preview = document.getElementById('launchSummaryPreview');
-    const status = document.getElementById('launchCopyStatus');
-    const packet = getLaunchPacket(sourceKey);
-
-    if (!packet) {
-        if (preview) preview.textContent = 'Launch packet unavailable for this source view.';
-        if (status) status.textContent = 'No share text available.';
-        return;
-    }
-
-    const prompts = view?.volume?.total_human ?? 0;
-    if (preview) preview.textContent = packet.summary;
-    if (status) status.textContent = `${packet.source_label} ready: ${Number(prompts).toLocaleString()} prompts included with GitHub attribution.`;
-}
+document.getElementById('shareDashboard')?.addEventListener('click', () => {
+    const container = document.querySelector('.container');
+    if (container) captureAndShare(container);
+});
 
 // === Main renderView ===
 
@@ -402,6 +402,7 @@ function renderView(sourceKey) {
     if (youreRightLabel) youreRightLabel.textContent = `${youreRight.per_conversation ?? 0}× per conversation`;
 
     renderHeatmap(temporal.heatmap);
+    renderTrendBand(view);
 }
 
 // === Source filter ===
@@ -474,13 +475,6 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMethodology();
 });
 
-// === Launch kit button handlers ===
-
-document.getElementById('copyLaunchSummaryBtn')?.addEventListener('click', () => copyLaunchText('summary'));
-document.getElementById('copyReleaseNotesBtn')?.addEventListener('click', () => copyLaunchText('release_notes'));
-document.getElementById('copyHnPostBtn')?.addEventListener('click', () => copyLaunchText('hn_post'));
-document.getElementById('copyLinkedinPostBtn')?.addEventListener('click', () => copyLaunchText('linkedin_post'));
-
 // === Fix wrapped link for local vs production ===
 
 function fixLocalLinks() {
@@ -515,8 +509,6 @@ function applyBranding(metricsData) {
     if (subscribeLink) subscribeLink.href = newsletterUrl;
     const footerGithubLink = document.getElementById('footerGithubLink');
     if (footerGithubLink) footerGithubLink.href = githubRepo;
-    const launchGithubLink = document.getElementById('launchGithubLink');
-    if (launchGithubLink) launchGithubLink.href = githubRepo;
 }
 
 // === Init ===
@@ -524,6 +516,14 @@ function applyBranding(metricsData) {
 async function init() {
     initThemeToggle('dashboard-theme');
     fixLocalLinks();
+
+    // Re-render ECharts on theme toggle (dark/light switch)
+    document.getElementById('themeToggle')?.addEventListener('click', () => {
+        // Small delay so the class toggle has applied
+        requestAnimationFrame(() => {
+            if (activeView) initTrendCharts(activeView);
+        });
+    });
 
     try {
         const response = await fetch('./metrics.json');
@@ -542,7 +542,6 @@ async function init() {
             defaultSource = 'claude_code';
         }
 
-        launchPackets = metrics.launch_packets || {};
         applyBranding(metrics);
         initSourceFilter();
     } catch (err) {
