@@ -1063,3 +1063,22 @@ body {
 .delay-6 { animation-delay: 0.3s; opacity: 0; }
 .delay-7 { animation-delay: 0.35s; opacity: 0; }
 .delay-8 { animation-delay: 0.4s; opacity: 0; }
+
+/* Refresh button */
+.refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 13px;
+    color: var(--text);
+    transition: border-color 0.2s, opacity 0.2s;
+}
+.refresh-btn:hover { border-color: var(--accent); }
+.refresh-btn.refreshing { opacity: 0.6; pointer-events: none; }
+.refresh-btn.refreshing .refresh-icon { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

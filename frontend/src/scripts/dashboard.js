@@ -415,11 +415,17 @@ function syncSourceSelectors(value) {
 function initSourceFilter() {
     if (!sourceFilter || !sourceFilterMobile) return;
 
-    const available = ['both', 'claude_code', 'codex'].filter((key) => Boolean(getView(key)));
+    const available = ['both', 'claude_code', 'codex', 'agent'].filter((key) => Boolean(getView(key)));
+    const labelMap = { both: 'Both', claude_code: 'Claude Code', codex: 'Codex', agent: 'Agent' };
     [sourceFilter, sourceFilterMobile].forEach((select) => {
-        Array.from(select.options).forEach((option) => {
-            option.disabled = !available.includes(option.value);
-        });
+        // Rebuild options dynamically — only show sources that have data
+        select.innerHTML = '';
+        for (const key of available) {
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.textContent = labelMap[key] || key;
+            select.appendChild(opt);
+        }
     });
 
     let selected = localStorage.getItem(sourceStorageKey) || defaultSource;
@@ -510,6 +516,54 @@ function applyBranding(metricsData) {
     const footerGithubLink = document.getElementById('footerGithubLink');
     if (footerGithubLink) footerGithubLink.href = githubRepo;
 }
+
+// === Refresh ===
+
+async function handleRefresh() {
+    const btn = document.getElementById('refreshBtn');
+    if (!btn || btn.classList.contains('refreshing')) return;
+
+    btn.classList.add('refreshing');
+    const label = btn.querySelector('.refresh-label');
+    if (label) label.textContent = 'Syncing...';
+
+    try {
+        const response = await fetch('/api/refresh', { method: 'POST' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const { metrics, stats } = await response.json();
+
+        sourceViews = metrics.source_views || { both: metrics };
+        if (!sourceViews.claude_code && sourceViews.claude) {
+            sourceViews.claude_code = sourceViews.claude;
+        }
+        sourceViews.both = sourceViews.both || metrics;
+
+        renderView(activeSourceKey);
+
+        const toast = document.getElementById('shareToast');
+        if (toast) {
+            const msg = stats.newMessages > 0
+                ? `Synced ${stats.newMessages} new message${stats.newMessages === 1 ? '' : 's'}`
+                : 'Already up to date';
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+    } catch (err) {
+        console.warn('Refresh failed:', err.message);
+        const toast = document.getElementById('shareToast');
+        if (toast) {
+            toast.textContent = 'Refresh failed — is the server running?';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    } finally {
+        btn.classList.remove('refreshing');
+        if (label) label.textContent = 'Refresh';
+    }
+}
+
+document.getElementById('refreshBtn')?.addEventListener('click', handleRefresh);
 
 // === Init ===
 

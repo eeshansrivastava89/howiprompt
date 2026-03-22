@@ -10,6 +10,34 @@ A personal analytics dashboard for your Claude Code + Codex AI conversations. Se
 
 ---
 
+## Quick Start
+
+```bash
+npx howiprompt
+```
+
+That's it. Syncs your conversations, builds analytics, and opens the dashboard in your browser.
+
+### Options
+
+```bash
+npx howiprompt --no-open     # don't auto-open browser
+npx howiprompt --port 4000   # custom port
+npx howiprompt --help        # usage info
+```
+
+### What Happens
+
+1. Copies conversation data from `~/.claude/projects/` and `~/.codex/history.jsonl`
+2. Parses and stores messages in a local SQLite database (`~/.howiprompt/data.db`)
+3. Runs NLP classifiers (intent, complexity, iteration style)
+4. Computes analytics (volume, depth, temporal, style, trends, persona)
+5. Serves an interactive dashboard at `localhost`
+
+Subsequent runs are incremental — only new messages are synced.
+
+---
+
 ## What You Get
 
 | Dashboard | Full Experience |
@@ -17,39 +45,25 @@ A personal analytics dashboard for your Claude Code + Codex AI conversations. Se
 | One-page overview of all your stats | Scroll-through "Wrapped" style presentation |
 | [howiprompt.eeshans.com](https://howiprompt.eeshans.com) | [howiprompt.eeshans.com/wrapped](https://howiprompt.eeshans.com/wrapped) |
 
-**Metrics include:** Total prompts, word counts, conversation depth, activity heatmap, prompt style analysis, and your AI persona classification.
+**Metrics include:** Total prompts, word counts, conversation depth, activity heatmap, prompt style analysis, trend charts, model usage, and your AI persona classification.
 
 ---
 
-## Build Your Own
+## Data Sources
 
-```bash
-# 1. Clone
-git clone https://github.com/eeshansrivastava89/howiprompt.git
-cd howiprompt
+| Source | Location |
+|--------|----------|
+| **Claude Code** | `~/.claude/projects/*.jsonl` |
+| **Codex** | `~/.codex/history.jsonl` |
 
-# 2. Build (auto-syncs Claude Code + Codex, then opens dashboard)
-python build.py
-
-# Optional: skip browser auto-open
-python build.py --no-open
-```
-
-### Data Sources
-
-| Source | How to Get It |
-|--------|---------------|
-| **Claude Code** | Auto-copied from `~/.claude/projects/` on each build |
-| **Codex** | Auto-copied from `~/.codex/history.jsonl` on each build |
-
-`v2` note: Claude.ai exports are deprecated and ignored by the active build pipeline.
+Both are auto-synced on each run. A backup is kept at `~/.howiprompt/raw/`.
 
 ---
 
 ## Privacy
 
 - **100% local** — Nothing leaves your machine
-- **You control the data** — Only processes files you explicitly add
+- **Persistent storage** — Conversations saved in `~/.howiprompt/data.db` (survives even if source files are deleted)
 - **No conversation text in output** — Only aggregate statistics
 
 ---
@@ -65,18 +79,28 @@ Your style is classified on two axes: **Engagement** (questions + iteration) and
 
 ---
 
-## Testing
+## Development
 
 ```bash
-python -m unittest discover -s tests -p "test_*.py" -v
+# Install deps
+npm install
+
+# Build TypeScript
+npm run build
+
+# Run tests
+npm test
+
+# Build for distribution
+npm run build:cli
+
+# Privacy gate (run before publish)
+npm run check:privacy
 ```
 
----
+### Requirements
 
-## Requirements
-
-- Python 3.10+ (no external dependencies)
-- macOS or Linux (Windows with minor tweaks)
+- Node.js 18+
 
 ---
 
