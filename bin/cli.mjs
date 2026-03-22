@@ -75,10 +75,29 @@ console.log(green("done"));
 process.stdout.write("  Syncing conversations...       ");
 try {
   const { runPipeline } = await import("../dist/index.js");
-  const stats = await runPipeline({ dbPath, dataDir });
+  let embeddingLogged = false;
+  const stats = await runPipeline({
+    dbPath,
+    dataDir,
+    onProgress: (stage, detail) => {
+      if (stage === "embedding" && !embeddingLogged) {
+        embeddingLogged = true;
+        process.stdout.write(`\n  Embedding prompts...           `);
+      }
+    },
+  });
   if (stats.newMessages > 0) {
-    console.log(green(`+${stats.newMessages} new messages (${stats.totalMessages} total)`));
+    if (!embeddingLogged) {
+      console.log(green(`+${stats.newMessages} new messages (${stats.totalMessages} total)`));
+    } else {
+      // Embedding line was already started
+      console.log(green(`done (${stats.embedded} embedded)`));
+      console.log(`  ${dim(`+${stats.newMessages} new messages, ${stats.totalMessages} total`)}`);
+    }
   } else {
+    if (embeddingLogged) {
+      console.log(green(`done (${stats.embedded} embedded)`));
+    }
     console.log(green(`${stats.totalMessages} messages (up to date)`));
   }
 } catch (err) {

@@ -8,6 +8,8 @@
   },
   "files": [
     "bin/*.mjs",
+    "config/",
+    "data/",
     "dist/",
     "frontend/dist/"
   ],
@@ -27,6 +29,7 @@
     "check:privacy": "node scripts/privacy-gate.mjs"
   },
   "dependencies": {
+    "@huggingface/transformers": "^3.8.1",
     "@libsql/client": "^0.17.0",
     "open": "^10.1.0"
   },

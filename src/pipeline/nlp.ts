@@ -216,6 +216,25 @@ export async function computeNlpMetrics(
   const ic = intentConf.rows[0];
   const ia = iterAgg.rows[0];
 
+  // HITL Score
+  const hitlAgg = await client.execute({
+    sql: `SELECT AVG(e.hitl_score) as avg_s, SUM(CASE WHEN e.hitl_score < 33 THEN 1 ELSE 0 END) as low, SUM(CASE WHEN e.hitl_score >= 33 AND e.hitl_score < 66 THEN 1 ELSE 0 END) as med, SUM(CASE WHEN e.hitl_score >= 66 THEN 1 ELSE 0 END) as high, AVG(e.hitl_confidence) as avg_c, MIN(e.hitl_confidence) as min_c, MAX(e.hitl_confidence) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND e.hitl_score IS NOT NULL${pf.clause}`,
+    args: pf.args,
+  });
+  const ha = hitlAgg.rows[0];
+  const hasHitl = ha.avg_s != null;
+
+  // Vibe Index
+  const vibeAgg = await client.execute({
+    sql: `SELECT AVG(e.vibe_score) as avg_s, SUM(CASE WHEN e.vibe_score < 30 THEN 1 ELSE 0 END) as vibe, SUM(CASE WHEN e.vibe_score >= 30 AND e.vibe_score < 70 THEN 1 ELSE 0 END) as balanced, SUM(CASE WHEN e.vibe_score >= 70 THEN 1 ELSE 0 END) as engineer, AVG(e.vibe_confidence) as avg_c, MIN(e.vibe_confidence) as min_c, MAX(e.vibe_confidence) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND e.vibe_score IS NOT NULL${pf.clause}`,
+    args: pf.args,
+  });
+  const va = vibeAgg.rows[0];
+  const hasVibe = va.avg_s != null;
+
+  const avgVibe = hasVibe ? round(Number(va.avg_s), 1) : 0;
+  const vibeLabel = avgVibe >= 70 ? "engineer" : avgVibe >= 50 ? "balanced_engineer" : avgVibe >= 30 ? "balanced_vibe" : "vibe_coder";
+
   return {
     intent: {
       method: "deterministic_rules_v1",
@@ -238,6 +257,19 @@ export async function computeNlpMetrics(
       distribution: { low: Number(ia.low), medium: Number(ia.med), high: Number(ia.high) },
       style: iterStyle,
       confidence: { mean: round(Number(ia.avg_c), 2), min: round(Number(ia.min_c), 2), max: round(Number(ia.max_c), 2) },
+    },
+    hitl_score: {
+      method: "embedding_similarity_v1",
+      avg_score: hasHitl ? round(Number(ha.avg_s), 1) : null,
+      distribution: hasHitl ? { low: Number(ha.low), medium: Number(ha.med), high: Number(ha.high) } : null,
+      confidence: hasHitl ? { mean: round(Number(ha.avg_c), 2), min: round(Number(ha.min_c), 2), max: round(Number(ha.max_c), 2) } : null,
+    },
+    vibe_coder_index: {
+      method: "embedding_similarity_v1",
+      avg_score: hasVibe ? avgVibe : null,
+      label: hasVibe ? vibeLabel : null,
+      distribution: hasVibe ? { vibe: Number(va.vibe), balanced: Number(va.balanced), engineer: Number(va.engineer) } : null,
+      confidence: hasVibe ? { mean: round(Number(va.avg_c), 2), min: round(Number(va.min_c), 2), max: round(Number(va.max_c), 2) } : null,
     },
   };
 }

@@ -2,26 +2,33 @@ import fs from "node:fs";
 import path from "node:path";
 import { createDbClient, insertMessages, logSync } from "./pipeline/db.js";
 import { loadConfig, loadBranding } from "./pipeline/config.js";
+import { loadMlConfig } from "./pipeline/ml-config.js";
 import { syncClaudeCode, syncCodex } from "./pipeline/sync.js";
 import { parseClaudeCode, parseCodexHistory, parseCodexSessionMetadata } from "./pipeline/parsers.js";
 import { enrichNlp } from "./pipeline/nlp.js";
+import { enrichEmbeddings } from "./pipeline/embeddings.js";
+import { enrichClassifiers } from "./pipeline/classifiers.js";
 import { computeSourceViews } from "./pipeline/metrics.js";
 
 export interface PipelineOptions {
   dbPath: string;
   dataDir: string;
   projectRoot?: string;
+  onProgress?: (stage: string, detail: string) => void;
 }
 
 export interface PipelineStats {
   newMessages: number;
   totalMessages: number;
   enriched: number;
+  embedded: number;
 }
 
 export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats> {
   const config = loadConfig(opts.dataDir);
+  const mlConfig = loadMlConfig(opts.dataDir);
   const client = createDbClient(opts.dbPath);
+  const log = opts.onProgress ?? (() => {});
 
   // Sync
   syncClaudeCode(config.claudeCodeSource);
@@ -50,6 +57,18 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
   // NLP enrichment (only un-enriched messages)
   const enriched = await enrichNlp(client);
 
+  // Embedding enrichment (only un-embedded human messages)
+  log("embedding", "Computing embeddings...");
+  const embedded = await enrichEmbeddings(client, mlConfig, opts.dataDir, (progress) => {
+    if (progress.status === "download" && progress.progress !== undefined) {
+      log("embedding", `Downloading model: ${Math.round(progress.progress)}%`);
+    }
+  });
+
+  // Classifier enrichment (HITL + Vibe scores from embeddings)
+  log("classifiers", "Computing HITL + Vibe scores...");
+  const classified = await enrichClassifiers(client, mlConfig, opts.dataDir);
+
   // Compute metrics
   const { sourceViews, metadata } = await computeSourceViews(client, config);
 
@@ -71,5 +90,5 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
 
   client.close();
 
-  return { newMessages: inserted, totalMessages, enriched };
+  return { newMessages: inserted, totalMessages, enriched, embedded };
 }

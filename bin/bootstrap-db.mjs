@@ -52,6 +52,30 @@ const SCHEMA_SQL = [
 ];
 
 /**
+ * Additive migrations — safe to re-run (catch duplicate column errors).
+ */
+const MIGRATIONS = [
+  // Phase 2: semantic classifiers
+  `ALTER TABLE nlp_enrichments ADD COLUMN hitl_score REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN hitl_confidence REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN vibe_score REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN vibe_confidence REAL`,
+];
+
+/**
+ * New tables added in later phases.
+ */
+const NEW_TABLES = [
+  `CREATE TABLE IF NOT EXISTS reference_embeddings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    classifier TEXT NOT NULL,
+    cluster TEXT NOT NULL,
+    prompt TEXT NOT NULL,
+    embedding F32_BLOB(384) NOT NULL
+  )`,
+];
+
+/**
  * Bootstrap the database schema at the given path.
  * @param {string} dbPath — absolute path to the SQLite file
  */
@@ -60,6 +84,20 @@ export async function bootstrapDb(dbPath) {
 
   for (const sql of SCHEMA_SQL) {
     await client.execute(sql);
+  }
+
+  // New tables
+  for (const sql of NEW_TABLES) {
+    await client.execute(sql);
+  }
+
+  // Additive migrations (ignore duplicate column errors)
+  for (const sql of MIGRATIONS) {
+    try {
+      await client.execute(sql);
+    } catch (err) {
+      if (!String(err).includes("duplicate column")) throw err;
+    }
   }
 
   client.close();
