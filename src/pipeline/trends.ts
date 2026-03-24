@@ -196,12 +196,55 @@ export async function computeTrendMetrics(
   const dailyRollups = buildTrendRollups(dailyBuckets, "date");
   const weeklyRollups = buildTrendRollups(weeklyBuckets, "week_start");
 
+  // Enrich weekly rollups with NLP score averages
+  await enrichWeeklyNlp(client, weeklyRollups, platform);
+
   return {
     daily_rollups: dailyRollups,
     weekly_rollups: weeklyRollups,
     deltas_7d_vs_30d: computeTrendDeltas(dailyRollups),
     shift_markers: detectShiftMarkers(dailyRollups),
   };
+}
+
+async function enrichWeeklyNlp(
+  client: Client,
+  weeklyRollups: Record<string, any>[],
+  platform?: Platform,
+): Promise<void> {
+  const pf = platformFilter(platform);
+  const rs = await client.execute({
+    sql: `SELECT
+      strftime('%Y-%m-%d', date(m.local_date, 'weekday 0', '-6 days')) as week_start,
+      AVG(e.hitl_score) as hitl,
+      AVG(e.vibe_score) as vibe,
+      AVG(e.precision_score) as precision,
+      AVG(e.curiosity_score) as curiosity,
+      AVG(e.tenacity_score) as tenacity,
+      AVG(e.trust_score) as trust
+    FROM nlp_enrichments e
+    JOIN messages m ON e.message_id = m.id
+    WHERE m.role = 'human' AND e.hitl_score IS NOT NULL${pf.clause}
+    GROUP BY week_start
+    ORDER BY week_start`,
+    args: pf.args,
+  });
+
+  const nlpByWeek = new Map<string, Record<string, number>>();
+  for (const row of rs.rows) {
+    nlpByWeek.set(String(row.week_start), {
+      hitl_score: row.hitl != null ? round(Number(row.hitl), 1) : 0,
+      vibe_coder_index: row.vibe != null ? round(Number(row.vibe), 1) : 0,
+      precision: row.precision != null ? round(Number(row.precision), 1) : 0,
+      curiosity: row.curiosity != null ? round(Number(row.curiosity), 1) : 0,
+      tenacity: row.tenacity != null ? round(Number(row.tenacity), 1) : 0,
+      trust: row.trust != null ? round(Number(row.trust), 1) : 0,
+    });
+  }
+
+  for (const rollup of weeklyRollups) {
+    rollup.nlp = nlpByWeek.get(rollup.week_start) || null;
+  }
 }
 
 function round(n: number, decimals: number): number {

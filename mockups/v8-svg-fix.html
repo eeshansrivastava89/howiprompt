@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How I Prompt</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+/* Catppuccin Latte */
+:root{
+  --bg:#eff1f5;--surface:#fff;--text:#4c4f69;--muted:#5c5f77;
+  --border:#ccd0da;--accent:#8839ef;--accent-soft:#f0e6ff;
+  --accent-rgb:136,57,239;
+  --radius:14px;--radius-sm:8px;
+  --shadow:0 1px 3px rgba(76,79,105,0.06),0 4px 12px rgba(76,79,105,0.04);
+  --shadow-hover:0 4px 12px rgba(76,79,105,0.1),0 8px 24px rgba(76,79,105,0.06);
+  --stat-b:#1a5bdb;--stat-r:#d20f39;
+}
+/* Catppuccin Mocha */
+.dark{
+  --bg:#1e1e2e;--surface:#313244;--text:#cdd6f4;--muted:#a6adc8;
+  --border:#45475a;--accent:#cba6f7;--accent-soft:#2a2240;
+  --accent-rgb:203,166,247;
+  --radius:14px;--radius-sm:8px;
+  --shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 12px rgba(0,0,0,0.2);
+  --shadow-hover:0 4px 12px rgba(0,0,0,0.4),0 8px 24px rgba(0,0,0,0.3);
+  --stat-b:#89b4fa;--stat-r:#f38ba8;
+}
+html,body{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;touch-action:manipulation}
+
+/* === FULL VIEWPORT LAYOUT === */
+.page-frame{display:flex;flex-direction:column;height:100dvh;min-height:0}
+@media(max-width:1024px){.page-frame{height:auto;min-height:100dvh}}
+
+/* === HEADER === */
+.header{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;flex-wrap:wrap;gap:12px;flex-shrink:0}
+.header-left{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.header h1{font-size:24px;font-weight:700;letter-spacing:-0.02em}
+.header h1 span{color:var(--accent)}
+.date-range{font-size:14px;color:var(--muted);font-weight:500}
+.header-right{display:flex;align-items:center;gap:12px}
+.nav-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;background:none;border:none;cursor:pointer;font-family:inherit;transition:color .15s}
+.nav-link:hover{color:var(--text)}
+.accent-link{font-size:13px;font-weight:600;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:var(--accent-soft);transition:background .15s}
+.accent-link:hover{background:rgba(var(--accent-rgb),0.15)}
+.source-select{appearance:none;border:1px solid var(--border);background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235c5f77' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;color:var(--text);padding:6px 28px 6px 12px;border-radius:20px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer}
+.theme-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s}
+.theme-btn:hover{border-color:var(--accent);color:var(--accent)}
+.dl-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;font-family:inherit;transition:transform .1s}
+.dl-btn:hover{transform:scale(1.03)}
+
+/* === LAYOUT: 67 / 33, fills remaining viewport height === */
+.container{padding:0 24px;flex:1;min-height:0;display:flex;flex-direction:column}
+.main-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;flex:1;min-height:0}
+@media(max-width:1024px){.main-grid{grid-template-columns:1fr;flex:none}.right-col{order:-1}}
+
+/* === LEFT COLUMN — fills height === */
+.left{display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.stat-cards{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--surface);border-radius:var(--radius-sm);padding:14px 16px;box-shadow:var(--shadow)}
+.stat-card-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);margin-bottom:4px}
+.stat-card-value{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.stat-card-value.highlight{color:var(--text);font-weight:800}
+.stat-card-sub{font-size:13px;color:var(--muted);margin-top:4px}
+
+/* === TREND CHART (pure SVG — zoom-proof) === */
+.trend-panel{background:var(--surface);border-radius:var(--radius-sm);padding:18px 20px;box-shadow:var(--shadow);flex:1;min-height:0;min-width:0;display:flex;flex-direction:column}
+.trend-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;min-width:0}
+.trend-title{font-size:16px;font-weight:700}
+.metric-tabs{display:flex;gap:4px;flex-wrap:wrap;min-width:0}
+.metric-tab{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.metric-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.metric-tab:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+.trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.trend-current-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--accent)}
+.trend-current-label{font-size:13px;color:var(--muted)}
+/* SVG chart container — vector, scales with zoom automatically */
+.trend-chart-wrap{position:relative;cursor:crosshair;flex:1;min-height:60px}
+.trend-chart-wrap svg{width:100%;height:100%;display:block}
+.trend-dot{transition:r .1s}
+.trend-dot-hover{display:none}
+.trend-guide{display:none}
+.trend-tooltip{position:absolute;top:6px;background:var(--text);color:var(--bg);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .1s;white-space:nowrap;z-index:10;transform:translateX(-50%)}
+.trend-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--text)}
+
+/* === HEATMAP (compact) === */
+.heatmap-panel{background:var(--surface);border-radius:var(--radius-sm);padding:14px 18px;box-shadow:var(--shadow);flex-shrink:0}
+.heatmap-title{font-size:14px;font-weight:700;margin-bottom:8px}
+.heatmap{display:grid;grid-template-columns:32px repeat(24,1fr);gap:1px;font-size:10px}
+.heatmap-label{display:flex;align-items:center;color:var(--muted);font-weight:500;font-size:10px}
+.heatmap-hour{text-align:center;color:var(--muted);font-size:10px;font-weight:500}
+.heatmap-cell{height:18px;border-radius:2px;background:var(--border);opacity:0.3}
+.heatmap-cell.l1{background:var(--accent);opacity:0.2}
+.heatmap-cell.l2{background:var(--accent);opacity:0.35}
+.heatmap-cell.l3{background:var(--accent);opacity:0.55}
+.heatmap-cell.l4{background:var(--accent);opacity:0.75}
+.heatmap-cell.l5{background:var(--accent);opacity:1}
+.heatmap-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted)}
+
+/* === RIGHT COLUMN — stretches full height === */
+.right-col{display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
+
+/* === PLAYER CARD — fills available space === */
+.card-dock{perspective:1200px;width:100%;flex:1;min-height:0;position:relative;display:flex}
+.player-card{
+  width:100%;border-radius:24px;overflow:hidden;/* clips sides/bottom, card-top overflows into body */
+  background:var(--surface);container-type:inline-size;
+  transform-style:preserve-3d;transition:transform .15s ease-out, box-shadow .2s ease-out;will-change:transform;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 4px 12px rgba(0,0,0,0.06),
+    0 12px 32px rgba(0,0,0,0.08),
+    0 24px 60px rgba(0,0,0,0.06);
+  border:1px solid rgba(0,0,0,0.06);
+  display:flex;flex-direction:column;height:100%;
+}
+.dark .player-card{
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.2),
+    0 4px 12px rgba(0,0,0,0.2),
+    0 12px 32px rgba(0,0,0,0.25),
+    0 24px 60px rgba(0,0,0,0.2);
+  border-color:rgba(255,255,255,0.06);
+}
+
+/* Dark top zone — pre-composed character image as background */
+.card-top{
+  position:relative;overflow:hidden;
+  background-image:url('../images/card_architect.png');
+  background-size:cover;background-position:center;
+  padding:0;
+  aspect-ratio:840/1040;
+  border-radius:24px 24px 0 0;
+}
+
+/* Content overlay — name and donut metrics on left side */
+.card-top-content{
+  position:absolute;inset:0;z-index:2;
+  padding:22px 24px 18px;
+  display:flex;flex-direction:column;gap:8px;
+  width:50%;
+}
+.donut-grid{margin-top:16px}
+.persona-name{font-size:clamp(26px, 6cqw, 36px);font-weight:800;color:#fff;letter-spacing:-0.04em;line-height:0.96;text-shadow:0 2px 8px rgba(0,0,0,0.3)}
+
+/* Donut metrics — vertical stack */
+.donut-grid{
+  display:flex;flex-direction:column;gap:10px;
+}
+.donut-item{display:flex;align-items:center;gap:10px}
+.donut-ring{position:relative;width:44px;height:44px;flex-shrink:0}
+.donut-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.donut-ring .donut-track{fill:none;stroke:rgba(255,255,255,0.15);stroke-width:5}
+.donut-ring .donut-fill{fill:none;stroke:rgba(255,255,255,0.85);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.donut-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:#fff}
+.donut-label{font-size:12px;font-weight:600;color:rgba(255,255,255,0.7)}
+
+/* Body — description */
+.card-body{padding:14px 24px 12px}
+.persona-desc{font-size:14px;color:var(--muted);line-height:1.58}
+.persona-desc strong{color:var(--text);font-weight:700}
+
+/* Stat strip */
+.stat-strip{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border)}
+.stat-block{padding:16px 10px 14px;text-align:center;position:relative}
+.stat-block:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:var(--border)}
+.stat-num{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.04em}
+.stat-block:nth-child(1) .stat-num{color:var(--accent)}
+.stat-block:nth-child(2) .stat-num{color:var(--stat-b)}
+.stat-block:nth-child(3) .stat-num{color:var(--stat-r)}
+.stat-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-top:5px}
+.stat-minibar{margin:8px auto 0;width:58%;height:3px;background:var(--border);border-radius:999px;overflow:hidden;opacity:0.55}
+.stat-minibar-fill{height:100%;border-radius:2px}
+.stat-minibar-fill.o{background:var(--accent)}
+.stat-minibar-fill.b{background:var(--stat-b)}
+.stat-minibar-fill.r{background:var(--stat-r)}
+
+.card-foot{padding:8px 24px;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);border-top:1px solid var(--border)}
+
+/* === CARD REVEAL OVERLAY === */
+.card-reveal{
+  position:absolute;inset:0;z-index:10;border-radius:24px;overflow:hidden;cursor:pointer;
+  background:linear-gradient(135deg,#2a1f00 0%,#4a3500 30%,#5c4400 60%,#3d2d00 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  transition:opacity .6s ease-out;
+}
+.card-reveal::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,
+    transparent 20%,
+    rgba(255,215,0,0.06) 28%,
+    rgba(255,215,0,0.2) 36%,
+    rgba(255,230,100,0.25) 40%,
+    rgba(255,215,0,0.2) 44%,
+    rgba(255,215,0,0.06) 52%,
+    transparent 60%
+  );
+  background-size:200% 100%;
+  animation:shimmer 2.5s ease-in-out infinite;
+}
+@keyframes shimmer{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+.card-reveal-icon{
+  width:48px;height:48px;border-radius:50%;
+  border:2px solid rgba(255,215,0,0.4);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,215,0,0.1);
+  animation:pulse-glow 2s ease-in-out infinite;
+}
+@keyframes pulse-glow{
+  0%,100%{box-shadow:0 0 20px rgba(255,215,0,0.15)}
+  50%{box-shadow:0 0 35px rgba(255,215,0,0.35)}
+}
+.card-reveal-icon svg{width:22px;height:22px;stroke:#ffd700;fill:none;stroke-width:1.5}
+.card-reveal-text{
+  font-size:14px;font-weight:600;color:#ffd700;
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+.card-reveal-sub{font-size:11px;color:rgba(255,215,0,0.4)}
+.card-reveal.revealed{opacity:0;pointer-events:none}
+.reveal-canvas{position:absolute;inset:0;z-index:11;pointer-events:none;border-radius:24px}
+
+/* Fun stat */
+
+/* === FOOTER === */
+.footer{flex-shrink:0;padding:12px 24px;margin-top:16px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);border-top:1px solid var(--border)}
+.footer-links{display:flex;gap:16px}
+.footer-links a{color:var(--muted);text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:var(--text)}
+
+/* Radar tooltip */
+.radar-tip{position:absolute;background:var(--text);color:var(--bg);font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;pointer-events:none;opacity:0;transition:opacity .12s;white-space:nowrap;transform:translate(-50%,-100%);z-index:20}
+
+/* Focus-visible for keyboard nav */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--radius-sm)}
+button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* === TABLET + MOBILE (≤1024) === */
+@media(max-width:1024px){
+  .page-frame{overflow-x:hidden}
+  /* Kill all flex-fill — natural document flow on mobile */
+  .container{flex:none}
+  .main-grid{flex:none}
+  .card-dock{flex:none}
+  .player-card{height:auto}
+  .card-top-content{gap:8px}
+  .trend-panel{flex:none;min-height:280px}
+  /* Card centering on tablet */
+  .right-col{align-self:center;max-width:480px;width:100%}
+}
+
+/* === MOBILE (≤640) === */
+@media(max-width:640px){
+  /* Allow vertical scroll, prevent horizontal overflow */
+  html,body{height:auto;overflow-x:hidden}
+
+  /* Header: compact */
+  .header{padding:10px 16px;gap:8px}
+  .header-right{gap:8px}
+  .header-right .nav-link,
+  .header-right .dl-btn{display:none}
+
+  /* Container */
+  .container{padding:0 12px}
+  .main-grid{gap:12px}
+
+  /* Card: full width, compact */
+  .right-col{max-width:none;align-self:stretch;gap:10px}
+  .card-top{aspect-ratio:840/1040}
+  .card-top-content{width:45%;padding:14px 14px 12px}
+  .persona-name{font-size:22px}
+  .donut-ring{width:36px;height:36px}
+  .donut-val{font-size:11px}
+  .donut-label{font-size:10px}
+  .donut-grid{gap:6px}
+  .donut-item{gap:6px}
+  .radar-lines{gap:10px}
+  .radar-line-label{font-size:12px;width:62px}
+  .radar-line-val{font-size:16px}
+  .card-body{padding:10px 16px 8px}
+  .persona-desc{font-size:12px;overflow-wrap:break-word}
+  .stat-num{font-size:22px}
+  .stat-label{font-size:10px}
+  .stat-block{padding:10px 4px}
+  .card-foot{padding:6px 16px;font-size:10px}
+
+  /* Fun card */
+
+  /* Stats */
+  .stat-cards{gap:8px}
+  .stat-card{padding:10px 12px}
+  .stat-card-value{font-size:20px}
+  .stat-card-label{font-size:11px}
+  .stat-card-sub{font-size:11px}
+
+  /* Trend panel */
+  .trend-panel{min-height:220px;padding:14px 14px}
+  .trend-header{gap:6px;flex-direction:column;align-items:flex-start}
+  .trend-title{font-size:14px}
+  .metric-tabs{flex-wrap:wrap;gap:3px;width:100%}
+  .metric-tab{padding:4px 8px;font-size:10px;border-radius:14px}
+  .trend-current-val{font-size:24px}
+  .trend-current-label{font-size:12px}
+  .trend-chart-wrap{min-height:80px}
+
+  /* Heatmap: compact GitHub-style */
+  .heatmap-panel{padding:10px 14px}
+  .heatmap-title{font-size:13px;margin-bottom:4px}
+  .heatmap{grid-template-columns:14px repeat(24,1fr);gap:1px}
+  .heatmap-hour{display:none}
+  .heatmap-label{font-size:7px;width:14px;overflow:hidden;text-overflow:clip;white-space:nowrap}
+  .heatmap-cell{height:8px;border-radius:1px}
+  .heatmap-meta{font-size:10px;flex-wrap:wrap;gap:4px}
+
+  /* Footer: stack */
+  .footer{flex-direction:column;gap:4px;text-align:center;padding:10px 12px;margin-top:8px;font-size:10px}
+}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  .player-card{transform:none!important}
+  .stat-card:hover{transform:none}
+  .dl-btn:hover{transform:none}
+}
+</style>
+</head>
+<body>
+<div class="page-frame">
+<header class="header">
+  <div class="header-left">
+    <h1>How I <span>Prompt</span></h1>
+    <span class="date-range">Dec 23, 2025 &ndash; Mar 22, 2026</span>
+  </div>
+  <div class="header-right">
+    <div style="position:relative"><select class="source-select"><option>Both</option><option>Claude Code</option><option>Codex</option></select></div>
+    <a href="#" class="accent-link"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>Wrapped</a>
+    <button class="nav-link">Methodology</button>
+    <button class="theme-btn" id="themeToggle" aria-label="Toggle theme"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg></button>
+    <button class="dl-btn"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>Download Card</button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="main-grid">
+    <!-- LEFT 67% -->
+    <div class="left">
+      <div class="stat-cards">
+        <div class="stat-card"><div class="stat-card-label">Prompts</div><div class="stat-card-value">8,768</div><div class="stat-card-sub">125 words avg</div></div>
+        <div class="stat-card"><div class="stat-card-label">Conversations</div><div class="stat-card-value">2,693</div><div class="stat-card-sub">8.1 turns avg</div></div>
+        <div class="stat-card"><div class="stat-card-label">Words Typed</div><div class="stat-card-value">523K</div><div class="stat-card-sub">1.1M from assistants</div></div>
+        <div class="stat-card"><div class="stat-card-label">Night Owl</div><div class="stat-card-value highlight">26.5%</div><div class="stat-card-sub">prompts 11pm-4am</div></div>
+      </div>
+
+      <!-- SVG Trend Chart -->
+      <div class="trend-panel">
+        <div class="trend-header">
+          <div class="trend-title">Trends</div>
+          <div class="metric-tabs" id="metricTabs">
+            <button class="metric-tab active" data-metric="hitl">HITL</button>
+            <button class="metric-tab" data-metric="vibe">Vibe</button>
+            <button class="metric-tab" data-metric="polite">Polite</button>
+            <button class="metric-tab" data-metric="precision">Precision</button>
+            <button class="metric-tab" data-metric="curiosity">Curiosity</button>
+            <button class="metric-tab" data-metric="tenacity">Tenacity</button>
+            <button class="metric-tab" data-metric="trust">Trust</button>
+          </div>
+        </div>
+        <div class="trend-current"><span class="trend-current-val" id="trendVal">47</span><span class="trend-current-label" id="trendLabel">HITL Score &middot; 12-week trend</span></div>
+        <div class="trend-chart-wrap" id="trendWrap">
+          <svg viewBox="0 0 600 140" preserveAspectRatio="none" id="trendSvg">
+            <defs>
+              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(136,57,239,0.2)"/>
+                <stop offset="100%" stop-color="rgba(136,57,239,0)"/>
+              </linearGradient>
+            </defs>
+            <polygon id="trendArea" fill="url(#areaGrad)"/>
+            <polyline id="trendLine" fill="none" stroke="#8839ef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <line id="trendGuide" class="trend-guide" stroke="rgba(136,57,239,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
+            <circle id="trendDotEnd" r="4" fill="#8839ef"/>
+            <circle id="trendDotHover" class="trend-dot-hover" r="6" fill="#8839ef"/>
+            <circle id="trendDotGlow" class="trend-dot-hover" r="11" fill="none" stroke="rgba(136,57,239,0.3)" stroke-width="2"/>
+            <!-- Invisible hit areas for each data point -->
+            <g id="trendHitAreas"></g>
+          </svg>
+          <div class="trend-tooltip" id="trendTooltip"></div>
+        </div>
+      </div>
+
+      <!-- Heatmap -->
+      <div class="heatmap-panel">
+        <div class="heatmap-title">Activity Heatmap</div>
+        <div class="heatmap" id="heatmapGrid"></div>
+        <div class="heatmap-meta"><span>Peak Hour: <strong>12am</strong></span><span>Peak Day: <strong>Sunday</strong></span><span>Response Ratio: <strong>6.1x</strong></span></div>
+      </div>
+    </div>
+
+    <!-- RIGHT 33% -->
+    <div class="right-col">
+      <div class="card-dock">
+        <div class="card-reveal" id="cardReveal">
+          <div class="card-reveal-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg></div>
+          <div class="card-reveal-text">Tap to reveal</div>
+          <div class="card-reveal-sub">your prompting persona</div>
+        </div>
+        <canvas class="reveal-canvas" id="revealCanvas"></canvas>
+        <div class="player-card" id="playerCard">
+          <div class="card-top">
+            <div class="card-top-content">
+              <div class="persona-name">The Architect</div>
+              <div class="donut-grid">
+                <div class="donut-item">
+                  <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="35.18"/></svg><div class="donut-val">72</div></div>
+                  <div class="donut-label">Precision</div>
+                </div>
+                <div class="donut-item">
+                  <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="40.21"/></svg><div class="donut-val">68</div></div>
+                  <div class="donut-label">Tenacity</div>
+                </div>
+                <div class="donut-item">
+                  <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="69.11"/></svg><div class="donut-val">45</div></div>
+                  <div class="donut-label">Curiosity</div>
+                </div>
+                <div class="donut-item">
+                  <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="77.91"/></svg><div class="donut-val">38</div></div>
+                  <div class="donut-label">Trust</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="persona-desc">You approach AI with <strong>precision</strong> and <strong>skepticism</strong> &mdash; every prompt is a spec, every output gets reviewed. You don't delegate blindly; you <strong>methodically</strong> steer the conversation toward exactly what you need.</p>
+          </div>
+          <div class="stat-strip">
+            <div class="stat-block"><div class="stat-num">47</div><div class="stat-label">HITL Score</div><div class="stat-minibar"><div class="stat-minibar-fill o" style="width:47%"></div></div></div>
+            <div class="stat-block"><div class="stat-num">70</div><div class="stat-label">Vibe Index</div><div class="stat-minibar"><div class="stat-minibar-fill b" style="width:70%"></div></div></div>
+            <div class="stat-block"><div class="stat-num">42%</div><div class="stat-label">Politeness</div><div class="stat-minibar"><div class="stat-minibar-fill r" style="width:42%"></div></div></div>
+          </div>
+          <div class="card-foot"><span>howiprompt.com</span><span>#0847</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <span>&copy; 2025 Eeshan Srivastava</span>
+  <span>Personal project &middot; MIT License &middot; Non-commercial</span>
+  <span class="footer-links">
+    <a href="https://github.com/eeshansrivastava89/howiprompt" target="_blank">Source</a>
+    <a href="https://www.linkedin.com/in/eeshans/" target="_blank">LinkedIn</a>
+  </span>
+</footer>
+</div><!-- /page-frame -->
+
+<script>
+// === Card Reveal + 3D Tilt ===
+(function(){
+  const card = document.getElementById('playerCard');
+  const dock = card.closest('.card-dock');
+  const overlay = document.getElementById('cardReveal');
+  const canvas = document.getElementById('revealCanvas');
+  const ctx = canvas.getContext('2d');
+  const MAX_TILT = 12;
+  let revealed = false;
+
+  // --- Particle system ---
+  function burst() {
+    const rect = dock.getBoundingClientRect();
+    canvas.width = rect.width * devicePixelRatio;
+    canvas.height = rect.height * devicePixelRatio;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+
+    const cx = rect.width / 2, cy = rect.height / 2;
+    const particles = [];
+    const GOLD = ['#ffd700','#ffb300','#ffe066','#fff8dc','#daa520','#f5c542'];
+
+    for (let i = 0; i < 90; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 5;
+      particles.push({
+        x: cx + (Math.random() - 0.5) * rect.width * 0.6,
+        y: cy + (Math.random() - 0.5) * rect.height * 0.4,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2,
+        size: 2 + Math.random() * 4,
+        rot: Math.random() * Math.PI * 2,
+        vr: (Math.random() - 0.5) * 0.3,
+        color: GOLD[Math.floor(Math.random() * GOLD.length)],
+        life: 1,
+        decay: 0.008 + Math.random() * 0.012,
+        gravity: 0.08 + Math.random() * 0.04
+      });
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      let alive = false;
+      for (const p of particles) {
+        if (p.life <= 0) continue;
+        alive = true;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.vx *= 0.99;
+        p.rot += p.vr;
+        p.life -= p.decay;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.5);
+        ctx.restore();
+      }
+      if (alive) requestAnimationFrame(frame);
+      else { ctx.clearRect(0, 0, rect.width, rect.height); }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // --- Reveal ---
+  function reveal() {
+    if (revealed) return;
+    revealed = true;
+    burst();
+    overlay.classList.add('revealed');
+    // Start tilt after reveal
+    setTimeout(enableTilt, 400);
+  }
+
+  overlay.addEventListener('click', reveal);
+
+  // --- Tilt ---
+  function enableTilt() {
+    // Desktop: mouse
+    dock.addEventListener('mousemove', e => {
+      const r = dock.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      card.style.transform = `rotateY(${(x-.5)*MAX_TILT}deg) rotateX(${(.5-y)*MAX_TILT}deg)`;
+    });
+    dock.addEventListener('mouseleave', () => { card.style.transform = ''; });
+
+    // Mobile: gyroscope
+    if (!('ontouchstart' in window)) return;
+
+    function handleOrientation(e) {
+      const beta = Math.max(-30, Math.min(30, (e.beta || 0) - 75));
+      const gamma = Math.max(-30, Math.min(30, e.gamma || 0));
+      card.style.transform = `rotateY(${(gamma/30)*MAX_TILT}deg) rotateX(${-(beta/30)*MAX_TILT}deg)`;
+    }
+
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(s => { if (s === 'granted') window.addEventListener('deviceorientation', handleOrientation); })
+        .catch(() => {});
+    } else {
+      window.addEventListener('deviceorientation', handleOrientation);
+    }
+  }
+})();
+
+// (Radar chart removed — data shown inline in card body)
+
+// === SVG Trend Chart (zoom-proof — no canvas, no bitmap, no pixel management) ===
+(function(){
+  const data = {
+    hitl:      {points:[32,35,38,34,40,42,38,44,43,46,45,47], label:'HITL Score', suffix:''},
+    vibe:      {points:[55,58,60,62,58,63,65,64,68,66,69,70], label:'Vibe Coder Index', suffix:''},
+    polite:    {points:[50,48,45,47,44,46,43,45,42,44,41,42], label:'Politeness Index', suffix:'%'},
+    precision: {points:[48,52,55,58,60,62,64,65,67,69,70,72], label:'Precision', suffix:''},
+    curiosity: {points:[40,42,44,43,45,44,46,45,44,45,44,45], label:'Curiosity', suffix:''},
+    tenacity:  {points:[50,52,55,58,60,62,63,65,66,67,67,68], label:'Tenacity', suffix:''},
+    trust:     {points:[45,43,42,40,39,40,38,39,38,38,37,38], label:'Trust', suffix:''}
+  };
+  const weeks = ['12w ago','11w','10w','9w','8w','7w','6w','5w','4w','3w','2w','Now'];
+  const ns = 'http://www.w3.org/2000/svg';
+  let active = 'hitl';
+
+  const svgEl    = document.getElementById('trendSvg');
+  const areaEl   = document.getElementById('trendArea');
+  const lineEl   = document.getElementById('trendLine');
+  const guideEl  = document.getElementById('trendGuide');
+  const dotEnd   = document.getElementById('trendDotEnd');
+  const dotHover = document.getElementById('trendDotHover');
+  const dotGlow  = document.getElementById('trendDotGlow');
+  const hitGroup = document.getElementById('trendHitAreas');
+  const tooltip  = document.getElementById('trendTooltip');
+  const wrap     = document.getElementById('trendWrap');
+  const valEl    = document.getElementById('trendVal');
+  const labelEl  = document.getElementById('trendLabel');
+
+  // viewBox is 600x140, padding 20px on each side
+  const vw = 600, vh = 140, pad = 20;
+
+  function render() {
+    const d = data[active];
+    const pts = d.points;
+    const min = Math.min(...pts) - 5;
+    const max = Math.max(...pts) + 5;
+    const stepX = (vw - pad*2) / (pts.length - 1);
+
+    const coords = pts.map((v, i) => ({
+      x: pad + i * stepX,
+      y: vh - pad - ((v - min) / (max - min)) * (vh - pad*2)
+    }));
+
+    // Area polygon
+    const areaPts = `${coords[0].x},${vh} ` + coords.map(c => `${c.x},${c.y}`).join(' ') + ` ${coords[coords.length-1].x},${vh}`;
+    areaEl.setAttribute('points', areaPts);
+
+    // Line polyline
+    lineEl.setAttribute('points', coords.map(c => `${c.x},${c.y}`).join(' '));
+
+    // End dot
+    const last = coords[coords.length - 1];
+    dotEnd.setAttribute('cx', last.x); dotEnd.setAttribute('cy', last.y);
+
+    // Hide hover elements
+    dotHover.style.display = 'none';
+    dotGlow.style.display = 'none';
+    guideEl.style.display = 'none';
+    tooltip.style.opacity = '0';
+
+    // Rebuild hit areas (invisible wide rectangles per data point for hover)
+    hitGroup.innerHTML = '';
+    coords.forEach((c, i) => {
+      const rect = document.createElementNS(ns, 'rect');
+      rect.setAttribute('x', c.x - stepX/2);
+      rect.setAttribute('y', 0);
+      rect.setAttribute('width', stepX);
+      rect.setAttribute('height', vh);
+      rect.setAttribute('fill', 'transparent');
+      rect.style.cursor = 'crosshair';
+
+      rect.addEventListener('mouseenter', () => {
+        dotHover.setAttribute('cx', c.x); dotHover.setAttribute('cy', c.y);
+        dotGlow.setAttribute('cx', c.x); dotGlow.setAttribute('cy', c.y);
+        dotHover.style.display = ''; dotGlow.style.display = '';
+
+        guideEl.setAttribute('x1', c.x); guideEl.setAttribute('y1', c.y + 12);
+        guideEl.setAttribute('x2', c.x); guideEl.setAttribute('y2', vh);
+        guideEl.style.display = '';
+
+        // Position tooltip using percentage of SVG width
+        const svgRect = svgEl.getBoundingClientRect();
+        const pctX = c.x / vw;
+        tooltip.style.left = (pctX * svgRect.width) + 'px';
+        tooltip.style.opacity = '1';
+        tooltip.textContent = `${weeks[i]}: ${pts[i]}${d.suffix}`;
+      });
+
+      rect.addEventListener('mouseleave', () => {
+        dotHover.style.display = 'none';
+        dotGlow.style.display = 'none';
+        guideEl.style.display = 'none';
+        tooltip.style.opacity = '0';
+      });
+
+      hitGroup.appendChild(rect);
+    });
+  }
+
+  function setMetric(key) {
+    active = key;
+    const d = data[key];
+    const last = d.points[d.points.length - 1];
+    valEl.textContent = last + d.suffix;
+    labelEl.textContent = d.label + ' \u00B7 12-week trend';
+    document.querySelectorAll('.metric-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.metric === key)
+    );
+    render();
+  }
+
+  document.querySelectorAll('.metric-tab').forEach(tab => {
+    tab.addEventListener('click', () => setMetric(tab.dataset.metric));
+  });
+
+  render();
+})();
+
+// === Heatmap ===
+(function(){
+  const grid = document.getElementById('heatmapGrid');
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  grid.appendChild(document.createElement('div')); // empty corner
+  for (let h=0; h<24; h++) {
+    const hd = document.createElement('div');
+    hd.className = 'heatmap-hour';
+    hd.textContent = h % 3 === 0 ? h : '';
+    grid.appendChild(hd);
+  }
+  const heatData = [
+    [0,0,2,1,0,0,0,0,1,3,5,6,8,7,6,5,4,3,5,6,4,3,2,1],
+    [0,0,1,0,0,0,0,1,2,4,6,7,9,8,7,6,5,4,5,7,5,3,2,1],
+    [0,1,1,0,0,0,0,0,2,3,5,6,7,6,5,4,3,2,4,5,3,2,1,0],
+    [0,0,0,1,0,0,0,1,3,5,7,8,10,9,8,7,6,5,6,8,6,4,3,2],
+    [0,0,1,0,0,0,0,0,2,4,5,6,7,6,5,4,3,2,3,4,3,2,1,0],
+    [1,2,3,2,1,0,0,0,1,2,3,4,5,4,3,2,2,3,4,5,6,5,4,3],
+    [2,3,4,3,2,1,0,0,0,1,2,3,4,3,4,3,3,4,6,8,9,8,6,4]
+  ];
+  const maxVal = Math.max(...heatData.flat(), 1);
+  days.forEach((day, di) => {
+    const lbl = document.createElement('div');
+    lbl.className = 'heatmap-label';
+    lbl.textContent = day;
+    grid.appendChild(lbl);
+    heatData[di].forEach(v => {
+      const cell = document.createElement('div');
+      cell.className = 'heatmap-cell';
+      if (v > 0) cell.classList.add('l' + Math.min(Math.ceil((v/maxVal)*5), 5));
+      grid.appendChild(cell);
+    });
+  });
+})();
+
+// === Theme Toggle ===
+document.getElementById('themeToggle').addEventListener('click', () => {
+  document.documentElement.classList.toggle('dark');
+});
+</script>
+</body>
+</html>

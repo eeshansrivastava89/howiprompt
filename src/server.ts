@@ -89,8 +89,11 @@ export async function startServer(opts: ServerOptions): Promise<http.Server> {
       filePath = path.join(filePath, "index.html");
     }
     // No extension → try adding /index.html (for /wrapped → /wrapped/index.html)
-    if (!path.extname(filePath) && !fs.existsSync(filePath)) {
-      filePath = path.join(filePath, "index.html");
+    if (!path.extname(filePath)) {
+      const indexPath = path.join(filePath, "index.html");
+      if (fs.existsSync(indexPath)) {
+        filePath = indexPath;
+      }
     }
 
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {

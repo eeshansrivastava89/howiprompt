@@ -60,6 +60,15 @@ const MIGRATIONS = [
   `ALTER TABLE nlp_enrichments ADD COLUMN hitl_confidence REAL`,
   `ALTER TABLE nlp_enrichments ADD COLUMN vibe_score REAL`,
   `ALTER TABLE nlp_enrichments ADD COLUMN vibe_confidence REAL`,
+  // Phase 6: radar axes
+  `ALTER TABLE nlp_enrichments ADD COLUMN precision_score REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN precision_confidence REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN curiosity_score REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN curiosity_confidence REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN tenacity_score REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN tenacity_confidence REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN trust_score REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN trust_confidence REAL`,
 ];
 
 /**

@@ -209,6 +209,38 @@ function hydrateWrapped(m) {
     setText('responseRatioS5', `${rr}x`);
     setText('responseRatioLabel', rr);
 
+    // Section 5b: HITL + Vibe Scores
+    const nlp = m.nlp || {};
+    const hitlData = nlp.hitl_score || {};
+    const vibeData = nlp.vibe_coder_index || {};
+
+    const hitlScore = hitlData.avg_score;
+    if (hitlScore != null) {
+        setText('wrappedHitlValue', Math.round(hitlScore));
+        const hitlLabel = hitlScore >= 66 ? 'High Impact' : hitlScore >= 33 ? 'Moderate' : 'Passive';
+        setText('wrappedHitlLabel', hitlLabel);
+        const hitlArc = el('wrappedHitlArc');
+        if (hitlArc) {
+            const pct = Math.min(hitlScore, 100) / 100;
+            hitlArc.setAttribute('stroke-dashoffset', String(326.73 * (1 - pct)));
+        }
+    } else {
+        setText('wrappedHitlValue', '--');
+        setText('wrappedHitlLabel', 'No data');
+    }
+
+    const vibeScore = vibeData.avg_score;
+    if (vibeScore != null) {
+        setText('wrappedVibeValue', Math.round(vibeScore));
+        const vibeLabel = vibeScore >= 70 ? 'Engineer' : vibeScore >= 50 ? 'Balanced (engineer-leaning)' : vibeScore >= 30 ? 'Balanced (vibe-leaning)' : 'Vibe Coder';
+        setText('wrappedVibeLabel', vibeLabel);
+        const vibeMarker = el('wrappedVibeMarker');
+        if (vibeMarker) vibeMarker.style.left = `${Math.min(Math.max(vibeScore, 0), 100)}%`;
+    } else {
+        setText('wrappedVibeValue', '--');
+        setText('wrappedVibeLabel', 'No data');
+    }
+
     // Section 6: Persona
     setText('personaName', p.name || '--');
     setText('personaDesc', p.description || '');
@@ -238,6 +270,8 @@ function hydrateWrapped(m) {
     setText('termPeakHour', peakHour12h);
     setText('termPeakDay', t.peak_day || 'N/A');
     setText('termNightOwl', `${t.night_owl_pct || 0}%`);
+    setText('termHitl', hitlScore != null ? Math.round(hitlScore) : '--');
+    setText('termVibe', vibeScore != null ? Math.round(vibeScore) : '--');
     setText('termYrCount', `${yr.count || 0}x`);
     setText('termPersonaName', `PERSONA: ${(p.name || '--').toUpperCase()}`);
     setText('termPersonaTraits', (p.traits || []).join(' • '));

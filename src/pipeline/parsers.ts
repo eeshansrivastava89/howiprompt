@@ -43,7 +43,7 @@ export async function parseClaudeCode(
         // Capture cwd from any entry that has it (usually the first)
         if (!fileCwd && typeof entry.cwd === "string") {
           fileCwd = entry.cwd;
-          filePlatform = agentCwdSet.has(fileCwd) ? Platform.AGENT : Platform.CLAUDE_CODE;
+          filePlatform = Platform.CLAUDE_CODE;
         }
 
         const entryType = entry.type;

@@ -1,42 +1,201 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
-import Header from '../components/dashboard/Header.astro';
-import HeroStats from '../components/dashboard/HeroStats.astro';
-import ActivityHeatmap from '../components/dashboard/ActivityHeatmap.astro';
-import ConversationDepth from '../components/dashboard/ConversationDepth.astro';
-import PromptStyle from '../components/dashboard/PromptStyle.astro';
-import PersonaCard from '../components/dashboard/PersonaCard.astro';
+import Leaderboard from '../components/dashboard/Leaderboard.astro';
 import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
-import TrendBand from '../components/dashboard/TrendBand.astro';
-import Footer from '../components/dashboard/Footer.astro';
 ---
 <DashboardLayout title="How I Prompt: Dashboard">
-    <div class="container">
-        <Header />
-        <HeroStats />
+<div class="page-frame">
 
-        <!-- Main Grid -->
-        <div class="grid">
-            <ActivityHeatmap />
-            <ConversationDepth />
-            <PromptStyle />
-            <PersonaCard />
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <h1>How I <span>Prompt</span></h1>
+    <span class="date-range" id="dateRange">--</span>
+  </div>
+  <div class="header-right">
+    <select class="source-select" id="sourceFilter">
+      <option value="both">All</option>
+    </select>
+    <a href="/wrapped" class="accent-link">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+      Wrapped
+    </a>
+    <button class="refresh-btn" id="refreshBtn">
+      <svg class="refresh-icon icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      <span class="refresh-label">Refresh</span>
+    </button>
+    <button class="nav-link" onclick="openMethodology()">Methodology</button>
+    <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+    </button>
+    <button class="dl-btn" id="shareDashboard">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      Download Card
+    </button>
+  </div>
+</header>
+
+<!-- MOBILE SOURCE FILTER -->
+<div class="header" style="display:none;padding-top:0" id="mobileNav">
+  <select class="source-select" id="sourceFilterMobile" style="width:100%">
+    <option value="both">All</option>
+  </select>
+</div>
+
+<!-- TAB BAR -->
+<nav class="tab-bar" role="tablist">
+  <button class="tab active" data-tab="dashboard" role="tab" aria-selected="true">Dashboard</button>
+  <button class="tab" data-tab="leaderboard" role="tab" aria-selected="false">Leaderboard</button>
+</nav>
+
+<!-- DASHBOARD TAB -->
+<div class="tab-panel active" id="tab-dashboard" role="tabpanel">
+  <div class="container">
+    <div class="main-grid">
+
+      <!-- LEFT 2fr -->
+      <div class="left">
+        <!-- Stat cards -->
+        <div class="stat-cards animate delay-1">
+          <div class="stat-card">
+            <div class="stat-card-label">Prompts</div>
+            <div class="stat-card-value" id="promptsValue">--</div>
+            <div class="stat-card-sub" id="promptsSubtitle">-- words avg</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Conversations</div>
+            <div class="stat-card-value" id="conversationsValue">--</div>
+            <div class="stat-card-sub" id="conversationsSubtitle">-- turns avg</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Words Typed</div>
+            <div class="stat-card-value" id="wordsTypedValue">--</div>
+            <div class="stat-card-sub" id="wordsTypedSubtitle">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Night Owl</div>
+            <div class="stat-card-value highlight" id="nightOwlValue">--%</div>
+            <div class="stat-card-sub">prompts 11pm–4am</div>
+          </div>
         </div>
 
-        <TrendBand />
-
-        <Footer />
-
-        <!-- Share FAB -->
-        <button class="share-fab" id="shareDashboard" type="button" aria-label="Share dashboard">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+        <!-- SVG Trend Chart -->
+        <div class="trend-panel animate delay-2">
+          <div class="trend-header">
+            <div class="trend-title">Trends</div>
+            <div class="metric-tabs" id="metricTabs">
+              <button class="metric-tab active" data-metric="hitl">Human in the Loop</button>
+              <button class="metric-tab" data-metric="vibe">Vibe</button>
+              <button class="metric-tab" data-metric="polite">Polite</button>
+              <button class="metric-tab" data-metric="precision">Precision</button>
+              <button class="metric-tab" data-metric="curiosity">Curiosity</button>
+              <button class="metric-tab" data-metric="tenacity">Tenacity</button>
+              <button class="metric-tab" data-metric="trust">Trust</button>
+            </div>
+          </div>
+          <div class="trend-current">
+            <span class="trend-current-val" id="trendVal">--</span>
+            <span class="trend-current-label" id="trendLabel">--</span>
+          </div>
+          <div class="trend-desc" id="trendDesc"></div>
+          <div class="trend-chart-wrap" id="trendWrap">
+            <svg viewBox="0 0 600 140" preserveAspectRatio="none" id="trendSvg">
+              <defs>
+                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(136,57,239,0.2)"/>
+                  <stop offset="100%" stop-color="rgba(136,57,239,0)"/>
+                </linearGradient>
+              </defs>
+              <polygon id="trendArea" fill="url(#areaGrad)"/>
+              <polyline id="trendLine" fill="none" stroke="#8839ef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <line id="trendGuide" class="trend-guide" stroke="rgba(136,57,239,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
+              <circle id="trendDotEnd" r="4" fill="#8839ef"/>
+              <circle id="trendDotHover" class="trend-dot-hover" r="6" fill="#8839ef"/>
+              <circle id="trendDotGlow" class="trend-dot-hover" r="11" fill="none" stroke="rgba(136,57,239,0.3)" stroke-width="2"/>
+              <g id="trendHitAreas"></g>
             </svg>
-        </button>
-        <div class="share-toast" id="shareToast">Screenshot saved!</div>
+            <div class="trend-tooltip" id="trendTooltip"></div>
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="heatmap-panel animate delay-3">
+          <div class="heatmap-title">Activity Heatmap</div>
+          <div class="heatmap" id="heatmapGrid"></div>
+          <div class="heatmap-meta">
+            <span>Peak Hour: <strong id="peakHourValue">--</strong></span>
+            <span>Peak Day: <strong id="peakDayValue">--</strong></span>
+            <span>Response Ratio: <strong id="responseRatioValue">--</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT 1fr -->
+      <div class="right-col">
+        <div class="card-dock">
+          <!-- Player card -->
+          <div class="player-card" id="playerCard">
+            <div class="card-top" id="cardTop">
+              <div class="card-top-content">
+                <div class="persona-name" id="personaName">--</div>
+                <div class="donut-grid">
+                  <div class="donut-item">
+                    <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" id="donutPrecision" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg><div class="donut-val" id="valPrecision">--</div></div>
+                    <div class="donut-label">Precision</div>
+                  </div>
+                  <div class="donut-item">
+                    <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" id="donutTenacity" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg><div class="donut-val" id="valTenacity">--</div></div>
+                    <div class="donut-label">Tenacity</div>
+                  </div>
+                  <div class="donut-item">
+                    <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" id="donutCuriosity" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg><div class="donut-val" id="valCuriosity">--</div></div>
+                    <div class="donut-label">Curiosity</div>
+                  </div>
+                  <div class="donut-item">
+                    <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" id="donutTrust" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg><div class="donut-val" id="valTrust">--</div></div>
+                    <div class="donut-label">Trust</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="persona-desc" id="personaDescription">Loading persona data...</p>
+            </div>
+            <div class="stat-strip">
+              <div class="stat-block"><div class="stat-num" id="cardHitl">--</div><div class="stat-label">Human in the Loop</div><div class="stat-minibar"><div class="stat-minibar-fill o" id="cardHitlBar"></div></div></div>
+              <div class="stat-block"><div class="stat-num" id="cardVibe">--</div><div class="stat-label">Vibe Index</div><div class="stat-minibar"><div class="stat-minibar-fill b" id="cardVibeBar"></div></div></div>
+              <div class="stat-block"><div class="stat-num" id="cardPolite">--</div><div class="stat-label">Politeness</div><div class="stat-minibar"><div class="stat-minibar-fill r" id="cardPoliteBar"></div></div></div>
+            </div>
+            <div class="card-foot"><span>howiprompt.com</span><span id="cardSerial">#0000</span></div>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
+</div>
 
-    <MethodologyModal />
+<!-- LEADERBOARD TAB -->
+<div class="tab-panel" id="tab-leaderboard" role="tabpanel">
+  <Leaderboard />
+</div>
 
-    <script src="../scripts/dashboard.js"></script>
+<!-- FOOTER -->
+<footer class="footer">
+  <span>&copy; 2025 Eeshan Srivastava</span>
+  <span>Personal project &middot; MIT License &middot; Non-commercial</span>
+  <span class="footer-links">
+    <a href="https://github.com/eeshansrivastava89/howiprompt" target="_blank" id="footerGithubLink">Source</a>
+    <a href="https://www.linkedin.com/in/eeshans/" target="_blank">LinkedIn</a>
+  </span>
+</footer>
+
+</div><!-- /page-frame -->
+
+<!-- Share toast -->
+<div class="share-toast" id="shareToast">Screenshot saved!</div>
+
+<MethodologyModal />
+
+<script src="../scripts/dashboard.js"></script>
 </DashboardLayout>

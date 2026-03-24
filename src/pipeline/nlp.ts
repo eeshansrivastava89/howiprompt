@@ -137,6 +137,23 @@ export async function enrichNlp(client: Client): Promise<number> {
   return enrichments.length;
 }
 
+async function aggregateClassifier(
+  client: Client,
+  column: string,
+  pf: { clause: string; args: any[] },
+): Promise<{ avg_score: number | null; confidence: { mean: number; min: number; max: number } | null }> {
+  const result = await client.execute({
+    sql: `SELECT AVG(e.${column}) as avg_s, AVG(e.${column.replace("_score", "_confidence")}) as avg_c, MIN(e.${column.replace("_score", "_confidence")}) as min_c, MAX(e.${column.replace("_score", "_confidence")}) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND e.${column} IS NOT NULL${pf.clause}`,
+    args: pf.args,
+  });
+  const r = result.rows[0];
+  if (r.avg_s == null) return { avg_score: null, confidence: null };
+  return {
+    avg_score: round(Number(r.avg_s), 1),
+    confidence: { mean: round(Number(r.avg_c), 2), min: round(Number(r.min_c), 2), max: round(Number(r.max_c), 2) },
+  };
+}
+
 export async function computeNlpMetrics(
   client: Client,
   platform?: Platform,
@@ -149,11 +166,17 @@ export async function computeNlpMetrics(
   });
   const total = Number(totalResult.rows[0].cnt);
 
+  const emptyClassifier = { method: "embedding_similarity_v1", avg_score: null, confidence: null };
+
   if (total === 0) {
     return {
       intent: { method: "deterministic_rules_v1", counts: {}, rates_pct: {}, top_intents: [], confidence: { mean: 0, min: 0, max: 0 } },
-      complexity: { method: "heuristic_complexity_v1", avg_score: 0, p50_score: 0, p90_score: 0, distribution: { low: 0, medium: 0, high: 0 }, confidence: { mean: 0, min: 0, max: 0 } },
-      iteration_style: { method: "iteration_markers_v1", avg_score: 0, distribution: { low: 0, medium: 0, high: 0 }, style: "balanced", confidence: { mean: 0, min: 0, max: 0 } },
+      hitl_score: emptyClassifier,
+      vibe_coder_index: emptyClassifier,
+      precision: emptyClassifier,
+      curiosity: emptyClassifier,
+      tenacity: emptyClassifier,
+      trust: emptyClassifier,
     };
   }
 
@@ -180,60 +203,17 @@ export async function computeNlpMetrics(
     sql: `SELECT AVG(e.intent_confidence) as avg_c, MIN(e.intent_confidence) as min_c, MAX(e.intent_confidence) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human'${pf.clause}`,
     args: pf.args,
   });
-
-  // Complexity
-  const complexityAgg = await client.execute({
-    sql: `SELECT AVG(e.complexity_score) as avg_s, SUM(CASE WHEN e.complexity_score < 2.5 THEN 1 ELSE 0 END) as low, SUM(CASE WHEN e.complexity_score >= 2.5 AND e.complexity_score < 3.8 THEN 1 ELSE 0 END) as med, SUM(CASE WHEN e.complexity_score >= 3.8 THEN 1 ELSE 0 END) as high, AVG(e.complexity_confidence) as avg_c, MIN(e.complexity_confidence) as min_c, MAX(e.complexity_confidence) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human'${pf.clause}`,
-    args: pf.args,
-  });
-
-  const sortedComplexity = await client.execute({
-    sql: `SELECT e.complexity_score FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human'${pf.clause} ORDER BY e.complexity_score`,
-    args: pf.args,
-  });
-  const scores = sortedComplexity.rows.map((r) => Number(r.complexity_score));
-  const n = scores.length;
-  let p50 = 0, p90 = 0;
-  if (n > 0) {
-    if (n % 2 === 1) {
-      p50 = scores[Math.floor(n / 2)];
-    } else {
-      p50 = (scores[n / 2 - 1] + scores[n / 2]) / 2;
-    }
-    p90 = scores[Math.max(0, Math.floor(n * 0.9) - 1)];
-  }
-
-  // Iteration
-  const iterAgg = await client.execute({
-    sql: `SELECT AVG(e.iteration_score) as avg_s, SUM(CASE WHEN e.iteration_score < 25 THEN 1 ELSE 0 END) as low, SUM(CASE WHEN e.iteration_score >= 25 AND e.iteration_score < 60 THEN 1 ELSE 0 END) as med, SUM(CASE WHEN e.iteration_score >= 60 THEN 1 ELSE 0 END) as high, AVG(e.iteration_confidence) as avg_c, MIN(e.iteration_confidence) as min_c, MAX(e.iteration_confidence) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human'${pf.clause}`,
-    args: pf.args,
-  });
-
-  const avgIteration = round(Number(iterAgg.rows[0].avg_s), 1);
-  const iterStyle = avgIteration >= 60 ? "highly_iterative" : avgIteration >= 30 ? "balanced_iterative" : "direct";
-
-  const ca = complexityAgg.rows[0];
   const ic = intentConf.rows[0];
-  const ia = iterAgg.rows[0];
 
-  // HITL Score
-  const hitlAgg = await client.execute({
-    sql: `SELECT AVG(e.hitl_score) as avg_s, SUM(CASE WHEN e.hitl_score < 33 THEN 1 ELSE 0 END) as low, SUM(CASE WHEN e.hitl_score >= 33 AND e.hitl_score < 66 THEN 1 ELSE 0 END) as med, SUM(CASE WHEN e.hitl_score >= 66 THEN 1 ELSE 0 END) as high, AVG(e.hitl_confidence) as avg_c, MIN(e.hitl_confidence) as min_c, MAX(e.hitl_confidence) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND e.hitl_score IS NOT NULL${pf.clause}`,
-    args: pf.args,
-  });
-  const ha = hitlAgg.rows[0];
-  const hasHitl = ha.avg_s != null;
-
-  // Vibe Index
-  const vibeAgg = await client.execute({
-    sql: `SELECT AVG(e.vibe_score) as avg_s, SUM(CASE WHEN e.vibe_score < 30 THEN 1 ELSE 0 END) as vibe, SUM(CASE WHEN e.vibe_score >= 30 AND e.vibe_score < 70 THEN 1 ELSE 0 END) as balanced, SUM(CASE WHEN e.vibe_score >= 70 THEN 1 ELSE 0 END) as engineer, AVG(e.vibe_confidence) as avg_c, MIN(e.vibe_confidence) as min_c, MAX(e.vibe_confidence) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND e.vibe_score IS NOT NULL${pf.clause}`,
-    args: pf.args,
-  });
-  const va = vibeAgg.rows[0];
-  const hasVibe = va.avg_s != null;
-
-  const avgVibe = hasVibe ? round(Number(va.avg_s), 1) : 0;
-  const vibeLabel = avgVibe >= 70 ? "engineer" : avgVibe >= 50 ? "balanced_engineer" : avgVibe >= 30 ? "balanced_vibe" : "vibe_coder";
+  // Aggregate all 6 embedding classifiers in parallel
+  const [hitl, vibe, precision, curiosity, tenacity, trust] = await Promise.all([
+    aggregateClassifier(client, "hitl_score", pf),
+    aggregateClassifier(client, "vibe_score", pf),
+    aggregateClassifier(client, "precision_score", pf),
+    aggregateClassifier(client, "curiosity_score", pf),
+    aggregateClassifier(client, "tenacity_score", pf),
+    aggregateClassifier(client, "trust_score", pf),
+  ]);
 
   return {
     intent: {
@@ -243,34 +223,12 @@ export async function computeNlpMetrics(
       top_intents: topIntents,
       confidence: { mean: round(Number(ic.avg_c), 2), min: round(Number(ic.min_c), 2), max: round(Number(ic.max_c), 2) },
     },
-    complexity: {
-      method: "heuristic_complexity_v1",
-      avg_score: round(Number(ca.avg_s), 1),
-      p50_score: round(p50, 1),
-      p90_score: round(p90, 1),
-      distribution: { low: Number(ca.low), medium: Number(ca.med), high: Number(ca.high) },
-      confidence: { mean: round(Number(ca.avg_c), 2), min: round(Number(ca.min_c), 2), max: round(Number(ca.max_c), 2) },
-    },
-    iteration_style: {
-      method: "iteration_markers_v1",
-      avg_score: avgIteration,
-      distribution: { low: Number(ia.low), medium: Number(ia.med), high: Number(ia.high) },
-      style: iterStyle,
-      confidence: { mean: round(Number(ia.avg_c), 2), min: round(Number(ia.min_c), 2), max: round(Number(ia.max_c), 2) },
-    },
-    hitl_score: {
-      method: "embedding_similarity_v1",
-      avg_score: hasHitl ? round(Number(ha.avg_s), 1) : null,
-      distribution: hasHitl ? { low: Number(ha.low), medium: Number(ha.med), high: Number(ha.high) } : null,
-      confidence: hasHitl ? { mean: round(Number(ha.avg_c), 2), min: round(Number(ha.min_c), 2), max: round(Number(ha.max_c), 2) } : null,
-    },
-    vibe_coder_index: {
-      method: "embedding_similarity_v1",
-      avg_score: hasVibe ? avgVibe : null,
-      label: hasVibe ? vibeLabel : null,
-      distribution: hasVibe ? { vibe: Number(va.vibe), balanced: Number(va.balanced), engineer: Number(va.engineer) } : null,
-      confidence: hasVibe ? { mean: round(Number(va.avg_c), 2), min: round(Number(va.min_c), 2), max: round(Number(va.max_c), 2) } : null,
-    },
+    hitl_score: { method: "embedding_similarity_v1", ...hitl },
+    vibe_coder_index: { method: "embedding_similarity_v1", ...vibe },
+    precision: { method: "embedding_similarity_v1", ...precision },
+    curiosity: { method: "embedding_similarity_v1", ...curiosity },
+    tenacity: { method: "embedding_similarity_v1", ...tenacity },
+    trust: { method: "embedding_similarity_v1", ...trust },
   };
 }
 

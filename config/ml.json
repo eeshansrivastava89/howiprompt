@@ -32,5 +32,45 @@
     "similarityThreshold": 0.50,
     "centerPoint": 50,
     "normalizationScale": 20
+  },
+  "precision": {
+    "weights": {
+      "detailed_spec": 20,
+      "contextual_request": 15,
+      "bare_command": -18
+    },
+    "similarityThreshold": 0.50,
+    "centerPoint": 50,
+    "normalizationScale": 20
+  },
+  "curiosity": {
+    "weights": {
+      "learning_inquiry": 20,
+      "exploration": 18,
+      "pure_execution": -15
+    },
+    "similarityThreshold": 0.50,
+    "centerPoint": 50,
+    "normalizationScale": 20
+  },
+  "tenacity": {
+    "weights": {
+      "iterative_building": 20,
+      "deep_refinement": 15,
+      "single_shot": -18
+    },
+    "similarityThreshold": 0.50,
+    "centerPoint": 50,
+    "normalizationScale": 20
+  },
+  "trust": {
+    "weights": {
+      "high_delegation": 20,
+      "open_ended_task": 15,
+      "tight_control": -18
+    },
+    "similarityThreshold": 0.50,
+    "centerPoint": 50,
+    "normalizationScale": 20
   }
 }

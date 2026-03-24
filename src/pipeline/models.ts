@@ -22,10 +22,11 @@ export interface Message {
 }
 
 export enum PersonaType {
-  COLLABORATOR = "collaborator",
+  ARCHITECT = "architect",
   EXPLORER = "explorer",
-  EFFICIENT = "efficient",
-  PRAGMATIST = "pragmatist",
+  COMMANDER = "commander",
+  PARTNER = "partner",
+  DELEGATOR = "delegator",
 }
 
 export interface PersonaDefinition {
@@ -35,24 +36,29 @@ export interface PersonaDefinition {
 }
 
 export const PERSONAS: Record<PersonaType, PersonaDefinition> = {
-  [PersonaType.COLLABORATOR]: {
-    name: "The Collaborator",
-    description: "You ask questions politely. AI is your partner, not your tool.",
-    traits: ["Inquisitive", "Courteous", "Partnership-oriented"],
+  [PersonaType.ARCHITECT]: {
+    name: "The Architect",
+    description: "You approach AI with precision and skepticism \u2014 every prompt is a spec, every output gets reviewed. You don't delegate blindly; you methodically steer the conversation toward exactly what you need.",
+    traits: ["Precise", "Skeptical", "Methodical"],
   },
   [PersonaType.EXPLORER]: {
     name: "The Explorer",
-    description: "You question, iterate, and dig deeper. Thinking out loud.",
-    traits: ["Curious", "Iterative", "Thorough"],
+    description: "You use AI to learn, investigate, and think out loud. Every conversation is an expedition \u2014 you ask questions, dig into details, and follow threads wherever they lead.",
+    traits: ["Curious", "Analytical", "Open-minded"],
   },
-  [PersonaType.EFFICIENT]: {
-    name: "The Efficient",
-    description: "Polite but focused. You know what you want and ask nicely.",
-    traits: ["Respectful", "Direct", "Purposeful"],
+  [PersonaType.COMMANDER]: {
+    name: "The Commander",
+    description: "You give precise orders in short bursts. No wasted words, no hand-holding \u2014 you know exactly what you want and expect the AI to deliver it on the first try.",
+    traits: ["Direct", "Exacting", "Efficient"],
   },
-  [PersonaType.PRAGMATIST]: {
-    name: "The Pragmatist",
-    description: "Balanced and practical. No frills, just results.",
-    traits: ["Balanced", "Practical", "Focused"],
+  [PersonaType.PARTNER]: {
+    name: "The Partner",
+    description: "You build together in long collaborative sessions, iterating until it's right. You treat AI as a co-pilot, not a tool \u2014 offering context, refining together, shipping as a team.",
+    traits: ["Collaborative", "Persistent", "Iterative"],
+  },
+  [PersonaType.DELEGATOR]: {
+    name: "The Delegator",
+    description: "You paint the vision and let AI handle the details. You trust the output, focus on outcomes over process, and move fast by giving AI maximum autonomy.",
+    traits: ["Big-picture", "Trusting", "Outcome-focused"],
   },
 };

@@ -99,18 +99,30 @@ describe("full pipeline integration", () => {
     expect(metrics.temporal.heatmap).toHaveLength(7);
     expect(metrics.temporal.heatmap[0]).toHaveLength(24);
 
-    expect(metrics.politeness.per_100_prompts).toBeGreaterThan(0);
+    expect(metrics.politeness.pct).toBeGreaterThanOrEqual(0);
+    expect(metrics.politeness.pct).toBeLessThanOrEqual(100);
     expect(metrics.persona).toHaveProperty("type");
     expect(metrics.persona).toHaveProperty("name");
+    expect(metrics.persona).toHaveProperty("radar");
 
     expect(metrics.nlp.intent).toHaveProperty("counts");
-    expect(metrics.nlp.complexity).toHaveProperty("avg_score");
-    expect(metrics.nlp.iteration_style).toHaveProperty("avg_score");
+    expect(metrics.nlp).toHaveProperty("hitl_score");
+    expect(metrics.nlp).toHaveProperty("vibe_coder_index");
+    expect(metrics.nlp).toHaveProperty("precision");
+    expect(metrics.nlp).toHaveProperty("curiosity");
+    expect(metrics.nlp).toHaveProperty("tenacity");
+    expect(metrics.nlp).toHaveProperty("trust");
 
     expect(metrics.trends).toHaveProperty("daily_rollups");
     expect(metrics.trends).toHaveProperty("weekly_rollups");
 
     expect(metrics.model_usage.coverage.total_human_prompts).toBe(30);
+
+    // Normalized scores
+    expect(metrics.normalized).toBeDefined();
+    expect(typeof metrics.normalized.politeness).toBe("number");
+    expect(metrics.normalized.politeness).toBeGreaterThanOrEqual(0);
+    expect(metrics.normalized.politeness).toBeLessThanOrEqual(100);
   });
 
   it("computes source views correctly", async () => {
@@ -144,8 +156,9 @@ describe("full pipeline integration", () => {
 
     const nlp = await computeNlpMetrics(client);
     expect(Object.keys(nlp.intent.counts).length).toBeGreaterThan(0);
-    expect(nlp.complexity.avg_score).toBeGreaterThan(0);
     expect(nlp.intent.confidence.mean).toBeGreaterThan(0);
+    expect(nlp).toHaveProperty("hitl_score");
+    expect(nlp).toHaveProperty("precision");
   });
 
   it("trend metrics include rollups", async () => {

@@ -2,8 +2,9 @@ import type { Client } from "@libsql/client";
 import type { Config } from "./config.js";
 import { platformFilter, queryMessages } from "./db.js";
 import { Platform, Role } from "./models.js";
-import { POLITENESS_PATTERNS, BACKTRACK_PATTERNS, COMMAND_PATTERN, computeNlpMetrics } from "./nlp.js";
+import { POLITENESS_PATTERNS, computeNlpMetrics } from "./nlp.js";
 import { classifyPersona } from "./persona.js";
+import { computeNormalized } from "./registry.js";
 import { computeTrendMetrics } from "./trends.js";
 
 function round(n: number, decimals: number): number {
@@ -194,34 +195,21 @@ export async function computeMetrics(
   }
   const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-  // Style metrics (regex on content)
+  // Politeness: % of prompts containing at least one politeness marker
   const humanMsgs = await queryMessages(client, { role: Role.HUMAN, platform });
   const assistantMsgs = await queryMessages(client, { role: Role.ASSISTANT, platform });
-  const humanTexts = humanMsgs.map((m) => m.content);
   const assistantTexts = assistantMsgs.map((m) => m.content);
 
-  const polCounts: Record<string, number> = {};
-  for (const [word, pattern] of Object.entries(POLITENESS_PATTERNS)) {
-    polCounts[word] = countAllMatches(humanTexts, pattern);
-  }
-  const totalPoliteness = Object.values(polCounts).reduce((a, b) => a + b, 0);
-  const polPer100 = (totalPoliteness / totalHuman) * 100;
-
-  const btCounts: Record<string, number> = {};
-  for (const [word, pattern] of Object.entries(BACKTRACK_PATTERNS)) {
-    btCounts[word] = countAllMatches(humanTexts, pattern);
-  }
-  const totalBacktrack = Object.values(btCounts).reduce((a, b) => a + b, 0);
-  const btPer100 = (totalBacktrack / totalHuman) * 100;
-
-  const qCount = humanMsgs.filter((m) => m.content.trim().endsWith("?")).length;
-  const qRate = (qCount / totalHuman) * 100;
-  let cCount = 0;
+  const allPatterns = Object.values(POLITENESS_PATTERNS);
+  let politePrompts = 0;
   for (const m of humanMsgs) {
-    if (COMMAND_PATTERN.test(m.content.trim())) cCount++;
-    COMMAND_PATTERN.lastIndex = 0;
+    const text = m.content;
+    for (const pattern of allPatterns) {
+      if (pattern.test(text)) { politePrompts++; pattern.lastIndex = 0; break; }
+      pattern.lastIndex = 0;
+    }
   }
-  const cRate = (cCount / totalHuman) * 100;
+  const politenessPct = totalHuman ? round((politePrompts / totalHuman) * 100, 1) : 0;
 
   const yrPattern = /you'?re (absolutely )?right/gi;
   const yrCount = countAllMatches(assistantTexts, yrPattern);
@@ -242,9 +230,6 @@ export async function computeMetrics(
     };
   }
 
-  // Persona
-  const persona = classifyPersona(polPer100, btPer100, qRate, cRate, config);
-
   // Date range
   const dateRange = (await client.execute({
     sql: `SELECT MIN(timestamp) as first_ts, MAX(timestamp) as last_ts FROM messages WHERE role = 'human'${pf.clause}`,
@@ -258,7 +243,7 @@ export async function computeMetrics(
     computeNlpMetrics(client, platform),
   ]);
 
-  return {
+  const result: Record<string, any> = {
     generated_at: new Date().toISOString(),
     volume: {
       total_messages: totalMessages,
@@ -286,18 +271,28 @@ export async function computeMetrics(
       peak_day_count: peakDayCount,
       hour_counts: hourCounts,
     },
-    politeness: { counts: polCounts, total: totalPoliteness, per_100_prompts: round(polPer100, 1) },
-    backtrack: { counts: btCounts, total: totalBacktrack, per_100_prompts: round(btPer100, 1) },
-    question: { count: qCount, rate: round(qRate, 1) },
-    command: { count: cCount, rate: round(cRate, 1) },
+    politeness: { pct: politenessPct, prompts_with_markers: politePrompts, total_prompts: totalHuman },
     youre_right: { count: yrCount, per_conversation: round(yrPerConvo, 1) },
-    persona,
     platform_stats: platformStats,
     model_usage: modelUsage,
     trends,
     nlp,
     date_range: { first: String(dateRange.first_ts), last: String(dateRange.last_ts) },
   };
+
+  // Derive persona from radar scores
+  const radar = {
+    precision: nlp.precision?.avg_score ?? 50,
+    curiosity: nlp.curiosity?.avg_score ?? 50,
+    tenacity: nlp.tenacity?.avg_score ?? 50,
+    trust: nlp.trust?.avg_score ?? 50,
+  };
+  result.persona = classifyPersona(radar);
+
+  // Compute normalized 0-100 values for all registry metrics
+  result.normalized = computeNormalized(result);
+
+  return result;
 }
 
 export async function hasHumanMessages(client: Client, platform?: Platform): Promise<boolean> {
@@ -313,13 +308,11 @@ export async function computeSourceViews(
   const allMetrics = await computeMetrics(client, config);
   const ccHas = await hasHumanMessages(client, Platform.CLAUDE_CODE);
   const cxHas = await hasHumanMessages(client, Platform.CODEX);
-  const agHas = await hasHumanMessages(client, Platform.AGENT);
 
   const sourceViews: Record<string, any> = {
     both: allMetrics,
     claude_code: ccHas ? await computeMetrics(client, config, Platform.CLAUDE_CODE) : null,
     codex: cxHas ? await computeMetrics(client, config, Platform.CODEX) : null,
-    agent: agHas ? await computeMetrics(client, config, Platform.AGENT) : null,
   };
 
   let defaultView = "both";

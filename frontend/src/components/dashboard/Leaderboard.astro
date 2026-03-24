@@ -1,0 +1,82 @@
+---
+// Leaderboard tab: submit scores + view rankings
+---
+<div class="leaderboard-container">
+    <!-- Submit section -->
+    <div class="card leaderboard-submit-card">
+        <div class="leaderboard-submit-header">
+            <div>
+                <div class="card-label">Submit Your Scores</div>
+                <p class="leaderboard-submit-desc">Share your anonymized metrics to see how you compare with other users.</p>
+            </div>
+            <button class="submit-btn" id="submitLeaderboard" type="button">
+                <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                Submit
+            </button>
+        </div>
+        <div class="leaderboard-privacy-note">
+            <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+            <span>Only aggregate scores are shared — no prompts, conversations, or personal data leave your machine.</span>
+        </div>
+    </div>
+
+    <!-- Leaderboard table -->
+    <div class="card">
+        <div class="leaderboard-table-header">
+            <div class="card-label">Rankings</div>
+            <div class="leaderboard-sort">
+                <label for="leaderboardSort" class="sr-only">Sort by</label>
+                <select id="leaderboardSort" class="leaderboard-sort-select">
+                    <option value="hitl_score">Human Impact</option>
+                    <option value="vibe_index">Vibe Index</option>
+                    <option value="total_prompts">Prompts</option>
+                    <option value="total_conversations">Conversations</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="leaderboardContent">
+            <!-- Empty state -->
+            <div class="leaderboard-empty" id="leaderboardEmpty">
+                <svg style="width:48px;height:48px;color:var(--muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <p class="leaderboard-empty-title">No submissions yet</p>
+                <p class="leaderboard-empty-desc">Be the first to submit your scores!</p>
+            </div>
+
+            <!-- Table (hidden until data loads) -->
+            <table class="leaderboard-table" id="leaderboardTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th class="rank-col">#</th>
+                        <th>Name</th>
+                        <th>HITL</th>
+                        <th>Vibe</th>
+                        <th>Prompts</th>
+                        <th>Persona</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Submit confirmation modal -->
+<div class="modal-overlay" id="submitModal">
+    <div class="modal-content">
+        <h3 class="modal-title">Submit to Leaderboard</h3>
+        <p class="modal-desc">The following aggregate metrics will be shared publicly:</p>
+        <div class="modal-preview" id="submitPreview"></div>
+        <div class="modal-field">
+            <label for="displayName" class="modal-label">Display Name</label>
+            <input type="text" id="displayName" class="modal-input" placeholder="Your name or handle" maxlength="30" />
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn-cancel" id="cancelSubmit" type="button">Cancel</button>
+            <button class="modal-btn-confirm" id="confirmSubmit" type="button">Submit Scores</button>
+        </div>
+    </div>
+</div>
+
+<!-- Submit toast -->
+<div class="share-toast" id="leaderboardToast"></div>

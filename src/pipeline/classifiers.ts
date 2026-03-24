@@ -19,6 +19,10 @@ interface ClassifierResult {
 
 let hitlCentroids: ClusterCentroid[] | null = null;
 let vibeCentroids: ClusterCentroid[] | null = null;
+let precisionCentroids: ClusterCentroid[] | null = null;
+let curiosityCentroids: ClusterCentroid[] | null = null;
+let tenacityCentroids: ClusterCentroid[] | null = null;
+let trustCentroids: ClusterCentroid[] | null = null;
 
 function loadReferenceClusters(): Record<string, Record<string, string[]>> {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -166,6 +170,18 @@ export async function initClassifiers(
   vibeCentroids = await buildCentroids(
     client, "vibe", clusters.vibe, mlConfig.vibe.weights, mlConfig, dataDir,
   );
+  precisionCentroids = await buildCentroids(
+    client, "precision", clusters.precision, mlConfig.precision.weights, mlConfig, dataDir,
+  );
+  curiosityCentroids = await buildCentroids(
+    client, "curiosity", clusters.curiosity, mlConfig.curiosity.weights, mlConfig, dataDir,
+  );
+  tenacityCentroids = await buildCentroids(
+    client, "tenacity", clusters.tenacity, mlConfig.tenacity.weights, mlConfig, dataDir,
+  );
+  trustCentroids = await buildCentroids(
+    client, "trust", clusters.trust, mlConfig.trust.weights, mlConfig, dataDir,
+  );
 }
 
 export function computeHitlScore(
@@ -187,16 +203,49 @@ export function computeVibeIndex(
   return scoreFromCentroids(embedding, vibeCentroids, mlConfig.vibe);
 }
 
+export function computePrecision(
+  embedding: Float32Array,
+  mlConfig: MlConfig,
+): ClassifierResult {
+  if (!precisionCentroids) throw new Error("Classifiers not initialized");
+  return scoreFromCentroids(embedding, precisionCentroids, mlConfig.precision);
+}
+
+export function computeCuriosity(
+  embedding: Float32Array,
+  mlConfig: MlConfig,
+): ClassifierResult {
+  if (!curiosityCentroids) throw new Error("Classifiers not initialized");
+  return scoreFromCentroids(embedding, curiosityCentroids, mlConfig.curiosity);
+}
+
+export function computeTenacity(
+  embedding: Float32Array,
+  mlConfig: MlConfig,
+): ClassifierResult {
+  if (!tenacityCentroids) throw new Error("Classifiers not initialized");
+  return scoreFromCentroids(embedding, tenacityCentroids, mlConfig.tenacity);
+}
+
+export function computeTrust(
+  embedding: Float32Array,
+  mlConfig: MlConfig,
+): ClassifierResult {
+  if (!trustCentroids) throw new Error("Classifiers not initialized");
+  return scoreFromCentroids(embedding, trustCentroids, mlConfig.trust);
+}
+
 export async function enrichClassifiers(
   client: Client,
   mlConfig: MlConfig,
   dataDir: string,
 ): Promise<number> {
-  // Find messages with embeddings but without classifier scores
+  // Find messages with embeddings but without all classifier scores
   const result = await client.execute(
     `SELECT m.id, m.embedding FROM messages m
      JOIN nlp_enrichments e ON m.id = e.message_id
-     WHERE m.role = 'human' AND m.embedding IS NOT NULL AND e.hitl_score IS NULL`,
+     WHERE m.role = 'human' AND m.embedding IS NOT NULL
+       AND (e.hitl_score IS NULL OR e.precision_score IS NULL)`,
   );
 
   if (result.rows.length === 0) return 0;
@@ -213,10 +262,29 @@ export async function enrichClassifiers(
       const embedding = new Float32Array(row.embedding as ArrayBuffer);
       const hitl = computeHitlScore(embedding, mlConfig);
       const vibe = computeVibeIndex(embedding, mlConfig);
+      const prec = computePrecision(embedding, mlConfig);
+      const cur = computeCuriosity(embedding, mlConfig);
+      const ten = computeTenacity(embedding, mlConfig);
+      const tru = computeTrust(embedding, mlConfig);
 
       return {
-        sql: `UPDATE nlp_enrichments SET hitl_score = ?, hitl_confidence = ?, vibe_score = ?, vibe_confidence = ? WHERE message_id = ?`,
-        args: [hitl.score, hitl.confidence, vibe.score, vibe.confidence, Number(row.id)],
+        sql: `UPDATE nlp_enrichments SET
+          hitl_score = ?, hitl_confidence = ?,
+          vibe_score = ?, vibe_confidence = ?,
+          precision_score = ?, precision_confidence = ?,
+          curiosity_score = ?, curiosity_confidence = ?,
+          tenacity_score = ?, tenacity_confidence = ?,
+          trust_score = ?, trust_confidence = ?
+          WHERE message_id = ?`,
+        args: [
+          hitl.score, hitl.confidence,
+          vibe.score, vibe.confidence,
+          prec.score, prec.confidence,
+          cur.score, cur.confidence,
+          ten.score, ten.confidence,
+          tru.score, tru.confidence,
+          Number(row.id),
+        ],
       };
     });
 
