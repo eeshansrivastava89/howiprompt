@@ -12,12 +12,23 @@ function countPatternMatches(text: string, pattern: RegExp): number {
 export function computeStyleSnapshot(messages: MessageRow[]): Record<string, number> {
   const total = messages.length;
   if (total === 0) {
-    return { politeness_per_100: 0, backtrack_per_100: 0, question_rate_pct: 0, command_rate_pct: 0 };
+    return { politeness_pct: 0, politeness_per_100: 0, backtrack_per_100: 0, question_rate_pct: 0, command_rate_pct: 0 };
   }
 
   let polCount = 0;
-  for (const pattern of Object.values(POLITENESS_PATTERNS)) {
-    for (const m of messages) polCount += countPatternMatches(m.content, pattern);
+  let politePrompts = 0;
+  const allPatterns = Object.values(POLITENESS_PATTERNS);
+  for (const m of messages) {
+    let hasPolite = false;
+    for (const pattern of allPatterns) {
+      const matches = m.content.match(pattern);
+      pattern.lastIndex = 0;
+      if (matches) {
+        polCount += matches.length;
+        hasPolite = true;
+      }
+    }
+    if (hasPolite) politePrompts++;
   }
 
   let btCount = 0;
@@ -27,10 +38,10 @@ export function computeStyleSnapshot(messages: MessageRow[]): Record<string, num
 
   const qCount = messages.filter((m) => m.content.trim().endsWith("?")).length;
   const cCount = messages.filter((m) => COMMAND_PATTERN.test(m.content.trim())).length;
-  // Reset lastIndex since COMMAND_PATTERN may not have global flag but be safe
   COMMAND_PATTERN.lastIndex = 0;
 
   return {
+    politeness_pct: round((politePrompts / total) * 100, 1),
     politeness_per_100: round((polCount / total) * 100, 1),
     backtrack_per_100: round((btCount / total) * 100, 1),
     question_rate_pct: round((qCount / total) * 100, 1),

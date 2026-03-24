@@ -72,16 +72,13 @@ function renderPlayerCard(persona, nlp, politeness, view) {
     const personaDesc = document.getElementById('personaDescription');
     if (personaDesc) personaDesc.textContent = persona.description || 'Not enough data.';
 
-    // Use latest weekly NLP scores for donuts (matches trend chart)
-    const weeklyRollups = view?.trends?.weekly_rollups || [];
-    const latestWeek = weeklyRollups.length > 0 ? weeklyRollups[weeklyRollups.length - 1] : null;
-    const latestNlp = latestWeek?.nlp || {};
+    // Card shows lifetime averages (stable persona representation)
     const radar = persona.radar || {};
 
-    setDonut('donutPrecision', 'valPrecision', latestNlp.precision ?? radar.precision);
-    setDonut('donutTenacity', 'valTenacity', latestNlp.tenacity ?? radar.tenacity);
-    setDonut('donutCuriosity', 'valCuriosity', latestNlp.curiosity ?? radar.curiosity);
-    setDonut('donutTrust', 'valTrust', latestNlp.trust ?? radar.trust);
+    setDonut('donutPrecision', 'valPrecision', radar.precision);
+    setDonut('donutTenacity', 'valTenacity', radar.tenacity);
+    setDonut('donutCuriosity', 'valCuriosity', radar.curiosity);
+    setDonut('donutTrust', 'valTrust', radar.trust);
 
     const hitlScore = nlp?.hitl_score?.avg_score;
     const vibeScore = nlp?.vibe_coder_index?.avg_score;
@@ -149,7 +146,7 @@ let activeTrendMetric = 'hitl';
 const TREND_METRIC_CONFIG = {
     hitl:      { key: 'hitl_score',          label: 'Human in the Loop', suffix: '', desc: 'How actively you steer AI output. Higher = more hands-on review and iteration.' },
     vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '', desc: 'Engineer vs. vibe coder spectrum. Higher = more structured, spec-driven prompting.' },
-    polite:    { key: 'politeness_per_100',   label: 'Politeness',        suffix: '', desc: 'How often you say please, thanks, and sorry per 100 prompts.' },
+    polite:    { key: 'politeness_pct',        label: 'Politeness',        suffix: '%', desc: 'Percentage of prompts containing please, thanks, or sorry.' },
     precision: { key: 'precision',           label: 'Precision',         suffix: '', desc: 'How specific and detailed your prompts are. Higher = more context and constraints.' },
     curiosity: { key: 'curiosity',           label: 'Curiosity',         suffix: '', desc: 'How often you explore, ask questions, and investigate new directions.' },
     tenacity:  { key: 'tenacity',            label: 'Tenacity',          suffix: '', desc: 'How persistently you iterate and refine. Higher = longer sessions, more follow-ups.' },
@@ -195,17 +192,29 @@ function initSvgTrend(view) {
         return `${ago}w ago`;
     });
 
-    // Build data for all metrics
+    // Lifetime averages for headline display
+    const nlp = view.nlp || {};
+    const lifetimeAvg = {
+        hitl: nlp.hitl_score?.avg_score,
+        vibe: nlp.vibe_coder_index?.avg_score,
+        polite: view.politeness?.pct,
+        precision: nlp.precision?.avg_score,
+        curiosity: nlp.curiosity?.avg_score,
+        tenacity: nlp.tenacity?.avg_score,
+        trust: nlp.trust?.avg_score,
+    };
+
+    // Build weekly data for trend lines
     trendData = {};
     for (const [key, config] of Object.entries(TREND_METRIC_CONFIG)) {
         const points = extractTrendPoints(weekly, config.key);
-        // Filter out nulls — only include if we have data
         const hasData = points.some((p) => p != null);
         if (hasData) {
             trendData[key] = {
                 points: points.map((p) => p ?? 0),
                 label: config.label,
                 suffix: config.suffix,
+                lifetime: lifetimeAvg[key],
             };
         }
     }
@@ -295,8 +304,8 @@ function initSvgTrend(view) {
         activeTrendMetric = key;
         const d = trendData[key];
         const config = TREND_METRIC_CONFIG[key];
-        const last = d.points[d.points.length - 1];
-        valEl.textContent = last + d.suffix;
+        const headline = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
+        valEl.textContent = headline + d.suffix;
         labelEl.textContent = `${d.label} · ${weekly.length}-week trend`;
         const descEl = document.getElementById('trendDesc');
         if (descEl) descEl.textContent = config?.desc || '';
