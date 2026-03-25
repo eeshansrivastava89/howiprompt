@@ -47,6 +47,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 .dl-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;font-family:inherit;transition:transform .1s}
 .dl-btn:hover{transform:scale(1.03)}
 
+/* === SHARE DROPDOWN === */
+.share-dropdown{position:relative}
+.share-menu{display:none;position:absolute;top:100%;right:0;margin-top:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-hover);min-width:200px;z-index:40;overflow:hidden}
+.share-dropdown.open .share-menu{display:block}
+.share-menu-item{display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;font-size:13px;font-weight:500;color:var(--text);background:none;border:none;cursor:pointer;font-family:inherit;transition:background .1s}
+.share-menu-item:hover{background:var(--accent-soft)}
+.share-menu-item svg{color:var(--muted);flex-shrink:0}
+
 /* === TAB BAR === */
 .tab-bar{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--border);flex-shrink:0}
 .tab{padding:10px 20px;font-size:14px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit}
@@ -190,6 +198,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 }
 .share-toast.show{opacity:1;transform:translateY(0)}
 
+/* === REFRESH MODAL === */
+.refresh-modal{background:var(--surface);border-radius:var(--radius);padding:28px 32px;max-width:380px;width:90%;box-shadow:var(--shadow-hover);text-align:center}
+.refresh-modal h3{font-size:16px;font-weight:700;margin-bottom:16px}
+.refresh-modal-status{display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;color:var(--muted)}
+.refresh-modal-spinner{width:20px;height:20px;color:var(--accent);animation:spin .8s linear infinite}
+.refresh-modal-result{font-size:14px;line-height:1.8;color:var(--text)}
+.refresh-modal-result .result-num{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent)}
+.refresh-modal-close{margin-top:16px;padding:8px 24px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;font-family:inherit;transition:transform .1s}
+.refresh-modal-close:hover{transform:scale(1.03)}
+
 /* === REFRESH BUTTON === */
 .refresh-btn{display:inline-flex;align-items:center;gap:5px;cursor:pointer;background:none;border:1px solid var(--border);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--text);transition:border-color .2s,opacity .2s;font-family:inherit}
 .refresh-btn:hover{border-color:var(--accent)}
@@ -305,7 +323,7 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
   html,body{height:auto;overflow-x:hidden}
   .header{padding:10px 16px;gap:8px}
   .header-right{gap:8px}
-  .header-right .nav-link,.header-right .dl-btn{display:none}
+  .header-right .nav-link,.header-right .share-dropdown{display:none}
   .tab-bar{padding:0 16px}
   .container{padding:0 12px}
   .main-grid{gap:12px}

@@ -553,26 +553,35 @@ function initCardTilt() {
 
 // === Share / Download Card ===
 
-async function captureAndShare() {
-    if (typeof html2canvas === 'undefined') return;
+async function captureCard() {
+    if (typeof html2canvas === 'undefined') return null;
     const element = document.getElementById('playerCard');
-    if (!element) return;
+    if (!element) return null;
+    const canvas = await html2canvas(element, { backgroundColor: null, scale: 2, useCORS: true });
+    return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), 'image/png'));
+}
+
+function showShareToast(msg) {
     const toast = document.getElementById('shareToast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function getShareText() {
+    const persona = document.getElementById('personaName')?.textContent || '';
+    return `My AI prompting persona: ${persona}. See yours at howiprompt.com`;
+}
+
+async function handleShareAction(action) {
+    const dropdown = document.getElementById('shareDropdown');
+    dropdown?.classList.remove('open');
+
     try {
-        const canvas = await html2canvas(element, {
-            backgroundColor: null,
-            scale: 2,
-            useCORS: true,
-        });
-        canvas.toBlob(async (blob) => {
+        if (action === 'download') {
+            const blob = await captureCard();
             if (!blob) return;
-            const file = new File([blob], 'howiprompt-card.png', { type: 'image/png' });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({ files: [file], title: 'How I Prompt Card' });
-                    return;
-                } catch (_) { /* user cancelled, fall through to download */ }
-            }
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -581,18 +590,41 @@ async function captureAndShare() {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            if (toast) {
-                toast.textContent = 'Card downloaded!';
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2500);
-            }
-        }, 'image/png');
+            showShareToast('Card downloaded!');
+        } else if (action === 'copy') {
+            const blob = await captureCard();
+            if (!blob) return;
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            showShareToast('Copied to clipboard!');
+        } else if (action === 'twitter') {
+            const text = encodeURIComponent(getShareText());
+            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+        } else if (action === 'linkedin') {
+            const text = encodeURIComponent(getShareText());
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://howiprompt.com')}&summary=${text}`, '_blank');
+        }
     } catch (err) {
-        console.warn('Share capture failed:', err.message);
+        console.warn('Share action failed:', err.message);
+        showShareToast('Share failed — try downloading instead');
     }
 }
 
-document.getElementById('shareDashboard')?.addEventListener('click', captureAndShare);
+// Toggle dropdown
+document.getElementById('shareToggle')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('shareDropdown')?.classList.toggle('open');
+});
+
+// Handle menu item clicks
+document.getElementById('shareMenu')?.addEventListener('click', (e) => {
+    const item = e.target.closest('[data-action]');
+    if (item) handleShareAction(item.dataset.action);
+});
+
+// Close dropdown on outside click
+document.addEventListener('click', () => {
+    document.getElementById('shareDropdown')?.classList.remove('open');
+});
 
 // === Main renderView ===
 
@@ -772,9 +804,20 @@ async function handleRefresh() {
     const btn = document.getElementById('refreshBtn');
     if (!btn || btn.classList.contains('refreshing')) return;
 
+    const modal = document.getElementById('refreshModal');
+    const statusEl = document.getElementById('refreshModalStatus');
+    const resultEl = document.getElementById('refreshModalResult');
+    const closeBtn = document.getElementById('refreshModalClose');
+
+    // Show modal in working state
     btn.classList.add('refreshing');
-    const label = btn.querySelector('.refresh-label');
-    if (label) label.textContent = 'Syncing...';
+    if (modal) {
+        statusEl.style.display = 'flex';
+        resultEl.style.display = 'none';
+        closeBtn.style.display = 'none';
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 
     try {
         const response = await fetch('/api/refresh', { method: 'POST' });
@@ -787,22 +830,32 @@ async function handleRefresh() {
 
         renderView(activeSourceKey);
 
-        const toast = document.getElementById('shareToast');
-        if (toast) {
-            const msg = stats.newMessages > 0
-                ? `Synced ${stats.newMessages} new message${stats.newMessages === 1 ? '' : 's'}`
-                : 'Already up to date';
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+        // Show result in modal
+        if (resultEl) {
+            const lines = [];
+            if (stats.newMessages > 0) {
+                lines.push(`<span class="result-num">${stats.newMessages}</span> new message${stats.newMessages === 1 ? '' : 's'} synced`);
+            } else {
+                lines.push('Already up to date');
+            }
+            lines.push(`<span class="result-num">${formatCompact(stats.totalMessages)}</span> total messages`);
+            if (stats.embedded > 0) {
+                lines.push(`<span class="result-num">${stats.embedded}</span> embeddings computed`);
+            }
+            resultEl.innerHTML = lines.join('<br>');
+            statusEl.style.display = 'none';
+            resultEl.style.display = 'block';
+            closeBtn.style.display = 'inline-block';
+            closeBtn.focus();
         }
     } catch (err) {
         console.warn('Refresh failed:', err.message);
-        const toast = document.getElementById('shareToast');
-        if (toast) {
-            toast.textContent = 'Refresh failed — is the server running?';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+        if (resultEl) {
+            resultEl.innerHTML = 'Refresh failed — is the server running?';
+            statusEl.style.display = 'none';
+            resultEl.style.display = 'block';
+            closeBtn.style.display = 'inline-block';
+            closeBtn.focus();
         }
     } finally {
         btn.classList.remove('refreshing');
@@ -810,6 +863,11 @@ async function handleRefresh() {
         if (label) label.textContent = 'Refresh';
     }
 }
+
+document.getElementById('refreshModalClose')?.addEventListener('click', () => {
+    const modal = document.getElementById('refreshModal');
+    if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
+});
 
 document.getElementById('refreshBtn')?.addEventListener('click', handleRefresh);
 
