@@ -69,6 +69,9 @@ const MIGRATIONS = [
   `ALTER TABLE nlp_enrichments ADD COLUMN tenacity_confidence REAL`,
   `ALTER TABLE nlp_enrichments ADD COLUMN trust_score REAL`,
   `ALTER TABLE nlp_enrichments ADD COLUMN trust_confidence REAL`,
+  // Politeness embedding classifier
+  `ALTER TABLE nlp_enrichments ADD COLUMN politeness_score REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN politeness_confidence REAL`,
 ];
 
 /**
@@ -108,6 +111,17 @@ export async function bootstrapDb(dbPath) {
       if (!String(err).includes("duplicate column")) throw err;
     }
   }
+
+  // Clean up agent/bot messages (excluded at parse time now)
+  // 1. Remove rows tagged as agent platform
+  await client.execute("DELETE FROM nlp_enrichments WHERE message_id IN (SELECT id FROM messages WHERE platform = 'agent')");
+  await client.execute("DELETE FROM messages WHERE platform = 'agent'");
+  // 2. Remove entire conversations containing Goalbot system prompts
+  await client.execute("DELETE FROM nlp_enrichments WHERE message_id IN (SELECT id FROM messages WHERE conversation_id IN (SELECT DISTINCT conversation_id FROM messages WHERE role = 'human' AND content LIKE 'Learned patterns%'))");
+  await client.execute("DELETE FROM messages WHERE conversation_id IN (SELECT DISTINCT conversation_id FROM messages WHERE role = 'human' AND content LIKE 'Learned patterns%')");
+  // 3. Remove agent-* compact sessions
+  await client.execute("DELETE FROM nlp_enrichments WHERE message_id IN (SELECT id FROM messages WHERE conversation_id LIKE 'agent-%')");
+  await client.execute("DELETE FROM messages WHERE conversation_id LIKE 'agent-%'");
 
   client.close();
 }

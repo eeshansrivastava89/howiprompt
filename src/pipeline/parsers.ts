@@ -3,12 +3,14 @@ import path from "node:path";
 import readline from "node:readline";
 import { Message, Platform, Role } from "./models.js";
 
-function findJsonlFiles(dir: string): string[] {
+function findJsonlFiles(dir: string, excludedDirs: Set<string> = new Set()): string[] {
   const results: string[] = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) results.push(...findJsonlFiles(full));
-    else if (entry.name.endsWith(".jsonl")) results.push(full);
+    if (entry.isDirectory()) {
+      if (excludedDirs.has(entry.name)) continue;
+      results.push(...findJsonlFiles(full, excludedDirs));
+    } else if (entry.name.endsWith(".jsonl")) results.push(full);
   }
   return results;
 }
@@ -19,17 +21,16 @@ export async function parseClaudeCode(
 ): Promise<Message[]> {
   if (!fs.existsSync(sourceDir)) return [];
 
-  const agentCwdSet = new Set(agentCwds);
+  // Convert excluded cwd paths to Claude project directory names
+  // e.g. "/Users/eeshans/PersonalVault" → "-Users-eeshans-PersonalVault"
+  const excludedDirs = new Set(agentCwds.map((p) => p.replace(/\//g, "-")));
   const messages: Message[] = [];
-  const allFiles = findJsonlFiles(sourceDir);
+  const allFiles = findJsonlFiles(sourceDir, excludedDirs);
 
   for (const filePath of allFiles) {
       const sessionId = path.basename(filePath, ".jsonl");
-      const lines = fs.readFileSync(filePath, "utf-8").split("\n");
 
-      // Detect cwd from first entry that has it — determines platform for entire file
-      let fileCwd: string = "";
-      let filePlatform: Platform = Platform.CLAUDE_CODE;
+      const lines = fs.readFileSync(filePath, "utf-8").split("\n");
 
       for (const line of lines) {
         if (!line.trim()) continue;
@@ -38,12 +39,6 @@ export async function parseClaudeCode(
           entry = JSON.parse(line);
         } catch {
           continue;
-        }
-
-        // Capture cwd from any entry that has it (usually the first)
-        if (!fileCwd && typeof entry.cwd === "string") {
-          fileCwd = entry.cwd;
-          filePlatform = Platform.CLAUDE_CODE;
         }
 
         const entryType = entry.type;
@@ -79,7 +74,7 @@ export async function parseClaudeCode(
 
         messages.push({
           timestamp,
-          platform: filePlatform,
+          platform: Platform.CLAUDE_CODE,
           role,
           content,
           conversationId: sessionId,

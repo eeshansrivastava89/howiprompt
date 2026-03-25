@@ -177,6 +177,7 @@ export async function computeNlpMetrics(
       curiosity: emptyClassifier,
       tenacity: emptyClassifier,
       trust: emptyClassifier,
+      politeness: emptyClassifier,
     };
   }
 
@@ -205,14 +206,15 @@ export async function computeNlpMetrics(
   });
   const ic = intentConf.rows[0];
 
-  // Aggregate all 6 embedding classifiers in parallel
-  const [hitl, vibe, precision, curiosity, tenacity, trust] = await Promise.all([
+  // Aggregate all 7 embedding classifiers in parallel
+  const [hitl, vibe, precision, curiosity, tenacity, trust, politeness] = await Promise.all([
     aggregateClassifier(client, "hitl_score", pf),
     aggregateClassifier(client, "vibe_score", pf),
     aggregateClassifier(client, "precision_score", pf),
     aggregateClassifier(client, "curiosity_score", pf),
     aggregateClassifier(client, "tenacity_score", pf),
     aggregateClassifier(client, "trust_score", pf),
+    aggregateClassifier(client, "politeness_score", pf),
   ]);
 
   return {
@@ -229,6 +231,7 @@ export async function computeNlpMetrics(
     curiosity: { method: "embedding_similarity_v1", ...curiosity },
     tenacity: { method: "embedding_similarity_v1", ...tenacity },
     trust: { method: "embedding_similarity_v1", ...trust },
+    politeness: { method: "embedding_similarity_v1", ...politeness },
   };
 }
 

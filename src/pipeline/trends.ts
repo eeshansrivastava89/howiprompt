@@ -1,7 +1,7 @@
 import type { Client } from "@libsql/client";
 import { queryMessages, platformFilter, type MessageRow } from "./db.js";
 import { Platform, Role } from "./models.js";
-import { POLITENESS_PATTERNS, BACKTRACK_PATTERNS, COMMAND_PATTERN } from "./nlp.js";
+import { BACKTRACK_PATTERNS, COMMAND_PATTERN } from "./nlp.js";
 
 function countPatternMatches(text: string, pattern: RegExp): number {
   const matches = text.match(pattern);
@@ -12,23 +12,7 @@ function countPatternMatches(text: string, pattern: RegExp): number {
 export function computeStyleSnapshot(messages: MessageRow[]): Record<string, number> {
   const total = messages.length;
   if (total === 0) {
-    return { politeness_pct: 0, politeness_per_100: 0, backtrack_per_100: 0, question_rate_pct: 0, command_rate_pct: 0 };
-  }
-
-  let polCount = 0;
-  let politePrompts = 0;
-  const allPatterns = Object.values(POLITENESS_PATTERNS);
-  for (const m of messages) {
-    let hasPolite = false;
-    for (const pattern of allPatterns) {
-      const matches = m.content.match(pattern);
-      pattern.lastIndex = 0;
-      if (matches) {
-        polCount += matches.length;
-        hasPolite = true;
-      }
-    }
-    if (hasPolite) politePrompts++;
+    return { backtrack_per_100: 0, question_rate_pct: 0, command_rate_pct: 0 };
   }
 
   let btCount = 0;
@@ -41,8 +25,6 @@ export function computeStyleSnapshot(messages: MessageRow[]): Record<string, num
   COMMAND_PATTERN.lastIndex = 0;
 
   return {
-    politeness_pct: round((politePrompts / total) * 100, 1),
-    politeness_per_100: round((polCount / total) * 100, 1),
     backtrack_per_100: round((btCount / total) * 100, 1),
     question_rate_pct: round((qCount / total) * 100, 1),
     command_rate_pct: round((cCount / total) * 100, 1),
@@ -114,7 +96,6 @@ export function computeTrendDeltas(dailyRollups: Record<string, any>[]): Record<
   const selectors: Record<string, (item: any) => number> = {
     prompts_per_day: (item) => item.prompts,
     codex_share_pct: (item) => item.source_share_pct[Platform.CODEX],
-    politeness_per_100: (item) => item.style.politeness_per_100,
     backtrack_per_100: (item) => item.style.backtrack_per_100,
     question_rate_pct: (item) => item.style.question_rate_pct,
     command_rate_pct: (item) => item.style.command_rate_pct,
@@ -210,12 +191,42 @@ export async function computeTrendMetrics(
   // Enrich weekly rollups with NLP score averages
   await enrichWeeklyNlp(client, weeklyRollups, platform);
 
-  return {
+  const result: Record<string, any> = {
     daily_rollups: dailyRollups,
     weekly_rollups: weeklyRollups,
     deltas_7d_vs_30d: computeTrendDeltas(dailyRollups),
     shift_markers: detectShiftMarkers(dailyRollups),
   };
+
+  // When showing all platforms, add per-platform weekly breakdowns
+  if (!platform) {
+    const platforms = [Platform.CLAUDE_CODE, Platform.CODEX];
+    const byPlatform: Record<string, Record<string, any>[]> = {};
+
+    for (const plat of platforms) {
+      const platMsgs = humanMsgs.filter((m) => m.platform === plat);
+      if (platMsgs.length === 0) continue;
+
+      const platWeekly = new Map<string, MessageRow[]>();
+      for (const msg of platMsgs) {
+        const d = new Date(msg.timestamp);
+        const dayOfWeek = (d.getDay() + 6) % 7;
+        const weekStart = new Date(d);
+        weekStart.setDate(d.getDate() - dayOfWeek);
+        const weekKey = `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, "0")}-${String(weekStart.getDate()).padStart(2, "0")}`;
+        if (!platWeekly.has(weekKey)) platWeekly.set(weekKey, []);
+        platWeekly.get(weekKey)!.push(msg);
+      }
+
+      const rollups = buildTrendRollups(platWeekly, "week_start");
+      await enrichWeeklyNlp(client, rollups, plat);
+      byPlatform[plat] = rollups;
+    }
+
+    result.weekly_by_platform = byPlatform;
+  }
+
+  return result;
 }
 
 async function enrichWeeklyNlp(
@@ -232,7 +243,8 @@ async function enrichWeeklyNlp(
       AVG(e.precision_score) as precision,
       AVG(e.curiosity_score) as curiosity,
       AVG(e.tenacity_score) as tenacity,
-      AVG(e.trust_score) as trust
+      AVG(e.trust_score) as trust,
+      AVG(e.politeness_score) as politeness
     FROM nlp_enrichments e
     JOIN messages m ON e.message_id = m.id
     WHERE m.role = 'human' AND e.hitl_score IS NOT NULL${pf.clause}
@@ -241,7 +253,7 @@ async function enrichWeeklyNlp(
     args: pf.args,
   });
 
-  const nlpByWeek = new Map<string, Record<string, number>>();
+  const nlpByWeek = new Map<string, Record<string, number | null>>();
   for (const row of rs.rows) {
     nlpByWeek.set(String(row.week_start), {
       hitl_score: row.hitl != null ? round(Number(row.hitl), 1) : 0,
@@ -250,6 +262,7 @@ async function enrichWeeklyNlp(
       curiosity: row.curiosity != null ? round(Number(row.curiosity), 1) : 0,
       tenacity: row.tenacity != null ? round(Number(row.tenacity), 1) : 0,
       trust: row.trust != null ? round(Number(row.trust), 1) : 0,
+      politeness: row.politeness != null ? round(Number(row.politeness), 1) : null,
     });
   }
 

@@ -16,11 +16,19 @@ const sourceStorageKey = 'dashboard-source-filter';
 // === Formatting helpers ===
 
 function formatNumber(value) {
-    return (Number(value) || 0).toLocaleString();
+    const n = Math.round(Number(value) || 0);
+    return n.toLocaleString();
 }
 
-function formatCompactK(value) {
-    return `${Math.round((Number(value) || 0) / 1000)}K`;
+function formatCompact(value) {
+    const n = Number(value) || 0;
+    if (n < 1_000_000) return Math.round(n).toLocaleString();
+    if (n < 1_000_000_000) {
+        const m = n / 1_000_000;
+        return (m >= 100 ? Math.round(m) : m.toFixed(1).replace(/\.0$/, '')) + 'M';
+    }
+    const b = n / 1_000_000_000;
+    return (b >= 100 ? Math.round(b) : b.toFixed(1).replace(/\.0$/, '')) + 'B';
 }
 
 function formatHour12(hour) {
@@ -82,15 +90,15 @@ function renderPlayerCard(persona, nlp, politeness, view) {
 
     const hitlScore = nlp?.hitl_score?.avg_score;
     const vibeScore = nlp?.vibe_coder_index?.avg_score;
-    const politePct = politeness?.pct ?? 0;
+    const politeScore = nlp?.politeness?.avg_score;
 
     const el = (id) => document.getElementById(id);
     if (el('cardHitl')) el('cardHitl').textContent = hitlScore != null ? Math.round(hitlScore) : '--';
     if (el('cardVibe')) el('cardVibe').textContent = vibeScore != null ? Math.round(vibeScore) : '--';
-    if (el('cardPolite')) el('cardPolite').textContent = `${Math.round(politePct)}%`;
+    if (el('cardPolite')) el('cardPolite').textContent = politeScore != null ? Math.round(politeScore) : '--';
     if (el('cardHitlBar')) el('cardHitlBar').style.width = `${Math.min(hitlScore ?? 0, 100)}%`;
     if (el('cardVibeBar')) el('cardVibeBar').style.width = `${Math.min(vibeScore ?? 0, 100)}%`;
-    if (el('cardPoliteBar')) el('cardPoliteBar').style.width = `${Math.min(politePct, 100)}%`;
+    if (el('cardPoliteBar')) el('cardPoliteBar').style.width = `${Math.min(politeScore, 100)}%`;
 
     const serial = el('cardSerial');
     if (serial) {
@@ -106,6 +114,9 @@ function renderHeatmap(heatmapData) {
     const data = Array.isArray(heatmapData) ? heatmapData : [];
     const heatmap = document.getElementById('heatmapGrid');
     if (!heatmap) return;
+    // Apply platform color to heatmap cells
+    const heatmapPanel = heatmap.closest('.heatmap-panel');
+    if (heatmapPanel) heatmapPanel.style.setProperty('--heatmap-color', resolveAccent());
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     // Empty corner + hour headers
@@ -146,27 +157,43 @@ let activeTrendMetric = 'hitl';
 const TREND_METRIC_CONFIG = {
     hitl:      { key: 'hitl_score',          label: 'Human in the Loop', suffix: '', desc: 'How actively you steer AI output. Higher = more hands-on review and iteration.' },
     vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '', desc: 'Engineer vs. vibe coder spectrum. Higher = more structured, spec-driven prompting.' },
-    polite:    { key: 'politeness_pct',        label: 'Politeness',        suffix: '%', desc: 'Percentage of prompts containing please, thanks, or sorry.' },
-    precision: { key: 'precision',           label: 'Precision',         suffix: '', desc: 'How specific and detailed your prompts are. Higher = more context and constraints.' },
-    curiosity: { key: 'curiosity',           label: 'Curiosity',         suffix: '', desc: 'How often you explore, ask questions, and investigate new directions.' },
-    tenacity:  { key: 'tenacity',            label: 'Tenacity',          suffix: '', desc: 'How persistently you iterate and refine. Higher = longer sessions, more follow-ups.' },
-    trust:     { key: 'trust',               label: 'Trust',             suffix: '', desc: 'How much autonomy you give AI. Higher = fewer corrections, more delegation.' },
+    polite:    { key: 'politeness',          label: 'Politeness',        suffix: '', desc: 'How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.' },
+    activity:  { key: '_prompts',            label: 'Activity',          suffix: '', desc: 'Prompts per week.', color: 'var(--text)' },
 };
 
 function extractTrendPoints(weekly, metricKey) {
     return weekly.map((w) => {
-        // NLP weekly scores (hitl_score, vibe_coder_index, precision, etc.)
+        if (metricKey === '_prompts') return w.prompts ?? null;
         if (w.nlp && w.nlp[metricKey] != null) return Math.round(w.nlp[metricKey]);
-        // Style metrics (politeness_per_100, backtrack_per_100, etc.)
-        if (w.style && w.style[metricKey] != null) return Math.round(w.style[metricKey]);
         return null;
     });
+}
+
+const PLATFORM_COLORS = {
+    claude_code: { stroke: '#e67e22', label: 'Claude Code' },
+    codex:       { stroke: '#2c2c2c', label: 'Codex' },
+};
+
+function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1,3), 16), g = parseInt(hex.slice(3,5), 16), b = parseInt(hex.slice(5,7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function resolveAccent() {
+    // If viewing a specific platform, use its color
+    const platColor = PLATFORM_COLORS[activeSourceKey]?.stroke;
+    if (platColor) return platColor;
+    // Otherwise use CSS accent
+    return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#5c3d2e';
 }
 
 function initSvgTrend(view) {
     const trends = view?.trends || {};
     const weekly = trends?.weekly_rollups || [];
     if (weekly.length < 2) return;
+
+    const weeklyByPlatform = trends?.weekly_by_platform || {};
+    const isAllView = Object.keys(weeklyByPlatform).length > 0;
 
     const ns = 'http://www.w3.org/2000/svg';
     const svgEl = document.getElementById('trendSvg');
@@ -177,6 +204,8 @@ function initSvgTrend(view) {
     const dotHover = document.getElementById('trendDotHover');
     const dotGlow = document.getElementById('trendDotGlow');
     const hitGroup = document.getElementById('trendHitAreas');
+    const platformGroup = document.getElementById('trendPlatformLines');
+    const xAxisGroup = document.getElementById('trendXAxis');
     const tooltip = document.getElementById('trendTooltip');
     const valEl = document.getElementById('trendVal');
     const labelEl = document.getElementById('trendLabel');
@@ -185,37 +214,57 @@ function initSvgTrend(view) {
 
     const vw = 600, vh = 140, pad = 20;
 
-    // Build week labels
-    const weekLabels = weekly.map((w, i) => {
-        if (i === weekly.length - 1) return 'Now';
-        const ago = weekly.length - 1 - i;
-        return `${ago}w ago`;
+    // Build week date labels from week_start keys
+    const weekDates = weekly.map((w) => {
+        const d = new Date(w.week_start || w.date);
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     });
 
     // Lifetime averages for headline display
     const nlp = view.nlp || {};
+    const avgPromptsPerWeek = weekly.length > 0
+        ? Math.round(weekly.reduce((s, w) => s + w.prompts, 0) / weekly.length)
+        : null;
     const lifetimeAvg = {
         hitl: nlp.hitl_score?.avg_score,
         vibe: nlp.vibe_coder_index?.avg_score,
-        polite: view.politeness?.pct,
-        precision: nlp.precision?.avg_score,
-        curiosity: nlp.curiosity?.avg_score,
-        tenacity: nlp.tenacity?.avg_score,
-        trust: nlp.trust?.avg_score,
+        polite: nlp.politeness?.avg_score,
+        activity: avgPromptsPerWeek,
     };
 
-    // Build weekly data for trend lines
+    // Build weekly data for trend lines (aggregate)
     trendData = {};
     for (const [key, config] of Object.entries(TREND_METRIC_CONFIG)) {
         const points = extractTrendPoints(weekly, config.key);
         const hasData = points.some((p) => p != null);
         if (hasData) {
-            trendData[key] = {
+            const entry = {
                 points: points.map((p) => p ?? 0),
                 label: config.label,
                 suffix: config.suffix,
                 lifetime: lifetimeAvg[key],
             };
+
+            // Build per-platform series aligned to aggregate week keys
+            if (isAllView) {
+                const weekKeys = weekly.map((w) => w.week_start);
+                entry.platforms = {};
+                for (const [plat, platWeekly] of Object.entries(weeklyByPlatform)) {
+                    const platByWeek = new Map(platWeekly.map((w) => [w.week_start, w]));
+                    const platPoints = weekKeys.map((wk) => {
+                        const pw = platByWeek.get(wk);
+                        if (!pw) return null;
+                        if (config.key === '_prompts') return pw.prompts ?? null;
+                        if (pw.nlp && pw.nlp[config.key] != null) return Math.round(pw.nlp[config.key]);
+                        return null;
+                    });
+                    if (platPoints.some((p) => p != null)) {
+                        entry.platforms[plat] = platPoints;
+                    }
+                }
+            }
+
+            trendData[key] = entry;
         }
     }
 
@@ -224,41 +273,144 @@ function initSvgTrend(view) {
         activeTrendMetric = Object.keys(trendData)[0] || 'hitl';
     }
 
+    // Render x-axis date labels
+    function renderXAxis(stepX) {
+        xAxisGroup.innerHTML = '';
+        // Show every Nth label to avoid crowding
+        const maxLabels = 8;
+        const step = Math.max(1, Math.ceil(weekly.length / maxLabels));
+        for (let i = 0; i < weekly.length; i += step) {
+            const text = document.createElementNS(ns, 'text');
+            text.setAttribute('x', pad + i * stepX);
+            text.setAttribute('y', vh + 14);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('font-size', '9');
+            text.setAttribute('fill', 'var(--subtext)');
+            text.setAttribute('opacity', '0.7');
+            text.textContent = weekDates[i];
+            xAxisGroup.appendChild(text);
+        }
+    }
+
+    function toCoords(pts, min, range, stepX) {
+        return pts.map((v, i) => ({
+            x: pad + i * stepX,
+            y: vh - pad - ((v - min) / range) * (vh - pad * 2),
+        }));
+    }
+
     function render() {
         const d = trendData[activeTrendMetric];
         if (!d) return;
         const pts = d.points;
-        const min = Math.min(...pts) - 5;
-        const max = Math.max(...pts) + 5;
+        const hasPlatforms = d.platforms && Object.keys(d.platforms).length > 1;
+
+        // Compute min/max across all series for consistent y-axis (ignore nulls)
+        let allValues = [...pts];
+        if (hasPlatforms) {
+            for (const platPts of Object.values(d.platforms)) allValues = allValues.concat(platPts.filter((p) => p != null));
+        }
+        const min = Math.min(...allValues) - 5;
+        const max = Math.max(...allValues) + 5;
         const range = max - min || 1;
         const stepX = (vw - pad * 2) / (pts.length - 1);
 
-        const coords = pts.map((v, i) => ({
-            x: pad + i * stepX,
-            y: vh - pad - ((v - min) / range) * (vh - pad * 2),
-        }));
+        const coords = toCoords(pts, min, range, stepX);
 
-        areaEl.setAttribute('points',
-            `${coords[0].x},${vh} ` + coords.map((c) => `${c.x},${c.y}`).join(' ') + ` ${coords[coords.length - 1].x},${vh}`
-        );
-        lineEl.setAttribute('points', coords.map((c) => `${c.x},${c.y}`).join(' '));
+        // Platform lines
+        platformGroup.innerHTML = '';
+        if (hasPlatforms) {
+            // In multi-line mode: hide aggregate area, show aggregate as thin dashed
+            areaEl.setAttribute('points', '');
+            lineEl.setAttribute('points', '');
+            dotEnd.style.display = 'none';
 
-        const last = coords[coords.length - 1];
-        dotEnd.setAttribute('cx', last.x);
-        dotEnd.setAttribute('cy', last.y);
+            for (const [plat, platPts] of Object.entries(d.platforms)) {
+                const color = PLATFORM_COLORS[plat]?.stroke || '#666';
+
+                // Break line at null gaps — render continuous segments
+                let segment = [];
+                for (let j = 0; j < platPts.length; j++) {
+                    if (platPts[j] != null) {
+                        const x = pad + j * stepX;
+                        const y = vh - pad - ((platPts[j] - min) / range) * (vh - pad * 2);
+                        segment.push({ x, y });
+                    } else if (segment.length > 0) {
+                        // Flush segment
+                        const line = document.createElementNS(ns, 'polyline');
+                        line.setAttribute('points', segment.map((c) => `${c.x},${c.y}`).join(' '));
+                        line.setAttribute('fill', 'none');
+                        line.setAttribute('stroke', color);
+                        line.setAttribute('stroke-width', '2.5');
+                        line.setAttribute('stroke-linecap', 'round');
+                        line.setAttribute('stroke-linejoin', 'round');
+                        platformGroup.appendChild(line);
+                        segment = [];
+                    }
+                }
+                // Flush remaining segment
+                if (segment.length > 0) {
+                    const line = document.createElementNS(ns, 'polyline');
+                    line.setAttribute('points', segment.map((c) => `${c.x},${c.y}`).join(' '));
+                    line.setAttribute('fill', 'none');
+                    line.setAttribute('stroke', color);
+                    line.setAttribute('stroke-width', '2.5');
+                    line.setAttribute('stroke-linecap', 'round');
+                    line.setAttribute('stroke-linejoin', 'round');
+                    platformGroup.appendChild(line);
+
+                    // End dot on last non-null point
+                    const last = segment[segment.length - 1];
+                    const dot = document.createElementNS(ns, 'circle');
+                    dot.setAttribute('cx', last.x);
+                    dot.setAttribute('cy', last.y);
+                    dot.setAttribute('r', '3.5');
+                    dot.setAttribute('fill', color);
+                    platformGroup.appendChild(dot);
+                }
+            }
+        } else {
+            // Single line mode
+            dotEnd.style.display = '';
+            areaEl.setAttribute('points',
+                `${coords[0].x},${vh} ` + coords.map((c) => `${c.x},${c.y}`).join(' ') + ` ${coords[coords.length - 1].x},${vh}`
+            );
+            lineEl.setAttribute('points', coords.map((c) => `${c.x},${c.y}`).join(' '));
+
+            const last = coords[coords.length - 1];
+            dotEnd.setAttribute('cx', last.x);
+            dotEnd.setAttribute('cy', last.y);
+        }
 
         dotHover.style.display = 'none';
         dotGlow.style.display = 'none';
         guideEl.style.display = 'none';
         tooltip.style.opacity = '0';
 
-        // Update SVG colors based on current accent
-        const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#8839ef';
-        lineEl.setAttribute('stroke', accent);
-        dotEnd.setAttribute('fill', accent);
+        // Resolve color — platform color for single-platform views, or config override, or accent
+        const cfg = TREND_METRIC_CONFIG[activeTrendMetric];
+        const rawColor = cfg?.color
+            ? getComputedStyle(document.documentElement).getPropertyValue(cfg.color.replace('var(', '').replace(')', '')).trim() || cfg.color
+            : null;
+        const accent = rawColor || resolveAccent();
+        if (!hasPlatforms) {
+            lineEl.setAttribute('stroke', accent);
+            dotEnd.setAttribute('fill', accent);
+        }
         dotHover.setAttribute('fill', accent);
-        dotGlow.setAttribute('stroke', accent.replace(')', ',0.3)').replace('rgb', 'rgba'));
+        dotGlow.setAttribute('stroke', hexToRgba(accent, 0.3));
 
+        // Update area gradient to match current accent
+        const grad = document.getElementById('areaGrad');
+        if (grad) {
+            grad.children[0]?.setAttribute('stop-color', hexToRgba(accent, 0.2));
+            grad.children[1]?.setAttribute('stop-color', hexToRgba(accent, 0));
+        }
+
+        // X-axis
+        renderXAxis(stepX);
+
+        // Hit areas for hover
         hitGroup.innerHTML = '';
         coords.forEach((c, i) => {
             const rect = document.createElementNS(ns, 'rect');
@@ -270,22 +422,41 @@ function initSvgTrend(view) {
             rect.style.cursor = 'crosshair';
 
             rect.addEventListener('mouseenter', () => {
-                dotHover.setAttribute('cx', c.x);
-                dotHover.setAttribute('cy', c.y);
-                dotGlow.setAttribute('cx', c.x);
-                dotGlow.setAttribute('cy', c.y);
-                dotHover.style.display = '';
-                dotGlow.style.display = '';
+                if (!hasPlatforms) {
+                    dotHover.setAttribute('cx', c.x);
+                    dotHover.setAttribute('cy', c.y);
+                    dotGlow.setAttribute('cx', c.x);
+                    dotGlow.setAttribute('cy', c.y);
+                    dotHover.style.display = '';
+                    dotGlow.style.display = '';
+                }
                 guideEl.setAttribute('x1', c.x);
-                guideEl.setAttribute('y1', c.y + 12);
+                guideEl.setAttribute('y1', pad);
                 guideEl.setAttribute('x2', c.x);
                 guideEl.setAttribute('y2', vh);
                 guideEl.style.display = '';
                 const svgRect = svgEl.getBoundingClientRect();
                 const pctX = c.x / vw;
-                tooltip.style.left = (pctX * svgRect.width) + 'px';
+                let leftPx = pctX * svgRect.width;
+                // Clamp tooltip to chart bounds
+                const tipW = 180;
+                leftPx = Math.max(tipW / 2, Math.min(leftPx, svgRect.width - tipW / 2));
+                tooltip.style.left = leftPx + 'px';
                 tooltip.style.opacity = '1';
-                tooltip.textContent = `${weekLabels[i]}: ${pts[i]}${d.suffix}`;
+
+                if (hasPlatforms) {
+                    const parts = Object.entries(d.platforms)
+                        .filter(([, platPts]) => platPts[i] != null)
+                        .map(([plat, platPts]) => {
+                            const label = PLATFORM_COLORS[plat]?.label || plat;
+                            return `${label}: ${platPts[i]}${d.suffix}`;
+                        });
+                    tooltip.textContent = parts.length > 0
+                        ? `${weekDates[i]} · ${parts.join(' / ')}`
+                        : weekDates[i];
+                } else {
+                    tooltip.textContent = `${weekDates[i]}: ${pts[i]}${d.suffix}`;
+                }
             });
 
             rect.addEventListener('mouseleave', () => {
@@ -304,9 +475,17 @@ function initSvgTrend(view) {
         activeTrendMetric = key;
         const d = trendData[key];
         const config = TREND_METRIC_CONFIG[key];
-        const headline = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
-        valEl.textContent = headline + d.suffix;
+        const headlineRaw = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
+        valEl.textContent = (key === 'activity' ? formatCompact(headlineRaw) : headlineRaw) + d.suffix;
         labelEl.textContent = `${d.label} · ${weekly.length}-week trend`;
+        // Set headline color to match platform/accent
+        const trendPanel = valEl.closest('.trend-panel');
+        if (trendPanel) {
+            const headlineColor = config?.color
+                ? getComputedStyle(document.documentElement).getPropertyValue(config.color.replace('var(', '').replace(')', '')).trim() || config.color
+                : resolveAccent();
+            trendPanel.style.setProperty('--trend-color', headlineColor);
+        }
         const descEl = document.getElementById('trendDesc');
         if (descEl) descEl.textContent = config?.desc || '';
         document.querySelectorAll('.metric-tab').forEach((t) =>
@@ -410,7 +589,7 @@ function renderView(sourceKey) {
     const promptsValue = el('promptsValue');
     if (promptsValue) promptsValue.textContent = formatNumber(volume.total_human);
     const promptsSubtitle = el('promptsSubtitle');
-    if (promptsSubtitle) promptsSubtitle.textContent = `${volume.avg_words_per_prompt ?? 0} words avg`;
+    if (promptsSubtitle) promptsSubtitle.textContent = `${formatNumber(volume.avg_words_per_prompt)} words avg`;
 
     const conversationsValue = el('conversationsValue');
     if (conversationsValue) conversationsValue.textContent = formatNumber(volume.total_conversations);
@@ -418,9 +597,9 @@ function renderView(sourceKey) {
     if (conversationsSubtitle) conversationsSubtitle.textContent = `${convo.avg_turns ?? 0} turns avg`;
 
     const wordsTypedValue = el('wordsTypedValue');
-    if (wordsTypedValue) wordsTypedValue.textContent = formatCompactK(volume.total_words_human);
+    if (wordsTypedValue) wordsTypedValue.textContent = formatCompact(volume.total_words_human);
     const wordsTypedSubtitle = el('wordsTypedSubtitle');
-    if (wordsTypedSubtitle) wordsTypedSubtitle.textContent = `${formatCompactK(volume.total_words_assistant)} from assistants`;
+    if (wordsTypedSubtitle) wordsTypedSubtitle.textContent = `${formatCompact(volume.total_words_assistant)} from assistants`;
 
     const nightOwlValue = el('nightOwlValue');
     if (nightOwlValue) nightOwlValue.textContent = `${temporal.night_owl_pct ?? 0}%`;

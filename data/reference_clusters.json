@@ -420,5 +420,75 @@
       "don't deviate from the API contract in the spec",
       "I want it done my way, not the textbook way"
     ]
+  },
+  "politeness": {
+    "courteous": [
+      "please help me fix this authentication issue",
+      "thank you for that, could you also update the tests?",
+      "thanks so much for the detailed explanation",
+      "sorry to bother you again, but I think there's another bug",
+      "would you mind taking a look at the error handling?",
+      "I'd really appreciate it if you could simplify this function",
+      "great work on that, thanks! Now can we move on to the API?",
+      "if it's not too much trouble, could you add validation?",
+      "I appreciate the thorough response, one more question though",
+      "no worries if this is hard, but can you try a different approach?",
+      "thanks for catching that, you're right about the edge case",
+      "could you please refactor this when you get a chance?",
+      "sorry, I wasn't clear — what I meant was change the return type",
+      "that's really helpful, thank you. Can you also add types?",
+      "please and thank you! Can you also run the linter?"
+    ],
+    "warm_collaborative": [
+      "nice catch! Let's fix that together",
+      "love that approach, let's go with it",
+      "this is looking great, just a few tweaks needed",
+      "really appreciate you walking me through this",
+      "that's exactly what I was hoping for, well done",
+      "I'm impressed with how clean this turned out",
+      "thanks for being patient while I figured out what I wanted",
+      "you've been super helpful today, one last thing",
+      "great thinking on the edge case handling",
+      "I like where this is going, let's keep iterating",
+      "awesome, that fixed it! Thanks for the quick turnaround",
+      "brilliant suggestion about the caching layer",
+      "this is way better than what I had in mind, thanks",
+      "really solid work on the error handling",
+      "you nailed it, exactly what the spec called for"
+    ],
+    "direct_neutral": [
+      "fix the bug in the login handler",
+      "change the return type to Promise<void>",
+      "add an index on user_id",
+      "run the test suite",
+      "implement the pagination endpoint",
+      "remove the deprecated function",
+      "update the schema to add a status column",
+      "refactor the middleware to use async/await",
+      "deploy to staging",
+      "write unit tests for the validator",
+      "add error handling to the file upload",
+      "create a new migration for the roles table",
+      "set the timeout to 5000ms",
+      "split this into two separate functions",
+      "move the config to environment variables"
+    ],
+    "curt_dismissive": [
+      "no",
+      "wrong",
+      "just do it",
+      "whatever",
+      "I don't care how, just make it work",
+      "not what I asked",
+      "try again",
+      "that's wrong, do it over",
+      "stop explaining and just write the code",
+      "skip the explanation",
+      "I didn't ask for your opinion",
+      "less talking more coding",
+      "just ship it already",
+      "don't overthink it",
+      "next"
+    ]
   }
 }

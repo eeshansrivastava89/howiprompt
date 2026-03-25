@@ -20,18 +20,8 @@ function makeRow(overrides: Partial<MessageRow> = {}): MessageRow {
 describe("computeStyleSnapshot", () => {
   it("returns zeros for empty array", () => {
     const result = computeStyleSnapshot([]);
-    expect(result.politeness_per_100).toBe(0);
     expect(result.backtrack_per_100).toBe(0);
-  });
-
-  it("counts politeness patterns", () => {
-    const msgs = [
-      makeRow({ content: "please fix this" }),
-      makeRow({ content: "thanks for the help" }),
-      makeRow({ content: "hello world" }),
-    ];
-    const result = computeStyleSnapshot(msgs);
-    expect(result.politeness_per_100).toBeGreaterThan(0);
+    expect(result.question_rate_pct).toBe(0);
   });
 
   it("counts question rate", () => {
@@ -70,7 +60,7 @@ describe("computeTrendDeltas", () => {
         date: d.toISOString().split("T")[0],
         prompts: 10 + (i > 22 ? 5 : 0),
         source_share_pct: { claude_code: 80, codex: 20 },
-        style: { politeness_per_100: 10, backtrack_per_100: 5, question_rate_pct: 30, command_rate_pct: 20 },
+        style: { backtrack_per_100: 5, question_rate_pct: 30, command_rate_pct: 20 },
         model_prompts: 8,
       };
     });

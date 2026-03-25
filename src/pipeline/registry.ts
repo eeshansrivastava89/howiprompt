@@ -44,14 +44,15 @@ export const METRICS: MetricDefinition[] = [
   },
   {
     key: "politeness",
-    name: "Politeness Index",
-    description: "% of prompts with courtesy markers",
+    name: "Politeness",
+    description: "How courteous and collaborative is your tone?",
     range: [0, 100] as const,
-    component: "percentage",
+    component: "gauge",
     tier: "hero",
     order: 3,
-    format: (v) => `${v.toFixed(1)}%`,
-    source: (m) => m.politeness?.pct ?? 0,
+    format: (v) => `${Math.round(v)}`,
+    labels: { low: "Direct", high: "Courteous" },
+    source: (m) => m.nlp?.politeness?.avg_score ?? 0,
   },
 
   // === Radar Axes (4-axis spider chart) ===

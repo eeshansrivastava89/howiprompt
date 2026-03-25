@@ -72,5 +72,16 @@
     "similarityThreshold": 0.50,
     "centerPoint": 50,
     "normalizationScale": 20
+  },
+  "politeness": {
+    "weights": {
+      "courteous": 20,
+      "warm_collaborative": 15,
+      "direct_neutral": -12,
+      "curt_dismissive": -20
+    },
+    "similarityThreshold": 0.50,
+    "centerPoint": 50,
+    "normalizationScale": 20
   }
 }

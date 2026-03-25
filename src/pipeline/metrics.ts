@@ -2,7 +2,7 @@ import type { Client } from "@libsql/client";
 import type { Config } from "./config.js";
 import { platformFilter, queryMessages } from "./db.js";
 import { Platform, Role } from "./models.js";
-import { POLITENESS_PATTERNS, computeNlpMetrics } from "./nlp.js";
+import { computeNlpMetrics } from "./nlp.js";
 import { classifyPersona } from "./persona.js";
 import { computeNormalized } from "./registry.js";
 import { computeTrendMetrics } from "./trends.js";
@@ -122,7 +122,7 @@ export async function computeModelUsage(
 
 export async function computeMetrics(
   client: Client,
-  config: Config,
+  _config: Config,
   platform?: Platform,
 ): Promise<Record<string, any>> {
   const pf = platformFilter(platform);
@@ -195,21 +195,8 @@ export async function computeMetrics(
   }
   const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-  // Politeness: % of prompts containing at least one politeness marker
-  const humanMsgs = await queryMessages(client, { role: Role.HUMAN, platform });
   const assistantMsgs = await queryMessages(client, { role: Role.ASSISTANT, platform });
   const assistantTexts = assistantMsgs.map((m) => m.content);
-
-  const allPatterns = Object.values(POLITENESS_PATTERNS);
-  let politePrompts = 0;
-  for (const m of humanMsgs) {
-    const text = m.content;
-    for (const pattern of allPatterns) {
-      if (pattern.test(text)) { politePrompts++; pattern.lastIndex = 0; break; }
-      pattern.lastIndex = 0;
-    }
-  }
-  const politenessPct = totalHuman ? round((politePrompts / totalHuman) * 100, 1) : 0;
 
   const yrPattern = /you'?re (absolutely )?right/gi;
   const yrCount = countAllMatches(assistantTexts, yrPattern);
@@ -271,7 +258,7 @@ export async function computeMetrics(
       peak_day_count: peakDayCount,
       hour_counts: hourCounts,
     },
-    politeness: { pct: politenessPct, prompts_with_markers: politePrompts, total_prompts: totalHuman },
+    politeness: { score: nlp.politeness?.avg_score ?? 0, total_prompts: totalHuman },
     youre_right: { count: yrCount, per_conversation: round(yrPerConvo, 1) },
     platform_stats: platformStats,
     model_usage: modelUsage,

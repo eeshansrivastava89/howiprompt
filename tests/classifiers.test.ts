@@ -33,6 +33,15 @@ describe("reference_clusters.json", () => {
     }
   });
 
+  it("has politeness clusters with expected categories", () => {
+    expect(clusters.politeness).toBeDefined();
+    const expected = ["courteous", "warm_collaborative", "direct_neutral", "curt_dismissive"];
+    for (const key of expected) {
+      expect(clusters.politeness[key]).toBeDefined();
+      expect(clusters.politeness[key].length).toBeGreaterThanOrEqual(10);
+    }
+  });
+
   it("all cluster examples are non-empty strings", () => {
     for (const [classifier, clusterMap] of Object.entries(clusters)) {
       for (const [cluster, examples] of Object.entries(clusterMap as Record<string, string[]>)) {
@@ -60,6 +69,12 @@ describe("ml config weights match clusters", () => {
   it("every vibe cluster has a weight", () => {
     for (const cluster of Object.keys(clusters.vibe)) {
       expect(config.vibe.weights[cluster]).toBeDefined();
+    }
+  });
+
+  it("every politeness cluster has a weight", () => {
+    for (const cluster of Object.keys(clusters.politeness)) {
+      expect(config.politeness.weights[cluster]).toBeDefined();
     }
   });
 });

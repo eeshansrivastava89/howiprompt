@@ -99,8 +99,8 @@ describe("full pipeline integration", () => {
     expect(metrics.temporal.heatmap).toHaveLength(7);
     expect(metrics.temporal.heatmap[0]).toHaveLength(24);
 
-    expect(metrics.politeness.pct).toBeGreaterThanOrEqual(0);
-    expect(metrics.politeness.pct).toBeLessThanOrEqual(100);
+    expect(metrics.politeness.score).toBeGreaterThanOrEqual(0);
+    expect(metrics.politeness.score).toBeLessThanOrEqual(100);
     expect(metrics.persona).toHaveProperty("type");
     expect(metrics.persona).toHaveProperty("name");
     expect(metrics.persona).toHaveProperty("radar");
@@ -112,6 +112,7 @@ describe("full pipeline integration", () => {
     expect(metrics.nlp).toHaveProperty("curiosity");
     expect(metrics.nlp).toHaveProperty("tenacity");
     expect(metrics.nlp).toHaveProperty("trust");
+    expect(metrics.nlp).toHaveProperty("politeness");
 
     expect(metrics.trends).toHaveProperty("daily_rollups");
     expect(metrics.trends).toHaveProperty("weekly_rollups");

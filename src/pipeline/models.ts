@@ -1,7 +1,6 @@
 export enum Platform {
   CLAUDE_CODE = "claude_code",
   CODEX = "codex",
-  AGENT = "agent",
 }
 
 export enum Role {

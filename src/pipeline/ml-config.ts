@@ -29,6 +29,7 @@ export interface MlConfig {
   curiosity: ClassifierConfig;
   tenacity: ClassifierConfig;
   trust: ClassifierConfig;
+  politeness: ClassifierConfig;
 }
 
 function deepMerge(target: any, source: any): any {

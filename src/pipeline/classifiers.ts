@@ -23,6 +23,7 @@ let precisionCentroids: ClusterCentroid[] | null = null;
 let curiosityCentroids: ClusterCentroid[] | null = null;
 let tenacityCentroids: ClusterCentroid[] | null = null;
 let trustCentroids: ClusterCentroid[] | null = null;
+let politenessCentroids: ClusterCentroid[] | null = null;
 
 function loadReferenceClusters(): Record<string, Record<string, string[]>> {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -97,9 +98,6 @@ async function buildCentroids(
   return centroids;
 }
 
-function sigmoid(x: number): number {
-  return 1 / (1 + Math.exp(-x));
-}
 
 function scoreFromCentroids(
   embedding: Float32Array,
@@ -182,6 +180,9 @@ export async function initClassifiers(
   trustCentroids = await buildCentroids(
     client, "trust", clusters.trust, mlConfig.trust.weights, mlConfig, dataDir,
   );
+  politenessCentroids = await buildCentroids(
+    client, "politeness", clusters.politeness, mlConfig.politeness.weights, mlConfig, dataDir,
+  );
 }
 
 export function computeHitlScore(
@@ -235,6 +236,14 @@ export function computeTrust(
   return scoreFromCentroids(embedding, trustCentroids, mlConfig.trust);
 }
 
+export function computePoliteness(
+  embedding: Float32Array,
+  mlConfig: MlConfig,
+): ClassifierResult {
+  if (!politenessCentroids) throw new Error("Classifiers not initialized");
+  return scoreFromCentroids(embedding, politenessCentroids, mlConfig.politeness);
+}
+
 export async function enrichClassifiers(
   client: Client,
   mlConfig: MlConfig,
@@ -245,7 +254,7 @@ export async function enrichClassifiers(
     `SELECT m.id, m.embedding FROM messages m
      JOIN nlp_enrichments e ON m.id = e.message_id
      WHERE m.role = 'human' AND m.embedding IS NOT NULL
-       AND (e.hitl_score IS NULL OR e.precision_score IS NULL)`,
+       AND (e.hitl_score IS NULL OR e.precision_score IS NULL OR e.politeness_score IS NULL)`,
   );
 
   if (result.rows.length === 0) return 0;
@@ -266,6 +275,7 @@ export async function enrichClassifiers(
       const cur = computeCuriosity(embedding, mlConfig);
       const ten = computeTenacity(embedding, mlConfig);
       const tru = computeTrust(embedding, mlConfig);
+      const pol = computePoliteness(embedding, mlConfig);
 
       return {
         sql: `UPDATE nlp_enrichments SET
@@ -274,7 +284,8 @@ export async function enrichClassifiers(
           precision_score = ?, precision_confidence = ?,
           curiosity_score = ?, curiosity_confidence = ?,
           tenacity_score = ?, tenacity_confidence = ?,
-          trust_score = ?, trust_confidence = ?
+          trust_score = ?, trust_confidence = ?,
+          politeness_score = ?, politeness_confidence = ?
           WHERE message_id = ?`,
         args: [
           hitl.score, hitl.confidence,
@@ -283,6 +294,7 @@ export async function enrichClassifiers(
           cur.score, cur.confidence,
           ten.score, ten.confidence,
           tru.score, tru.confidence,
+          pol.score, pol.confidence,
           Number(row.id),
         ],
       };

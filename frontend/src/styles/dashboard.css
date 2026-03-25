@@ -1,23 +1,23 @@
-/* dashboard.css — Catppuccin Latte / Mocha theme */
+/* dashboard.css — Coffee theme */
 
 *{margin:0;padding:0;box-sizing:border-box}
 
-/* Catppuccin Latte (light) */
+/* Light */
 :root{
-  --bg:#eff1f5;--surface:#fff;--text:#4c4f69;--muted:#5c5f77;
-  --border:#ccd0da;--accent:#8839ef;--accent-soft:#f0e6ff;
-  --accent-rgb:136,57,239;
+  --bg:#f5f3f0;--surface:#fff;--text:#3c3226;--subtext:#6b5e50;--muted:#8a7d6f;
+  --border:#d9d2c9;--accent:#5c3d2e;--accent-soft:#ede6de;
+  --accent-rgb:92,61,46;
   --radius:14px;--radius-sm:8px;
-  --shadow:0 1px 3px rgba(76,79,105,0.06),0 4px 12px rgba(76,79,105,0.04);
-  --shadow-hover:0 4px 12px rgba(76,79,105,0.1),0 8px 24px rgba(76,79,105,0.06);
+  --shadow:0 1px 3px rgba(60,50,38,0.06),0 4px 12px rgba(60,50,38,0.04);
+  --shadow-hover:0 4px 12px rgba(60,50,38,0.1),0 8px 24px rgba(60,50,38,0.06);
   --stat-b:#1a5bdb;--stat-r:#d20f39;
 }
 
-/* Catppuccin Mocha (dark) */
+/* Dark */
 .dark{
-  --bg:#1e1e2e;--surface:#313244;--text:#cdd6f4;--muted:#a6adc8;
-  --border:#45475a;--accent:#cba6f7;--accent-soft:#2a2240;
-  --accent-rgb:203,166,247;
+  --bg:#1c1816;--surface:#2a2420;--text:#e0d6cc;--subtext:#b0a596;--muted:#8a7d6f;
+  --border:#3d342c;--accent:#c9a882;--accent-soft:#2e261f;
+  --accent-rgb:201,168,130;
   --shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 12px rgba(0,0,0,0.2);
   --shadow-hover:0 4px 12px rgba(0,0,0,0.4),0 8px 24px rgba(0,0,0,0.3);
   --stat-b:#89b4fa;--stat-r:#f38ba8;
@@ -79,7 +79,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 .metric-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .metric-tab:hover:not(.active){border-color:var(--accent);color:var(--accent)}
 .trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
-.trend-current-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--accent)}
+.trend-current-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--trend-color, var(--accent))}
 .trend-current-label{font-size:13px;color:var(--muted)}
 .trend-desc{font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.4}
 .trend-chart-wrap{position:relative;cursor:crosshair;flex:1;min-height:60px}
@@ -97,11 +97,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 .heatmap-label{display:flex;align-items:center;color:var(--muted);font-weight:500;font-size:10px}
 .heatmap-hour{text-align:center;color:var(--muted);font-size:10px;font-weight:500}
 .heatmap-cell{height:18px;border-radius:2px;background:var(--border);opacity:0.3}
-.heatmap-cell.l1{background:var(--accent);opacity:0.2}
-.heatmap-cell.l2{background:var(--accent);opacity:0.35}
-.heatmap-cell.l3{background:var(--accent);opacity:0.55}
-.heatmap-cell.l4{background:var(--accent);opacity:0.75}
-.heatmap-cell.l5{background:var(--accent);opacity:1}
+.heatmap-cell.l1{background:var(--heatmap-color, var(--accent));opacity:0.2}
+.heatmap-cell.l2{background:var(--heatmap-color, var(--accent));opacity:0.35}
+.heatmap-cell.l3{background:var(--heatmap-color, var(--accent));opacity:0.55}
+.heatmap-cell.l4{background:var(--heatmap-color, var(--accent));opacity:0.75}
+.heatmap-cell.l5{background:var(--heatmap-color, var(--accent));opacity:1}
 .heatmap-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted)}
 
 /* === RIGHT COLUMN === */
