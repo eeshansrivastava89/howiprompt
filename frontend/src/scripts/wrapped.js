@@ -1,10 +1,27 @@
 // wrapped.js — Wrapped experience interactivity
-// Heatmap rendering, counter animations, intersection observer, theme toggle
+// Source filtering, heatmap, counter animations, embedding metrics, persona, share card.
 // Loads metrics.json via fetch() at runtime.
 
 import { initThemeToggle } from './theme.js';
 
-let metricsData = null;
+let sourceViews = {};
+let activeSourceKey = 'both';
+const sourceFilter = document.getElementById('sourceFilter');
+
+// === Formatting helpers ===
+
+function formatHour12(hour) {
+    const h = Number(hour) || 0;
+    return `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`;
+}
+
+function formatDateRange(dateRange) {
+    if (!dateRange || !dateRange.first || !dateRange.last) return '2025';
+    const first = new Date(dateRange.first);
+    const last = new Date(dateRange.last);
+    const opts = { month: 'short', day: '2-digit', year: 'numeric' };
+    return `${first.toLocaleDateString('en-US', opts)} – ${last.toLocaleDateString('en-US', opts)}`;
+}
 
 // === Heatmap ===
 
@@ -15,16 +32,6 @@ function renderHeatmap(heatmapData) {
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const maxVal = Math.max(1, ...data.flat());
-
-    function getHeatColor(value) {
-        if (value === 0) return 'bg-bg';
-        const intensity = value / maxVal;
-        if (intensity < 0.2) return 'bg-accent/20';
-        if (intensity < 0.4) return 'bg-accent/40';
-        if (intensity < 0.6) return 'bg-accent/60';
-        if (intensity < 0.8) return 'bg-accent/80';
-        return 'bg-accent';
-    }
 
     heatmapContainer.innerHTML = '';
     data.forEach((row, dayIndex) => {
@@ -38,8 +45,12 @@ function renderHeatmap(heatmapData) {
         cellsContainer.className = 'flex-1 grid grid-cols-24 gap-[2px]';
         row.forEach((value, hourIndex) => {
             const cell = document.createElement('div');
-            cell.className = `heatmap-cell aspect-square rounded-sm ${getHeatColor(value)} cursor-pointer`;
-            cell.title = `${days[dayIndex]} ${hourIndex}:00 - ${value} prompts`;
+            const intensity = value > 0 ? Math.ceil((value / maxVal) * 5) : 0;
+            const opacityMap = { 0: '0.1', 1: '0.2', 2: '0.35', 3: '0.55', 4: '0.75', 5: '1' };
+            cell.className = 'heatmap-cell aspect-square rounded-sm cursor-pointer';
+            cell.style.background = intensity > 0 ? `rgba(var(--accent-rgb), ${opacityMap[intensity]})` : 'var(--border)';
+            if (intensity === 0) cell.style.opacity = '0.3';
+            cell.title = `${days[dayIndex]} ${formatHour12(hourIndex)} — ${value} prompt${value !== 1 ? 's' : ''}`;
             cellsContainer.appendChild(cell);
         });
         rowDiv.appendChild(cellsContainer);
@@ -83,6 +94,30 @@ function initAnimations() {
     document.querySelectorAll('section > div').forEach(el => observer.observe(el));
 }
 
+// === Donut + Arc helpers ===
+
+const DONUT_CIRCUMFERENCE = 125.66;
+const ARC_CIRCUMFERENCE = 326.73;
+
+function setDonut(circleId, valId, score) {
+    const circle = document.getElementById(circleId);
+    const valEl = document.getElementById(valId);
+    const value = Math.round(score ?? 0);
+    if (circle) {
+        const offset = DONUT_CIRCUMFERENCE * (1 - Math.min(value, 100) / 100);
+        circle.setAttribute('stroke-dashoffset', String(offset));
+    }
+    if (valEl) valEl.textContent = value;
+}
+
+function setArc(arcId, score) {
+    const arc = document.getElementById(arcId);
+    if (arc) {
+        const pct = Math.min(score ?? 0, 100) / 100;
+        arc.setAttribute('stroke-dashoffset', String(ARC_CIRCUMFERENCE * (1 - pct)));
+    }
+}
+
 // === Fix dashboard link for local vs production ===
 
 function fixLocalLinks() {
@@ -90,7 +125,6 @@ function fixLocalLinks() {
     if (isLocal) {
         document.querySelectorAll('.dashboard-link').forEach(link => {
             const currentPath = location.pathname;
-            // Handle both /wrapped/ (trailing slash) and /wrapped (no trailing slash)
             if (currentPath.includes('/wrapped')) {
                 const wrappedIdx = currentPath.indexOf('/wrapped');
                 link.href = currentPath.substring(0, wrappedIdx) + '/index.html';
@@ -101,60 +135,36 @@ function fixLocalLinks() {
     }
 }
 
-// === Formatting helpers ===
-
-function formatHour12(hour) {
-    const h = Number(hour) || 0;
-    return `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`;
-}
-
-function formatDateRange(dateRange) {
-    if (!dateRange || !dateRange.first || !dateRange.last) return '2025';
-    const first = new Date(dateRange.first);
-    const last = new Date(dateRange.last);
-    const opts = { month: 'short', day: '2-digit', year: 'numeric' };
-    return `${first.toLocaleDateString('en-US', opts)} – ${last.toLocaleDateString('en-US', opts)}`;
-}
-
 // === Hydrate all wrapped sections ===
 
 function hydrateWrapped(m) {
     const v = m.volume || {};
     const t = m.temporal || {};
-    const pol = m.politeness || {};
-    const back = m.backtrack || {};
-    const q = m.question || {};
-    const cmd = m.command || {};
     const yr = m.youre_right || {};
-    const p = m.persona || {};
     const cd = m.conversation_depth || {};
     const rr = m.response_ratio || 0;
     const dr = m.date_range || {};
+    const nlp = m.nlp || {};
+    const p = m.persona || {};
+
+    const el = (id) => document.getElementById(id);
+    const setText = (id, text) => { const e = el(id); if (e) e.textContent = text; };
 
     const dateRangeDisplay = formatDateRange(dr);
     const peakHour12h = formatHour12(t.peak_hour);
 
-    // Politeness bar widths (relative to max)
-    const polCounts = pol.counts || {};
-    const polMax = Math.max(polCounts.please || 0, polCounts.sorry || 0, polCounts.thanks || 0, 1);
-    const polPleasePct = Math.round((polCounts.please || 0) / polMax * 100);
-    const polSorryPct = Math.round((polCounts.sorry || 0) / polMax * 100);
-    const polThanksPct = Math.round((polCounts.thanks || 0) / polMax * 100);
-
-    // Backtrack bar widths
-    const backCounts = back.counts || {};
-    const backMax = Math.max(backCounts.actually || 0, backCounts.wait || 0, 1);
-    const backActuallyPct = Math.round((backCounts.actually || 0) / backMax * 100);
-    const backWaitPct = Math.round((backCounts.wait || 0) / backMax * 100);
-
-    const el = (id) => document.getElementById(id);
-    const setText = (id, text) => { const e = el(id); if (e) e.textContent = text; };
-    const setWidth = (id, pct) => { const e = el(id); if (e) e.style.width = `${pct}%`; };
-
     // Section 1: Cold Open
     setText('yrCount', yr.count || 0);
-    setText('yrPerConvo', `${yr.per_conversation || 0}×`);
+    setText('yrPerConvo', `${yr.per_conversation || 0}x`);
     setText('dateRangeDisplay', dateRangeDisplay);
+
+    // Platform-aware attribution
+    const platformLabelMap = { claude_code: 'Claude', codex: 'Codex', both: null };
+    const ps = m.platform_stats || {};
+    const platformNames = Object.keys(ps).map(k => platformLabelMap[k] || k);
+    const attribution = platformLabelMap[activeSourceKey]
+        || (platformNames.length > 0 ? platformNames.join(' & ') : 'the AI');
+    setText('yrAttribution', attribution);
 
     // Section 2: Numbers
     const counterEl = el('mainCounter');
@@ -176,90 +186,58 @@ function hydrateWrapped(m) {
     setText('peakDay', t.peak_day || 'N/A');
     setText('peakDayCount', `${t.peak_day_count || 0} prompts`);
 
-    // Section 4: Prompt Style
-    setText('polPer100', pol.per_100_prompts ?? 0);
-    setText('polPleaseCount', polCounts.please || 0);
-    setText('polSorryCount', polCounts.sorry || 0);
-    setText('polThanksCount', polCounts.thanks || 0);
-    setWidth('polPleaseBar', polPleasePct);
-    setWidth('polSorryBar', polSorryPct);
-    setWidth('polThanksBar', polThanksPct);
+    // Section 4: Your Style (embedding hero metrics)
+    const hitlScore = nlp.hitl_score?.avg_score;
+    const vibeScore = nlp.vibe_coder_index?.avg_score;
+    const politeScore = nlp.politeness?.avg_score;
 
-    setText('backPer100', back.per_100_prompts ?? 0);
-    setText('backActuallyCount', backCounts.actually || 0);
-    setText('backWaitCount', backCounts.wait || 0);
-    setWidth('backActuallyBar', backActuallyPct);
-    setWidth('backWaitBar', backWaitPct);
+    setText('wrappedHitlValue', hitlScore != null ? Math.round(hitlScore) : '--');
+    setText('wrappedHitlLabel', hitlScore >= 66 ? 'High Impact' : hitlScore >= 33 ? 'Moderate' : hitlScore != null ? 'Passive' : 'No data');
+    setArc('wrappedHitlArc', hitlScore);
 
-    setText('questionRate', `${q.rate || 0}%`);
-    setText('questionCount', `${q.count || 0} questions`);
-    setText('questionTotal', `of ${(v.total_human || 0).toLocaleString()}`);
-    setWidth('questionBar', q.rate || 0);
+    setText('wrappedVibeValue', vibeScore != null ? Math.round(vibeScore) : '--');
+    setText('wrappedVibeLabel', vibeScore >= 70 ? 'Engineer' : vibeScore >= 50 ? 'Balanced' : vibeScore >= 30 ? 'Vibe-leaning' : vibeScore != null ? 'Vibe Coder' : 'No data');
+    const vibeMarker = el('wrappedVibeMarker');
+    if (vibeMarker && vibeScore != null) vibeMarker.style.left = `${Math.min(Math.max(vibeScore, 0), 100)}%`;
 
-    setText('commandRate', `${cmd.rate || 0}%`);
-    setText('commandCount', `${cmd.count || 0} commands`);
-    setWidth('commandBar', cmd.rate || 0);
+    setText('wrappedPoliteValue', politeScore != null ? Math.round(politeScore) : '--');
+    setText('wrappedPoliteLabel', politeScore >= 66 ? 'Courteous' : politeScore >= 33 ? 'Balanced' : politeScore != null ? 'Direct' : 'No data');
+    setArc('wrappedPoliteArc', politeScore);
 
-    // Section 5: Conversation Patterns
-    setText('quickAsks', cd.quick_asks || 0);
-    setText('workingSessions', cd.working_sessions || 0);
-    setText('deepDivesS5', cd.deep_dives || 0);
-    setText('avgTurnsS5', cd.avg_turns || 0);
-    setText('maxTurnsS5', `${cd.max_turns || 0} turns`);
-    setText('responseRatioS5', `${rr}x`);
-    setText('responseRatioLabel', rr);
+    // Section 5: Persona Reveal
+    const CARD_IMAGES = {
+        architect: '/images/char_architect.png',
+        explorer: '/images/char_explorer.png',
+        commander: '/images/char_commander.png',
+        partner: '/images/char_partner.png',
+        delegator: '/images/char_delegator.png',
+    };
 
-    // Section 5b: HITL + Vibe Scores
-    const nlp = m.nlp || {};
-    const hitlData = nlp.hitl_score || {};
-    const vibeData = nlp.vibe_coder_index || {};
+    const cardTop = el('wrappedCardTop');
+    if (cardTop) cardTop.src = CARD_IMAGES[p.type] || CARD_IMAGES.architect;
 
-    const hitlScore = hitlData.avg_score;
-    if (hitlScore != null) {
-        setText('wrappedHitlValue', Math.round(hitlScore));
-        const hitlLabel = hitlScore >= 66 ? 'High Impact' : hitlScore >= 33 ? 'Moderate' : 'Passive';
-        setText('wrappedHitlLabel', hitlLabel);
-        const hitlArc = el('wrappedHitlArc');
-        if (hitlArc) {
-            const pct = Math.min(hitlScore, 100) / 100;
-            hitlArc.setAttribute('stroke-dashoffset', String(326.73 * (1 - pct)));
-        }
-    } else {
-        setText('wrappedHitlValue', '--');
-        setText('wrappedHitlLabel', 'No data');
-    }
-
-    const vibeScore = vibeData.avg_score;
-    if (vibeScore != null) {
-        setText('wrappedVibeValue', Math.round(vibeScore));
-        const vibeLabel = vibeScore >= 70 ? 'Engineer' : vibeScore >= 50 ? 'Balanced (engineer-leaning)' : vibeScore >= 30 ? 'Balanced (vibe-leaning)' : 'Vibe Coder';
-        setText('wrappedVibeLabel', vibeLabel);
-        const vibeMarker = el('wrappedVibeMarker');
-        if (vibeMarker) vibeMarker.style.left = `${Math.min(Math.max(vibeScore, 0), 100)}%`;
-    } else {
-        setText('wrappedVibeValue', '--');
-        setText('wrappedVibeLabel', 'No data');
-    }
-
-    // Section 6: Persona
     setText('personaName', p.name || '--');
     setText('personaDesc', p.description || '');
+
     const traitsContainer = el('personaTraits');
     if (traitsContainer) {
         traitsContainer.innerHTML = '';
         (p.traits || []).forEach(trait => {
             const span = document.createElement('span');
-            span.className = 'px-4 py-2 bg-border rounded-full text-sm font-medium';
+            span.className = 'px-4 py-1.5 text-sm font-medium rounded-full';
+            span.style.background = 'var(--accent-soft)';
             span.textContent = trait;
             traitsContainer.appendChild(span);
         });
     }
-    setText('personaPolScore', p.scores?.politeness ?? 0);
-    setText('personaBackScore', p.scores?.backtrack ?? 0);
-    setText('personaQRate', `${p.scores?.question_rate ?? 0}%`);
-    setText('personaCmdRate', `${p.scores?.command_rate ?? 0}%`);
 
-    // Section 7: Terminal card
+    const radar = p.radar || {};
+    setDonut('wDonutPrecision', 'wValPrecision', radar.precision);
+    setDonut('wDonutCuriosity', 'wValCuriosity', radar.curiosity);
+    setDonut('wDonutTenacity', 'wValTenacity', radar.tenacity);
+    setDonut('wDonutTrust', 'wValTrust', radar.trust);
+
+    // Section 6: Terminal Summary
     setText('termDateRange', dateRangeDisplay.toUpperCase() + ' SUMMARY');
     setText('termPrompts', (v.total_human || 0).toLocaleString());
     setText('termConversations', v.total_conversations || 0);
@@ -272,9 +250,28 @@ function hydrateWrapped(m) {
     setText('termNightOwl', `${t.night_owl_pct || 0}%`);
     setText('termHitl', hitlScore != null ? Math.round(hitlScore) : '--');
     setText('termVibe', vibeScore != null ? Math.round(vibeScore) : '--');
+    setText('termPolite', politeScore != null ? Math.round(politeScore) : '--');
     setText('termYrCount', `${yr.count || 0}x`);
+
+    // Platform breakdown in receipt
+    const platSection = el('termPlatformSection');
+    if (platSection) {
+        const ps = m.platform_stats || {};
+        const labelMap = { claude_code: 'Claude Code', codex: 'Codex' };
+        platSection.innerHTML = '';
+        const platforms = Object.keys(ps);
+        if (platforms.length > 0) {
+            platforms.forEach(plat => {
+                const stats = ps[plat];
+                const row = document.createElement('div');
+                row.className = 'flex justify-between';
+                row.innerHTML = `<span class="text-muted">${labelMap[plat] || plat}</span><span class="font-bold">${(stats.messages || 0).toLocaleString()} msgs</span>`;
+                platSection.appendChild(row);
+            });
+        }
+    }
     setText('termPersonaName', `PERSONA: ${(p.name || '--').toUpperCase()}`);
-    setText('termPersonaTraits', (p.traits || []).join(' • '));
+    setText('termPersonaTraits', (p.traits || []).join(' · '));
 
     // Render heatmap
     renderHeatmap(t.heatmap);
@@ -285,19 +282,150 @@ function hydrateWrapped(m) {
         const brandingLink = el('brandingLink');
         if (brandingLink) brandingLink.href = branding.site_url;
     }
-    if (branding.site_name) {
-        setText('brandingSiteName', branding.site_name);
-    }
+    if (branding.site_name) setText('brandingSiteName', branding.site_name);
     if (branding.github_repo) {
         document.querySelectorAll('.build-your-own-link').forEach(link => {
             link.href = branding.github_repo;
         });
     }
-    if (branding.newsletter_url) {
-        const nl = el('newsletterLink');
-        if (nl) nl.href = branding.newsletter_url;
+}
+
+// === Source filter ===
+
+function initSourceFilter() {
+    if (!sourceFilter) return;
+    const available = ['both', 'claude_code', 'codex'].filter(k => Boolean(sourceViews[k]));
+    const labelMap = { both: 'All', claude_code: 'Claude Code', codex: 'Codex' };
+
+    sourceFilter.innerHTML = '';
+    for (const key of available) {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = labelMap[key] || key;
+        sourceFilter.appendChild(opt);
+    }
+
+    let selected = localStorage.getItem('wrapped-source-filter') || 'both';
+    if (!available.includes(selected)) selected = available[0] || 'both';
+    sourceFilter.value = selected;
+    activeSourceKey = selected;
+
+    hydrateWrapped(sourceViews[selected]);
+
+    sourceFilter.addEventListener('change', (e) => {
+        activeSourceKey = e.target.value;
+        localStorage.setItem('wrapped-source-filter', activeSourceKey);
+        hydrateWrapped(sourceViews[activeSourceKey]);
+    });
+}
+
+// === Share card ===
+
+async function captureCard() {
+    if (typeof html2canvas === 'undefined') return null;
+    const element = document.getElementById('terminalCard');
+    if (!element) return null;
+    const canvas = await html2canvas(element, { backgroundColor: null, scale: 2, useCORS: true });
+    return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), 'image/png'));
+}
+
+function showShareToast(msg) {
+    const toast = document.getElementById('shareToast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function getShareText() {
+    const persona = document.getElementById('personaName')?.textContent || '';
+    return `My AI prompting persona: ${persona}. See yours at howiprompt.com`;
+}
+
+async function handleShareAction(action) {
+    const menu = document.getElementById('shareMenu');
+    if (menu) menu.style.display = 'none';
+    try {
+        if (action === 'download') {
+            const blob = await captureCard();
+            if (!blob) return;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'howiprompt-wrapped.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showShareToast('Card downloaded!');
+        } else if (action === 'copy') {
+            const blob = await captureCard();
+            if (!blob) return;
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            showShareToast('Copied to clipboard!');
+        } else if (action === 'twitter') {
+            const text = encodeURIComponent(getShareText());
+            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+        } else if (action === 'linkedin') {
+            const text = encodeURIComponent(getShareText());
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://howiprompt.com')}&summary=${text}`, '_blank');
+        }
+    } catch (err) {
+        console.warn('Share action failed:', err.message);
+        showShareToast('Share failed — try downloading instead');
     }
 }
+
+document.getElementById('shareToggle')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const menu = document.getElementById('shareMenu');
+    if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+});
+
+document.getElementById('shareMenu')?.addEventListener('click', (e) => {
+    const item = e.target.closest('[data-action]');
+    if (item) handleShareAction(item.dataset.action);
+});
+
+document.addEventListener('click', () => {
+    const menu = document.getElementById('shareMenu');
+    if (menu) menu.style.display = 'none';
+});
+
+// === Methodology modal ===
+
+let methodologyOpener = null;
+
+function openMethodology() {
+    const modal = document.getElementById('methodologyModal');
+    if (modal) {
+        methodologyOpener = document.activeElement;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        const closeBtn = modal.querySelector('.modal-close');
+        if (closeBtn) closeBtn.focus();
+    }
+}
+
+function closeMethodology() {
+    const modal = document.getElementById('methodologyModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        if (methodologyOpener) { methodologyOpener.focus(); methodologyOpener = null; }
+    }
+}
+
+window.openMethodology = openMethodology;
+window.closeMethodology = closeMethodology;
+
+document.getElementById('methodologyModal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeMethodology();
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMethodology();
+});
 
 // === Init ===
 
@@ -309,13 +437,14 @@ async function init() {
     try {
         const response = await fetch('./metrics.json');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        metricsData = await response.json();
+        const metricsData = await response.json();
+        sourceViews = metricsData.source_views || {};
 
-        // For the wrapped page, use the claude_code view if available, else default
-        const sourceViews = metricsData.source_views || {};
-        const wrappedView = sourceViews.claude_code || sourceViews.both || metricsData;
+        if (Object.keys(sourceViews).length === 0) {
+            sourceViews = { both: metricsData };
+        }
 
-        hydrateWrapped(wrappedView);
+        initSourceFilter();
     } catch (err) {
         console.warn('Could not load metrics.json:', err.message);
     }

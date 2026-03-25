@@ -198,7 +198,7 @@ export async function computeMetrics(
   const assistantMsgs = await queryMessages(client, { role: Role.ASSISTANT, platform });
   const assistantTexts = assistantMsgs.map((m) => m.content);
 
-  const yrPattern = /you'?re (absolutely )?right/gi;
+  const yrPattern = /you'?re (absolutely |completely |totally )?right|(?:that'?s |this is )(?:a )?(?:great|good|excellent) (?:point|idea|suggestion|approach|call)|(?:exactly|precisely|absolutely)[!.,]|great (?:catch|observation|question)/gi;
   const yrCount = countAllMatches(assistantTexts, yrPattern);
   const yrPerConvo = totalConversations ? yrCount / totalConversations : 0;
 

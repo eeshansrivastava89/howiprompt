@@ -21,8 +21,9 @@ const { title = 'How I Prompt' } = Astro.props;
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <script is:inline src="https://cdn.tailwindcss.com"></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/html2canvas@1/dist/html2canvas.min.js"></script>
     <script is:inline>
         tailwind.config = {
             darkMode: 'class',
@@ -33,14 +34,14 @@ const { title = 'How I Prompt' } = Astro.props;
                         'surface': 'var(--surface)',
                         'border': 'var(--border)',
                         'text': 'var(--text)',
+                        'subtext': 'var(--subtext)',
                         'muted': 'var(--muted)',
-                        'accent': '#f97316',
-                        'accent-dim': '#c2410c',
+                        'accent': 'var(--accent)',
+                        'accent-soft': 'var(--accent-soft)',
                     },
                     fontFamily: {
-                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                        'serif': ['Georgia', 'Cambria', 'serif'],
-                        'mono': ['SF Mono', 'Menlo', 'monospace'],
+                        'sans': ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'SF Mono', 'Menlo', 'monospace'],
                     },
                     gridTemplateColumns: {
                         '24': 'repeat(24, minmax(0, 1fr))',
@@ -50,7 +51,7 @@ const { title = 'How I Prompt' } = Astro.props;
         }
     </script>
 
-    <style>
+    <style is:global>
       @import '../styles/wrapped.css';
     </style>
 
