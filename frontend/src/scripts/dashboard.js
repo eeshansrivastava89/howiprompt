@@ -902,18 +902,29 @@ function initTabs() {
     });
 }
 
-// === Leaderboard ===
+// === Leaderboard (Supabase PostgREST) ===
 
-const LEADERBOARD_API = 'https://leaderboard.howiprompt.com';
+const SUPABASE_URL = 'https://nazioidbiydxduonenmb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemlvaWRiaXlkeGR1b25lbm1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NDEyMjQsImV4cCI6MjA3NjIxNzIyNH0.PjEzSI8wq74RCQpSkh7j4zhh_5nXc2nYX0M5vCjLEro';
+const LB_TABLE = '/rest/v1/howiprompt_leaderboard';
+
+function supaHeaders(includeContent = true) {
+    const h = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
+    if (includeContent) h['Content-Type'] = 'application/json';
+    return h;
+}
+
 let leaderboardData = [];
 let leaderboardLoaded = false;
 
 async function fetchLeaderboard() {
     if (leaderboardLoaded) return;
     try {
-        const response = await fetch(`${LEADERBOARD_API}/api/leaderboard`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        leaderboardData = await response.json();
+        const res = await fetch(`${SUPABASE_URL}${LB_TABLE}?select=*&order=hitl_score.desc`, {
+            headers: supaHeaders(false),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        leaderboardData = await res.json();
         leaderboardLoaded = true;
         renderLeaderboard();
     } catch {
@@ -939,17 +950,22 @@ function renderLeaderboard() {
 
     const sortKey = document.getElementById('leaderboardSort')?.value || 'hitl_score';
     const sorted = [...leaderboardData].sort((a, b) => (b[sortKey] ?? 0) - (a[sortKey] ?? 0));
+    const myFp = localStorage.getItem('howiprompt_fingerprint');
 
-    body.innerHTML = sorted.map((entry, i) => `
-        <tr${entry.is_you ? ' class="is-you"' : ''}>
+    body.innerHTML = sorted.map((entry, i) => {
+        const isYou = myFp && entry.fingerprint === myFp;
+        return `
+        <tr${isYou ? ' class="is-you"' : ''}>
             <td class="rank-col">${i + 1}</td>
-            <td><strong>${escapeHtml(entry.display_name || 'Anonymous')}</strong></td>
+            <td><strong>${escapeHtml(entry.display_name || 'Anonymous')}</strong>${isYou ? ' <span style="font-size:11px;color:var(--accent)">(you)</span>' : ''}</td>
             <td>${entry.hitl_score ?? '--'}</td>
             <td>${entry.vibe_index ?? '--'}</td>
+            <td>${entry.politeness ?? '--'}</td>
             <td>${(entry.total_prompts ?? 0).toLocaleString()}</td>
             <td>${escapeHtml(entry.persona || '--')}</td>
-        </tr>
-    `).join('');
+            <td>${isYou ? '<button class="delete-entry-btn" onclick="deleteMySubmission()">✕</button>' : ''}</td>
+        </tr>`;
+    }).join('');
 }
 
 function escapeHtml(str) {
@@ -960,6 +976,30 @@ function escapeHtml(str) {
 
 document.getElementById('leaderboardSort')?.addEventListener('change', renderLeaderboard);
 
+// === Username + Fingerprint ===
+
+function getOrCreateUsername() {
+    let name = localStorage.getItem('howiprompt_username');
+    if (!name && typeof window.generateRandomUsername === 'function') {
+        name = window.generateRandomUsername();
+        localStorage.setItem('howiprompt_username', name);
+    }
+    return name || 'Anonymous';
+}
+
+function computeFingerprint() {
+    if (!activeView) return null;
+    const v = activeView.volume || {};
+    const nlp = activeView.nlp || {};
+    const raw = `${v.total_human || 0}-${v.total_conversations || 0}-${Math.round(nlp.hitl_score?.avg_score ?? 0)}-${Math.round(nlp.vibe_coder_index?.avg_score ?? 0)}-${Math.round(nlp.politeness?.avg_score ?? 0)}`;
+    // Simple hash
+    let hash = 0;
+    for (let i = 0; i < raw.length; i++) {
+        hash = ((hash << 5) - hash + raw.charCodeAt(i)) | 0;
+    }
+    return 'fp_' + Math.abs(hash).toString(36);
+}
+
 // === Submit to leaderboard ===
 
 function getSubmissionPayload() {
@@ -967,38 +1007,40 @@ function getSubmissionPayload() {
     const v = activeView.volume || {};
     const nlp = activeView.nlp || {};
     const persona = activeView.persona || {};
-    const norm = activeView.normalized || {};
 
     return {
-        total_conversations: v.total_conversations || 0,
-        total_prompts: v.total_human || 0,
-        avg_words_per_prompt: v.avg_words_per_prompt || 0,
-        politeness: Math.round(norm.politeness ?? 0),
-        backtrack: Math.round(norm.backtrack ?? 0),
-        question_rate: Math.round(norm.question_rate ?? 0),
-        command_rate: Math.round(norm.command_rate ?? 0),
         hitl_score: Math.round(nlp.hitl_score?.avg_score ?? 0),
         vibe_index: Math.round(nlp.vibe_coder_index?.avg_score ?? 0),
+        politeness: Math.round(nlp.politeness?.avg_score ?? 0),
+        total_prompts: v.total_human || 0,
+        total_conversations: v.total_conversations || 0,
         persona: persona.type || 'unknown',
-        complexity_avg: Math.round(norm.complexity ?? 0),
         platform: activeSourceKey,
-        tool_version: '2.0.0',
     };
 }
 
 function showSubmitModal() {
     const modal = document.getElementById('submitModal');
     const preview = document.getElementById('submitPreview');
+    const nameInput = document.getElementById('displayName');
     if (!modal || !preview) return;
 
     const payload = getSubmissionPayload();
     if (!payload) return;
 
+    // Pre-fill username
+    if (nameInput) nameInput.value = getOrCreateUsername();
+
+    const labels = {
+        hitl_score: 'Human in the Loop', vibe_index: 'Vibe Index', politeness: 'Politeness',
+        total_prompts: 'Prompts', total_conversations: 'Conversations', persona: 'Persona', platform: 'Platform',
+    };
     preview.innerHTML = Object.entries(payload)
-        .map(([k, v]) => `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="color:var(--muted)">${k}</span><span>${v}</span></div>`)
+        .map(([k, v]) => `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="color:var(--muted)">${labels[k] || k}</span><span>${v}</span></div>`)
         .join('');
 
     modal.classList.add('active');
+    if (nameInput) nameInput.focus();
 }
 
 function hideSubmitModal() {
@@ -1010,42 +1052,83 @@ async function submitToLeaderboard() {
     const nameInput = document.getElementById('displayName');
     if (!payload || !nameInput) return;
 
-    const displayName = nameInput.value.trim();
+    const displayName = nameInput.value.trim().slice(0, 30);
     if (!displayName) {
         nameInput.style.borderColor = 'red';
         nameInput.focus();
         return;
     }
 
+    const fingerprint = computeFingerprint();
+    if (!fingerprint) return;
+
     payload.display_name = displayName;
+    payload.fingerprint = fingerprint;
+    payload.updated_at = new Date().toISOString();
+
+    localStorage.setItem('howiprompt_username', displayName);
+    localStorage.setItem('howiprompt_fingerprint', fingerprint);
     hideSubmitModal();
 
     const toast = document.getElementById('leaderboardToast');
     try {
-        const response = await fetch(`${LEADERBOARD_API}/api/submit`, {
+        const res = await fetch(`${SUPABASE_URL}${LB_TABLE}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { ...supaHeaders(true), 'Prefer': 'resolution=merge-duplicates' },
             body: JSON.stringify(payload),
         });
-
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        if (toast) {
-            toast.textContent = 'Scores submitted!';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         leaderboardLoaded = false;
-        fetchLeaderboard();
+        await fetchLeaderboard();
+
+        // Find rank
+        const sortKey = document.getElementById('leaderboardSort')?.value || 'hitl_score';
+        const sorted = [...leaderboardData].sort((a, b) => (b[sortKey] ?? 0) - (a[sortKey] ?? 0));
+        const rank = sorted.findIndex(e => e.fingerprint === fingerprint) + 1;
+
+        if (toast) {
+            toast.textContent = rank > 0 ? `Submitted! You're ranked #${rank}` : 'Scores submitted!';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
     } catch {
         if (toast) {
-            toast.textContent = 'Submit failed — leaderboard service may not be deployed yet.';
+            toast.textContent = 'Submit failed — try again later.';
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
     }
 }
+
+async function deleteMySubmission() {
+    const fp = localStorage.getItem('howiprompt_fingerprint');
+    if (!fp) return;
+    const toast = document.getElementById('leaderboardToast');
+    try {
+        const res = await fetch(`${SUPABASE_URL}${LB_TABLE}?fingerprint=eq.${fp}`, {
+            method: 'DELETE',
+            headers: supaHeaders(false),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        localStorage.removeItem('howiprompt_fingerprint');
+        leaderboardLoaded = false;
+        fetchLeaderboard();
+        if (toast) {
+            toast.textContent = 'Submission deleted.';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+    } catch {
+        if (toast) {
+            toast.textContent = 'Delete failed — try again later.';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    }
+}
+
+window.deleteMySubmission = deleteMySubmission;
 
 document.getElementById('submitLeaderboard')?.addEventListener('click', showSubmitModal);
 document.getElementById('cancelSubmit')?.addEventListener('click', hideSubmitModal);

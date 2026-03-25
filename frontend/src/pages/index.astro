@@ -176,5 +176,11 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
 
 <MethodologyModal />
 
+<script>
+import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
+(window as any).generateRandomUsername = function() {
+    return uniqueNamesGenerator({ dictionaries: [adjectives, animals], separator: ' ', style: 'capital', length: 2 });
+};
+</script>
 <script src="../scripts/dashboard.js"></script>
 </DashboardLayout>

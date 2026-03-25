@@ -290,6 +290,8 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 .rank-col{width:40px;text-align:center}
 .leaderboard-table .rank-col{font-weight:700;color:var(--accent)}
 .leaderboard-toast{position:fixed;bottom:24px;right:24px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;font-size:13px;box-shadow:var(--shadow);z-index:50;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;pointer-events:none}
+.delete-entry-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:4px 8px;border-radius:4px;transition:color .15s}
+.delete-entry-btn:hover{color:var(--stat-r)}
 .leaderboard-toast.show{opacity:1;transform:translateY(0)}
 
 /* === SUBMIT MODAL === */
