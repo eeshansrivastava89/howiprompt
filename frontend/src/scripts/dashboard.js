@@ -117,6 +117,14 @@ function renderHeatmap(heatmapData) {
     // Apply platform color to heatmap cells
     const heatmapPanel = heatmap.closest('.heatmap-panel');
     if (heatmapPanel) heatmapPanel.style.setProperty('--heatmap-color', resolveAccent());
+
+    // Ensure tooltip element exists
+    let tooltip = heatmapPanel?.querySelector('.heatmap-tooltip');
+    if (!tooltip && heatmapPanel) {
+        tooltip = document.createElement('div');
+        tooltip.className = 'heatmap-tooltip';
+        heatmapPanel.appendChild(tooltip);
+    }
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     // Empty corner + hour headers
@@ -137,16 +145,38 @@ function renderHeatmap(heatmapData) {
         label.textContent = day;
         heatmap.appendChild(label);
 
-        (data[dayIndex] || []).forEach((value) => {
+        (data[dayIndex] || []).forEach((value, hour) => {
             const cell = document.createElement('div');
             cell.className = 'heatmap-cell';
             if (value > 0) {
                 const intensity = Math.ceil((value / maxVal) * 5);
                 cell.classList.add('l' + Math.min(intensity, 5));
             }
+            cell.setAttribute('aria-label', `${day} ${formatHour12(hour)}: ${value} prompt${value !== 1 ? 's' : ''}`);
+            cell.dataset.day = day;
+            cell.dataset.hour = hour;
+            cell.dataset.count = value;
             heatmap.appendChild(cell);
         });
     });
+
+    // Tooltip via event delegation
+    if (tooltip) {
+        heatmap.addEventListener('mouseover', (e) => {
+            const cell = e.target.closest('.heatmap-cell');
+            if (!cell) { tooltip.style.opacity = '0'; return; }
+            const { day: d, hour: h, count: c } = cell.dataset;
+            tooltip.textContent = `${d} ${formatHour12(h)} — ${c} prompt${c !== '1' ? 's' : ''}`;
+            const rect = cell.getBoundingClientRect();
+            const panelRect = heatmapPanel.getBoundingClientRect();
+            let left = rect.left - panelRect.left + rect.width / 2;
+            left = Math.max(60, Math.min(left, panelRect.width - 60));
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = (rect.top - panelRect.top - 30) + 'px';
+            tooltip.style.opacity = '1';
+        });
+        heatmap.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+    }
 }
 
 // === SVG Trend Chart ===
@@ -158,7 +188,7 @@ const TREND_METRIC_CONFIG = {
     hitl:      { key: 'hitl_score',          label: 'Human in the Loop', suffix: '', desc: 'How actively you steer AI output. Higher = more hands-on review and iteration.' },
     vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '', desc: 'Engineer vs. vibe coder spectrum. Higher = more structured, spec-driven prompting.' },
     polite:    { key: 'politeness',          label: 'Politeness',        suffix: '', desc: 'How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.' },
-    activity:  { key: '_prompts',            label: 'Activity',          suffix: '', desc: 'Prompts per week.', color: 'var(--text)' },
+    activity:  { key: '_prompts',            label: 'Activity',          suffix: '', desc: 'Prompts per week.' },
 };
 
 function extractTrendPoints(weekly, metricKey) {
@@ -169,10 +199,13 @@ function extractTrendPoints(weekly, metricKey) {
     });
 }
 
-const PLATFORM_COLORS = {
-    claude_code: { stroke: '#e67e22', label: 'Claude Code' },
-    codex:       { stroke: '#2c2c2c', label: 'Codex' },
-};
+function getPlatformColors() {
+    const isDark = document.documentElement.classList.contains('dark');
+    return {
+        claude_code: { stroke: '#e67e22', label: 'Claude Code' },
+        codex:       { stroke: isDark ? '#b0a596' : '#2c2c2c', label: 'Codex' },
+    };
+}
 
 function hexToRgba(hex, alpha) {
     const r = parseInt(hex.slice(1,3), 16), g = parseInt(hex.slice(3,5), 16), b = parseInt(hex.slice(5,7), 16);
@@ -181,7 +214,7 @@ function hexToRgba(hex, alpha) {
 
 function resolveAccent() {
     // If viewing a specific platform, use its color
-    const platColor = PLATFORM_COLORS[activeSourceKey]?.stroke;
+    const platColor = getPlatformColors()[activeSourceKey]?.stroke;
     if (platColor) return platColor;
     // Otherwise use CSS accent
     return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#5c3d2e';
@@ -326,7 +359,7 @@ function initSvgTrend(view) {
             dotEnd.style.display = 'none';
 
             for (const [plat, platPts] of Object.entries(d.platforms)) {
-                const color = PLATFORM_COLORS[plat]?.stroke || '#666';
+                const color = getPlatformColors()[plat]?.stroke || '#666';
 
                 // Break line at null gaps — render continuous segments
                 let segment = [];
@@ -448,7 +481,7 @@ function initSvgTrend(view) {
                     const parts = Object.entries(d.platforms)
                         .filter(([, platPts]) => platPts[i] != null)
                         .map(([plat, platPts]) => {
-                            const label = PLATFORM_COLORS[plat]?.label || plat;
+                            const label = getPlatformColors()[plat]?.label || plat;
                             return `${label}: ${platPts[i]}${d.suffix}`;
                         });
                     tooltip.textContent = parts.length > 0
@@ -665,11 +698,16 @@ function initSourceFilter() {
 
 // === Methodology modal ===
 
+let methodologyOpener = null;
+
 function openMethodology() {
     const modal = document.getElementById('methodologyModal');
     if (modal) {
+        methodologyOpener = document.activeElement;
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        const closeBtn = modal.querySelector('.modal-close');
+        if (closeBtn) closeBtn.focus();
     }
 }
 
@@ -678,6 +716,7 @@ function closeMethodology() {
     if (modal) {
         modal.classList.remove('active');
         document.body.style.overflow = '';
+        if (methodologyOpener) { methodologyOpener.focus(); methodologyOpener = null; }
     }
 }
 
@@ -690,6 +729,19 @@ document.getElementById('methodologyModal')?.addEventListener('click', (e) => {
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMethodology();
+    // Focus trap for methodology modal
+    const modal = document.getElementById('methodologyModal');
+    if (e.key === 'Tab' && modal?.classList.contains('active')) {
+        const focusable = modal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus();
+        }
+    }
 });
 
 // === Fix local links ===
