@@ -71,41 +71,17 @@ process.stdout.write("  Initializing database...       ");
 await bootstrapDb(dbPath);
 console.log(green("done"));
 
-// ── Run pipeline ───────────────────────────────────────
-process.stdout.write("  Syncing conversations...       ");
-try {
-  const { runPipeline } = await import("../dist/index.js");
-  let embeddingLogged = false;
-  const stats = await runPipeline({
-    dbPath,
-    dataDir,
-    onProgress: (stage, detail) => {
-      if (stage === "embedding" && !embeddingLogged) {
-        embeddingLogged = true;
-        process.stdout.write(`\n  Embedding prompts...           `);
-      }
-    },
-  });
-  if (stats.newMessages > 0) {
-    if (!embeddingLogged) {
-      console.log(green(`+${stats.newMessages} new messages (${stats.totalMessages} total)`));
-    } else {
-      // Embedding line was already started
-      console.log(green(`done (${stats.embedded} embedded)`));
-      console.log(`  ${dim(`+${stats.newMessages} new messages, ${stats.totalMessages} total`)}`);
+// ── Ensure wizard shows when there's no data ──────────
+const metricsPath = path.join(dataDir, "metrics.json");
+if (!fs.existsSync(metricsPath)) {
+  const configPath = path.join(dataDir, "config.json");
+  try {
+    const cfg = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+    if (cfg.hasCompletedSetup) {
+      cfg.hasCompletedSetup = false;
+      fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2));
     }
-  } else {
-    if (embeddingLogged) {
-      console.log(green(`done (${stats.embedded} embedded)`));
-    }
-    console.log(green(`${stats.totalMessages} messages (up to date)`));
-  }
-} catch (err) {
-  if (err.code === "ERR_MODULE_NOT_FOUND") {
-    console.log(yellow("pipeline not built yet — run `npm run build` first"));
-  } else {
-    console.log(red(`error: ${err.message}`));
-  }
+  } catch { /* no config yet — wizard will show by default */ }
 }
 
 // ── Start server ───────────────────────────────────────
@@ -154,11 +130,11 @@ try {
     openBrowser(serverUrl);
   }
 
-  // Graceful shutdown
+  // Graceful shutdown — force exit quickly to avoid libsql native mutex errors
   function shutdown() {
     console.log("\n  Shutting down...");
-    server.close(() => process.exit(0));
-    setTimeout(() => process.exit(1), 5000);
+    server.close();
+    setTimeout(() => process.exit(0), 300);
   }
 
   process.on("SIGINT", shutdown);

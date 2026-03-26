@@ -1,0 +1,54 @@
+---
+// Setup Wizard: 3-step flow for first-run configuration
+// Step 1: Detect backends — Step 2: Configure — Step 3: Analyze (SSE pipeline)
+---
+<div class="wizard-overlay" id="setupWizard" role="dialog" aria-modal="true" aria-labelledby="wizardTitle">
+  <div class="wizard-panel">
+    <h2 id="wizardTitle" class="wizard-title">How I Prompt</h2>
+
+    <!-- Step indicators -->
+    <div class="wizard-steps">
+      <div class="wizard-step active" data-step="1"><span class="wizard-step-num">1</span> Detect</div>
+      <div class="wizard-step" data-step="2"><span class="wizard-step-num">2</span> Configure</div>
+      <div class="wizard-step" data-step="3"><span class="wizard-step-num">3</span> Analyze</div>
+    </div>
+
+    <!-- Step 1: Welcome + Detection -->
+    <div class="wizard-page active" id="wizardStep1">
+      <p class="wizard-intro">Let's find your AI coding assistant data. Everything stays on your machine.</p>
+      <div id="wizardBackends" class="wizard-backends">
+        <div class="wizard-loading">Scanning for AI assistants...</div>
+      </div>
+      <button class="wizard-btn wizard-btn-primary" id="wizardNext1">Continue</button>
+    </div>
+
+    <!-- Step 2: Configure -->
+    <div class="wizard-page" id="wizardStep2">
+      <p class="wizard-intro">Toggle which backends to include in your analysis.</p>
+      <div id="wizardConfig" class="wizard-config"></div>
+      <div id="wizardExclusions" class="wizard-exclusions" style="display:none">
+        <label class="wizard-label">Excluded directories</label>
+        <div class="exclusion-chips" id="wizardExclusionChips"></div>
+        <button class="wizard-btn wizard-btn-ghost exclusion-add-btn" id="wizardAddExclusion" type="button">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Directory
+        </button>
+        <p class="wizard-hint">Claude Code projects in these directories will be skipped.</p>
+      </div>
+      <div class="wizard-nav">
+        <button class="wizard-btn wizard-btn-ghost" id="wizardBack2">Back</button>
+        <button class="wizard-btn wizard-btn-primary" id="wizardNext2">Run Analysis</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Pipeline Run (SSE log) -->
+    <div class="wizard-page" id="wizardStep3">
+      <p class="wizard-intro">Analyzing your prompting patterns...</p>
+      <div class="wizard-progress">
+        <div class="wizard-progress-bar" id="wizardProgressBar"></div>
+      </div>
+      <div class="wizard-log" id="wizardLog"></div>
+      <button class="wizard-btn wizard-btn-primary" id="wizardDone" style="display:none">View Dashboard</button>
+    </div>
+  </div>
+</div>

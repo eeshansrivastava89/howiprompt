@@ -3,6 +3,8 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
 import Header from '../components/Header.astro';
 import Leaderboard from '../components/dashboard/Leaderboard.astro';
 import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
+import SetupWizard from '../components/dashboard/SetupWizard.astro';
+import SettingsModal from '../components/dashboard/SettingsModal.astro';
 ---
 <DashboardLayout title="How I Prompt: Dashboard">
 <div class="page-frame">
@@ -158,14 +160,12 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
 
 </div><!-- /page-frame -->
 
-<!-- Refresh modal -->
+<!-- Refresh modal (reuses wizard-log/progress styles) -->
 <div class="modal-overlay" id="refreshModal" role="dialog" aria-modal="true" aria-labelledby="refreshModalTitle">
   <div class="refresh-modal">
     <h3 id="refreshModalTitle">Syncing Pipeline</h3>
-    <div class="refresh-modal-status" id="refreshModalStatus">
-      <svg class="refresh-modal-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-      <span>Parsing logs, computing embeddings...</span>
-    </div>
+    <div class="wizard-progress" id="refreshProgress"><div class="wizard-progress-bar" id="refreshProgressBar"></div></div>
+    <div class="wizard-log" id="refreshLog"></div>
     <div class="refresh-modal-result" id="refreshModalResult" style="display:none"></div>
     <button class="refresh-modal-close" id="refreshModalClose" style="display:none">Done</button>
   </div>
@@ -175,6 +175,8 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
 <div class="share-toast" id="shareToast">Screenshot saved!</div>
 
 <MethodologyModal />
+<SetupWizard />
+<SettingsModal />
 
 <script>
 import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';

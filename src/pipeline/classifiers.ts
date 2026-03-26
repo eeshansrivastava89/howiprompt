@@ -248,6 +248,7 @@ export async function enrichClassifiers(
   client: Client,
   mlConfig: MlConfig,
   dataDir: string,
+  onBatchProgress?: (classified: number, total: number) => void,
 ): Promise<number> {
   // Find messages with embeddings but without all classifier scores
   const result = await client.execute(
@@ -302,6 +303,7 @@ export async function enrichClassifiers(
 
     await client.batch(stmts, "write");
     classified += batch.length;
+    onBatchProgress?.(classified, result.rows.length);
   }
 
   return classified;

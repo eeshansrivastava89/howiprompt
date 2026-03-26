@@ -71,6 +71,7 @@ export async function enrichEmbeddings(
   mlConfig: MlConfig,
   dataDir: string,
   onProgress?: (progress: { status: string; progress?: number }) => void,
+  onBatchProgress?: (embedded: number, total: number) => void,
 ): Promise<number> {
   // Find human messages without embeddings
   const result = await client.execute(
@@ -104,6 +105,7 @@ export async function enrichEmbeddings(
 
     await client.batch(stmts, "write");
     embedded += batchTexts.length;
+    onBatchProgress?.(embedded, total);
 
     // Brief yield every batch so the event loop breathes
     if (i + batchSize < total) {

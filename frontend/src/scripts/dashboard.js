@@ -755,12 +755,100 @@ function closeMethodology() {
 window.openMethodology = openMethodology;
 window.closeMethodology = closeMethodology;
 
+// === Settings modal ===
+
+let settingsOpener = null;
+
+async function openSettings() {
+    const modal = document.getElementById('settingsModal');
+    if (!modal) return;
+
+    settingsOpener = document.activeElement;
+
+    // Show modal immediately with loading state
+    const container = document.getElementById('settingsBackends');
+    if (container) container.innerHTML = '<div class="wizard-loading">Loading...</div>';
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Load config (fast — reads local JSON file)
+    const configRes = await fetch('/api/config').then(r => r.json()).catch(() => ({}));
+
+    // Populate from config without waiting for detect (no scan needed for settings)
+    const backendIds = Object.keys(configRes.backends || {});
+    const nameMap = { claude_code: 'Claude Code', codex: 'Codex', copilot_chat: 'Copilot Chat', cursor: 'Cursor' };
+    if (container) {
+        container.innerHTML = backendIds.map(id => {
+            const toggle = configRes.backends[id];
+            return `<label class="wizard-toggle">
+                <input type="checkbox" data-backend="${id}" ${toggle.enabled !== false ? 'checked' : ''}>
+                ${nameMap[id] || id}
+            </label>`;
+        }).join('');
+    }
+
+    // Show exclusions if Claude Code is configured
+    const excSection = document.getElementById('settingsExclusionSection');
+    if (excSection && configRes.backends?.claude_code) {
+        excSection.style.display = 'block';
+        const exclusions = configRes.backends.claude_code.exclusions ?? [];
+        loadExclusionChips('settingsExclusionChips', exclusions);
+    }
+}
+
+function closeSettings() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        if (settingsOpener) { settingsOpener.focus(); settingsOpener = null; }
+    }
+}
+
+async function saveSettings() {
+    const toggles = {};
+    document.querySelectorAll('#settingsBackends input[type=checkbox]').forEach(cb => {
+        toggles[cb.dataset.backend] = { enabled: cb.checked, exclusions: [] };
+    });
+    if (toggles.claude_code) {
+        toggles.claude_code.exclusions = getExclusionPaths('settingsExclusionChips');
+    }
+
+    await fetch('/api/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backends: toggles }),
+    });
+
+    closeSettings();
+    handleRefresh();
+}
+
+window.openSettings = openSettings;
+window.closeSettings = closeSettings;
+
+document.getElementById('settingsAddExclusion')?.addEventListener('click', () => pickAndAddExclusion('settingsExclusionChips'));
+document.getElementById('settingsSave')?.addEventListener('click', saveSettings);
+document.getElementById('settingsReset')?.addEventListener('click', () => {
+    document.getElementById('resetConfirmModal')?.classList.add('active');
+});
+document.getElementById('resetCancel')?.addEventListener('click', () => {
+    document.getElementById('resetConfirmModal')?.classList.remove('active');
+});
+document.getElementById('resetConfirm')?.addEventListener('click', async () => {
+    await fetch('/api/reset', { method: 'POST' });
+    window.location.reload();
+});
+document.getElementById('settingsModal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeSettings();
+});
+
 document.getElementById('methodologyModal')?.addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeMethodology();
 });
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeMethodology();
+    if (e.key === 'Escape') { closeMethodology(); closeSettings(); }
     // Focus trap for methodology modal
     const modal = document.getElementById('methodologyModal');
     if (e.key === 'Tab' && modal?.classList.contains('active')) {
@@ -805,63 +893,102 @@ async function handleRefresh() {
     if (!btn || btn.classList.contains('refreshing')) return;
 
     const modal = document.getElementById('refreshModal');
-    const statusEl = document.getElementById('refreshModalStatus');
+    const log = document.getElementById('refreshLog');
+    const bar = document.getElementById('refreshProgressBar');
     const resultEl = document.getElementById('refreshModalResult');
     const closeBtn = document.getElementById('refreshModalClose');
 
-    // Show modal in working state
+    // Show modal with starter message
     btn.classList.add('refreshing');
     if (modal) {
-        statusEl.style.display = 'flex';
+        if (log) log.innerHTML = '<div class="wizard-log-entry">Starting pipeline...</div>';
+        if (bar) bar.style.width = '0';
         resultEl.style.display = 'none';
         closeBtn.style.display = 'none';
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
 
-    try {
-        const response = await fetch('/api/refresh', { method: 'POST' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const { metrics, stats } = await response.json();
-
-        sourceViews = metrics.source_views || { both: metrics };
-        if (!sourceViews.claude_code && sourceViews.claude) sourceViews.claude_code = sourceViews.claude;
-        sourceViews.both = sourceViews.both || metrics;
-
-        renderView(activeSourceKey);
-
-        // Show result in modal
+    const showResult = (html) => {
         if (resultEl) {
-            const lines = [];
-            if (stats.newMessages > 0) {
-                lines.push(`<span class="result-num">${stats.newMessages}</span> new message${stats.newMessages === 1 ? '' : 's'} synced`);
-            } else {
-                lines.push('Already up to date');
-            }
-            lines.push(`<span class="result-num">${formatCompact(stats.totalMessages)}</span> total messages`);
-            if (stats.embedded > 0) {
-                lines.push(`<span class="result-num">${stats.embedded}</span> embeddings computed`);
-            }
-            resultEl.innerHTML = lines.join('<br>');
-            statusEl.style.display = 'none';
+            resultEl.innerHTML = html;
             resultEl.style.display = 'block';
             closeBtn.style.display = 'inline-block';
             closeBtn.focus();
         }
-    } catch (err) {
-        console.warn('Refresh failed:', err.message);
-        if (resultEl) {
-            resultEl.innerHTML = 'Refresh failed — is the server running?';
-            statusEl.style.display = 'none';
-            resultEl.style.display = 'block';
-            closeBtn.style.display = 'inline-block';
-            closeBtn.focus();
-        }
-    } finally {
         btn.classList.remove('refreshing');
         const label = btn.querySelector('.refresh-label');
         if (label) label.textContent = 'Refresh';
-    }
+    };
+
+    // Reuse same SSE log pattern as wizard
+    const stages = ['sync', 'parse', 'insert', 'nlp', 'embedding', 'classifiers', 'metrics'];
+    let maxStageIdx = 0;
+    let refreshDone = false;
+    const evtSource = new EventSource('/api/pipeline/stream');
+
+    evtSource.addEventListener('progress', (e) => {
+        const data = JSON.parse(e.data);
+        if (log) {
+            const entry = document.createElement('div');
+            entry.className = 'wizard-log-entry';
+            entry.textContent = `${data.stage}: ${data.detail}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+        const idx = stages.indexOf(data.stage);
+        if (idx >= 0 && idx > maxStageIdx) maxStageIdx = idx;
+        if (bar) bar.style.width = `${((maxStageIdx + 1) / stages.length) * 100}%`;
+    });
+
+    evtSource.addEventListener('complete', (e) => {
+        refreshDone = true;
+        evtSource.close();
+        const data = JSON.parse(e.data);
+
+        if (bar) bar.style.width = '100%';
+        if (log) {
+            const entry = document.createElement('div');
+            entry.className = 'wizard-log-entry done';
+            entry.textContent = `Done! ${data.stats.totalMessages.toLocaleString()} messages analyzed.`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        if (data.metrics) {
+            sourceViews = data.metrics.source_views || { both: data.metrics };
+            if (!sourceViews.claude_code && sourceViews.claude) sourceViews.claude_code = sourceViews.claude;
+            sourceViews.both = sourceViews.both || data.metrics;
+            renderView(activeSourceKey);
+        }
+
+        const lines = [];
+        const stats = data.stats;
+        if (stats.newMessages > 0) {
+            lines.push(`<span class="result-num">${stats.newMessages}</span> new message${stats.newMessages === 1 ? '' : 's'} synced`);
+        } else {
+            lines.push('Already up to date');
+        }
+        lines.push(`<span class="result-num">${formatCompact(stats.totalMessages)}</span> total messages`);
+        if (stats.embedded > 0) {
+            lines.push(`<span class="result-num">${stats.embedded}</span> embeddings computed`);
+        }
+        showResult(lines.join('<br>'));
+    });
+
+    evtSource.addEventListener('pipeline_error', (e) => {
+        refreshDone = true;
+        evtSource.close();
+        const data = JSON.parse(e.data);
+        showResult(`Refresh failed: ${data.message}`);
+    });
+
+    evtSource.onerror = () => {
+        if (!refreshDone) {
+            evtSource.close();
+            showResult('Refresh failed — is the server running?');
+        }
+    };
 }
 
 document.getElementById('refreshModalClose')?.addEventListener('click', () => {
@@ -1137,6 +1264,317 @@ document.getElementById('submitModal')?.addEventListener('click', (e) => {
     if (e.target === e.currentTarget) hideSubmitModal();
 });
 
+// === Setup Wizard ===
+
+let wizardBackendData = [];
+
+async function initWizard() {
+    const wizard = document.getElementById('setupWizard');
+    if (!wizard) return false;
+
+    // Check if metrics.json exists — if it does, no wizard needed
+    let hasMetrics = false;
+    try {
+        const metricsRes = await fetch('./metrics.json');
+        hasMetrics = metricsRes.ok;
+    } catch { /* no metrics */ }
+
+    if (hasMetrics) {
+        // Ensure flag is set so future loads skip this check
+        fetch('/api/config', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hasCompletedSetup: true }),
+        }).catch(() => {});
+        return false;
+    }
+
+    // Check config flag — only skip wizard if flag is set AND metrics exist
+    let config;
+    try {
+        const res = await fetch('/api/config');
+        if (res.ok) config = await res.json();
+    } catch { /* server may not support /api/config yet */ }
+
+    if (config?.hasCompletedSetup && hasMetrics) return false;
+
+    wizard.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    await wizardDetect();
+    return true;
+}
+
+async function wizardDetect() {
+    const container = document.getElementById('wizardBackends');
+    if (!container) return;
+
+    try {
+        const res = await fetch('/api/detect');
+        const { backends } = await res.json();
+        wizardBackendData = backends;
+
+        container.innerHTML = backends.map(b => {
+            let detail = '';
+            if (b.status === 'available' && b.messageCount) {
+                detail = `${b.messageCount.toLocaleString()} messages`;
+                if (b.dateRange) {
+                    const fmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                    detail += ` · ${fmt(b.dateRange.first)} – ${fmt(b.dateRange.last)}`;
+                }
+            } else if (b.status === 'coming_soon') {
+                detail = 'Detected (coming soon)';
+            } else {
+                detail = 'Not installed';
+            }
+            return `
+            <div class="wizard-backend ${b.detected ? 'detected' : ''}" data-id="${b.id}">
+                <div class="wizard-backend-icon ${b.status}"></div>
+                <div class="wizard-backend-info">
+                    <div class="wizard-backend-name">${b.name}</div>
+                    <div class="wizard-backend-detail">${detail}</div>
+                </div>
+            </div>`;
+        }).join('');
+    } catch {
+        container.innerHTML = '<div class="wizard-loading">Could not detect backends.</div>';
+    }
+}
+
+// === Shared exclusion directory picker ===
+
+async function pickAndAddExclusion(chipContainerId) {
+    const container = document.getElementById(chipContainerId);
+    if (!container) return;
+
+    // Open native folder picker
+    let dirPath;
+    try {
+        const res = await fetch('/api/pick-directory');
+        const data = await res.json();
+        dirPath = data.path;
+    } catch { return; }
+    if (!dirPath) return; // user cancelled
+
+    // Check for duplicates
+    if (container.querySelector(`[data-path="${CSS.escape(dirPath)}"]`)) return;
+
+    // Get message count
+    let messageCount = 0;
+    try {
+        const res = await fetch('/api/exclusion-count', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: dirPath }),
+        });
+        const data = await res.json();
+        messageCount = data.messageCount || 0;
+    } catch { /* count unavailable */ }
+
+    addExclusionChip(container, dirPath, messageCount);
+}
+
+function addExclusionChip(container, dirPath, messageCount) {
+    const chip = document.createElement('div');
+    chip.className = 'exclusion-chip';
+    chip.dataset.path = dirPath;
+    // Show just the last directory name for brevity
+    const shortName = dirPath.split('/').pop() || dirPath;
+    const countLabel = messageCount > 0 ? `${messageCount.toLocaleString()} messages` : 'no data found';
+    chip.innerHTML = `
+        <span class="exclusion-chip-path" title="${dirPath}">${shortName}</span>
+        <span class="exclusion-chip-count">${countLabel}</span>
+        <button class="exclusion-chip-remove" type="button" aria-label="Remove">&times;</button>
+    `;
+    chip.querySelector('.exclusion-chip-remove').addEventListener('click', () => chip.remove());
+    container.appendChild(chip);
+}
+
+function getExclusionPaths(chipContainerId) {
+    const container = document.getElementById(chipContainerId);
+    if (!container) return [];
+    return [...container.querySelectorAll('.exclusion-chip')].map(c => c.dataset.path);
+}
+
+async function loadExclusionChips(chipContainerId, exclusions) {
+    const container = document.getElementById(chipContainerId);
+    if (!container) return;
+    container.innerHTML = '';
+    for (const dirPath of exclusions) {
+        // Get count for each existing exclusion
+        let messageCount = 0;
+        try {
+            const res = await fetch('/api/exclusion-count', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: dirPath }),
+            });
+            const data = await res.json();
+            messageCount = data.messageCount || 0;
+        } catch { /* skip */ }
+        addExclusionChip(container, dirPath, messageCount);
+    }
+}
+
+// === Wizard step 2 ===
+
+function wizardBuildConfig() {
+    const container = document.getElementById('wizardConfig');
+    const exclusionsDiv = document.getElementById('wizardExclusions');
+    if (!container) return;
+
+    const available = wizardBackendData.filter(b => b.status === 'available');
+    container.innerHTML = available.map(b => `
+        <label class="wizard-toggle">
+            <input type="checkbox" data-backend="${b.id}" checked>
+            ${b.name}
+        </label>
+    `).join('');
+
+    // Show exclusions + load existing chips if Claude Code is available
+    if (available.some(b => b.id === 'claude_code') && exclusionsDiv) {
+        exclusionsDiv.style.display = 'block';
+    }
+}
+
+async function wizardSaveConfig() {
+    const toggles = {};
+    document.querySelectorAll('#wizardConfig input[type=checkbox]').forEach(cb => {
+        toggles[cb.dataset.backend] = { enabled: cb.checked, exclusions: [] };
+    });
+    if (toggles.claude_code) {
+        toggles.claude_code.exclusions = getExclusionPaths('wizardExclusionChips');
+    }
+    try {
+        await fetch('/api/config', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ backends: toggles }),
+        });
+    } catch { /* best effort */ }
+}
+
+function wizardRunPipeline() {
+    const log = document.getElementById('wizardLog');
+    const bar = document.getElementById('wizardProgressBar');
+    const doneBtn = document.getElementById('wizardDone');
+    if (!log) return;
+
+    log.innerHTML = '<div class="wizard-log-entry">Starting pipeline...</div>';
+    const stages = ['sync', 'parse', 'insert', 'nlp', 'embedding', 'classifiers', 'metrics'];
+    let maxStageIdx = 0;
+    let completed = false;
+
+    const evtSource = new EventSource('/api/pipeline/stream');
+
+    evtSource.addEventListener('progress', (e) => {
+        const data = JSON.parse(e.data);
+        const entry = document.createElement('div');
+        entry.className = 'wizard-log-entry';
+        entry.textContent = `${data.stage}: ${data.detail}`;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+
+        const idx = stages.indexOf(data.stage);
+        if (idx >= 0 && idx > maxStageIdx) maxStageIdx = idx;
+        if (bar) bar.style.width = `${((maxStageIdx + 1) / stages.length) * 100}%`;
+    });
+
+    evtSource.addEventListener('complete', (e) => {
+        completed = true;
+        evtSource.close();
+        const data = JSON.parse(e.data);
+
+        const entry = document.createElement('div');
+        entry.className = 'wizard-log-entry done';
+        entry.textContent = `Done! ${data.stats.totalMessages} messages analyzed.`;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+
+        if (bar) bar.style.width = '100%';
+        if (doneBtn) doneBtn.style.display = 'inline-block';
+
+        // Stash metrics so dashboard can render immediately
+        if (data.metrics) {
+            sourceViews = data.metrics.source_views || { both: data.metrics };
+            if (!sourceViews.claude_code && sourceViews.claude) sourceViews.claude_code = sourceViews.claude;
+            sourceViews.both = sourceViews.both || data.metrics;
+            defaultSource = data.metrics.default_view || 'both';
+            if (defaultSource === 'claude' && sourceViews.claude_code) defaultSource = 'claude_code';
+        }
+    });
+
+    evtSource.addEventListener('pipeline_error', (e) => {
+        completed = true;
+        evtSource.close();
+        const data = JSON.parse(e.data);
+        const entry = document.createElement('div');
+        entry.className = 'wizard-log-entry error';
+        entry.textContent = `Error: ${data.message}`;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+        if (doneBtn) {
+            doneBtn.textContent = 'Continue Anyway';
+            doneBtn.style.display = 'inline-block';
+        }
+    });
+
+    // Built-in error fires on connection close — ignore if we already completed
+    evtSource.onerror = () => {
+        if (!completed) {
+            evtSource.close();
+            const entry = document.createElement('div');
+            entry.className = 'wizard-log-entry error';
+            entry.textContent = 'Connection lost — check terminal for details.';
+            log.appendChild(entry);
+            if (doneBtn) {
+                doneBtn.textContent = 'Continue Anyway';
+                doneBtn.style.display = 'inline-block';
+            }
+        }
+    };
+}
+
+function switchWizardStep(step) {
+    document.querySelectorAll('.wizard-step').forEach(s => {
+        const n = Number(s.dataset.step);
+        s.classList.toggle('active', n === step);
+        s.classList.toggle('done', n < step);
+    });
+    document.querySelectorAll('.wizard-page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`wizardStep${step}`)?.classList.add('active');
+}
+
+// Wire wizard buttons
+document.getElementById('wizardAddExclusion')?.addEventListener('click', () => pickAndAddExclusion('wizardExclusionChips'));
+document.getElementById('wizardNext1')?.addEventListener('click', () => {
+    wizardBuildConfig();
+    switchWizardStep(2);
+});
+document.getElementById('wizardBack2')?.addEventListener('click', () => switchWizardStep(1));
+document.getElementById('wizardNext2')?.addEventListener('click', async () => {
+    await wizardSaveConfig();
+    switchWizardStep(3);
+    wizardRunPipeline();
+});
+document.getElementById('wizardDone')?.addEventListener('click', async () => {
+    // Mark setup complete
+    try {
+        await fetch('/api/config', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hasCompletedSetup: true }),
+        });
+    } catch { /* best effort */ }
+
+    // Hide wizard
+    const wizard = document.getElementById('setupWizard');
+    if (wizard) { wizard.classList.remove('active'); document.body.style.overflow = ''; }
+
+    // Render dashboard with stashed metrics
+    applyBranding({});
+    initSourceFilter();
+});
+
 // === Init ===
 
 async function init() {
@@ -1157,6 +1595,10 @@ async function init() {
     if (mobileNav && window.innerWidth <= 640) {
         mobileNav.style.display = 'flex';
     }
+
+    // Check if wizard is needed
+    const wizardActive = await initWizard();
+    if (wizardActive) return;
 
     try {
         const response = await fetch('./metrics.json');
