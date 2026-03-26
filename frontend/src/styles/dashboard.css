@@ -411,6 +411,7 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 .wizard-toggle{display:flex;align-items:center;gap:12px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-weight:500;transition:border-color .15s}
 .wizard-toggle:has(input:checked){border-color:var(--accent)}
 .wizard-toggle input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+.wizard-toggle.is-disabled{cursor:not-allowed;opacity:.65}
 .wizard-exclusions{margin-bottom:16px}
 .wizard-label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
 .wizard-hint{font-size:11px;color:var(--muted);margin-top:8px}
@@ -450,6 +451,8 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 .settings-header h3{font-size:16px;font-weight:700}
 .settings-body{padding:16px 24px}
 .settings-section{margin-bottom:16px}
+.settings-backend-row{display:flex;flex-direction:column;gap:4px}
+.settings-backend-detail{font-size:12px;color:var(--muted);padding:0 4px 2px 16px}
 .settings-footer{display:flex;align-items:center;justify-content:space-between;padding:16px 24px 20px;border-top:1px solid var(--border);margin-top:8px}
 .settings-footer-right{display:flex;gap:8px}
 .wizard-btn-danger{background:none;color:var(--stat-r);border:1px solid var(--stat-r);font-size:12px;padding:8px 16px}

@@ -97,7 +97,7 @@ export async function startServer(opts: ServerOptions): Promise<http.Server> {
       for await (const chunk of req) body += chunk;
       const { path: dirPath } = JSON.parse(body);
 
-      // Convert to Claude's directory format: /Users/foo/Bar → -Users-foo-Bar
+      // Convert to Claude's directory format: /path/to/project -> -path-to-project
       const claudeDir = dirPath.replace(/\//g, "-");
       const projectsDir = path.join(os.homedir(), ".claude", "projects");
       const targetDir = path.join(projectsDir, claudeDir);

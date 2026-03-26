@@ -2,6 +2,14 @@
 // Loads metrics.json via fetch() at runtime — no build-time data injection.
 
 import { initThemeToggle } from './theme.js';
+import {
+    CLIENT_ID_STORAGE_KEY,
+    USERNAME_STORAGE_KEY,
+    createStableClientId,
+    findEntryRank,
+    getSubmissionPayload as buildSubmissionPayload,
+    sortLeaderboardEntries,
+} from './leaderboard.js';
 
 let sourceViews = {};
 let defaultSource = 'both';
@@ -12,6 +20,11 @@ let branding = {};
 const sourceFilter = document.getElementById('sourceFilter');
 const sourceFilterMobile = document.getElementById('sourceFilterMobile');
 const sourceStorageKey = 'dashboard-source-filter';
+const SOURCE_LABELS = { both: 'All', claude_code: 'Claude Code', codex: 'Codex' };
+
+function formatSourceLabel(key) {
+    return SOURCE_LABELS[key] || key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 // === Formatting helpers ===
 
@@ -162,7 +175,7 @@ function renderHeatmap(heatmapData) {
 
     // Tooltip via event delegation
     if (tooltip) {
-        heatmap.addEventListener('mouseover', (e) => {
+        heatmap.onmouseover = (e) => {
             const cell = e.target.closest('.heatmap-cell');
             if (!cell) { tooltip.style.opacity = '0'; return; }
             const { day: d, hour: h, count: c } = cell.dataset;
@@ -174,8 +187,8 @@ function renderHeatmap(heatmapData) {
             tooltip.style.left = left + 'px';
             tooltip.style.top = (rect.top - panelRect.top - 30) + 'px';
             tooltip.style.opacity = '1';
-        });
-        heatmap.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+        };
+        heatmap.onmouseleave = () => { tooltip.style.opacity = '0'; };
     }
 }
 
@@ -632,6 +645,16 @@ function getView(sourceKey) {
     return sourceViews[sourceKey] || null;
 }
 
+function getAvailableSourceKeys() {
+    return Object.keys(sourceViews)
+        .filter((key) => key === 'both' || Boolean(getView(key)))
+        .sort((a, b) => {
+            if (a === 'both') return -1;
+            if (b === 'both') return 1;
+            return formatSourceLabel(a).localeCompare(formatSourceLabel(b));
+        });
+}
+
 function renderView(sourceKey) {
     const view = getView(sourceKey);
     if (!view) return;
@@ -697,14 +720,13 @@ function syncSourceSelectors(value) {
 function initSourceFilter() {
     if (!sourceFilter) return;
 
-    const available = ['both', 'claude_code', 'codex'].filter((key) => Boolean(getView(key)));
-    const labelMap = { both: 'All', claude_code: 'Claude Code', codex: 'Codex' };
+    const available = getAvailableSourceKeys();
     [sourceFilter, sourceFilterMobile].filter(Boolean).forEach((select) => {
         select.innerHTML = '';
         for (const key of available) {
             const opt = document.createElement('option');
             opt.value = key;
-            opt.textContent = labelMap[key] || key;
+            opt.textContent = formatSourceLabel(key);
             select.appendChild(opt);
         }
     });
@@ -771,19 +793,32 @@ async function openSettings() {
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Load config (fast — reads local JSON file)
-    const configRes = await fetch('/api/config').then(r => r.json()).catch(() => ({}));
+    const [configRes, detectRes] = await Promise.all([
+        fetch('/api/config').then((r) => r.json()).catch(() => ({})),
+        fetch('/api/detect').then((r) => r.json()).catch(() => ({ backends: [] })),
+    ]);
 
-    // Populate from config without waiting for detect (no scan needed for settings)
-    const backendIds = Object.keys(configRes.backends || {});
-    const nameMap = { claude_code: 'Claude Code', codex: 'Codex', copilot_chat: 'Copilot Chat', cursor: 'Cursor' };
+    const detectedById = new Map((detectRes.backends || []).map((backend) => [backend.id, backend]));
+    const backendIds = Array.from(new Set([
+        ...Object.keys(configRes.backends || {}),
+        ...Array.from(detectedById.keys()),
+    ]));
     if (container) {
         container.innerHTML = backendIds.map(id => {
-            const toggle = configRes.backends[id];
-            return `<label class="wizard-toggle">
-                <input type="checkbox" data-backend="${id}" ${toggle.enabled !== false ? 'checked' : ''}>
-                ${nameMap[id] || id}
-            </label>`;
+            const toggle = configRes.backends?.[id] || { enabled: false, exclusions: [] };
+            const info = detectedById.get(id) || {};
+            const disabled = info.supported === false || info.status === 'coming_soon' || info.status === 'not_found';
+            let detail = 'Not detected';
+            if (info.status === 'available') detail = 'Ready to analyze';
+            if (info.status === 'coming_soon') detail = 'Detected, but analysis support is not shipped yet';
+            if (info.status === 'not_found') detail = 'Not installed';
+            return `<div class="settings-backend-row">
+                <label class="wizard-toggle ${disabled ? 'is-disabled' : ''}">
+                    <input type="checkbox" data-backend="${id}" ${toggle.enabled !== false ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+                    ${formatSourceLabel(id)}
+                </label>
+                <div class="settings-backend-detail">${detail}</div>
+            </div>`;
         }).join('');
     }
 
@@ -1076,11 +1111,11 @@ function renderLeaderboard() {
     table.style.display = '';
 
     const sortKey = document.getElementById('leaderboardSort')?.value || 'hitl_score';
-    const sorted = [...leaderboardData].sort((a, b) => (b[sortKey] ?? 0) - (a[sortKey] ?? 0));
-    const myFp = localStorage.getItem('howiprompt_fingerprint');
+    const sorted = sortLeaderboardEntries(leaderboardData, sortKey);
+    const clientId = localStorage.getItem(CLIENT_ID_STORAGE_KEY);
 
     body.innerHTML = sorted.map((entry, i) => {
-        const isYou = myFp && entry.fingerprint === myFp;
+        const isYou = clientId && entry.fingerprint === clientId;
         return `
         <tr${isYou ? ' class="is-you"' : ''}>
             <td class="rank-col">${i + 1}</td>
@@ -1089,6 +1124,7 @@ function renderLeaderboard() {
             <td>${entry.vibe_index ?? '--'}</td>
             <td>${entry.politeness ?? '--'}</td>
             <td>${(entry.total_prompts ?? 0).toLocaleString()}</td>
+            <td>${(entry.total_conversations ?? 0).toLocaleString()}</td>
             <td>${escapeHtml(entry.persona || '--')}</td>
             <td>${isYou ? '<button class="delete-entry-btn" onclick="deleteMySubmission()">✕</button>' : ''}</td>
         </tr>`;
@@ -1106,44 +1142,18 @@ document.getElementById('leaderboardSort')?.addEventListener('change', renderLea
 // === Username + Fingerprint ===
 
 function getOrCreateUsername() {
-    let name = localStorage.getItem('howiprompt_username');
+    let name = localStorage.getItem(USERNAME_STORAGE_KEY);
     if (!name && typeof window.generateRandomUsername === 'function') {
         name = window.generateRandomUsername();
-        localStorage.setItem('howiprompt_username', name);
+        localStorage.setItem(USERNAME_STORAGE_KEY, name);
     }
     return name || 'Anonymous';
-}
-
-function computeFingerprint() {
-    if (!activeView) return null;
-    const v = activeView.volume || {};
-    const nlp = activeView.nlp || {};
-    const raw = `${v.total_human || 0}-${v.total_conversations || 0}-${Math.round(nlp.hitl_score?.avg_score ?? 0)}-${Math.round(nlp.vibe_coder_index?.avg_score ?? 0)}-${Math.round(nlp.politeness?.avg_score ?? 0)}`;
-    // Simple hash
-    let hash = 0;
-    for (let i = 0; i < raw.length; i++) {
-        hash = ((hash << 5) - hash + raw.charCodeAt(i)) | 0;
-    }
-    return 'fp_' + Math.abs(hash).toString(36);
 }
 
 // === Submit to leaderboard ===
 
 function getSubmissionPayload() {
-    if (!activeView) return null;
-    const v = activeView.volume || {};
-    const nlp = activeView.nlp || {};
-    const persona = activeView.persona || {};
-
-    return {
-        hitl_score: Math.round(nlp.hitl_score?.avg_score ?? 0),
-        vibe_index: Math.round(nlp.vibe_coder_index?.avg_score ?? 0),
-        politeness: Math.round(nlp.politeness?.avg_score ?? 0),
-        total_prompts: v.total_human || 0,
-        total_conversations: v.total_conversations || 0,
-        persona: persona.type || 'unknown',
-        platform: activeSourceKey,
-    };
+    return buildSubmissionPayload(activeView, activeSourceKey);
 }
 
 function showSubmitModal() {
@@ -1186,15 +1196,14 @@ async function submitToLeaderboard() {
         return;
     }
 
-    const fingerprint = computeFingerprint();
-    if (!fingerprint) return;
+    const clientId = createStableClientId(localStorage);
+    if (!clientId) return;
 
     payload.display_name = displayName;
-    payload.fingerprint = fingerprint;
+    payload.fingerprint = clientId;
     payload.updated_at = new Date().toISOString();
 
-    localStorage.setItem('howiprompt_username', displayName);
-    localStorage.setItem('howiprompt_fingerprint', fingerprint);
+    localStorage.setItem(USERNAME_STORAGE_KEY, displayName);
     hideSubmitModal();
 
     const toast = document.getElementById('leaderboardToast');
@@ -1211,8 +1220,7 @@ async function submitToLeaderboard() {
 
         // Find rank
         const sortKey = document.getElementById('leaderboardSort')?.value || 'hitl_score';
-        const sorted = [...leaderboardData].sort((a, b) => (b[sortKey] ?? 0) - (a[sortKey] ?? 0));
-        const rank = sorted.findIndex(e => e.fingerprint === fingerprint) + 1;
+        const rank = findEntryRank(leaderboardData, sortKey, clientId);
 
         if (toast) {
             toast.textContent = rank > 0 ? `Submitted! You're ranked #${rank}` : 'Scores submitted!';
@@ -1229,16 +1237,15 @@ async function submitToLeaderboard() {
 }
 
 async function deleteMySubmission() {
-    const fp = localStorage.getItem('howiprompt_fingerprint');
-    if (!fp) return;
+    const clientId = localStorage.getItem(CLIENT_ID_STORAGE_KEY);
+    if (!clientId) return;
     const toast = document.getElementById('leaderboardToast');
     try {
-        const res = await fetch(`${SUPABASE_URL}${LB_TABLE}?fingerprint=eq.${fp}`, {
+        const res = await fetch(`${SUPABASE_URL}${LB_TABLE}?fingerprint=eq.${clientId}`, {
             method: 'DELETE',
             headers: supaHeaders(false),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        localStorage.removeItem('howiprompt_fingerprint');
         leaderboardLoaded = false;
         fetchLeaderboard();
         if (toast) {
@@ -1422,7 +1429,7 @@ function wizardBuildConfig() {
     const exclusionsDiv = document.getElementById('wizardExclusions');
     if (!container) return;
 
-    const available = wizardBackendData.filter(b => b.status === 'available');
+    const available = wizardBackendData.filter(b => b.status === 'available' && b.supported !== false);
     container.innerHTML = available.map(b => `
         <label class="wizard-toggle">
             <input type="checkbox" data-backend="${b.id}" checked>
@@ -1433,6 +1440,10 @@ function wizardBuildConfig() {
     // Show exclusions + load existing chips if Claude Code is available
     if (available.some(b => b.id === 'claude_code') && exclusionsDiv) {
         exclusionsDiv.style.display = 'block';
+        fetch('/api/config')
+            .then((res) => res.json())
+            .then((config) => loadExclusionChips('wizardExclusionChips', config.backends?.claude_code?.exclusions ?? []))
+            .catch(() => {});
     }
 }
 

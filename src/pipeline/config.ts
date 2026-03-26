@@ -19,6 +19,34 @@ export interface Config {
   hasCompletedSetup: boolean;
 }
 
+function defaultBackends(agentCwds: string[]): Record<string, BackendToggle> {
+  return {
+    claude_code: { enabled: true, exclusions: agentCwds },
+    codex: { enabled: true, exclusions: [] },
+    copilot_chat: { enabled: false, exclusions: [] },
+    cursor: { enabled: false, exclusions: [] },
+  };
+}
+
+function mergeBackends(
+  defaults: Record<string, BackendToggle>,
+  configured: Record<string, BackendToggle> = {},
+): Record<string, BackendToggle> {
+  const merged: Record<string, BackendToggle> = {};
+  const ids = new Set([...Object.keys(defaults), ...Object.keys(configured)]);
+
+  for (const id of ids) {
+    merged[id] = {
+      enabled: configured[id]?.enabled ?? defaults[id]?.enabled ?? false,
+      exclusions: Array.isArray(configured[id]?.exclusions)
+        ? configured[id].exclusions
+        : (defaults[id]?.exclusions ?? []),
+    };
+  }
+
+  return merged;
+}
+
 export function loadConfig(dataDir?: string): Config {
   const dd = dataDir ?? path.join(os.homedir(), ".howiprompt");
 
@@ -34,11 +62,7 @@ export function loadConfig(dataDir?: string): Config {
   const agentCwds: string[] = Array.isArray(userConfig.agentCwds) ? userConfig.agentCwds : [];
 
   // Migrate legacy agentCwds → backends.claude_code.exclusions
-  const defaultBackends: Record<string, BackendToggle> = {
-    claude_code: { enabled: true, exclusions: agentCwds },
-    codex: { enabled: true, exclusions: [] },
-  };
-  const backends: Record<string, BackendToggle> = userConfig.backends ?? defaultBackends;
+  const backends = mergeBackends(defaultBackends(agentCwds), userConfig.backends);
 
   return {
     dataDir: dd,
@@ -62,6 +86,8 @@ export function saveConfig(dataDir: string, updates: Record<string, any>): void 
     // Start fresh
   }
   const merged = { ...existing, ...updates };
+  const agentCwds: string[] = Array.isArray(merged.agentCwds) ? merged.agentCwds : [];
+  merged.backends = mergeBackends(defaultBackends(agentCwds), merged.backends);
   fs.mkdirSync(dataDir, { recursive: true });
   fs.writeFileSync(configPath, JSON.stringify(merged, null, 2));
 }

@@ -14,12 +14,21 @@ import type { Config } from "./config.js";
 export interface BackendInfo {
   id: string;
   name: string;
+  supported: boolean;
   detected: boolean;
   sourcePath: string;
   status: "available" | "coming_soon" | "not_found";
   messageCount?: number;
   dateRange?: { first: string; last: string };
 }
+
+const DETECTION_CACHE_TTL_MS = 10_000;
+let detectionCache:
+  | {
+    expiresAt: number;
+    infos: BackendInfo[];
+  }
+  | null = null;
 
 // ── Scan helpers ───────────────────────────────────────
 
@@ -127,6 +136,7 @@ class ClaudeCodeBackend implements Backend {
     return {
       id: this.id,
       name: this.name,
+      supported: true,
       detected,
       sourcePath,
       status: detected ? "available" : "not_found",
@@ -158,6 +168,7 @@ class CodexBackend implements Backend {
     return {
       id: this.id,
       name: this.name,
+      supported: true,
       detected,
       sourcePath,
       status: detected ? "available" : "not_found",
@@ -195,6 +206,7 @@ class CopilotChatBackend implements Backend {
     return {
       id: this.id,
       name: this.name,
+      supported: false,
       detected,
       sourcePath,
       status: detected ? "coming_soon" : "not_found",
@@ -229,6 +241,7 @@ class CursorBackend implements Backend {
     return {
       id: this.id,
       name: this.name,
+      supported: false,
       detected,
       sourcePath,
       status: detected ? "coming_soon" : "not_found",
@@ -262,14 +275,29 @@ export function getBackend(id: string): Backend | undefined {
 }
 
 export function detectAll(): BackendInfo[] {
-  return ALL_BACKENDS.map((b) => b.detect());
+  const now = Date.now();
+  if (detectionCache && detectionCache.expiresAt > now) {
+    return detectionCache.infos;
+  }
+
+  const infos = ALL_BACKENDS.map((b) => b.detect());
+  detectionCache = {
+    expiresAt: now + DETECTION_CACHE_TTL_MS,
+    infos,
+  };
+  return infos;
+}
+
+export function resetBackendDetectionCacheForTests(): void {
+  detectionCache = null;
 }
 
 /** Get backends that are enabled and have working parsers */
 export function getEnabledBackends(config: Config): Backend[] {
+  const available = new Map(detectAll().map((info) => [info.id, info]));
   return ALL_BACKENDS.filter((b) => {
-    const info = b.detect();
-    if (info.status !== "available") return false;
+    const info = available.get(b.id);
+    if (!info || info.status !== "available") return false;
     return config.backends?.[b.id]?.enabled !== false;
   });
 }

@@ -25,6 +25,16 @@ let tenacityCentroids: ClusterCentroid[] | null = null;
 let trustCentroids: ClusterCentroid[] | null = null;
 let politenessCentroids: ClusterCentroid[] | null = null;
 
+export function resetClassifiersForTests(): void {
+  hitlCentroids = null;
+  vibeCentroids = null;
+  precisionCentroids = null;
+  curiosityCentroids = null;
+  tenacityCentroids = null;
+  trustCentroids = null;
+  politenessCentroids = null;
+}
+
 function loadReferenceClusters(): Record<string, Record<string, string[]>> {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const candidates = [

@@ -22,7 +22,7 @@ export async function parseClaudeCode(
   if (!fs.existsSync(sourceDir)) return [];
 
   // Convert excluded cwd paths to Claude project directory names
-  // e.g. "/Users/eeshans/PersonalVault" → "-Users-eeshans-PersonalVault"
+  // e.g. "/path/to/project" -> "-path-to-project"
   const excludedDirs = new Set(agentCwds.map((p) => p.replace(/\//g, "-")));
   const messages: Message[] = [];
   const allFiles = findJsonlFiles(sourceDir, excludedDirs);

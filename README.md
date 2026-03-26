@@ -2,7 +2,7 @@
 
 # How I Prompt
 
-A personal analytics dashboard for your Claude Code + Codex AI conversations. See your prompting patterns at a glance.
+A local-first analytics dashboard for your Claude Code and Codex conversations. It syncs local logs, computes prompting metrics on-device, and opens an interactive dashboard in your browser.
 
 **[View Live Demo →](https://howiprompt.eeshans.com)**
 
@@ -16,7 +16,7 @@ A personal analytics dashboard for your Claude Code + Codex AI conversations. Se
 npx howiprompt
 ```
 
-That's it. Syncs your conversations, builds analytics, and opens the dashboard in your browser.
+That starts a local server and opens the dashboard. On first run, a setup wizard detects supported backends, lets you confirm sources, and then runs the pipeline.
 
 ### Options
 
@@ -28,13 +28,13 @@ npx howiprompt --help        # usage info
 
 ### What Happens
 
-1. Copies conversation data from `~/.claude/projects/` and `~/.codex/history.jsonl`
-2. Parses and stores messages in a local SQLite database (`~/.howiprompt/data.db`)
-3. Runs NLP classifiers (intent, complexity, iteration style)
-4. Computes analytics (volume, depth, temporal, style, trends, persona)
-5. Serves an interactive dashboard at `localhost`
+1. Detects supported local backends and writes setup to `~/.howiprompt/config.json`
+2. Copies raw conversation data into `~/.howiprompt/raw/`
+3. Parses and stores messages in a local SQLite database at `~/.howiprompt/data.db`
+4. Runs embeddings and classifier scoring for dashboard metrics
+5. Writes `~/.howiprompt/metrics.json` and serves the dashboard at `localhost`
 
-Subsequent runs are incremental — only new messages are synced.
+Subsequent refreshes are incremental and reuse the local database, caches, and configured exclusions.
 
 ---
 
@@ -42,10 +42,10 @@ Subsequent runs are incremental — only new messages are synced.
 
 | Dashboard | Full Experience |
 |-----------|-----------------|
-| One-page overview of all your stats | Scroll-through "Wrapped" style presentation |
+| One-page overview of your stats | Scroll-through "Wrapped" presentation |
 | [howiprompt.eeshans.com](https://howiprompt.eeshans.com) | [howiprompt.eeshans.com/wrapped](https://howiprompt.eeshans.com/wrapped) |
 
-**Metrics include:** Total prompts, word counts, conversation depth, activity heatmap, prompt style analysis, trend charts, model usage, and your AI persona classification.
+**Metrics include:** total prompts, conversation depth, activity heatmap, model usage, Human in the Loop, Vibe Coder Index, Politeness, four radar axes, trends, and persona classification.
 
 ---
 
@@ -56,26 +56,33 @@ Subsequent runs are incremental — only new messages are synced.
 | **Claude Code** | `~/.claude/projects/*.jsonl` |
 | **Codex** | `~/.codex/history.jsonl` |
 
-Both are auto-synced on each run. A backup is kept at `~/.howiprompt/raw/`.
+Both are auto-synced into `~/.howiprompt/raw/` and reused across refreshes.
+
+### Backend Status
+
+- Supported today: `Claude Code`, `Codex`
+- Detected but not yet ingested: `GitHub Copilot Chat`, `Cursor`
 
 ---
 
 ## Privacy
 
-- **100% local** — Nothing leaves your machine
-- **Persistent storage** — Conversations saved in `~/.howiprompt/data.db` (survives even if source files are deleted)
-- **No conversation text in output** — Only aggregate statistics
+- **Local by default** — Sync, parsing, embeddings, classifier scoring, and metrics run on your machine
+- **Persistent storage** — Raw copies, local DB, config, and metrics live under `~/.howiprompt/`
+- **No prompt text leaves your machine** — The app does not upload raw logs or prompt content
+- **Optional leaderboard** — If you choose to submit, it sends aggregate metrics plus your public display name
 
 ---
 
-## The 4 Personas
+## The 5 Personas
 
-Your style is classified on two axes: **Engagement** (questions + iteration) and **Politeness** (courtesy - commands).
+Your persona is derived from four radar axes: **Precision**, **Curiosity**, **Tenacity**, and **Trust**.
 
-|                    | High Politeness | Low Politeness |
-|--------------------|-----------------|----------------|
-| **High Engagement** | Collaborator | Explorer |
-| **Low Engagement**  | Efficient | Pragmatist |
+- **The Architect**: high precision, low trust
+- **The Explorer**: high curiosity
+- **The Commander**: high precision, low tenacity
+- **The Partner**: high tenacity
+- **The Delegator**: high trust
 
 ---
 
@@ -90,6 +97,9 @@ npm run build
 
 # Run tests
 npm test
+
+# Build frontend
+cd frontend && npm run build
 
 # Build for distribution
 npm run build:cli

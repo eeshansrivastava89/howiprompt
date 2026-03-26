@@ -7,7 +7,7 @@
         <div class="leaderboard-submit-header">
             <div>
                 <div class="card-label">Submit Your Scores</div>
-                <p class="leaderboard-submit-desc">Share your anonymized metrics to see how you compare with other users.</p>
+                <p class="leaderboard-submit-desc">Share aggregate metrics to see how you compare with other users.</p>
             </div>
             <button class="submit-btn" id="submitLeaderboard" type="button">
                 <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
@@ -16,7 +16,7 @@
         </div>
         <div class="leaderboard-privacy-note">
             <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-            <span>Only aggregate scores are shared — no prompts, conversations, or personal data leave your machine.</span>
+            <span>Only aggregate scores plus your public display name are shared. No prompt text or raw conversation logs leave your machine.</span>
         </div>
     </div>
 
@@ -54,6 +54,7 @@
                         <th>Vibe</th>
                         <th>Polite</th>
                         <th>Prompts</th>
+                        <th>Convos</th>
                         <th>Persona</th>
                         <th></th>
                     </tr>
@@ -68,7 +69,7 @@
 <div class="modal-overlay" id="submitModal">
     <div class="modal-content">
         <h3 class="modal-title">Submit to Leaderboard</h3>
-        <p class="modal-desc">The following aggregate metrics will be shared publicly:</p>
+        <p class="modal-desc">The following aggregate metrics and your public display name will be shared publicly:</p>
         <div class="modal-preview" id="submitPreview"></div>
         <div class="modal-field">
             <label for="displayName" class="modal-label">Display Name</label>

@@ -31,6 +31,7 @@ describe("Backend Registry", () => {
     for (const info of infos) {
       expect(info).toHaveProperty("id");
       expect(info).toHaveProperty("name");
+      expect(info).toHaveProperty("supported");
       expect(info).toHaveProperty("detected");
       expect(info).toHaveProperty("sourcePath");
       expect(["available", "coming_soon", "not_found"]).toContain(info.status);
@@ -41,6 +42,8 @@ describe("Backend Registry", () => {
     const infos = detectAll();
     const copilot = infos.find((i) => i.id === "copilot_chat")!;
     const cursor = infos.find((i) => i.id === "cursor")!;
+    expect(copilot.supported).toBe(false);
+    expect(cursor.supported).toBe(false);
     expect(["coming_soon", "not_found"]).toContain(copilot.status);
     expect(["coming_soon", "not_found"]).toContain(cursor.status);
   });
@@ -82,6 +85,8 @@ describe("Config expansion", () => {
       exclusions: ["/foo/bar"],
     });
     expect(config.backends.codex).toEqual({ enabled: true, exclusions: [] });
+    expect(config.backends.copilot_chat).toEqual({ enabled: false, exclusions: [] });
+    expect(config.backends.cursor).toEqual({ enabled: false, exclusions: [] });
     expect(config.hasCompletedSetup).toBe(false);
     fs.rmSync(tmpDir, { recursive: true });
   });
@@ -97,6 +102,8 @@ describe("Config expansion", () => {
     );
     const config = loadConfig(tmpDir);
     expect(config.backends.claude_code.enabled).toBe(false);
+    expect(config.backends.codex.enabled).toBe(true);
+    expect(config.backends.copilot_chat.enabled).toBe(false);
     expect(config.hasCompletedSetup).toBe(true);
     fs.rmSync(tmpDir, { recursive: true });
   });
@@ -111,6 +118,7 @@ describe("Config expansion", () => {
     const raw = JSON.parse(fs.readFileSync(path.join(tmpDir, "config.json"), "utf-8"));
     expect(raw.hasCompletedSetup).toBe(true);
     expect(raw.agentCwds).toEqual(["/a"]); // preserved
+    expect(raw.backends.codex).toEqual({ enabled: true, exclusions: [] });
     fs.rmSync(tmpDir, { recursive: true });
   });
 
@@ -119,6 +127,8 @@ describe("Config expansion", () => {
     saveConfig(tmpDir, { hasCompletedSetup: true });
     const raw = JSON.parse(fs.readFileSync(path.join(tmpDir, "config.json"), "utf-8"));
     expect(raw.hasCompletedSetup).toBe(true);
+    expect(raw.backends.claude_code.enabled).toBe(true);
+    expect(raw.backends.copilot_chat.enabled).toBe(false);
     fs.rmSync(tmpDir, { recursive: true });
   });
 });

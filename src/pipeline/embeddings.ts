@@ -4,6 +4,10 @@ import type { MlConfig } from "./ml-config.js";
 
 let extractor: any = null;
 
+export function resetEmbedderForTests(): void {
+  extractor = null;
+}
+
 export async function initEmbedder(
   mlConfig: MlConfig,
   cacheDir: string,
