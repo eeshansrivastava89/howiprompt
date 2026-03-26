@@ -449,6 +449,19 @@ document.getElementById('methodologyModal')?.addEventListener('click', (e) => {
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMethodology();
+    // Focus trap for methodology modal
+    const modal = document.getElementById('methodologyModal');
+    if (e.key === 'Tab' && modal?.classList.contains('active')) {
+        const focusable = modal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus();
+        }
+    }
 });
 
 // === Init ===

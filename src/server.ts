@@ -47,24 +47,6 @@ export async function startServer(opts: ServerOptions): Promise<http.Server> {
       return;
     }
 
-    // API: refresh
-    if (req.method === "POST" && url.pathname === "/api/refresh") {
-      try {
-        const { runPipeline } = await import("./index.js");
-        const stats = await runPipeline({
-          dbPath: opts.dbPath,
-          dataDir: opts.dataDir,
-        });
-        const metrics = JSON.parse(fs.readFileSync(metricsPath, "utf-8"));
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ metrics, stats }));
-      } catch (err: any) {
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: err.message }));
-      }
-      return;
-    }
-
     // API: health check
     if (url.pathname === "/api/health") {
       res.writeHead(200, { "Content-Type": "application/json" });
