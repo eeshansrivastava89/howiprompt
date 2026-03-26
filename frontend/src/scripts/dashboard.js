@@ -944,6 +944,12 @@ function closeSettings() {
 }
 
 async function saveSettings() {
+    const checked = document.querySelectorAll('#settingsBackends input[type=checkbox]:checked');
+    if (checked.length === 0) {
+        alert('Please enable at least one backend to analyze.');
+        return;
+    }
+
     const toggles = {};
     document.querySelectorAll('#settingsBackends input[type=checkbox]').forEach(cb => {
         toggles[cb.dataset.backend] = { enabled: cb.checked, exclusions: [] };
@@ -1097,6 +1103,9 @@ async function handleRefresh() {
             sourceViews = data.metrics.source_views || { both: data.metrics };
             if (!sourceViews.claude_code && sourceViews.claude) sourceViews.claude_code = sourceViews.claude;
             sourceViews.both = sourceViews.both || data.metrics;
+            // Fall back to 'both' if the active source was disabled
+            if (!sourceViews[activeSourceKey]) activeSourceKey = 'both';
+            initSourceFilter();
             renderView(activeSourceKey);
         }
 
@@ -1801,6 +1810,11 @@ document.getElementById('wizardNext1')?.addEventListener('click', () => {
 });
 document.getElementById('wizardBack2')?.addEventListener('click', () => switchWizardStep(1));
 document.getElementById('wizardNext2')?.addEventListener('click', async () => {
+    const checked = document.querySelectorAll('#wizardConfig input[type=checkbox]:checked');
+    if (checked.length === 0) {
+        alert('Please enable at least one backend to analyze.');
+        return;
+    }
     await wizardSaveConfig();
     switchWizardStep(3);
     wizardRunPipeline();
