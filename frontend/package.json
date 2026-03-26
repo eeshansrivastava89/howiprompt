@@ -8,7 +8,9 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^5.7.0"
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^5.7.0",
+    "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "playwright": "^1.58.2"

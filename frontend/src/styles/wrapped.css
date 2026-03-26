@@ -1,27 +1,12 @@
-/* wrapped.css — Coffee theme for Wrapped experience */
-
-/* Light */
-:root {
-    --bg: #f5f3f0; --surface: #fff; --text: #3c3226; --subtext: #6b5e50;
-    --muted: #8a7d6f; --border: #d9d2c9; --accent: #5c3d2e; --accent-soft: #ede6de;
-    --accent-rgb: 92,61,46;
-    --radius: 14px; --radius-sm: 8px;
-}
-
-/* Dark */
-.dark {
-    --bg: #1c1816; --surface: #2a2420; --text: #e0d6cc; --subtext: #b0a596;
-    --muted: #8a7d6f; --border: #3d342c; --accent: #c9a882; --accent-soft: #2e261f;
-    --accent-rgb: 201,168,130;
-}
+/* wrapped.css — Wrapped page styles (theme tokens are in global.css) */
 
 html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
 section { scroll-snap-align: start; scroll-snap-stop: always; }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInWrapped { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-.animate-fade-in { animation: fadeIn 1s ease-out forwards; }
+.animate-fade-in { animation: fadeInWrapped 1s ease-out forwards; }
 .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
 .delay-1 { animation-delay: 0.3s; opacity: 0; }
 .delay-2 { animation-delay: 0.6s; opacity: 0; }
@@ -35,7 +20,7 @@ section { scroll-snap-align: start; scroll-snap-stop: always; }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
 .tabular-nums { font-variant-numeric: tabular-nums; }
 
-/* === SHARED HEADER (from dashboard) === */
+/* === SHARED HEADER === */
 .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; flex-wrap: wrap; gap: 12px; flex-shrink: 0; position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); }
 .header-left { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
@@ -90,39 +75,13 @@ section { scroll-snap-align: start; scroll-snap-stop: always; }
 .share-toast { position: fixed; bottom: 84px; right: 24px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 500; box-shadow: 0 1px 3px rgba(60,50,38,0.06); z-index: 50; opacity: 0; transform: translateY(8px); transition: opacity .3s, transform .3s; pointer-events: none; }
 .share-toast.show { opacity: 1; transform: translateY(0); }
 
-/* === METHODOLOGY MODAL === */
-.modal-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 16px; }
+/* === METHODOLOGY MODAL (new brew guide uses meth-* classes from dashboard.css via MethodologyModal.astro) === */
+.modal-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(60,50,38,.35); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 16px; }
+.dark .modal-overlay { background: rgba(0,0,0,.55); }
 .modal-overlay.active { display: flex; }
-.modal-content { background: var(--surface); border-radius: var(--radius); width: calc(100% - 32px); height: calc(100% - 32px); max-width: 1200px; max-height: 800px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
-@media (min-width: 768px) { .modal-content { width: calc(100% - 48px); height: calc(100% - 48px); } }
-.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.modal-header h2 { font-size: 18px; font-weight: 700; }
-.modal-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--bg); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; }
-.modal-close:hover { background: var(--border); }
-.modal-close svg { width: 18px; height: 18px; color: var(--text); }
-.modal-body { padding: 24px; overflow-y: auto; flex: 1; }
-@media (min-width: 768px) { .modal-body { padding: 32px; } }
-.modal-grid { display: grid; gap: 24px; grid-template-columns: 1fr; height: 100%; }
-@media (min-width: 768px) { .modal-grid { grid-template-columns: repeat(3, 1fr); gap: 28px; } }
-.modal-section { background: var(--bg); border-radius: var(--radius-sm); padding: 20px; display: flex; flex-direction: column; }
-@media (min-width: 768px) { .modal-section { padding: 24px; } }
-.dark .modal-section { background: rgba(255,255,255,0.05); }
-.modal-section h3 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 24px; }
-.step-item { display: flex; gap: 16px; margin-bottom: 24px; }
-.step-item:last-child { margin-bottom: 0; }
-.step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.step-content h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-.step-content p { font-size: 14px; color: var(--muted); line-height: 1.6; }
-.metric-group { margin-bottom: 20px; }
-.metric-group:last-child { margin-bottom: 0; }
-.metric-group h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text); margin-bottom: 8px; }
-.metric-group p { font-size: 14px; color: var(--muted); line-height: 1.7; }
-.metric-group span { color: var(--text); }
-.persona-list { display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
-.persona-cell { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
-.persona-cell.highlight { background: rgba(var(--accent-rgb), 0.1); border-color: var(--accent); }
-.persona-cell strong { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.persona-cell.highlight strong { color: var(--accent); }
+.modal-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: .15s; }
+.modal-close:hover { border-color: var(--accent); color: var(--accent); }
+.modal-close svg { width: 16px; height: 16px; color: currentColor; }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {

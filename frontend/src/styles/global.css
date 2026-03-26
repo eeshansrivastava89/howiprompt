@@ -1,0 +1,256 @@
+@import "tailwindcss";
+
+/* ─── Theme tokens ─── */
+@theme {
+  /* Coffee palette colors — used by Tailwind utilities (bg-bg, text-muted, etc.) */
+  --color-bg: #f5f3f0;
+  --color-surface: #fff;
+  --color-surface-raised: #faf8f5;
+  --color-text: #3c3226;
+  --color-subtext: #6b5e50;
+  --color-muted: #8a7d6f;
+  --color-border: #d9d2c9;
+  --color-border-light: #ebe5dc;
+  --color-accent: #5c3d2e;
+  --color-accent-soft: #ede6de;
+  --color-stat-b: #1a5bdb;
+  --color-stat-r: #d20f39;
+
+  /* Fonts */
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+  /* Custom grid columns (used by wrapped heatmap) */
+  --grid-template-columns-24: repeat(24, minmax(0, 1fr));
+
+  /* DO NOT put --radius-*, --shadow-*, --spacing-* here —
+     they clash with Tailwind's built-in scale names.
+     Dashboard uses them as plain CSS vars in :root instead. */
+}
+
+/* ─── CSS variables for runtime dark mode switching ─── */
+/* These are used by JS-driven components (trend chart SVG, heatmap, player card) */
+:root {
+  --bg: #f5f3f0;
+  --surface: #fff;
+  --text: #3c3226;
+  --subtext: #6b5e50;
+  --muted: #8a7d6f;
+  --border: #d9d2c9;
+  --accent: #5c3d2e;
+  --accent-soft: #ede6de;
+  --accent-rgb: 92,61,46;
+  --ui-radius: 14px;
+  --ui-radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(60,50,38,0.06), 0 4px 12px rgba(60,50,38,0.04);
+  --shadow-hover: 0 4px 12px rgba(60,50,38,0.1), 0 8px 24px rgba(60,50,38,0.06);
+  --stat-b: #1a5bdb;
+  --stat-r: #d20f39;
+}
+
+.dark {
+  --bg: #1c1816;
+  --surface: #2a2420;
+  --text: #e0d6cc;
+  --subtext: #b0a596;
+  --muted: #8a7d6f;
+  --border: #3d342c;
+  --accent: #c9a882;
+  --accent-soft: #2e261f;
+  --accent-rgb: 201,168,130;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+  --shadow-hover: 0 4px 12px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.3);
+  --stat-b: #89b4fa;
+  --stat-r: #f38ba8;
+}
+
+/* ─── Base resets ─── */
+@layer base {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
+    /* NOTE: display:flex is only for dashboard, applied via dashboard.css body rule */
+  }
+
+
+}
+
+/* ═══════════════════════════════════════════
+   Components that don't map cleanly to utilities
+   (animations, pseudo-elements, complex states)
+   ═══════════════════════════════════════════ */
+@layer components {
+  /* ── Animations ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes methBob {
+    0%, 100% { transform: rotate(45deg) translate(0,0); }
+    50% { transform: rotate(45deg) translate(2px,2px); }
+  }
+
+  .animate { animation: fadeIn .4s ease forwards; }
+  .delay-1 { animation-delay: .05s; opacity: 0; }
+  .delay-2 { animation-delay: .1s; opacity: 0; }
+  .delay-3 { animation-delay: .15s; opacity: 0; }
+  .delay-4 { animation-delay: .2s; opacity: 0; }
+  .delay-5 { animation-delay: .25s; opacity: 0; }
+
+  .refreshing .refresh-icon { animation: spin .8s linear infinite; }
+
+  /* ── Source select dropdown arrow ── */
+  .source-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235c5f77' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+
+  /* ── Player card 3D tilt ── */
+  .card-dock { perspective: 1200px; }
+  .player-card {
+    transform-style: preserve-3d;
+    transition: transform .15s ease-out, box-shadow .2s ease-out;
+    will-change: transform;
+    container-type: inline-size;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06),
+                0 12px 32px rgba(0,0,0,0.08), 0 24px 60px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .dark .player-card {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.2),
+                0 12px 32px rgba(0,0,0,0.25), 0 24px 60px rgba(0,0,0,0.2);
+    border-color: rgba(255,255,255,0.06);
+  }
+  .persona-name {
+    font-size: clamp(26px, 6cqw, 36px);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .donut-ring svg { transform: rotate(-90deg); }
+  .donut-fill { transition: stroke-dashoffset .6s ease; }
+
+  /* ── Stat block dividers ── */
+  .stat-block:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 20%; height: 60%; width: 1px;
+    background: var(--border);
+  }
+
+  /* ── Trend chart ── */
+  .trend-dot { transition: r .1s; }
+  .trend-tooltip::after {
+    content: ''; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: var(--text);
+  }
+
+  /* ── Heatmap ── */
+  .heatmap-cell.l1 { background: var(--heatmap-color, var(--accent)); opacity: 0.2; }
+  .heatmap-cell.l2 { background: var(--heatmap-color, var(--accent)); opacity: 0.35; }
+  .heatmap-cell.l3 { background: var(--heatmap-color, var(--accent)); opacity: 0.55; }
+  .heatmap-cell.l4 { background: var(--heatmap-color, var(--accent)); opacity: 0.75; }
+  .heatmap-cell.l5 { background: var(--heatmap-color, var(--accent)); opacity: 1; }
+  .heatmap-tooltip::after {
+    content: ''; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent; border-top-color: var(--text);
+  }
+
+  /* ── Methodology modal — complex styles ── */
+  .meth-modal {
+    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06), 0 32px 64px rgba(0,0,0,.08);
+  }
+  .dark .meth-modal {
+    box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.2), 0 32px 64px rgba(0,0,0,.25);
+  }
+  .meth-progress-fill {
+    background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 50%, transparent));
+  }
+  .meth-step-icon {
+    background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #a08060));
+    box-shadow: 0 4px 10px rgba(var(--accent-rgb), .2);
+  }
+  .meth-step:not(:last-child)::after {
+    content: ''; position: absolute; right: -1px; top: 50%; z-index: 2;
+    width: 14px; height: 14px;
+    background: var(--bg);
+    border: 1px solid var(--border); border-left: none; border-bottom: none;
+    transform: translateX(50%) translateY(-50%) rotate(45deg);
+  }
+  @media (max-width: 700px) { .meth-step:not(:last-child)::after { display: none; } }
+  .meth-scroll-arrow {
+    animation: methBob 2s ease-in-out infinite;
+  }
+  .meth-s1 { background: radial-gradient(ellipse 55% 50% at 50% 85%, rgba(var(--accent-rgb),.06), transparent); }
+  .meth-s2 { background: radial-gradient(circle at 80% 20%, rgba(var(--accent-rgb),.06), transparent 45%); }
+  .meth-s3 { background: radial-gradient(ellipse 60% 50% at 30% 70%, rgba(var(--accent-rgb),.06), transparent); }
+  .dark .meth-s1 { background: radial-gradient(ellipse 55% 50% at 50% 85%, rgba(var(--accent-rgb),.1), transparent); }
+  .dark .meth-s2 { background: radial-gradient(circle at 80% 20%, rgba(var(--accent-rgb),.1), transparent 45%); }
+  .dark .meth-s3 { background: radial-gradient(ellipse 60% 50% at 30% 70%, rgba(var(--accent-rgb),.1), transparent); }
+  .meth-taste-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--tc, var(--accent));
+  }
+  .meth-pd-art::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 80%, transparent 40%, rgba(255,255,255,.2));
+  }
+  .dark .meth-pd-art::after {
+    background: radial-gradient(circle at 50% 80%, transparent 40%, rgba(0,0,0,.15));
+  }
+  .meth-p-thumb.active {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--pa) 10%, transparent), var(--shadow);
+  }
+  .meth-reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+  }
+  .meth-reveal.vis { opacity: 1; transform: translateY(0); }
+  .meth-reveal.d1 { transition-delay: .08s; }
+  .meth-reveal.d2 { transition-delay: .16s; }
+  .meth-reveal.d3 { transition-delay: .24s; }
+  .meth-reveal.d4 { transition-delay: .32s; }
+
+  /* ── Setup wizard progress bars ── */
+  .wizard-stage-fill {
+    transition: width .35s ease;
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  .wizard-stage-track.is-active .wizard-stage-fill {
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+  .wizard-stage-track.is-done .wizard-stage-fill {
+    background: color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .wizard-stage-track.is-error .wizard-stage-fill {
+    background: color-mix(in srgb, var(--stat-r) 32%, transparent);
+  }
+
+  /* ── Focus visible ── */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--ui-radius-sm);
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+    .player-card { transform: none !important; }
+    .meth-reveal { opacity: 1 !important; transform: none !important; }
+  }
+}
+
+/* No overrides needed — conflicting class names (.container) renamed to .dash-container */
