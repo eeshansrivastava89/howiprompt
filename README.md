@@ -2,7 +2,7 @@
 
 # How I Prompt
 
-A local-first analytics dashboard for your Claude Code and Codex conversations. It syncs local logs, computes prompting metrics on-device, and opens an interactive dashboard in your browser.
+A local-first analytics dashboard for your AI coding assistant conversations. It syncs local logs, computes prompting metrics on-device, and opens an interactive dashboard in your browser.
 
 **[View Live Demo →](https://howiprompt.eeshans.com)**
 
@@ -55,13 +55,15 @@ Subsequent refreshes are incremental and reuse the local database, caches, and c
 |--------|----------|
 | **Claude Code** | `~/.claude/projects/*.jsonl` |
 | **Codex** | `~/.codex/history.jsonl` |
+| **Copilot Chat** | `~/Library/Application Support/Code/User/workspaceStorage` |
+| **Cursor** | `~/Library/Application Support/Cursor/User/workspaceStorage` |
+| **LM Studio** | `~/.lmstudio/conversations` |
 
-Both are auto-synced into `~/.howiprompt/raw/` and reused across refreshes.
+All supported sources are auto-synced into `~/.howiprompt/raw/` and reused across refreshes.
 
 ### Backend Status
 
-- Supported today: `Claude Code`, `Codex`
-- Detected but not yet ingested: `GitHub Copilot Chat`, `Cursor`
+- Supported today: `Claude Code`, `Codex`, `Copilot Chat`, `Cursor`, `LM Studio`
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "name": "howiprompt",
   "version": "2.0.0",
-  "description": "Local-first analytics dashboard for your Claude Code and Codex prompting patterns",
+  "description": "Local-first analytics dashboard for your AI coding assistant conversations",
   "type": "module",
   "bin": {
     "howiprompt": "bin/cli.mjs"

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Methodology — Final</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;0,9..144,900;1,9..144,400;1,9..144,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Reset ─── */
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;background:var(--bg)}
+
+    /* ─── Theme tokens ─── */
+    :root{
+      --bg:#f5f3f0;--surface:#fff;--surface-raised:#faf8f5;
+      --text:#3c3226;--subtext:#6b5e50;--muted:#8a7d6f;
+      --border:#d9d2c9;--border-light:#ebe5dc;
+      --accent:#5c3d2e;--accent-soft:#ede6de;--accent-rgb:92,61,46;
+      --card-shadow:0 1px 3px rgba(60,50,38,.05),0 4px 12px rgba(60,50,38,.04);
+      --glow-opacity:.06;
+    }
+    html.dark{
+      --bg:#1c1816;--surface:#2a2420;--surface-raised:#322b25;
+      --text:#e0d6cc;--subtext:#b0a596;--muted:#8a7d6f;
+      --border:#3d342c;--border-light:#332c26;
+      --accent:#c9a882;--accent-soft:#2e261f;--accent-rgb:201,168,130;
+      --card-shadow:0 1px 3px rgba(0,0,0,.2),0 4px 12px rgba(0,0,0,.15);
+      --glow-opacity:.1;
+    }
+
+    /* ─── Grain overlay ─── */
+    body::after{
+      content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+      opacity:.04;mix-blend-mode:multiply;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size:180px;
+    }
+    html.dark body::after{mix-blend-mode:screen;opacity:.025}
+
+    /* ─── Backdrop + Modal ─── */
+    .backdrop{
+      position:fixed;inset:0;
+      background:rgba(60,50,38,.35);
+      backdrop-filter:blur(8px);
+      display:flex;align-items:center;justify-content:center;
+      padding:16px;
+      color:var(--text);
+    }
+    html.dark .backdrop{background:rgba(0,0,0,.55)}
+
+    .modal{
+      width:min(1000px,100%);
+      height:min(720px,calc(100vh - 32px));
+      background:var(--bg);
+      border-radius:20px;overflow:hidden;
+      display:flex;flex-direction:column;
+      position:relative;
+      border:1px solid var(--border-light);
+      box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06),0 32px 64px rgba(0,0,0,.08);
+    }
+    html.dark .modal{box-shadow:0 1px 2px rgba(0,0,0,.2),0 8px 24px rgba(0,0,0,.2),0 32px 64px rgba(0,0,0,.25)}
+
+    /* ─── Progress bar ─── */
+    .progress{position:absolute;top:0;left:0;right:0;height:2px;background:var(--border-light);z-index:20}
+    .progress-fill{height:100%;width:0%;transition:width .25s;border-radius:0 1px 1px 0;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 50%,transparent))}
+
+    /* ─── Header ─── */
+    .header{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:14px 22px;border-bottom:1px solid var(--border-light);
+      flex-shrink:0;background:var(--bg);z-index:10;
+    }
+    .header-left{display:flex;align-items:center;gap:12px}
+    .logo-mark{
+      width:32px;height:32px;border-radius:8px;
+      background:var(--accent);
+      display:flex;align-items:center;justify-content:center;
+      font-size:15px;
+      box-shadow:0 2px 6px rgba(var(--accent-rgb),.2);
+    }
+    .header-title{font-family:'Fraunces',serif;font-size:16px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+    .header-sub{font-size:11px;color:var(--muted);margin-top:1px}
+    .header-right{display:flex;align-items:center;gap:8px}
+    .icon-btn{
+      width:32px;height:32px;border-radius:8px;border:1px solid var(--border);
+      background:var(--surface);color:var(--muted);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;font-size:14px;
+      transition:.15s;
+    }
+    .icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+    /* ─── Scroll container — snap ─── */
+    .scroll{
+      flex:1;height:0;min-height:0;
+      overflow-y:auto;overflow-x:hidden;
+      scroll-snap-type:y mandatory;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(var(--accent-rgb),.15) transparent;
+    }
+    .scroll::-webkit-scrollbar{width:5px}
+    .scroll::-webkit-scrollbar-track{background:transparent}
+    .scroll::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),.15);border-radius:3px}
+
+    /* Each section fills the scroll viewport exactly */
+    .snap-section{
+      min-height:100%;
+      height:100%;
+      scroll-snap-align:start;
+      scroll-snap-stop:always;
+      display:flex;flex-direction:column;
+      overflow:hidden;
+      flex-shrink:0;
+    }
+
+    /* ─── Reveal animation ─── */
+    .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+    .reveal.vis{opacity:1;transform:translateY(0)}
+    .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}
+    .reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+
+    /* ═══════════════════════════════════
+       SECTION 1 — INTRO + PIPELINE
+       ═══════════════════════════════════ */
+    .s1{
+      background:
+        radial-gradient(ellipse 55% 50% at 50% 85%,rgba(var(--accent-rgb),var(--glow-opacity)),transparent);
+    }
+    .s1-inner{
+      flex:1;display:flex;flex-direction:column;
+      justify-content:center;
+      padding:0 48px;
+      gap:0;
+    }
+    @media(max-width:640px){.s1-inner{padding:0 20px}}
+
+    /* Hero */
+    .hero{text-align:center;padding:40px 0 32px}
+    .hero-kicker{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:6px 14px;border-radius:999px;
+      background:var(--accent-soft);
+      font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+      text-transform:uppercase;letter-spacing:.12em;color:var(--accent);
+      margin-bottom:20px;
+    }
+    .hero h1{
+      font-family:'Fraunces',serif;
+      font-size:clamp(34px,5.5vw,52px);
+      font-weight:800;line-height:1.02;letter-spacing:-.04em;
+      color:var(--text);max-width:15ch;margin:0 auto;
+    }
+    .hero h1 em{font-style:italic;font-weight:600;color:var(--accent)}
+    .hero-sub{
+      margin-top:16px;font-size:17px;line-height:1.6;
+      color:var(--subtext);max-width:46ch;margin-left:auto;margin-right:auto;
+    }
+
+    /* Pipeline */
+    .pipeline-wrap{padding:0 0 28px}
+    .section-rule{
+      font-family:'Fraunces',serif;font-size:14px;font-weight:700;
+      color:var(--accent);margin-bottom:18px;
+      display:flex;align-items:center;gap:12px;
+    }
+    .section-rule::after{content:'';flex:1;height:1px;background:var(--border-light)}
+
+    .process-track{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+    @media(max-width:700px){.process-track{grid-template-columns:1fr 1fr}}
+
+    .brew-step{
+      padding:22px 20px;background:var(--surface);
+      border:1px solid var(--border-light);
+      position:relative;transition:.2s;
+    }
+    .brew-step:first-child{border-radius:12px 0 0 12px}
+    .brew-step:last-child{border-radius:0 12px 12px 0}
+    @media(max-width:700px){
+      .brew-step:first-child{border-radius:12px 0 0 0}
+      .brew-step:nth-child(2){border-radius:0 12px 0 0}
+      .brew-step:nth-child(3){border-radius:0 0 0 12px}
+      .brew-step:last-child{border-radius:0 0 12px 0}
+    }
+    .brew-step:hover{background:var(--surface-raised)}
+
+    .brew-icon{
+      width:38px;height:38px;border-radius:9px;
+      background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#a08060));
+      color:#f0e8de;display:flex;align-items:center;justify-content:center;
+      font-size:17px;margin-bottom:12px;
+      box-shadow:0 4px 10px rgba(var(--accent-rgb),.2);
+    }
+    .brew-step h3{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-bottom:5px;color:var(--text)}
+    .brew-step p{font-size:13px;line-height:1.55;color:var(--muted)}
+
+    /* Arrow connectors */
+    .brew-step:not(:last-child)::after{
+      content:'';position:absolute;right:-1px;top:50%;z-index:2;
+      width:14px;height:14px;
+      background:var(--bg);
+      border:1px solid var(--border-light);border-left:none;border-bottom:none;
+      transform:translateX(50%) translateY(-50%) rotate(45deg);
+    }
+    @media(max-width:700px){.brew-step:not(:last-child)::after{display:none}}
+
+    /* Scroll hint */
+    .scroll-hint{
+      text-align:center;padding:8px 0 16px;
+      color:var(--muted);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;font-family:'JetBrains Mono',monospace;
+      display:flex;flex-direction:column;align-items:center;gap:6px;
+    }
+    .scroll-arrow{
+      width:14px;height:14px;
+      border-right:2px solid var(--border);border-bottom:2px solid var(--border);
+      transform:rotate(45deg);
+      animation:bob 2s ease-in-out infinite;
+    }
+    @keyframes bob{0%,100%{transform:rotate(45deg) translate(0,0)}50%{transform:rotate(45deg) translate(2px,2px)}}
+
+
+    /* ═══════════════════════════════════
+       SECTION 2 — TASTING NOTES
+       ═══════════════════════════════════ */
+    .s2{
+      background:
+        radial-gradient(circle at 80% 20%,rgba(var(--accent-rgb),var(--glow-opacity)),transparent 45%);
+    }
+    .s2-inner{
+      flex:1;display:flex;flex-direction:column;
+      justify-content:center;
+      padding:0 48px;
+    }
+    @media(max-width:640px){.s2-inner{padding:0 20px}}
+
+    .s2-header{text-align:center;margin-bottom:36px}
+    .s2-header h2{
+      font-family:'Fraunces',serif;font-size:clamp(28px,4vw,40px);
+      font-weight:800;letter-spacing:-.03em;color:var(--text);line-height:1.05;
+    }
+    .s2-header p{margin-top:10px;font-size:16px;color:var(--subtext);max-width:48ch;margin-left:auto;margin-right:auto;line-height:1.6}
+
+    .taste-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    @media(max-width:800px){.taste-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:480px){.taste-grid{grid-template-columns:1fr}}
+
+    .taste-card{
+      padding:24px 22px;border-radius:16px;
+      background:var(--surface);border:1px solid var(--border-light);
+      box-shadow:var(--card-shadow);
+      position:relative;overflow:hidden;
+    }
+    .taste-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:var(--tc,var(--accent));
+    }
+    .taste-category{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:16px}
+    .taste-list{display:flex;flex-direction:column;gap:0}
+    .taste-item{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border-light);font-size:14px}
+    .taste-item:last-child{border-bottom:none}
+    .taste-item-name{font-weight:600;color:var(--text)}
+    .taste-item-note{color:var(--muted);font-size:12px;text-align:right}
+
+
+    /* ═══════════════════════════════════
+       SECTION 3 — PERSONA EXPLORER
+       ═══════════════════════════════════ */
+    .s3{
+      background:
+        radial-gradient(ellipse 60% 50% at 30% 70%,rgba(var(--accent-rgb),var(--glow-opacity)),transparent);
+    }
+    .s3-inner{
+      flex:1;display:flex;flex-direction:column;
+      padding:28px 48px 24px;
+      min-height:0;
+    }
+    @media(max-width:640px){.s3-inner{padding:24px 20px 20px}}
+
+    .s3-header{margin-bottom:20px}
+    .s3-header h2{font-family:'Fraunces',serif;font-size:clamp(26px,3.5vw,36px);font-weight:800;letter-spacing:-.03em;color:var(--text);line-height:1.05}
+    .s3-header p{margin-top:8px;font-size:15px;color:var(--subtext);line-height:1.55}
+
+    .persona-layout{
+      flex:1;min-height:0;
+      display:grid;
+      grid-template-columns:210px 1fr;
+      gap:16px;
+    }
+    @media(max-width:760px){.persona-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr}}
+
+    /* Picker column */
+    .persona-list{
+      display:flex;flex-direction:column;gap:6px;
+      overflow-y:auto;
+      scrollbar-width:thin;scrollbar-color:rgba(var(--accent-rgb),.1) transparent;
+    }
+    @media(max-width:760px){.persona-list{flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:8px;padding-bottom:4px}}
+
+    .p-thumb{
+      display:flex;align-items:center;gap:12px;
+      padding:11px 14px;border-radius:13px;
+      background:var(--surface);border:2px solid transparent;
+      cursor:pointer;transition:.2s;flex-shrink:0;
+      box-shadow:var(--card-shadow);
+    }
+    .p-thumb:hover{border-color:var(--border);transform:translateY(-1px)}
+    .p-thumb.active{
+      border-color:var(--pa,var(--accent));
+      background:color-mix(in srgb,var(--pa,var(--accent)) 6%,var(--surface));
+      box-shadow:0 0 0 3px color-mix(in srgb,var(--pa) 10%,transparent),var(--card-shadow);
+    }
+    .p-thumb-img{
+      width:44px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;
+      background:var(--surface-raised);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .p-thumb-img img{width:90%;height:90%;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.1))}
+    .p-thumb-text{min-width:0}
+    .p-thumb-name{font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .p-thumb-trait{font-size:11px;color:var(--muted);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    @media(max-width:760px){
+      .p-thumb{flex-direction:column;text-align:center;gap:6px;padding:8px 14px;min-width:100px}
+      .p-thumb-trait{display:none}
+    }
+
+    /* Detail panel */
+    .persona-detail{
+      min-height:0;
+      border-radius:18px;overflow:hidden;
+      background:var(--surface);border:1px solid var(--border-light);
+      box-shadow:var(--card-shadow);
+      display:grid;
+      grid-template-columns:240px 1fr;
+    }
+    @media(max-width:900px){.persona-detail{grid-template-columns:200px 1fr}}
+    @media(max-width:760px){.persona-detail{grid-template-columns:1fr;grid-template-rows:180px 1fr}}
+
+    .pd-art{
+      display:flex;align-items:center;justify-content:center;
+      background:var(--pd-gradient,linear-gradient(160deg,#ede6de,#f5f3f0));
+      border-right:1px solid var(--border-light);
+      padding:20px;position:relative;overflow:hidden;
+    }
+    @media(max-width:760px){.pd-art{border-right:none;border-bottom:1px solid var(--border-light)}}
+    .pd-art::after{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 50% 80%,transparent 40%,rgba(255,255,255,.2));
+    }
+    html.dark .pd-art{
+      background:var(--pd-gradient-dark,linear-gradient(160deg,#2e2822,#1c1816));
+    }
+    html.dark .pd-art::after{background:radial-gradient(circle at 50% 80%,transparent 40%,rgba(0,0,0,.15))}
+    .pd-art img{
+      height:82%;width:auto;max-width:90%;object-fit:contain;position:relative;z-index:1;
+      filter:drop-shadow(0 10px 20px rgba(0,0,0,.15));
+      transition:transform .4s cubic-bezier(.16,1,.3,1),opacity .25s;
+    }
+
+    .pd-copy{
+      padding:24px 28px;overflow-y:auto;display:flex;flex-direction:column;gap:0;
+      scrollbar-width:thin;scrollbar-color:rgba(var(--accent-rgb),.1) transparent;
+    }
+    @media(max-width:640px){.pd-copy{padding:18px 20px}}
+
+    .pd-badge{
+      font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+      text-transform:uppercase;letter-spacing:.1em;
+      color:var(--pa,var(--accent));margin-bottom:5px;
+    }
+    .pd-name{
+      font-family:'Fraunces',serif;
+      font-size:clamp(28px,3.5vw,38px);font-weight:800;
+      letter-spacing:-.04em;line-height:.95;
+      color:var(--text);margin-bottom:12px;
+    }
+    .pd-desc{font-size:15px;line-height:1.6;color:var(--subtext);margin-bottom:18px}
+
+    .pd-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    @media(max-width:500px){.pd-cards{grid-template-columns:1fr}}
+    .pd-card{padding:14px 16px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--border-light)}
+    .pd-card-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+    .pd-card-text{font-size:13px;line-height:1.55;color:var(--text)}
+
+    .pd-axes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    @media(max-width:600px){.pd-axes{grid-template-columns:1fr 1fr}}
+    .ax{display:flex;flex-direction:column;gap:5px}
+    .ax-label{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--text)}
+    .ax-label span:last-child{font-family:'JetBrains Mono',monospace;color:var(--muted)}
+    .ax-track{height:6px;border-radius:3px;background:var(--border-light);overflow:hidden}
+    .ax-fill{height:100%;border-radius:3px;background:var(--pa,var(--accent));transition:width .5s cubic-bezier(.16,1,.3,1)}
+
+
+    /* ─── Bottom bar ─── */
+    .bottombar{
+      padding:12px 22px;border-top:1px solid var(--border-light);
+      display:flex;justify-content:space-between;align-items:center;
+      flex-shrink:0;gap:12px;flex-wrap:wrap;background:var(--bg);
+    }
+    .bottombar-note{font-size:11px;color:var(--muted);line-height:1.5;max-width:50ch}
+    .dot-nav{display:flex;gap:6px;align-items:center}
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background:var(--border);cursor:pointer;
+      transition:.2s;border:none;
+    }
+    .dot.active{background:var(--accent);box-shadow:0 0 6px rgba(var(--accent-rgb),.25)}
+    .dot:hover{background:color-mix(in srgb,var(--accent) 50%,var(--border))}
+
+    /* ─── Reduced motion ─── */
+    @media(prefers-reduced-motion:reduce){
+      *{transition:none!important;animation:none!important}
+      .reveal{opacity:1!important;transform:none!important}
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop" id="root">
+    <div class="modal">
+      <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <div class="logo-mark">☕</div>
+          <div>
+            <div class="header-title">The Brew Guide</div>
+            <div class="header-sub">How your prompting style gets scored</div>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="icon-btn" id="themeToggle" title="Toggle theme">
+            <span id="themeIcon">🌙</span>
+          </button>
+          <button class="icon-btn close-btn" title="Close">✕</button>
+        </div>
+      </div>
+
+      <!-- Scroll container -->
+      <div class="scroll" id="scroll">
+
+        <!-- ═══ S1: INTRO + PIPELINE ═══ -->
+        <section class="snap-section s1" data-section="0">
+          <div class="s1-inner">
+            <div class="hero">
+              <div class="hero-kicker reveal">☕ Methodology</div>
+              <h1 class="reveal d1">From raw chats to your <em>signature blend</em></h1>
+              <p class="hero-sub reveal d2">We harvest your local chat history, roast it through embeddings, and brew a persona that captures how you prompt.</p>
+            </div>
+
+            <div class="pipeline-wrap reveal d3">
+              <div class="section-rule">The Brewing Process</div>
+              <div class="process-track">
+                <div class="brew-step">
+                  <div class="brew-icon">🫘</div>
+                  <h3>Harvest</h3>
+                  <p>Read local histories from Claude Code, Codex, Copilot Chat, Cursor, and LM Studio.</p>
+                </div>
+                <div class="brew-step">
+                  <div class="brew-icon">⚙️</div>
+                  <h3>Sort</h3>
+                  <p>Keep human-authored prompts. Remove system messages, tool output, and assistant text.</p>
+                </div>
+                <div class="brew-step">
+                  <div class="brew-icon">🔥</div>
+                  <h3>Roast</h3>
+                  <p>Embed each prompt with bge-small-en-v1.5 locally. Score 7 metrics via cosine similarity.</p>
+                </div>
+                <div class="brew-step">
+                  <div class="brew-icon">☕</div>
+                  <h3>Brew</h3>
+                  <p>Four axes — Precision, Curiosity, Tenacity, Trust — map to the persona that fits you.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="scroll-hint reveal d4">
+              <span>Scroll</span>
+              <div class="scroll-arrow"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ S2: TASTING NOTES ═══ -->
+        <section class="snap-section s2" data-section="1">
+          <div class="s2-inner">
+            <div class="s2-header reveal">
+              <h2>Tasting Notes</h2>
+              <p>Seven metrics across four dimensions. Each one uses embeddings — not regex or keyword matching.</p>
+            </div>
+
+            <div class="taste-grid">
+              <div class="taste-card reveal d1" style="--tc:#5c3d2e">
+                <div class="taste-category">Volume</div>
+                <div class="taste-list">
+                  <div class="taste-item"><span class="taste-item-name">Prompts</span><span class="taste-item-note">Total messages</span></div>
+                  <div class="taste-item"><span class="taste-item-name">Conversations</span><span class="taste-item-note">Distinct threads</span></div>
+                  <div class="taste-item"><span class="taste-item-name">Words</span><span class="taste-item-note">Total typed</span></div>
+                </div>
+              </div>
+              <div class="taste-card reveal d2" style="--tc:#7b5a42">
+                <div class="taste-category">Timing</div>
+                <div class="taste-list">
+                  <div class="taste-item"><span class="taste-item-name">Peak hour</span><span class="taste-item-note">Most active time</span></div>
+                  <div class="taste-item"><span class="taste-item-name">Night owl</span><span class="taste-item-note">11pm–4am share</span></div>
+                  <div class="taste-item"><span class="taste-item-name">Trend</span><span class="taste-item-note">Volume over time</span></div>
+                </div>
+              </div>
+              <div class="taste-card reveal d3" style="--tc:#a08060">
+                <div class="taste-category">Style</div>
+                <div class="taste-list">
+                  <div class="taste-item"><span class="taste-item-name">Human in Loop</span><span class="taste-item-note">How you steer</span></div>
+                  <div class="taste-item"><span class="taste-item-name">Vibe Coder</span><span class="taste-item-note">Structured vs. free</span></div>
+                  <div class="taste-item"><span class="taste-item-name">Politeness</span><span class="taste-item-note">Tone warmth</span></div>
+                </div>
+              </div>
+              <div class="taste-card reveal d4" style="--tc:#c4a882">
+                <div class="taste-category">Persona Axes</div>
+                <div class="taste-list">
+                  <div class="taste-item"><span class="taste-item-name">Precision</span><span class="taste-item-note">Instruction detail</span></div>
+                  <div class="taste-item"><span class="taste-item-name">Curiosity</span><span class="taste-item-note">Exploration</span></div>
+                  <div class="taste-item"><span class="taste-item-name">Tenacity</span><span class="taste-item-note">Depth</span></div>
+                  <div class="taste-item"><span class="taste-item-name">Trust</span><span class="taste-item-note">Delegation</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ S3: PERSONA EXPLORER ═══ -->
+        <section class="snap-section s3" data-section="2">
+          <div class="s3-inner">
+            <div class="s3-header reveal">
+              <h2>House Blends — The 5 Personas</h2>
+              <p>Your dominant axis determines which blend fits your prompting pattern.</p>
+            </div>
+
+            <div class="persona-layout reveal d1">
+              <div class="persona-list" id="personaList"></div>
+              <div class="persona-detail" id="personaDetail"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="bottombar">
+        <span class="bottombar-note">All analysis stays local. Persona is a pattern summary, not a fixed identity.</span>
+        <div class="dot-nav" id="dotNav">
+          <button class="dot active" data-idx="0"></button>
+          <button class="dot" data-idx="1"></button>
+          <button class="dot" data-idx="2"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const IMG = '../frontend/public/images/';
+    const personas = [
+      { key:'architect', img:IMG+'char_architect.png', name:'The Architect',
+        badge:'Precision-led', trait:'Structured, exact, review-heavy',
+        accent:'#7b5a42', accentDark:'#c4a07a',
+        gradient:'linear-gradient(160deg,#e8ddd2,#ddd0c2)',
+        gradientDark:'linear-gradient(160deg,#342c24,#2a2218)',
+        desc:'You think in specs, constraints, and acceptance criteria. You want the AI to follow the plan closely and you review outputs carefully.',
+        prompt:'"Use the existing component API. Keep the interaction model unchanged. Add keyboard support, tests, and a migration note."',
+        liner:'You like the model to be powerful, but not unsupervised.',
+        axes:{Precision:91,Curiosity:48,Tenacity:67,Trust:31} },
+      { key:'explorer', img:IMG+'char_explorer.png', name:'The Explorer',
+        badge:'Curiosity-led', trait:'Investigative, branching, exploratory',
+        accent:'#3f7a6e', accentDark:'#6abfae',
+        gradient:'linear-gradient(160deg,#d4e8e3,#c2ddd6)',
+        gradientDark:'linear-gradient(160deg,#222e2b,#1a2624)',
+        desc:'You probe, branch, and investigate. Your prompts open doors instead of closing them, and you use the AI to discover rather than execute.',
+        prompt:'"Compare these three approaches, surface tradeoffs, and tell me what an experienced engineer would worry about."',
+        liner:'You use the model as an idea space, not just a task runner.',
+        axes:{Precision:63,Curiosity:92,Tenacity:59,Trust:46} },
+      { key:'commander', img:IMG+'char_commander.png', name:'The Commander',
+        badge:'Direct + decisive', trait:'Efficient, concise, action-first',
+        accent:'#41608e', accentDark:'#7da4d4',
+        gradient:'linear-gradient(160deg,#d4dde8,#c2cedd)',
+        gradientDark:'linear-gradient(160deg,#222830,#1a2028)',
+        desc:'You issue clear, efficient instructions and move fast. Less discussion, more execution. You like momentum and concise control.',
+        prompt:'"Patch this regression, keep the API stable, and show me the exact files changed."',
+        liner:'You prefer decisive progress over collaborative wandering.',
+        axes:{Precision:82,Curiosity:38,Tenacity:34,Trust:49} },
+      { key:'partner', img:IMG+'char_partner.png', name:'The Partner',
+        badge:'Tenacity-led', trait:'Iterative, collaborative, persistent',
+        accent:'#8a5d73', accentDark:'#c48aa8',
+        gradient:'linear-gradient(160deg,#e8d8e0,#ddc8d4)',
+        gradientDark:'linear-gradient(160deg,#2e2428,#261c22)',
+        desc:'You stay with problems. Your prompts build through iteration, refinement, and back-and-forth until the result feels right.',
+        prompt:'"Better, but not there yet. Keep the tone, reduce complexity, and give me a second version with a stronger opening."',
+        liner:'You keep pushing until the output finally clicks.',
+        axes:{Precision:61,Curiosity:58,Tenacity:93,Trust:52} },
+      { key:'delegator', img:IMG+'char_delegator.png', name:'The Delegator',
+        badge:'Trust-led', trait:'Outcome-first, delegative, leveraged',
+        accent:'#8a7a44', accentDark:'#c4b46a',
+        gradient:'linear-gradient(160deg,#e8e2d0,#ddd6c0)',
+        gradientDark:'linear-gradient(160deg,#2c2a1e,#24221a)',
+        desc:'You define the goal, trust the system, and let the AI fill in the path. You optimize for outcomes more than hand-holding.',
+        prompt:'"Build the first draft end-to-end, choose sensible defaults, and then tell me what assumptions you made."',
+        liner:'You want lift and momentum, even if it means giving up some control.',
+        axes:{Precision:44,Curiosity:46,Tenacity:57,Trust:94} }
+    ];
+
+    const isDark = () => document.documentElement.classList.contains('dark');
+
+    // ─── Persona list + detail ───
+    const listEl = document.getElementById('personaList');
+    const detailEl = document.getElementById('personaDetail');
+    let activeKey = 'architect';
+
+    function renderList() {
+      listEl.innerHTML = personas.map(p => `
+        <button class="p-thumb ${p.key===activeKey?'active':''}" data-key="${p.key}"
+                style="--pa:${isDark()?p.accentDark:p.accent}">
+          <div class="p-thumb-img"><img src="${p.img}" alt="${p.name}"/></div>
+          <div class="p-thumb-text">
+            <div class="p-thumb-name">${p.name.replace('The ','')}</div>
+            <div class="p-thumb-trait">${p.trait}</div>
+          </div>
+        </button>`).join('');
+    }
+
+    function renderDetail(key, animate) {
+      const p = personas.find(x => x.key === key);
+      if (!p) return;
+      const dark = isDark();
+      const ac = dark ? p.accentDark : p.accent;
+
+      detailEl.style.setProperty('--pa', ac);
+      detailEl.style.setProperty('--pd-gradient', p.gradient);
+      detailEl.style.setProperty('--pd-gradient-dark', p.gradientDark);
+
+      const img = detailEl.querySelector('.pd-art img');
+      if (animate && img) {
+        img.style.opacity = '0';
+        img.style.transform = 'scale(.9)';
+        setTimeout(() => updateDetailContent(p, ac), 200);
+      } else {
+        updateDetailContent(p, ac);
+      }
+    }
+
+    function updateDetailContent(p, ac) {
+      detailEl.innerHTML = `
+        <div class="pd-art">
+          <img src="${p.img}" alt="${p.name}" style="opacity:0;transform:scale(.9)"/>
+        </div>
+        <div class="pd-copy">
+          <div class="pd-badge" style="color:${ac}">${p.badge}</div>
+          <div class="pd-name">${p.name}</div>
+          <p class="pd-desc">${p.desc}</p>
+          <div class="pd-cards">
+            <div class="pd-card">
+              <div class="pd-card-label">Signature prompt</div>
+              <div class="pd-card-text">${p.prompt}</div>
+            </div>
+            <div class="pd-card">
+              <div class="pd-card-label">Flavor note</div>
+              <div class="pd-card-text">${p.liner}</div>
+            </div>
+          </div>
+          <div class="pd-axes">
+            ${Object.entries(p.axes).map(([k,v])=>`
+              <div class="ax">
+                <div class="ax-label"><span>${k}</span><span>${v}</span></div>
+                <div class="ax-track"><div class="ax-fill" style="width:0%;background:${ac}"></div></div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+
+      // Animate in
+      requestAnimationFrame(() => {
+        const img = detailEl.querySelector('.pd-art img');
+        if (img) { img.style.opacity = '1'; img.style.transform = 'scale(1)'; }
+        detailEl.querySelectorAll('.ax-fill').forEach((f, i) => {
+          const w = Object.values(p.axes)[i];
+          setTimeout(() => f.style.width = w + '%', 50 + i * 60);
+        });
+      });
+    }
+
+    function selectPersona(key) {
+      const animate = key !== activeKey;
+      activeKey = key;
+      renderList();
+      renderDetail(key, animate);
+    }
+
+    listEl.addEventListener('click', e => {
+      const btn = e.target.closest('[data-key]');
+      if (btn) selectPersona(btn.dataset.key);
+    });
+
+    // Initial render
+    renderList();
+    renderDetail('architect', false);
+
+    // ─── Theme toggle ───
+    const themeIcon = document.getElementById('themeIcon');
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      themeIcon.textContent = isDark() ? '☀️' : '🌙';
+      // Re-render persona with new accent colors
+      renderList();
+      renderDetail(activeKey, false);
+    });
+
+    // ─── Intersection Observer for reveals ───
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+    }, { threshold: 0.1, root: document.getElementById('scroll') });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // ─── Scroll progress + dot nav ───
+    const scroll = document.getElementById('scroll');
+    const sections = document.querySelectorAll('[data-section]');
+    const dots = document.querySelectorAll('.dot');
+    const pf = document.getElementById('progressFill');
+
+    scroll.addEventListener('scroll', () => {
+      const max = scroll.scrollHeight - scroll.clientHeight;
+      pf.style.width = (max > 0 ? scroll.scrollTop / max * 100 : 0) + '%';
+      let cur = 0;
+      const sr = scroll.getBoundingClientRect();
+      sections.forEach((s, i) => {
+        if (s.getBoundingClientRect().top - sr.top < sr.height * 0.5) cur = i;
+      });
+      dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+    });
+
+    dots.forEach(d => d.addEventListener('click', () => {
+      sections[parseInt(d.dataset.idx)]?.scrollIntoView({ behavior:'smooth' });
+    }));
+  </script>
+</body>
+</html>
