@@ -1,6 +1,6 @@
 import type { Client } from "@libsql/client";
 import { queryMessages, platformFilter, type MessageRow } from "./db.js";
-import { Platform, Role } from "./models.js";
+import { PLATFORM_VALUES, type Platform, Role } from "./models.js";
 import { BACKTRACK_PATTERNS, COMMAND_PATTERN } from "./nlp.js";
 
 function countPatternMatches(text: string, pattern: RegExp): number {
@@ -42,7 +42,7 @@ export function buildTrendRollups(
     const msgs = bucketMap.get(key)!;
     const totalPrompts = msgs.length;
 
-    const sourceCounts: Record<string, number> = { claude_code: 0, codex: 0 };
+    const sourceCounts: Record<string, number> = {};
     const modelCounts: Record<string, number> = {};
 
     for (const m of msgs) {
@@ -54,7 +54,7 @@ export function buildTrendRollups(
     }
 
     const sourceSharePct: Record<string, number> = {};
-    for (const src of [Platform.CLAUDE_CODE, Platform.CODEX]) {
+    for (const src of Object.keys(sourceCounts).sort()) {
       sourceSharePct[src] = totalPrompts ? round((sourceCounts[src] ?? 0) / totalPrompts * 100, 1) : 0;
     }
 
@@ -93,9 +93,13 @@ export function computeTrendDeltas(dailyRollups: Record<string, any>[]): Record<
   const recent7 = windowRollups(7);
   const recent30 = windowRollups(30);
 
+  function dominantSourceShare(item: any): number {
+    return Math.max(0, ...Object.values(item.source_share_pct || {}).map((value) => Number(value) || 0));
+  }
+
   const selectors: Record<string, (item: any) => number> = {
     prompts_per_day: (item) => item.prompts,
-    codex_share_pct: (item) => item.source_share_pct[Platform.CODEX],
+    dominant_source_share_pct: dominantSourceShare,
     backtrack_per_100: (item) => item.style.backtrack_per_100,
     question_rate_pct: (item) => item.style.question_rate_pct,
     command_rate_pct: (item) => item.style.command_rate_pct,
@@ -140,19 +144,25 @@ export function detectShiftMarkers(dailyRollups: Record<string, any>[]): Record<
       });
     }
 
-    const codexDelta = round(
-      curr.source_share_pct[Platform.CODEX] - prev.source_share_pct[Platform.CODEX],
-      1,
-    );
-    if (Math.abs(codexDelta) >= 20) {
+    const sources = new Set([
+      ...Object.keys(prev.source_share_pct || {}),
+      ...Object.keys(curr.source_share_pct || {}),
+    ]);
+    for (const source of sources) {
+      const shareDelta = round(
+        Number(curr.source_share_pct?.[source] ?? 0) - Number(prev.source_share_pct?.[source] ?? 0),
+        1,
+      );
+      if (Math.abs(shareDelta) < 20) continue;
       markers.push({
         date: curr.date,
         type: "source_share_shift",
-        direction: codexDelta > 0 ? "up" : "down",
-        delta_codex_share_pct: codexDelta,
-        prev_codex_share_pct: prev.source_share_pct[Platform.CODEX],
-        curr_codex_share_pct: curr.source_share_pct[Platform.CODEX],
-        magnitude: Math.abs(codexDelta),
+        source,
+        direction: shareDelta > 0 ? "up" : "down",
+        delta_source_share_pct: shareDelta,
+        prev_source_share_pct: Number(prev.source_share_pct?.[source] ?? 0),
+        curr_source_share_pct: Number(curr.source_share_pct?.[source] ?? 0),
+        magnitude: Math.abs(shareDelta),
       });
     }
   }
@@ -200,10 +210,9 @@ export async function computeTrendMetrics(
 
   // When showing all platforms, add per-platform weekly breakdowns
   if (!platform) {
-    const platforms = [Platform.CLAUDE_CODE, Platform.CODEX];
     const byPlatform: Record<string, Record<string, any>[]> = {};
 
-    for (const plat of platforms) {
+    for (const plat of PLATFORM_VALUES) {
       const platMsgs = humanMsgs.filter((m) => m.platform === plat);
       if (platMsgs.length === 0) continue;
 

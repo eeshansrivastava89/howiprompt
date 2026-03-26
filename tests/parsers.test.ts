@@ -2,7 +2,13 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
-import { parseClaudeCode, parseCodexHistory, parseCodexSessionMetadata } from "../src/pipeline/parsers.js";
+import {
+  parseClaudeCode,
+  parseCodexHistory,
+  parseCodexSessionMetadata,
+  parseLmStudioConversations,
+  parseVsCodeChatSessions,
+} from "../src/pipeline/parsers.js";
 import { Platform, Role } from "../src/pipeline/models.js";
 
 let tmpDir: string;
@@ -179,5 +185,120 @@ describe("parseCodexSessionMetadata", () => {
   it("returns empty map for nonexistent path", async () => {
     const result = await parseCodexSessionMetadata("/nonexistent");
     expect(result.size).toBe(0);
+  });
+});
+
+describe("parseVsCodeChatSessions", () => {
+  it("parses prompt/response pairs with model metadata", async () => {
+    const chatDir = path.join(tmpDir, "workspaceStorage", "abc", "chatSessions");
+    fs.mkdirSync(chatDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(chatDir, "session.json"),
+      JSON.stringify({
+        sessionId: "session-1",
+        creationDate: 1762531735768,
+        lastMessageDate: 1762531755209,
+        requests: [
+          {
+            timestamp: 1762531755209,
+            modelId: "copilot/grok-code-fast-1",
+            message: { text: "review this code" },
+            response: [
+              { kind: "toolInvocationSerialized", toolId: "copilot_readFile" },
+              { value: "Here is the review." },
+            ],
+          },
+        ],
+      }),
+    );
+
+    const messages = await parseVsCodeChatSessions(tmpDir, Platform.COPILOT_CHAT);
+    expect(messages).toHaveLength(2);
+    expect(messages[0]).toMatchObject({
+      platform: Platform.COPILOT_CHAT,
+      role: Role.HUMAN,
+      content: "review this code",
+      modelId: "copilot/grok-code-fast-1",
+      modelProvider: "copilot",
+    });
+    expect(messages[1]).toMatchObject({
+      platform: Platform.COPILOT_CHAT,
+      role: Role.ASSISTANT,
+      content: "Here is the review.",
+    });
+  });
+
+  it("skips sessions without textual prompts", async () => {
+    const chatDir = path.join(tmpDir, "workspaceStorage", "abc", "chatSessions");
+    fs.mkdirSync(chatDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(chatDir, "session.json"),
+      JSON.stringify({
+        sessionId: "session-1",
+        requests: [
+          { timestamp: 1762531755209, message: { text: "" }, response: [{ value: "ignored" }] },
+        ],
+      }),
+    );
+
+    expect(await parseVsCodeChatSessions(tmpDir, Platform.CURSOR)).toEqual([]);
+  });
+});
+
+describe("parseLmStudioConversations", () => {
+  it("parses user and assistant messages with inferred timestamps", async () => {
+    const convoDir = path.join(tmpDir, "Coding");
+    fs.mkdirSync(convoDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(convoDir, "1767112781244.conversation.json"),
+      JSON.stringify({
+        createdAt: 1767112781244,
+        messages: [
+          {
+            currentlySelected: 0,
+            versions: [
+              {
+                type: "singleStep",
+                role: "user",
+                content: [{ type: "text", text: "hello" }],
+              },
+            ],
+          },
+          {
+            currentlySelected: 0,
+            versions: [
+              {
+                type: "multiStep",
+                role: "assistant",
+                senderInfo: { senderName: "mistralai/devstral-small-2-2512" },
+                steps: [
+                  {
+                    stepIdentifier: "1767112846837-0.3287",
+                    content: [{ type: "text", text: "Hello there." }],
+                    genInfo: { identifier: "mistralai/devstral-small-2-2512" },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+    );
+
+    const messages = await parseLmStudioConversations(tmpDir);
+    expect(messages).toHaveLength(2);
+    expect(messages[0]).toMatchObject({
+      platform: Platform.LMSTUDIO,
+      role: Role.HUMAN,
+      content: "hello",
+    });
+    expect(messages[1]).toMatchObject({
+      platform: Platform.LMSTUDIO,
+      role: Role.ASSISTANT,
+      content: "Hello there.",
+      modelId: "mistralai/devstral-small-2-2512",
+      modelProvider: "mistralai",
+    });
+    expect(messages[0].timestamp.getTime()).toBeLessThan(messages[1].timestamp.getTime());
   });
 });

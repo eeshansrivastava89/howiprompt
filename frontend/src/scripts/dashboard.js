@@ -20,10 +20,32 @@ let branding = {};
 const sourceFilter = document.getElementById('sourceFilter');
 const sourceFilterMobile = document.getElementById('sourceFilterMobile');
 const sourceStorageKey = 'dashboard-source-filter';
-const SOURCE_LABELS = { both: 'All', claude_code: 'Claude Code', codex: 'Codex' };
+const SOURCE_LABELS = {
+    both: 'All',
+    claude_code: 'Claude Code',
+    codex: 'Codex',
+    copilot_chat: 'Copilot Chat',
+    cursor: 'Cursor',
+    lmstudio: 'LM Studio',
+};
+const SOURCE_ACCENTS = {
+    claude_code: '#e67e22',
+    codex: '#2c2c2c',
+    copilot_chat: '#0ea5a5',
+    cursor: '#2563eb',
+    lmstudio: '#16a34a',
+};
 
 function formatSourceLabel(key) {
     return SOURCE_LABELS[key] || key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function getSourceDisplayName(key, short = false) {
+    if (short) {
+        if (key === 'claude_code') return 'Claude';
+        if (key === 'copilot_chat') return 'Copilot';
+    }
+    return formatSourceLabel(key);
 }
 
 // === Formatting helpers ===
@@ -214,10 +236,17 @@ function extractTrendPoints(weekly, metricKey) {
 
 function getPlatformColors() {
     const isDark = document.documentElement.classList.contains('dark');
-    return {
-        claude_code: { stroke: '#e67e22', label: 'Claude Code' },
-        codex:       { stroke: isDark ? '#b0a596' : '#2c2c2c', label: 'Codex' },
-    };
+    return Object.fromEntries(
+        Object.entries(SOURCE_LABELS)
+            .filter(([key]) => key !== 'both')
+            .map(([key, label]) => [
+                key,
+                {
+                    stroke: key === 'codex' && isDark ? '#b0a596' : (SOURCE_ACCENTS[key] || '#666666'),
+                    label,
+                },
+            ]),
+    );
 }
 
 function hexToRgba(hex, alpha) {
@@ -780,6 +809,95 @@ window.closeMethodology = closeMethodology;
 // === Settings modal ===
 
 let settingsOpener = null;
+let detectedBackendCache = null;
+let detectedBackendFetch = null;
+
+function getCachedDetectedBackends() {
+    if (Array.isArray(wizardBackendData) && wizardBackendData.length > 0) return wizardBackendData;
+    if (Array.isArray(detectedBackendCache) && detectedBackendCache.length > 0) return detectedBackendCache;
+    return [];
+}
+
+function setDetectedBackends(backends) {
+    const normalized = Array.isArray(backends) ? backends : [];
+    detectedBackendCache = normalized;
+    if (normalized.length > 0) wizardBackendData = normalized;
+    return normalized;
+}
+
+function summarizeDetectionChanges(previousBackends = [], nextBackends = [], knownBackendIds = []) {
+    const previousById = new Map((previousBackends || []).map((backend) => [backend.id, backend]));
+    const knownIds = new Set(knownBackendIds);
+    const badges = {};
+
+    for (const backend of nextBackends || []) {
+        const previous = previousById.get(backend.id);
+        if (!previous) {
+            if (!knownIds.has(backend.id)) badges[backend.id] = 'New';
+            continue;
+        }
+        if (previous.status !== backend.status || previous.detected !== backend.detected) {
+            badges[backend.id] = 'Updated';
+        }
+    }
+
+    return badges;
+}
+
+async function fetchDetectedBackends(options = {}) {
+    const { useCache = true, force = false } = options;
+
+    if (!force) {
+        const cached = getCachedDetectedBackends();
+        if (useCache && cached.length > 0) return cached;
+        if (detectedBackendFetch) return detectedBackendFetch;
+    }
+
+    detectedBackendFetch = fetch('/api/detect')
+        .then((r) => r.json())
+        .then((payload) => setDetectedBackends(payload.backends || []))
+        .catch(() => getCachedDetectedBackends())
+        .finally(() => {
+            detectedBackendFetch = null;
+        });
+
+    return detectedBackendFetch;
+}
+
+function renderSettingsBackends(configRes = {}, detectedBackends = [], options = {}) {
+    const { isRefreshing = false, badges = {} } = options;
+    const container = document.getElementById('settingsBackends');
+    if (!container) return;
+
+    const detectedById = new Map((detectedBackends || []).map((backend) => [backend.id, backend]));
+    const backendIds = Array.from(new Set([
+        ...Object.keys(configRes.backends || {}),
+        ...Array.from(detectedById.keys()),
+    ]));
+
+    if (backendIds.length === 0) {
+        container.innerHTML = `<div class="wizard-loading">${isRefreshing ? 'Checking installed backends…' : 'No backend settings yet.'}</div>`;
+        return;
+    }
+
+    container.innerHTML = backendIds.map(id => {
+        const toggle = configRes.backends?.[id] || { enabled: false, exclusions: [] };
+        const info = detectedById.get(id);
+        const disabled = info ? (info.supported === false || info.status === 'coming_soon' || info.status === 'not_found') : false;
+        let detail = isRefreshing ? 'Checking installation...' : 'Saved configuration';
+        if (info?.status === 'available') detail = 'Ready to analyze';
+        if (info?.status === 'coming_soon') detail = 'Detected, but analysis support is not shipped yet';
+        if (info?.status === 'not_found') detail = 'Not installed';
+        const badge = badges[id] ? `<span class="settings-backend-badge">${badges[id]}</span>` : '';
+        return `<div class="settings-backend-row">
+            <label class="wizard-toggle ${disabled ? 'is-disabled' : ''}">
+                <input type="checkbox" data-backend="${id}" ${toggle.enabled !== false ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+                <span class="settings-backend-title">${formatSourceLabel(id)}${badge}</span>
+            </label>
+            <div class="settings-backend-detail">${detail}</div>
+        </div>`;
+    }).join('');
+}
 
 async function openSettings() {
     const modal = document.getElementById('settingsModal');
@@ -787,40 +905,12 @@ async function openSettings() {
 
     settingsOpener = document.activeElement;
 
-    // Show modal immediately with loading state
-    const container = document.getElementById('settingsBackends');
-    if (container) container.innerHTML = '<div class="wizard-loading">Loading...</div>';
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    const [configRes, detectRes] = await Promise.all([
-        fetch('/api/config').then((r) => r.json()).catch(() => ({})),
-        fetch('/api/detect').then((r) => r.json()).catch(() => ({ backends: [] })),
-    ]);
-
-    const detectedById = new Map((detectRes.backends || []).map((backend) => [backend.id, backend]));
-    const backendIds = Array.from(new Set([
-        ...Object.keys(configRes.backends || {}),
-        ...Array.from(detectedById.keys()),
-    ]));
-    if (container) {
-        container.innerHTML = backendIds.map(id => {
-            const toggle = configRes.backends?.[id] || { enabled: false, exclusions: [] };
-            const info = detectedById.get(id) || {};
-            const disabled = info.supported === false || info.status === 'coming_soon' || info.status === 'not_found';
-            let detail = 'Not detected';
-            if (info.status === 'available') detail = 'Ready to analyze';
-            if (info.status === 'coming_soon') detail = 'Detected, but analysis support is not shipped yet';
-            if (info.status === 'not_found') detail = 'Not installed';
-            return `<div class="settings-backend-row">
-                <label class="wizard-toggle ${disabled ? 'is-disabled' : ''}">
-                    <input type="checkbox" data-backend="${id}" ${toggle.enabled !== false ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
-                    ${formatSourceLabel(id)}
-                </label>
-                <div class="settings-backend-detail">${detail}</div>
-            </div>`;
-        }).join('');
-    }
+    const configRes = await fetch('/api/config').then((r) => r.json()).catch(() => ({}));
+    const initialDetected = getCachedDetectedBackends();
+    renderSettingsBackends(configRes, initialDetected, { isRefreshing: true });
 
     // Show exclusions if Claude Code is configured
     const excSection = document.getElementById('settingsExclusionSection');
@@ -829,6 +919,19 @@ async function openSettings() {
         const exclusions = configRes.backends.claude_code.exclusions ?? [];
         loadExclusionChips('settingsExclusionChips', exclusions);
     }
+
+    fetchDetectedBackends({ force: true })
+        .then((backends) => {
+            const stillOpen = document.getElementById('settingsModal')?.classList.contains('active');
+            if (!stillOpen) return;
+            const knownBackendIds = [
+                ...initialDetected.map((backend) => backend.id),
+                ...Object.keys(configRes.backends || {}),
+            ];
+            const badges = summarizeDetectionChanges(initialDetected, backends, knownBackendIds);
+            renderSettingsBackends(configRes, backends, { isRefreshing: false, badges });
+        })
+        .catch(() => {});
 }
 
 function closeSettings() {
@@ -1274,6 +1377,158 @@ document.getElementById('submitModal')?.addEventListener('click', (e) => {
 // === Setup Wizard ===
 
 let wizardBackendData = [];
+const PIPELINE_STAGE_ORDER = [
+    { key: 'boot', label: 'Prepare' },
+    { key: 'sync', label: 'Sync Sources' },
+    { key: 'parse', label: 'Parse Chats' },
+    { key: 'insert', label: 'Store Messages' },
+    { key: 'nlp', label: 'Language Scores' },
+    { key: 'embedding', label: 'Embeddings' },
+    { key: 'classifiers', label: 'Behavior Scores' },
+    { key: 'metrics', label: 'Build Dashboard' },
+];
+const PIPELINE_STAGE_INDEX = Object.fromEntries(PIPELINE_STAGE_ORDER.map((stage, index) => [stage.key, index]));
+
+function createWizardPipelineTracker() {
+    const logEl = document.getElementById('wizardLog');
+    const barEl = document.getElementById('wizardProgressBar');
+    const labelEl = document.getElementById('wizardProgressLabel');
+    const pctEl = document.getElementById('wizardProgressPct');
+    const stageListEl = document.getElementById('wizardStageList');
+    const stageState = Object.fromEntries(PIPELINE_STAGE_ORDER.map(({ key }, index) => [key, {
+        key,
+        label: PIPELINE_STAGE_ORDER[index].label,
+        detail: 'Waiting...',
+        progress: 0,
+        status: 'pending',
+    }]));
+    let activeStage = 'boot';
+    let trickleTimer = null;
+    let completed = false;
+
+    function render() {
+        const overall = PIPELINE_STAGE_ORDER.reduce((sum, { key }) => sum + (stageState[key].progress || 0), 0) / PIPELINE_STAGE_ORDER.length;
+        if (barEl) barEl.style.width = `${Math.round(overall)}%`;
+        if (labelEl) {
+            const active = stageState[activeStage] || stageState.boot;
+            labelEl.textContent = active?.detail || 'Preparing analysis...';
+        }
+        if (pctEl) pctEl.textContent = `${Math.round(overall)}%`;
+        if (stageListEl) {
+            stageListEl.innerHTML = PIPELINE_STAGE_ORDER.map(({ key, label }) => {
+                const stage = stageState[key];
+                return `
+                    <div class="wizard-stage-row">
+                        <div class="wizard-stage-name">${label}</div>
+                        <div class="wizard-stage-track is-${stage.status}">
+                            <div class="wizard-stage-fill" style="width:${stage.progress}%"></div>
+                            <span class="wizard-stage-detail">${stage.detail}</span>
+                        </div>
+                        <div class="wizard-stage-value">${Math.round(stage.progress)}%</div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    function stopTrickle() {
+        if (trickleTimer) {
+            clearInterval(trickleTimer);
+            trickleTimer = null;
+        }
+    }
+
+    function startTrickle(stageKey) {
+        stopTrickle();
+        trickleTimer = window.setInterval(() => {
+            if (completed || activeStage !== stageKey) return;
+            const stage = stageState[stageKey];
+            const ceiling = stageKey === 'embedding' || stageKey === 'classifiers' ? 95 : 88;
+            if (stage.progress >= ceiling) return;
+            stage.progress = Math.min(ceiling, stage.progress + (stage.progress < 30 ? 3 : 1));
+            render();
+        }, 450);
+    }
+
+    function appendLog(detail, status = 'normal') {
+        if (!logEl) return;
+        const entry = document.createElement('div');
+        entry.className = `wizard-log-entry${status === 'done' ? ' done' : status === 'error' ? ' error' : ''}`;
+        entry.textContent = detail;
+        logEl.appendChild(entry);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function begin() {
+        if (logEl) logEl.innerHTML = '';
+        for (const { key } of PIPELINE_STAGE_ORDER) {
+            stageState[key].detail = 'Waiting...';
+            stageState[key].progress = 0;
+            stageState[key].status = 'pending';
+        }
+        activeStage = 'boot';
+        stageState.boot.detail = 'Connecting to local pipeline...';
+        stageState.boot.progress = 5;
+        stageState.boot.status = 'active';
+        completed = false;
+        appendLog('Starting pipeline...');
+        startTrickle('boot');
+        render();
+    }
+
+    function advance(stageKey, detail, progress) {
+        const normalizedKey = PIPELINE_STAGE_INDEX[stageKey] != null ? stageKey : 'boot';
+        const nextIndex = PIPELINE_STAGE_INDEX[normalizedKey];
+        const prevIndex = PIPELINE_STAGE_INDEX[activeStage] ?? 0;
+
+        if (nextIndex > prevIndex) {
+            for (let i = prevIndex; i < nextIndex; i++) {
+                const key = PIPELINE_STAGE_ORDER[i].key;
+                stageState[key].status = 'done';
+                stageState[key].progress = 100;
+            }
+        }
+
+        activeStage = normalizedKey;
+        const stage = stageState[normalizedKey];
+        stage.status = 'active';
+        stage.detail = detail;
+        if (typeof progress === 'number' && Number.isFinite(progress)) {
+            stage.progress = Math.max(stage.progress, Math.min(100, progress));
+        } else {
+            stage.progress = Math.max(stage.progress, 12);
+        }
+        appendLog(`${normalizedKey}: ${detail}`);
+        startTrickle(normalizedKey);
+        render();
+    }
+
+    function finish(totalMessages) {
+        completed = true;
+        stopTrickle();
+        for (const { key } of PIPELINE_STAGE_ORDER) {
+            stageState[key].status = 'done';
+            stageState[key].progress = 100;
+            if (stageState[key].detail === 'Waiting...') stageState[key].detail = 'Done';
+        }
+        activeStage = 'metrics';
+        stageState.metrics.detail = 'Dashboard ready.';
+        appendLog(`Done! ${Number(totalMessages || 0).toLocaleString()} messages analyzed.`, 'done');
+        render();
+    }
+
+    function fail(message) {
+        completed = true;
+        stopTrickle();
+        const stage = stageState[activeStage] || stageState.boot;
+        stage.status = 'error';
+        stage.detail = message;
+        appendLog(`Error: ${message}`, 'error');
+        render();
+    }
+
+    return { begin, advance, finish, fail };
+}
 
 async function initWizard() {
     const wizard = document.getElementById('setupWizard');
@@ -1318,16 +1573,12 @@ async function wizardDetect() {
     try {
         const res = await fetch('/api/detect');
         const { backends } = await res.json();
-        wizardBackendData = backends;
+        setDetectedBackends(backends);
 
         container.innerHTML = backends.map(b => {
             let detail = '';
-            if (b.status === 'available' && b.messageCount) {
-                detail = `${b.messageCount.toLocaleString()} messages`;
-                if (b.dateRange) {
-                    const fmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-                    detail += ` · ${fmt(b.dateRange.first)} – ${fmt(b.dateRange.last)}`;
-                }
+            if (b.status === 'available') {
+                detail = 'Detected locally';
             } else if (b.status === 'coming_soon') {
                 detail = 'Detected (coming soon)';
             } else {
@@ -1430,21 +1681,35 @@ function wizardBuildConfig() {
     if (!container) return;
 
     const available = wizardBackendData.filter(b => b.status === 'available' && b.supported !== false);
-    container.innerHTML = available.map(b => `
-        <label class="wizard-toggle">
-            <input type="checkbox" data-backend="${b.id}" checked>
-            ${b.name}
-        </label>
-    `).join('');
+    fetch('/api/config')
+        .then((res) => res.json())
+        .then((config) => {
+            container.innerHTML = available.map(b => {
+                const savedToggle = config.backends?.[b.id];
+                const checked = savedToggle ? savedToggle.enabled !== false : true;
+                return `
+                    <label class="wizard-toggle">
+                        <input type="checkbox" data-backend="${b.id}" ${checked ? 'checked' : ''}>
+                        ${b.name}
+                    </label>
+                `;
+            }).join('');
 
-    // Show exclusions + load existing chips if Claude Code is available
-    if (available.some(b => b.id === 'claude_code') && exclusionsDiv) {
-        exclusionsDiv.style.display = 'block';
-        fetch('/api/config')
-            .then((res) => res.json())
-            .then((config) => loadExclusionChips('wizardExclusionChips', config.backends?.claude_code?.exclusions ?? []))
-            .catch(() => {});
-    }
+            if (available.some(b => b.id === 'claude_code') && exclusionsDiv) {
+                exclusionsDiv.style.display = 'block';
+                loadExclusionChips('wizardExclusionChips', config.backends?.claude_code?.exclusions ?? []);
+            } else if (exclusionsDiv) {
+                exclusionsDiv.style.display = 'none';
+            }
+        })
+        .catch(() => {
+            container.innerHTML = available.map(b => `
+                <label class="wizard-toggle">
+                    <input type="checkbox" data-backend="${b.id}" checked>
+                    ${b.name}
+                </label>
+            `).join('');
+        });
 }
 
 async function wizardSaveConfig() {
@@ -1465,43 +1730,23 @@ async function wizardSaveConfig() {
 }
 
 function wizardRunPipeline() {
-    const log = document.getElementById('wizardLog');
-    const bar = document.getElementById('wizardProgressBar');
     const doneBtn = document.getElementById('wizardDone');
-    if (!log) return;
-
-    log.innerHTML = '<div class="wizard-log-entry">Starting pipeline...</div>';
-    const stages = ['sync', 'parse', 'insert', 'nlp', 'embedding', 'classifiers', 'metrics'];
-    let maxStageIdx = 0;
+    const tracker = createWizardPipelineTracker();
     let completed = false;
+    tracker.begin();
 
     const evtSource = new EventSource('/api/pipeline/stream');
 
     evtSource.addEventListener('progress', (e) => {
         const data = JSON.parse(e.data);
-        const entry = document.createElement('div');
-        entry.className = 'wizard-log-entry';
-        entry.textContent = `${data.stage}: ${data.detail}`;
-        log.appendChild(entry);
-        log.scrollTop = log.scrollHeight;
-
-        const idx = stages.indexOf(data.stage);
-        if (idx >= 0 && idx > maxStageIdx) maxStageIdx = idx;
-        if (bar) bar.style.width = `${((maxStageIdx + 1) / stages.length) * 100}%`;
+        tracker.advance(data.stage, data.detail, data.progress);
     });
 
     evtSource.addEventListener('complete', (e) => {
         completed = true;
         evtSource.close();
         const data = JSON.parse(e.data);
-
-        const entry = document.createElement('div');
-        entry.className = 'wizard-log-entry done';
-        entry.textContent = `Done! ${data.stats.totalMessages} messages analyzed.`;
-        log.appendChild(entry);
-        log.scrollTop = log.scrollHeight;
-
-        if (bar) bar.style.width = '100%';
+        tracker.finish(data.stats.totalMessages);
         if (doneBtn) doneBtn.style.display = 'inline-block';
 
         // Stash metrics so dashboard can render immediately
@@ -1518,11 +1763,7 @@ function wizardRunPipeline() {
         completed = true;
         evtSource.close();
         const data = JSON.parse(e.data);
-        const entry = document.createElement('div');
-        entry.className = 'wizard-log-entry error';
-        entry.textContent = `Error: ${data.message}`;
-        log.appendChild(entry);
-        log.scrollTop = log.scrollHeight;
+        tracker.fail(data.message);
         if (doneBtn) {
             doneBtn.textContent = 'Continue Anyway';
             doneBtn.style.display = 'inline-block';
@@ -1533,10 +1774,7 @@ function wizardRunPipeline() {
     evtSource.onerror = () => {
         if (!completed) {
             evtSource.close();
-            const entry = document.createElement('div');
-            entry.className = 'wizard-log-entry error';
-            entry.textContent = 'Connection lost — check terminal for details.';
-            log.appendChild(entry);
+            tracker.fail('Connection lost — check terminal for details.');
             if (doneBtn) {
                 doneBtn.textContent = 'Continue Anyway';
                 doneBtn.style.display = 'inline-block';
@@ -1610,6 +1848,8 @@ async function init() {
     // Check if wizard is needed
     const wizardActive = await initWizard();
     if (wizardActive) return;
+
+    fetchDetectedBackends({ useCache: true }).catch(() => {});
 
     try {
         const response = await fetch('./metrics.json');

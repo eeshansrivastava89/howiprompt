@@ -439,10 +439,25 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 .wizard-log-entry.error{color:var(--stat-r)}
 .wizard-progress{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:12px}
 .wizard-progress-bar{height:100%;background:var(--accent);width:0;transition:width .4s ease}
+.wizard-progress-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.wizard-progress-label{font-size:12px;font-weight:600;color:var(--text)}
+.wizard-progress-pct{font-size:12px;font-weight:700;color:var(--accent)}
+.wizard-stage-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.wizard-stage-row{display:grid;grid-template-columns:minmax(0,130px) 1fr 36px;align-items:center;gap:10px}
+.wizard-stage-name{font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--muted);text-transform:uppercase}
+.wizard-stage-track{position:relative;height:24px;border:1px solid var(--border);border-radius:999px;background:var(--bg);overflow:hidden}
+.wizard-stage-fill{position:absolute;inset:0 auto 0 0;width:0;background:color-mix(in srgb, var(--accent) 18%, transparent);transition:width .35s ease}
+.wizard-stage-track.is-active .wizard-stage-fill{background:color-mix(in srgb, var(--accent) 28%, transparent)}
+.wizard-stage-track.is-done .wizard-stage-fill{background:color-mix(in srgb, var(--accent) 40%, transparent)}
+.wizard-stage-track.is-error .wizard-stage-fill{background:color-mix(in srgb, var(--stat-r) 32%, transparent)}
+.wizard-stage-detail{position:relative;z-index:1;display:block;padding:0 10px;font-size:11px;line-height:24px;color:var(--subtext);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wizard-stage-track.is-active .wizard-stage-detail{color:var(--text)}
+.wizard-stage-value{font-size:11px;font-weight:700;color:var(--muted);text-align:right}
 
 @media(max-width:640px){
   .wizard-panel{padding:24px 20px}
   .wizard-steps{flex-wrap:wrap}
+  .wizard-stage-row{grid-template-columns:110px 1fr 32px}
 }
 
 /* === SETTINGS MODAL === */
@@ -452,6 +467,8 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 .settings-body{padding:16px 24px}
 .settings-section{margin-bottom:16px}
 .settings-backend-row{display:flex;flex-direction:column;gap:4px}
+.settings-backend-title{display:inline-flex;align-items:center;gap:8px}
+.settings-backend-badge{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;background:color-mix(in srgb, var(--accent) 16%, transparent);color:var(--accent)}
 .settings-backend-detail{font-size:12px;color:var(--muted);padding:0 4px 2px 16px}
 .settings-footer{display:flex;align-items:center;justify-content:space-between;padding:16px 24px 20px;border-top:1px solid var(--border);margin-top:8px}
 .settings-footer-right{display:flex;gap:8px}

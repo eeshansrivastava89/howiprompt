@@ -1,14 +1,21 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import readline from "node:readline";
-import { type SyncResult, syncClaudeCode, syncCodex } from "./sync.js";
+import {
+  type SyncResult,
+  syncClaudeCode,
+  syncCodex,
+  syncLmStudioConversations,
+  syncVsCodeChatSessions,
+} from "./sync.js";
 import {
   parseClaudeCode,
   parseCodexHistory,
   parseCodexSessionMetadata,
+  parseLmStudioConversations,
+  parseVsCodeChatSessions,
 } from "./parsers.js";
-import type { Message } from "./models.js";
+import { Platform, type Message } from "./models.js";
 import type { Config } from "./config.js";
 
 export interface BackendInfo {
@@ -45,6 +52,30 @@ function findJsonlFilesRecursive(dir: string): string[] {
     }
   } catch { /* permission errors, etc */ }
   return results;
+}
+
+function findFilesRecursive(
+  dir: string,
+  matcher: (filePath: string, entryName: string) => boolean,
+): string[] {
+  const results: string[] = [];
+  try {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        results.push(...findFilesRecursive(full, matcher));
+      } else if (matcher(full, entry.name)) {
+        results.push(full);
+      }
+    }
+  } catch { /* permission errors, etc */ }
+  return results;
+}
+
+function parseIso(ms: number | null): string | undefined {
+  if (!ms) return undefined;
+  const dt = new Date(ms);
+  return Number.isNaN(dt.getTime()) ? undefined : dt.toISOString();
 }
 
 /** Count lines and extract first/last timestamps from JSONL files. */
@@ -115,6 +146,86 @@ function scanCodexSource(sourcePath: string): { messageCount: number; dateRange?
   }
 }
 
+function scanVsCodeChatSource(sourceDir: string): { messageCount: number; dateRange?: { first: string; last: string } } {
+  const files = findFilesRecursive(sourceDir, (filePath, entryName) =>
+    entryName.endsWith(".json") && filePath.includes(`${path.sep}chatSessions${path.sep}`),
+  );
+  if (files.length === 0) return { messageCount: 0 };
+
+  let messageCount = 0;
+  let earliestMs: number | null = null;
+  let latestMs: number | null = null;
+
+  for (const file of files) {
+    try {
+      const session = JSON.parse(fs.readFileSync(file, "utf-8"));
+      const requests = Array.isArray(session.requests) ? session.requests : [];
+      messageCount += requests.length;
+
+      const timestamps = [
+        typeof session.creationDate === "number" ? session.creationDate : null,
+        typeof session.lastMessageDate === "number" ? session.lastMessageDate : null,
+      ].filter((value): value is number => typeof value === "number");
+      for (const request of requests) {
+        if (typeof request?.timestamp === "number") timestamps.push(request.timestamp);
+      }
+
+      for (const ts of timestamps) {
+        if (earliestMs === null || ts < earliestMs) earliestMs = ts;
+        if (latestMs === null || ts > latestMs) latestMs = ts;
+      }
+    } catch { /* skip unreadable files */ }
+  }
+
+  const first = parseIso(earliestMs);
+  const last = parseIso(latestMs);
+  return {
+    messageCount,
+    dateRange: first && last ? { first, last } : undefined,
+  };
+}
+
+function scanLmStudioSource(sourceDir: string): { messageCount: number; dateRange?: { first: string; last: string } } {
+  const files = findFilesRecursive(sourceDir, (_filePath, entryName) =>
+    entryName.endsWith(".conversation.json"),
+  );
+  if (files.length === 0) return { messageCount: 0 };
+
+  let messageCount = 0;
+  let earliestMs: number | null = null;
+  let latestMs: number | null = null;
+
+  for (const file of files) {
+    try {
+      const conversation = JSON.parse(fs.readFileSync(file, "utf-8"));
+      const messages = Array.isArray(conversation.messages) ? conversation.messages : [];
+      for (const message of messages) {
+        const selectedIndex = Number.isInteger(message?.currentlySelected) ? message.currentlySelected : 0;
+        const version = Array.isArray(message?.versions) ? message.versions[selectedIndex] ?? message.versions[0] : null;
+        if (version?.role === "user") messageCount++;
+      }
+
+      const timestamps = [
+        typeof conversation.createdAt === "number" ? conversation.createdAt : null,
+        typeof conversation.userLastMessagedAt === "number" ? conversation.userLastMessagedAt : null,
+        typeof conversation.assistantLastMessagedAt === "number" ? conversation.assistantLastMessagedAt : null,
+      ].filter((value): value is number => typeof value === "number");
+
+      for (const ts of timestamps) {
+        if (earliestMs === null || ts < earliestMs) earliestMs = ts;
+        if (latestMs === null || ts > latestMs) latestMs = ts;
+      }
+    } catch { /* skip unreadable files */ }
+  }
+
+  const first = parseIso(earliestMs);
+  const last = parseIso(latestMs);
+  return {
+    messageCount,
+    dateRange: first && last ? { first, last } : undefined,
+  };
+}
+
 export interface Backend {
   readonly id: string;
   readonly name: string;
@@ -132,7 +243,6 @@ class ClaudeCodeBackend implements Backend {
   detect(): BackendInfo {
     const sourcePath = path.join(os.homedir(), ".claude", "projects");
     const detected = fs.existsSync(sourcePath);
-    const scan = detected ? scanClaudeCodeSource(sourcePath) : undefined;
     return {
       id: this.id,
       name: this.name,
@@ -140,8 +250,6 @@ class ClaudeCodeBackend implements Backend {
       detected,
       sourcePath,
       status: detected ? "available" : "not_found",
-      messageCount: scan?.messageCount,
-      dateRange: scan?.dateRange,
     };
   }
 
@@ -164,7 +272,6 @@ class CodexBackend implements Backend {
   detect(): BackendInfo {
     const sourcePath = path.join(os.homedir(), ".codex", "history.jsonl");
     const detected = fs.existsSync(sourcePath);
-    const scan = detected ? scanCodexSource(sourcePath) : undefined;
     return {
       id: this.id,
       name: this.name,
@@ -172,8 +279,6 @@ class CodexBackend implements Backend {
       detected,
       sourcePath,
       status: detected ? "available" : "not_found",
-      messageCount: scan?.messageCount,
-      dateRange: scan?.dateRange,
     };
   }
 
@@ -187,7 +292,7 @@ class CodexBackend implements Backend {
   }
 }
 
-// ── Copilot Chat (detection only) ──────────────────────
+// ── Copilot Chat ───────────────────────────────────────
 
 class CopilotChatBackend implements Backend {
   readonly id = "copilot_chat";
@@ -200,29 +305,32 @@ class CopilotChatBackend implements Backend {
       "Application Support",
       "Code",
       "User",
-      "globalStorage",
+      "workspaceStorage",
     );
     const detected = fs.existsSync(sourcePath);
     return {
       id: this.id,
       name: this.name,
-      supported: false,
+      supported: true,
       detected,
       sourcePath,
-      status: detected ? "coming_soon" : "not_found",
+      status: detected ? "available" : "not_found",
     };
   }
 
-  sync(): SyncResult {
-    return { files: 0, source: "copilot_chat" };
+  sync(config: Config): SyncResult {
+    return syncVsCodeChatSessions(
+      path.join(os.homedir(), "Library", "Application Support", "Code", "User", "workspaceStorage"),
+      config.copilotChatSource,
+    );
   }
 
-  async parse(): Promise<Message[]> {
-    return [];
+  async parse(config: Config): Promise<Message[]> {
+    return parseVsCodeChatSessions(config.copilotChatSource, Platform.COPILOT_CHAT);
   }
 }
 
-// ── Cursor (detection only) ────────────────────────────
+// ── Cursor ─────────────────────────────────────────────
 
 class CursorBackend implements Backend {
   readonly id = "cursor";
@@ -241,19 +349,50 @@ class CursorBackend implements Backend {
     return {
       id: this.id,
       name: this.name,
-      supported: false,
+      supported: true,
       detected,
       sourcePath,
-      status: detected ? "coming_soon" : "not_found",
+      status: detected ? "available" : "not_found",
     };
   }
 
-  sync(): SyncResult {
-    return { files: 0, source: "cursor" };
+  sync(config: Config): SyncResult {
+    return syncVsCodeChatSessions(
+      path.join(os.homedir(), "Library", "Application Support", "Cursor", "User", "workspaceStorage"),
+      config.cursorSource,
+    );
   }
 
-  async parse(): Promise<Message[]> {
-    return [];
+  async parse(config: Config): Promise<Message[]> {
+    return parseVsCodeChatSessions(config.cursorSource, Platform.CURSOR);
+  }
+}
+
+// ── LM Studio ──────────────────────────────────────────
+
+class LmStudioBackend implements Backend {
+  readonly id = "lmstudio";
+  readonly name = "LM Studio";
+
+  detect(): BackendInfo {
+    const sourcePath = path.join(os.homedir(), ".lmstudio", "conversations");
+    const detected = fs.existsSync(sourcePath);
+    return {
+      id: this.id,
+      name: this.name,
+      supported: true,
+      detected,
+      sourcePath,
+      status: detected ? "available" : "not_found",
+    };
+  }
+
+  sync(config: Config): SyncResult {
+    return syncLmStudioConversations(config.lmStudioSource);
+  }
+
+  async parse(config: Config): Promise<Message[]> {
+    return parseLmStudioConversations(config.lmStudioSource);
   }
 }
 
@@ -264,6 +403,7 @@ const ALL_BACKENDS: Backend[] = [
   new CodexBackend(),
   new CopilotChatBackend(),
   new CursorBackend(),
+  new LmStudioBackend(),
 ];
 
 export function getAllBackends(): Backend[] {

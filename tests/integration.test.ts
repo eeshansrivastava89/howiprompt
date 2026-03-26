@@ -127,7 +127,28 @@ describe("full pipeline integration", () => {
   });
 
   it("computes source views correctly", async () => {
-    await insertMessages(client, generateTestMessages());
+    await insertMessages(client, [
+      ...generateTestMessages(),
+      makeMsg("explain the failing test", {
+        timestamp: new Date("2026-02-11T10:00:00Z"),
+        conversationId: "copilot-session-1",
+        platform: Platform.COPILOT_CHAT,
+        modelId: "copilot/gpt-4.1",
+        modelProvider: "copilot",
+      }),
+      makeMsg("show me the diff", {
+        timestamp: new Date("2026-02-11T10:05:00Z"),
+        conversationId: "cursor-session-1",
+        platform: Platform.CURSOR,
+      }),
+      makeMsg("help me optimize this query", {
+        timestamp: new Date("2026-02-11T10:10:00Z"),
+        conversationId: "lmstudio-session-1",
+        platform: Platform.LMSTUDIO,
+        modelId: "mistralai/devstral-small-2-2512",
+        modelProvider: "mistralai",
+      }),
+    ]);
     await enrichNlp(client);
 
     const config = loadConfig("/tmp/test-howiprompt");
@@ -136,11 +157,17 @@ describe("full pipeline integration", () => {
     expect(sourceViews.both).not.toBeNull();
     expect(sourceViews.claude_code).not.toBeNull();
     expect(sourceViews.codex).not.toBeNull();
+    expect(sourceViews.copilot_chat).not.toBeNull();
+    expect(sourceViews.cursor).not.toBeNull();
+    expect(sourceViews.lmstudio).not.toBeNull();
     expect(metadata.default_view).toBe("both");
 
     // Claude Code view should only have Claude Code messages
     expect(sourceViews.claude_code.platform_stats).toHaveProperty("claude_code");
     expect(sourceViews.claude_code.platform_stats).not.toHaveProperty("codex");
+    expect(sourceViews.copilot_chat.platform_stats).toHaveProperty("copilot_chat");
+    expect(sourceViews.cursor.platform_stats).toHaveProperty("cursor");
+    expect(sourceViews.lmstudio.platform_stats).toHaveProperty("lmstudio");
   });
 
   it("hasHumanMessages works with platform filter", async () => {
@@ -163,12 +190,22 @@ describe("full pipeline integration", () => {
   });
 
   it("trend metrics include rollups", async () => {
-    await insertMessages(client, generateTestMessages());
+    await insertMessages(client, [
+      ...generateTestMessages(),
+      makeMsg("follow up in copilot", {
+        timestamp: new Date("2026-02-08T11:00:00Z"),
+        conversationId: "copilot-trend-1",
+        platform: Platform.COPILOT_CHAT,
+      }),
+    ]);
     const trends = await computeTrendMetrics(client);
 
     expect(trends.daily_rollups.length).toBeGreaterThan(0);
     expect(trends.weekly_rollups.length).toBeGreaterThan(0);
     expect(trends.daily_rollups[0]).toHaveProperty("prompts");
     expect(trends.daily_rollups[0]).toHaveProperty("style");
+    expect(trends.weekly_by_platform).toHaveProperty("claude_code");
+    expect(trends.weekly_by_platform).toHaveProperty("codex");
+    expect(trends.weekly_by_platform).toHaveProperty("copilot_chat");
   });
 });

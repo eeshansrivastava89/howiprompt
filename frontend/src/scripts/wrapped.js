@@ -7,6 +7,26 @@ import { initThemeToggle } from './theme.js';
 let sourceViews = {};
 let activeSourceKey = 'both';
 const sourceFilter = document.getElementById('sourceFilter');
+const SOURCE_LABELS = {
+    both: 'All',
+    claude_code: 'Claude Code',
+    codex: 'Codex',
+    copilot_chat: 'Copilot Chat',
+    cursor: 'Cursor',
+    lmstudio: 'LM Studio',
+};
+
+function formatSourceLabel(key) {
+    return SOURCE_LABELS[key] || key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function getSourceDisplayName(key, short = false) {
+    if (short) {
+        if (key === 'claude_code') return 'Claude';
+        if (key === 'copilot_chat') return 'Copilot';
+    }
+    return formatSourceLabel(key);
+}
 
 // === Formatting helpers ===
 
@@ -159,11 +179,11 @@ function hydrateWrapped(m) {
     setText('dateRangeDisplay', dateRangeDisplay);
 
     // Platform-aware attribution
-    const platformLabelMap = { claude_code: 'Claude', codex: 'Codex', both: null };
     const ps = m.platform_stats || {};
-    const platformNames = Object.keys(ps).map(k => platformLabelMap[k] || k);
-    const attribution = platformLabelMap[activeSourceKey]
-        || (platformNames.length > 0 ? platformNames.join(' & ') : 'the AI');
+    const platformNames = Object.keys(ps).map(k => getSourceDisplayName(k, true));
+    const attribution = activeSourceKey !== 'both'
+        ? getSourceDisplayName(activeSourceKey, true)
+        : (platformNames.length > 0 ? platformNames.join(' & ') : 'the AI');
     setText('yrAttribution', attribution);
 
     // Section 2: Numbers
@@ -257,7 +277,6 @@ function hydrateWrapped(m) {
     const platSection = el('termPlatformSection');
     if (platSection) {
         const ps = m.platform_stats || {};
-        const labelMap = { claude_code: 'Claude Code', codex: 'Codex' };
         platSection.innerHTML = '';
         const platforms = Object.keys(ps);
         if (platforms.length > 0) {
@@ -265,7 +284,7 @@ function hydrateWrapped(m) {
                 const stats = ps[plat];
                 const row = document.createElement('div');
                 row.className = 'flex justify-between';
-                row.innerHTML = `<span class="text-muted">${labelMap[plat] || plat}</span><span class="font-bold">${(stats.messages || 0).toLocaleString()} msgs</span>`;
+                row.innerHTML = `<span class="text-muted">${formatSourceLabel(plat)}</span><span class="font-bold">${(stats.messages || 0).toLocaleString()} msgs</span>`;
                 platSection.appendChild(row);
             });
         }
@@ -294,14 +313,19 @@ function hydrateWrapped(m) {
 
 function initSourceFilter() {
     if (!sourceFilter) return;
-    const available = ['both', 'claude_code', 'codex'].filter(k => Boolean(sourceViews[k]));
-    const labelMap = { both: 'All', claude_code: 'Claude Code', codex: 'Codex' };
+    const available = Object.keys(sourceViews)
+        .filter(k => k === 'both' || Boolean(sourceViews[k]))
+        .sort((a, b) => {
+            if (a === 'both') return -1;
+            if (b === 'both') return 1;
+            return formatSourceLabel(a).localeCompare(formatSourceLabel(b));
+        });
 
     sourceFilter.innerHTML = '';
     for (const key of available) {
         const opt = document.createElement('option');
         opt.value = key;
-        opt.textContent = labelMap[key] || key;
+        opt.textContent = formatSourceLabel(key);
         sourceFilter.appendChild(opt);
     }
 

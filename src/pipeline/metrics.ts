@@ -1,7 +1,7 @@
 import type { Client } from "@libsql/client";
 import type { Config } from "./config.js";
 import { platformFilter, queryMessages } from "./db.js";
-import { Platform, Role } from "./models.js";
+import { PLATFORM_VALUES, type Platform, Role } from "./models.js";
 import { computeNlpMetrics } from "./nlp.js";
 import { classifyPersona } from "./persona.js";
 import { computeNormalized } from "./registry.js";
@@ -293,18 +293,16 @@ export async function computeSourceViews(
   config: Config,
 ): Promise<{ sourceViews: Record<string, any>; metadata: { default_view: string } }> {
   const allMetrics = await computeMetrics(client, config);
-  const ccHas = await hasHumanMessages(client, Platform.CLAUDE_CODE);
-  const cxHas = await hasHumanMessages(client, Platform.CODEX);
+  const sourceViews: Record<string, any> = { both: allMetrics };
 
-  const sourceViews: Record<string, any> = {
-    both: allMetrics,
-    claude_code: ccHas ? await computeMetrics(client, config, Platform.CLAUDE_CODE) : null,
-    codex: cxHas ? await computeMetrics(client, config, Platform.CODEX) : null,
-  };
+  for (const platform of PLATFORM_VALUES) {
+    const hasMessages = await hasHumanMessages(client, platform);
+    sourceViews[platform] = hasMessages ? await computeMetrics(client, config, platform) : null;
+  }
 
   let defaultView = "both";
   if (!sourceViews[defaultView]) {
-    for (const candidate of ["claude_code", "codex"]) {
+    for (const candidate of PLATFORM_VALUES) {
       if (sourceViews[candidate]) { defaultView = candidate; break; }
     }
   }

@@ -59,6 +59,9 @@ const dataDir = resolveDataDir();
 fs.mkdirSync(dataDir, { recursive: true });
 fs.mkdirSync(path.join(dataDir, "raw", "claude_code"), { recursive: true });
 fs.mkdirSync(path.join(dataDir, "raw", "codex"), { recursive: true });
+fs.mkdirSync(path.join(dataDir, "raw", "copilot_chat"), { recursive: true });
+fs.mkdirSync(path.join(dataDir, "raw", "cursor"), { recursive: true });
+fs.mkdirSync(path.join(dataDir, "raw", "lmstudio"), { recursive: true });
 
 console.log(`\n${bold("howiprompt")} v${pkg.version}\n`);
 
@@ -98,14 +101,17 @@ try {
   console.log(`\n  Dashboard ready. Press ${bold("Ctrl+C")} to stop.\n`);
 
   // Non-blocking version check
+  let versionCheckTimeout = null;
   (async () => {
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 3000);
+      versionCheckTimeout = setTimeout(() => controller.abort(), 3000);
+      versionCheckTimeout.unref?.();
       const res = await fetch("https://registry.npmjs.org/howiprompt/latest", {
         signal: controller.signal,
       });
-      clearTimeout(timeout);
+      clearTimeout(versionCheckTimeout);
+      versionCheckTimeout = null;
       if (!res.ok) return;
       const data = await res.json();
       const latest = data.version;
@@ -123,6 +129,11 @@ try {
       }
     } catch {
       // Silent on failure
+    } finally {
+      if (versionCheckTimeout) {
+        clearTimeout(versionCheckTimeout);
+        versionCheckTimeout = null;
+      }
     }
   })();
 
@@ -130,15 +141,35 @@ try {
     openBrowser(serverUrl);
   }
 
-  // Graceful shutdown — force exit quickly to avoid libsql native mutex errors
+  let shuttingDown = false;
   function shutdown() {
+    if (shuttingDown) return;
+    shuttingDown = true;
     console.log("\n  Shutting down...");
-    server.close();
-    setTimeout(() => process.exit(0), 300);
+
+    if (versionCheckTimeout) {
+      clearTimeout(versionCheckTimeout);
+      versionCheckTimeout = null;
+    }
+
+    const hardExitTimer = setTimeout(() => {
+      process.exit(0);
+    }, 2000);
+    hardExitTimer.unref?.();
+
+    server.close((closeErr) => {
+      clearTimeout(hardExitTimer);
+      if (closeErr) {
+        console.log(red(`error during shutdown: ${closeErr.message}`));
+        process.exit(1);
+        return;
+      }
+      process.exitCode = 0;
+    });
   }
 
-  process.on("SIGINT", shutdown);
-  process.on("SIGTERM", shutdown);
+  process.once("SIGINT", shutdown);
+  process.once("SIGTERM", shutdown);
 } catch (err) {
   if (err.code === "ERR_MODULE_NOT_FOUND") {
     console.log(yellow("server not built yet — run `npm run build` first"));

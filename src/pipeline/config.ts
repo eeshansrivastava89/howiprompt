@@ -12,6 +12,9 @@ export interface Config {
   claudeCodeSource: string;
   codexHistorySource: string;
   codexSessionsSource: string;
+  copilotChatSource: string;
+  cursorSource: string;
+  lmStudioSource: string;
   engagementThreshold: number;
   politenessThreshold: number;
   agentCwds: string[];
@@ -25,6 +28,7 @@ function defaultBackends(agentCwds: string[]): Record<string, BackendToggle> {
     codex: { enabled: true, exclusions: [] },
     copilot_chat: { enabled: false, exclusions: [] },
     cursor: { enabled: false, exclusions: [] },
+    lmstudio: { enabled: false, exclusions: [] },
   };
 }
 
@@ -69,6 +73,9 @@ export function loadConfig(dataDir?: string): Config {
     claudeCodeSource: path.join(dd, "raw", "claude_code"),
     codexHistorySource: path.join(dd, "raw", "codex", "history.jsonl"),
     codexSessionsSource: path.join(os.homedir(), ".codex", "sessions"),
+    copilotChatSource: path.join(dd, "raw", "copilot_chat"),
+    cursorSource: path.join(dd, "raw", "cursor"),
+    lmStudioSource: path.join(dd, "raw", "lmstudio"),
     engagementThreshold: 12.0,
     politenessThreshold: 4.5,
     agentCwds,

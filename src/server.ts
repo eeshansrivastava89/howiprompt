@@ -184,18 +184,19 @@ export async function startServer(opts: ServerOptions): Promise<http.Server> {
         "Connection": "keep-alive",
       });
 
-      function emit(type: string, data: Record<string, unknown>) {
+      function emit(type: string, data: unknown) {
         if (clientDisconnected) return;
         res.write(`event: ${type}\ndata: ${JSON.stringify(data)}\n\n`);
       }
 
       try {
+        emit("progress", { stage: "boot", detail: "Preparing analysis session...", progress: 5 });
         const { runPipeline } = await import("./index.js");
         const stats = await runPipeline({
           dbPath: opts.dbPath,
           dataDir: opts.dataDir,
-          onProgress: (stage: string, detail: string) => {
-            emit("progress", { stage, detail });
+          onProgress: (progress) => {
+            emit("progress", progress);
           },
         });
         const metrics = fs.existsSync(metricsPath)

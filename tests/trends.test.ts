@@ -59,13 +59,14 @@ describe("computeTrendDeltas", () => {
       return {
         date: d.toISOString().split("T")[0],
         prompts: 10 + (i > 22 ? 5 : 0),
-        source_share_pct: { claude_code: 80, codex: 20 },
+        source_share_pct: { claude_code: 80, codex: 20, copilot_chat: 0 },
         style: { backtrack_per_100: 5, question_rate_pct: 30, command_rate_pct: 20 },
         model_prompts: 8,
       };
     });
     const deltas = computeTrendDeltas(rollups);
     expect(deltas).toHaveProperty("prompts_per_day");
+    expect(deltas).toHaveProperty("dominant_source_share_pct");
     expect(deltas.prompts_per_day).toHaveProperty("avg_7d");
     expect(deltas.prompts_per_day).toHaveProperty("avg_30d");
     expect(deltas.prompts_per_day).toHaveProperty("delta_pct");
@@ -87,5 +88,13 @@ describe("detectShiftMarkers", () => {
     expect(markers.length).toBeGreaterThan(0);
     expect(markers[0].type).toBe("prompt_shift");
     expect(markers[0].direction).toBe("up");
+  });
+
+  it("detects large source-share shifts for any source", () => {
+    const markers = detectShiftMarkers([
+      { date: "2026-01-01", prompts: 20, source_share_pct: { claude_code: 90, copilot_chat: 10 } },
+      { date: "2026-01-02", prompts: 20, source_share_pct: { claude_code: 50, copilot_chat: 50 } },
+    ]);
+    expect(markers.some((marker) => marker.type === "source_share_shift" && marker.source === "copilot_chat")).toBe(true);
   });
 });

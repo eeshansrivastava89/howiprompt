@@ -44,9 +44,14 @@
     <!-- Step 3: Pipeline Run (SSE log) -->
     <div class="wizard-page" id="wizardStep3">
       <p class="wizard-intro">Analyzing your prompting patterns...</p>
+      <div class="wizard-progress-meta">
+        <div class="wizard-progress-label" id="wizardProgressLabel">Preparing analysis...</div>
+        <div class="wizard-progress-pct" id="wizardProgressPct">0%</div>
+      </div>
       <div class="wizard-progress">
         <div class="wizard-progress-bar" id="wizardProgressBar"></div>
       </div>
+      <div class="wizard-stage-list" id="wizardStageList"></div>
       <div class="wizard-log" id="wizardLog"></div>
       <button class="wizard-btn wizard-btn-primary" id="wizardDone" style="display:none">View Dashboard</button>
     </div>
