@@ -3,11 +3,19 @@ import path from "node:path";
 import { createDbClient, insertMessages, logSync } from "./pipeline/db.js";
 import { loadConfig, loadBranding } from "./pipeline/config.js";
 import { loadMlConfig } from "./pipeline/ml-config.js";
-import { getEnabledBackends } from "./pipeline/backends.js";
+import { getEnabledBackends, getAllBackends } from "./pipeline/backends.js";
 import { enrichNlp } from "./pipeline/nlp.js";
 import { enrichEmbeddings } from "./pipeline/embeddings.js";
 import { enrichClassifiers } from "./pipeline/classifiers.js";
 import { computeSourceViews } from "./pipeline/metrics.js";
+import {
+  seedSystemRules,
+  discoverAndSyncRules,
+  loadExclusionRules,
+  compileRules,
+  flagExcludedMessages,
+} from "./pipeline/exclusions.js";
+import { parseClaudeCode } from "./pipeline/parsers.js";
 
 export interface PipelineOptions {
   dbPath: string;
@@ -34,6 +42,55 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
   const mlConfig = loadMlConfig(opts.dataDir);
   const client = createDbClient(opts.dbPath);
   const log = opts.onProgress ?? (() => {});
+
+  // Purge messages from excluded source directories
+  // (user expects "reanalyze" to respect exclusion changes)
+  const allExclusions = Object.entries(config.backends)
+    .flatMap(([, toggle]) => toggle.exclusions)
+    .map((cwd) => cwd.replace(/\//g, "-").replace(/^-/, "-"));
+  for (const dirName of allExclusions) {
+    const pattern = `%/raw/claude_code/${dirName}/%`;
+    await client.execute({
+      sql: "DELETE FROM nlp_enrichments WHERE message_id IN (SELECT id FROM messages WHERE source_file LIKE ?)",
+      args: [pattern],
+    });
+    const result = await client.execute({
+      sql: "DELETE FROM messages WHERE source_file LIKE ?",
+      args: [pattern],
+    });
+    if (result.rowsAffected > 0) {
+      log({ stage: "boot", detail: `Removed ${result.rowsAffected} messages from excluded project`, progress: 10 });
+    }
+  }
+
+  // Purge messages from sources matching CWD exclusion rules
+  // (catches npx/node_modules sessions that were ingested before rules existed)
+  for (const cwdPattern of ["node_modules", ".npm/_npx"]) {
+    const likePattern = `%${cwdPattern}%`;
+    await client.execute({
+      sql: "DELETE FROM nlp_enrichments WHERE message_id IN (SELECT id FROM messages WHERE source_file LIKE ?)",
+      args: [likePattern],
+    });
+    const result = await client.execute({
+      sql: "DELETE FROM messages WHERE source_file LIKE ?",
+      args: [likePattern],
+    });
+    if (result.rowsAffected > 0) {
+      log({ stage: "boot", detail: `Removed ${result.rowsAffected} messages from programmatic sessions`, progress: 10 });
+    }
+  }
+
+  // Exclusion rules: seed system rules, discover skill rules, compile
+  log({ stage: "exclusions", detail: "Loading exclusion rules...", progress: 10 });
+  const seeded = await seedSystemRules(client);
+  const { skillsFound, rulesUpserted } = await discoverAndSyncRules(client, getAllBackends());
+  const rules = await loadExclusionRules(client);
+  const compiledRules = compileRules(rules);
+  log({
+    stage: "exclusions",
+    detail: `${rules.length} rules active (${skillsFound} skills, ${seeded} new system rules)`,
+    progress: 100,
+  });
 
   // Sync + parse via backend registry
   const backends = getEnabledBackends(config);
@@ -64,7 +121,16 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
       detail: `Parsing ${backend.name}...`,
       progress: Math.round(completedFraction * 100),
     });
-    const msgs = await backend.parse(config);
+
+    // Pass compiled rules to Claude Code parser for content/CWD filtering
+    let msgs: import("./pipeline/models.js").Message[];
+    if (backend.id === "claude_code") {
+      const exclusions = config.backends?.[backend.id]?.exclusions ?? [];
+      msgs = await parseClaudeCode(config.claudeCodeSource, exclusions, compiledRules);
+    } else {
+      msgs = await backend.parse(config);
+    }
+
     if (msgs.length > 0) {
       const lastTs = msgs[msgs.length - 1].timestamp.toISOString();
       await logSync(client, backend.id, null, lastTs, msgs.length);
@@ -83,6 +149,17 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
   log({
     stage: "insert",
     detail: `${inserted.toLocaleString()} new, ${skipped.toLocaleString()} already synced`,
+    progress: 100,
+  });
+
+  // Flag existing messages against exclusion rules
+  log({ stage: "exclusions", detail: "Flagging excluded messages...", progress: 50 });
+  const flagged = await flagExcludedMessages(client);
+  log({
+    stage: "exclusions",
+    detail: flagged > 0
+      ? `${flagged.toLocaleString()} messages flagged`
+      : "No new messages to flag",
     progress: 100,
   });
 

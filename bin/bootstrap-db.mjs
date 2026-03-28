@@ -72,6 +72,15 @@ const MIGRATIONS = [
   // Politeness embedding classifier
   `ALTER TABLE nlp_enrichments ADD COLUMN politeness_score REAL`,
   `ALTER TABLE nlp_enrichments ADD COLUMN politeness_confidence REAL`,
+  // Skill invocation flagging
+  `ALTER TABLE messages ADD COLUMN is_skill_invocation INTEGER DEFAULT 0`,
+  `ALTER TABLE messages ADD COLUMN matched_skill_id INTEGER REFERENCES skills(id)`,
+  // Skill source type (discovered from disk vs config stored in DB)
+  `ALTER TABLE skills ADD COLUMN source TEXT DEFAULT 'discovered'`,
+  // Exclusion rule reference on messages
+  `ALTER TABLE messages ADD COLUMN matched_rule_id INTEGER REFERENCES exclusion_rules(id)`,
+  // Rename flag: is_skill_invocation -> is_excluded (broader meaning)
+  `ALTER TABLE messages ADD COLUMN is_excluded INTEGER DEFAULT 0`,
 ];
 
 /**
@@ -84,6 +93,32 @@ const NEW_TABLES = [
     cluster TEXT NOT NULL,
     prompt TEXT NOT NULL,
     embedding F32_BLOB(384) NOT NULL
+  )`,
+
+  `CREATE TABLE IF NOT EXISTS skills (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    platform TEXT NOT NULL,
+    skill_name TEXT NOT NULL,
+    skill_path TEXT NOT NULL,
+    invocation_pattern TEXT,
+    template_content TEXT,
+    content_hash TEXT,
+    discovered_at TEXT NOT NULL,
+    UNIQUE(platform, skill_name)
+  )`,
+
+  `CREATE TABLE IF NOT EXISTS exclusion_rules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    platform TEXT NOT NULL DEFAULT '*',
+    rule_type TEXT NOT NULL,
+    pattern TEXT NOT NULL,
+    match_mode TEXT NOT NULL DEFAULT 'starts_with',
+    description TEXT,
+    source TEXT NOT NULL DEFAULT 'system',
+    template_content TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(platform, rule_type, pattern)
   )`,
 ];
 
@@ -112,14 +147,14 @@ export async function bootstrapDb(dbPath) {
     }
   }
 
-  // Clean up agent/bot messages (excluded at parse time now)
-  // 1. Remove rows tagged as agent platform
+  // Migrate is_skill_invocation -> is_excluded (one-time)
+  await client.execute("UPDATE messages SET is_excluded = is_skill_invocation WHERE is_excluded = 0 AND is_skill_invocation = 1");
+
+  // Legacy cleanup: remove rows from obsolete 'agent' platform.
+  // Skill invocation flagging is now handled by src/pipeline/skills.ts
+  // at runtime — messages are kept but flagged (is_skill_invocation = 1).
   await client.execute("DELETE FROM nlp_enrichments WHERE message_id IN (SELECT id FROM messages WHERE platform = 'agent')");
   await client.execute("DELETE FROM messages WHERE platform = 'agent'");
-  // 2. Remove entire conversations containing Goalbot system prompts
-  await client.execute("DELETE FROM nlp_enrichments WHERE message_id IN (SELECT id FROM messages WHERE conversation_id IN (SELECT DISTINCT conversation_id FROM messages WHERE role = 'human' AND content LIKE 'Learned patterns%'))");
-  await client.execute("DELETE FROM messages WHERE conversation_id IN (SELECT DISTINCT conversation_id FROM messages WHERE role = 'human' AND content LIKE 'Learned patterns%')");
-  // 3. Remove agent-* compact sessions
   await client.execute("DELETE FROM nlp_enrichments WHERE message_id IN (SELECT id FROM messages WHERE conversation_id LIKE 'agent-%')");
   await client.execute("DELETE FROM messages WHERE conversation_id LIKE 'agent-%'");
 

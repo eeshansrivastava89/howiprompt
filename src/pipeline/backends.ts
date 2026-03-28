@@ -226,12 +226,59 @@ function scanLmStudioSource(sourceDir: string): { messageCount: number; dateRang
   };
 }
 
+export interface SkillDefinition {
+  skillName: string;
+  skillPath: string;
+  invocationPattern: string; // regex string
+  templateContent: string;
+  /** 'discovered' = scanned from disk, 'config' = platform built-in */
+  source?: "discovered" | "config";
+}
+
 export interface Backend {
   readonly id: string;
   readonly name: string;
   detect(): BackendInfo;
   sync(config: Config): SyncResult;
   parse(config: Config): Promise<Message[]>;
+  /** Discover skills/agents/hooks installed for this platform. */
+  discoverSkills?(): SkillDefinition[];
+}
+
+// ── Skill discovery helpers ───────────────────────────────
+
+function readSkillTemplate(skillDir: string): string {
+  // Try common skill definition filenames
+  for (const name of ["SKILL.md", "skill.md", "README.md", "prompt.md", "index.md"]) {
+    const p = path.join(skillDir, name);
+    try {
+      return fs.readFileSync(p, "utf-8");
+    } catch { /* not found, try next */ }
+  }
+  return "";
+}
+
+function scanSkillDirs(
+  searchPaths: string[],
+  buildPattern: (skillName: string) => string,
+): SkillDefinition[] {
+  const skills: SkillDefinition[] = [];
+  for (const base of searchPaths) {
+    try {
+      if (!fs.existsSync(base)) continue;
+      for (const entry of fs.readdirSync(base, { withFileTypes: true })) {
+        if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+        const skillPath = path.join(base, entry.name);
+        skills.push({
+          skillName: entry.name,
+          skillPath,
+          invocationPattern: buildPattern(entry.name),
+          templateContent: readSkillTemplate(skillPath),
+        });
+      }
+    } catch { /* permission errors, etc */ }
+  }
+  return skills;
 }
 
 // ── Claude Code ────────────────────────────────────────
@@ -261,6 +308,15 @@ class ClaudeCodeBackend implements Backend {
     const exclusions = config.backends?.[this.id]?.exclusions ?? [];
     return parseClaudeCode(config.claudeCodeSource, exclusions);
   }
+
+  discoverSkills(): SkillDefinition[] {
+    const home = os.homedir();
+    return scanSkillDirs(
+      [path.join(home, ".claude", "skills")],
+      // Only match explicit /slash invocation at start of message
+      (name) => `^\\/${name}\\b`,
+    );
+  }
 }
 
 // ── Codex ──────────────────────────────────────────────
@@ -289,6 +345,15 @@ class CodexBackend implements Backend {
   async parse(config: Config): Promise<Message[]> {
     const sessionModels = await parseCodexSessionMetadata(config.codexSessionsSource);
     return parseCodexHistory(config.codexHistorySource, sessionModels);
+  }
+
+  discoverSkills(): SkillDefinition[] {
+    const home = os.homedir();
+    return scanSkillDirs(
+      [path.join(home, ".codex", "skills")],
+      // Match [$skill-name](...) or $skill-name at start of message
+      (name) => `^(?:\\[\\$${name}\\]\\(|\\$${name}\\b)`,
+    );
   }
 }
 
@@ -328,6 +393,18 @@ class CopilotChatBackend implements Backend {
   async parse(config: Config): Promise<Message[]> {
     return parseVsCodeChatSessions(config.copilotChatSource, Platform.COPILOT_CHAT);
   }
+
+  discoverSkills(): SkillDefinition[] {
+    return [
+      {
+        skillName: "agent-command",
+        skillPath: "",
+        invocationPattern: "^@agent\\b",
+        templateContent: "",
+        source: "config",
+      },
+    ];
+  }
 }
 
 // ── Cursor ─────────────────────────────────────────────
@@ -365,6 +442,15 @@ class CursorBackend implements Backend {
 
   async parse(config: Config): Promise<Message[]> {
     return parseVsCodeChatSessions(config.cursorSource, Platform.CURSOR);
+  }
+
+  discoverSkills(): SkillDefinition[] {
+    const home = os.homedir();
+    return scanSkillDirs(
+      [path.join(home, ".cursor", "skills-cursor")],
+      // Only match explicit /slash invocation at start of message
+      (name) => `^\\/${name}\\b`,
+    );
   }
 }
 

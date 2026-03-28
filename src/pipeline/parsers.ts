@@ -1,14 +1,27 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Message, Platform, Role } from "./models.js";
+import type { CompiledRules } from "./exclusions.js";
+import { shouldExcludeContent, shouldExcludeCwd, shouldExcludeDir } from "./exclusions.js";
 
-function findJsonlFiles(dir: string, excludedDirs: Set<string> = new Set()): string[] {
+function findJsonlFiles(
+  dir: string,
+  excludedDirs: Set<string> = new Set(),
+  rules?: CompiledRules,
+): string[] {
   const results: string[] = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (excludedDirs.has(entry.name) || entry.name === "subagents") continue;
-      results.push(...findJsonlFiles(full, excludedDirs));
+      // Check DB-driven dir exclusion rules, then legacy excludedDirs
+      if (rules) {
+        if (shouldExcludeDir(rules, entry.name).excluded) continue;
+      } else {
+        // Fallback: hardcoded subagents skip when no DB rules available
+        if (entry.name === "subagents") continue;
+      }
+      if (excludedDirs.has(entry.name)) continue;
+      results.push(...findJsonlFiles(full, excludedDirs, rules));
     } else if (entry.name.endsWith(".jsonl") || entry.name.includes(".jsonl.backup.")) results.push(full);
   }
   return results;
@@ -46,6 +59,7 @@ function sortMessages(messages: Message[]): Message[] {
 export async function parseClaudeCode(
   sourceDir: string,
   agentCwds: string[] = [],
+  rules?: CompiledRules,
 ): Promise<Message[]> {
   if (!fs.existsSync(sourceDir)) return [];
 
@@ -53,10 +67,15 @@ export async function parseClaudeCode(
   // e.g. "/path/to/project" -> "-path-to-project"
   const excludedDirs = new Set(agentCwds.map((p) => p.replace(/\//g, "-")));
   const messages: Message[] = [];
-  const allFiles = findJsonlFiles(sourceDir, excludedDirs);
+  const allFiles = findJsonlFiles(sourceDir, excludedDirs, rules);
+
+  // Track sessions excluded by CWD rules (skip all messages from that session)
+  const excludedSessions = new Set<string>();
 
   for (const filePath of allFiles) {
     const sessionId = path.basename(filePath, ".jsonl");
+    if (excludedSessions.has(sessionId)) continue;
+
     const lines = fs.readFileSync(filePath, "utf-8").split("\n");
 
     for (const line of lines) {
@@ -70,6 +89,7 @@ export async function parseClaudeCode(
 
       const entryType = entry.type;
       if (entryType !== "user" && entryType !== "assistant") continue;
+      // Structural JSONL checks — these are format-level, not content rules
       if (entry.isMeta) continue;
 
       const tsStr = entry.timestamp;
@@ -77,12 +97,29 @@ export async function parseClaudeCode(
       const timestamp = new Date(tsStr);
       if (isNaN(timestamp.getTime())) continue;
 
+      // CWD-based exclusion: if entry has a cwd matching a rule, skip entire session
+      if (rules && entry.cwd) {
+        const cwdCheck = shouldExcludeCwd(rules, entry.cwd);
+        if (cwdCheck.excluded) {
+          excludedSessions.add(sessionId);
+          break;
+        }
+      }
+
       const msgData = entry.message ?? {};
       if (msgData.role === "user") {
+        // Structural JSONL checks
         if (entry.sourceToolAssistantUUID || entry.toolUseResult) continue;
         const content = extractContent(msgData.content).trim();
         if (!content) continue;
-        if (content.startsWith("<command-") || content.startsWith("<local-command")) continue;
+
+        // Content-based exclusion: DB rules when available, fallback for tests
+        if (rules) {
+          const contentCheck = shouldExcludeContent(rules, content, Platform.CLAUDE_CODE);
+          if (contentCheck.excluded) continue;
+        } else {
+          if (content.startsWith("<command-") || content.startsWith("<local-command")) continue;
+        }
 
         appendClaudeTurn(messages, {
           timestamp,
