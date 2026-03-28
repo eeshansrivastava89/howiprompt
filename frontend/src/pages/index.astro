@@ -48,41 +48,24 @@ import SettingsModal from '../components/dashboard/SettingsModal.astro';
           </div>
         </div>
 
-        <!-- SVG Trend Chart -->
+        <!-- Trend Chart -->
         <div class="trend-panel animate delay-2">
           <div class="trend-header">
             <div class="trend-title">Trends</div>
+            <div class="trend-legend" id="trendLegend"></div>
             <div class="metric-tabs" id="metricTabs">
-              <button class="metric-tab active" data-metric="hitl">Human in the Loop</button>
-              <button class="metric-tab" data-metric="vibe">Vibe</button>
-              <button class="metric-tab" data-metric="polite">Politeness</button>
-              <button class="metric-tab" data-metric="activity">Activity</button>
+              <button class="metric-tab active" data-metric="hitl" data-tooltip="How actively you steer AI output. Higher = more hands-on review and iteration.">Human in the Loop</button>
+              <button class="metric-tab" data-metric="vibe" data-tooltip="How much you rely on intent over specification. Higher = more structured, engineering-style prompts.">Vibe</button>
+              <button class="metric-tab" data-metric="polite" data-tooltip="How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.">Politeness</button>
+              <button class="metric-tab" data-metric="activity" data-tooltip="Prompts per week.">Activity</button>
             </div>
           </div>
           <div class="trend-current">
             <span class="trend-current-val" id="trendVal">--</span>
             <span class="trend-current-label" id="trendLabel">--</span>
           </div>
-          <div class="trend-desc" id="trendDesc"></div>
           <div class="trend-chart-wrap" id="trendWrap">
-            <svg viewBox="0 0 600 160" preserveAspectRatio="none" id="trendSvg">
-              <defs>
-                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="rgba(136,57,239,0.2)"/>
-                  <stop offset="100%" stop-color="rgba(136,57,239,0)"/>
-                </linearGradient>
-              </defs>
-              <g id="trendXAxis"></g>
-              <g id="trendPlatformLines"></g>
-              <polygon id="trendArea" fill="url(#areaGrad)"/>
-              <polyline id="trendLine" fill="none" stroke="#8839ef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              <line id="trendGuide" class="trend-guide" stroke="rgba(92,61,46,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
-              <circle id="trendDotEnd" r="4" fill="#8839ef"/>
-              <circle id="trendDotHover" class="trend-dot-hover" r="6" fill="#8839ef"/>
-              <circle id="trendDotGlow" class="trend-dot-hover" r="11" fill="none" stroke="rgba(136,57,239,0.3)" stroke-width="2"/>
-              <g id="trendHitAreas"></g>
-            </svg>
-            <div class="trend-tooltip" id="trendTooltip"></div>
+            <div id="trendChart"></div>
           </div>
         </div>
 
@@ -93,7 +76,6 @@ import SettingsModal from '../components/dashboard/SettingsModal.astro';
           <div class="heatmap-meta">
             <span>Peak Hour: <strong id="peakHourValue">--</strong></span>
             <span>Peak Day: <strong id="peakDayValue">--</strong></span>
-            <span>Response Ratio: <strong id="responseRatioValue">--</strong></span>
           </div>
         </div>
       </div>

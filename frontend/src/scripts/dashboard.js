@@ -1,4 +1,4 @@
-// dashboard.js — Dashboard interactivity: source filtering, heatmap, SVG trends, player card, share
+// dashboard.js — Dashboard interactivity: source filtering, heatmap, ApexCharts trends, player card, share
 // Loads metrics.json via fetch() at runtime — no build-time data injection.
 
 import { initThemeToggle } from './theme.js';
@@ -30,10 +30,10 @@ const SOURCE_LABELS = {
 };
 const SOURCE_ACCENTS = {
     claude_code: '#e67e22',
-    codex: '#2c2c2c',
-    copilot_chat: '#0ea5a5',
-    cursor: '#2563eb',
-    lmstudio: '#16a34a',
+    codex: '#a855f7',
+    copilot_chat: '#06b6d4',
+    cursor: '#3b82f6',
+    lmstudio: '#22c55e',
 };
 
 function formatSourceLabel(key) {
@@ -214,16 +214,16 @@ function renderHeatmap(heatmapData) {
     }
 }
 
-// === SVG Trend Chart ===
+// === Trend Chart (ApexCharts) ===
 
 let trendData = {};
 let activeTrendMetric = 'hitl';
 
 const TREND_METRIC_CONFIG = {
-    hitl:      { key: 'hitl_score',          label: 'Human in the Loop', suffix: '', desc: 'How actively you steer AI output. Higher = more hands-on review and iteration.' },
-    vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '', desc: 'Engineer vs. vibe coder spectrum. Higher = more structured, spec-driven prompting.' },
-    polite:    { key: 'politeness',          label: 'Politeness',        suffix: '', desc: 'How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.' },
-    activity:  { key: '_prompts',            label: 'Activity',          suffix: '', desc: 'Prompts per week.' },
+    hitl:      { key: 'hitl_score',          label: 'Human in the Loop', suffix: '/100', desc: 'How actively you steer AI output. Higher = more hands-on review and iteration.' },
+    vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '/100', desc: 'Engineer vs. vibe coder spectrum. Higher = more structured, spec-driven prompting.' },
+    polite:    { key: 'politeness',          label: 'Politeness',        suffix: '/100', desc: 'How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.' },
+    activity:  { key: '_prompts',            label: 'Activity',          suffix: '/wk', desc: 'Prompts per week.' },
 };
 
 function extractTrendPoints(weekly, metricKey) {
@@ -234,35 +234,19 @@ function extractTrendPoints(weekly, metricKey) {
     });
 }
 
-function getPlatformColors() {
-    const isDark = document.documentElement.classList.contains('dark');
-    return Object.fromEntries(
-        Object.entries(SOURCE_LABELS)
-            .filter(([key]) => key !== 'both')
-            .map(([key, label]) => [
-                key,
-                {
-                    stroke: key === 'codex' && isDark ? '#b0a596' : (SOURCE_ACCENTS[key] || '#666666'),
-                    label,
-                },
-            ]),
-    );
-}
-
-function hexToRgba(hex, alpha) {
-    const r = parseInt(hex.slice(1,3), 16), g = parseInt(hex.slice(3,5), 16), b = parseInt(hex.slice(5,7), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
-}
-
 function resolveAccent() {
-    // If viewing a specific platform, use its color
-    const platColor = getPlatformColors()[activeSourceKey]?.stroke;
+    const platColor = SOURCE_ACCENTS[activeSourceKey];
     if (platColor) return platColor;
-    // Otherwise use CSS accent
     return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#5c3d2e';
 }
 
-function initSvgTrend(view) {
+function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+let trendChartInstance = null;
+
+function initTrendChart(view) {
     const trends = view?.trends || {};
     const weekly = trends?.weekly_rollups || [];
     if (weekly.length < 2) return;
@@ -270,26 +254,13 @@ function initSvgTrend(view) {
     const weeklyByPlatform = trends?.weekly_by_platform || {};
     const isAllView = Object.keys(weeklyByPlatform).length > 0;
 
-    const ns = 'http://www.w3.org/2000/svg';
-    const svgEl = document.getElementById('trendSvg');
-    const areaEl = document.getElementById('trendArea');
-    const lineEl = document.getElementById('trendLine');
-    const guideEl = document.getElementById('trendGuide');
-    const dotEnd = document.getElementById('trendDotEnd');
-    const dotHover = document.getElementById('trendDotHover');
-    const dotGlow = document.getElementById('trendDotGlow');
-    const hitGroup = document.getElementById('trendHitAreas');
-    const platformGroup = document.getElementById('trendPlatformLines');
-    const xAxisGroup = document.getElementById('trendXAxis');
-    const tooltip = document.getElementById('trendTooltip');
+    const chartEl = document.getElementById('trendChart');
     const valEl = document.getElementById('trendVal');
     const labelEl = document.getElementById('trendLabel');
 
-    if (!svgEl || !areaEl || !lineEl) return;
+    if (!chartEl) return;
 
-    const vw = 600, vh = 140, pad = 20;
-
-    // Build week date labels from week_start keys
+    // Build week date labels
     const weekDates = weekly.map((w) => {
         const d = new Date(w.week_start || w.date);
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -307,7 +278,7 @@ function initSvgTrend(view) {
         activity: avgPromptsPerWeek,
     };
 
-    // Build weekly data for trend lines (aggregate)
+    // Build trendData structure
     trendData = {};
     for (const [key, config] of Object.entries(TREND_METRIC_CONFIG)) {
         const points = extractTrendPoints(weekly, config.key);
@@ -320,7 +291,6 @@ function initSvgTrend(view) {
                 lifetime: lifetimeAvg[key],
             };
 
-            // Build per-platform series aligned to aggregate week keys
             if (isAllView) {
                 const weekKeys = weekly.map((w) => w.week_start);
                 entry.platforms = {};
@@ -328,12 +298,12 @@ function initSvgTrend(view) {
                     const platByWeek = new Map(platWeekly.map((w) => [w.week_start, w]));
                     const platPoints = weekKeys.map((wk) => {
                         const pw = platByWeek.get(wk);
-                        if (!pw) return null;
-                        if (config.key === '_prompts') return pw.prompts ?? null;
+                        if (!pw) return 0;
+                        if (config.key === '_prompts') return pw.prompts ?? 0;
                         if (pw.nlp && pw.nlp[config.key] != null) return Math.round(pw.nlp[config.key]);
-                        return null;
+                        return 0;
                     });
-                    if (platPoints.some((p) => p != null)) {
+                    if (platPoints.some((p) => p != null && p !== 0)) {
                         entry.platforms[plat] = platPoints;
                     }
                 }
@@ -343,230 +313,160 @@ function initSvgTrend(view) {
         }
     }
 
-    // If first metric has no data, find one that does
     if (!trendData[activeTrendMetric]) {
         activeTrendMetric = Object.keys(trendData)[0] || 'hitl';
     }
 
-    // Render x-axis date labels
-    function renderXAxis(stepX) {
-        xAxisGroup.innerHTML = '';
-        // Show every Nth label to avoid crowding
-        const maxLabels = 8;
-        const step = Math.max(1, Math.ceil(weekly.length / maxLabels));
-        for (let i = 0; i < weekly.length; i += step) {
-            const text = document.createElementNS(ns, 'text');
-            text.setAttribute('x', pad + i * stepX);
-            text.setAttribute('y', vh + 14);
-            text.setAttribute('text-anchor', 'middle');
-            text.setAttribute('font-size', '9');
-            text.setAttribute('fill', 'var(--subtext)');
-            text.setAttribute('opacity', '0.7');
-            text.textContent = weekDates[i];
-            xAxisGroup.appendChild(text);
-        }
-    }
+    function buildSeriesAndColors(metricKey) {
+        const d = trendData[metricKey];
+        if (!d) return { series: [], colors: [] };
 
-    function toCoords(pts, min, range, stepX) {
-        return pts.map((v, i) => ({
-            x: pad + i * stepX,
-            y: vh - pad - ((v - min) / range) * (vh - pad * 2),
-        }));
-    }
-
-    function render() {
-        const d = trendData[activeTrendMetric];
-        if (!d) return;
-        const pts = d.points;
         const hasPlatforms = d.platforms && Object.keys(d.platforms).length > 1;
 
-        // Compute min/max across all series for consistent y-axis (ignore nulls)
-        let allValues = [...pts];
         if (hasPlatforms) {
-            for (const platPts of Object.values(d.platforms)) allValues = allValues.concat(platPts.filter((p) => p != null));
-        }
-        const min = Math.min(...allValues) - 5;
-        const max = Math.max(...allValues) + 5;
-        const range = max - min || 1;
-        const stepX = (vw - pad * 2) / (pts.length - 1);
-
-        const coords = toCoords(pts, min, range, stepX);
-
-        // Platform lines
-        platformGroup.innerHTML = '';
-        if (hasPlatforms) {
-            // In multi-line mode: hide aggregate area, show aggregate as thin dashed
-            areaEl.setAttribute('points', '');
-            lineEl.setAttribute('points', '');
-            dotEnd.style.display = 'none';
-
+            const series = [];
+            const colors = [];
             for (const [plat, platPts] of Object.entries(d.platforms)) {
-                const color = getPlatformColors()[plat]?.stroke || '#666';
-
-                // Break line at null gaps — render continuous segments
-                let segment = [];
-                for (let j = 0; j < platPts.length; j++) {
-                    if (platPts[j] != null) {
-                        const x = pad + j * stepX;
-                        const y = vh - pad - ((platPts[j] - min) / range) * (vh - pad * 2);
-                        segment.push({ x, y });
-                    } else if (segment.length > 0) {
-                        // Flush segment
-                        const line = document.createElementNS(ns, 'polyline');
-                        line.setAttribute('points', segment.map((c) => `${c.x},${c.y}`).join(' '));
-                        line.setAttribute('fill', 'none');
-                        line.setAttribute('stroke', color);
-                        line.setAttribute('stroke-width', '2.5');
-                        line.setAttribute('stroke-linecap', 'round');
-                        line.setAttribute('stroke-linejoin', 'round');
-                        platformGroup.appendChild(line);
-                        segment = [];
-                    }
-                }
-                // Flush remaining segment
-                if (segment.length > 0) {
-                    const line = document.createElementNS(ns, 'polyline');
-                    line.setAttribute('points', segment.map((c) => `${c.x},${c.y}`).join(' '));
-                    line.setAttribute('fill', 'none');
-                    line.setAttribute('stroke', color);
-                    line.setAttribute('stroke-width', '2.5');
-                    line.setAttribute('stroke-linecap', 'round');
-                    line.setAttribute('stroke-linejoin', 'round');
-                    platformGroup.appendChild(line);
-
-                    // End dot on last non-null point
-                    const last = segment[segment.length - 1];
-                    const dot = document.createElementNS(ns, 'circle');
-                    dot.setAttribute('cx', last.x);
-                    dot.setAttribute('cy', last.y);
-                    dot.setAttribute('r', '3.5');
-                    dot.setAttribute('fill', color);
-                    platformGroup.appendChild(dot);
-                }
+                series.push({
+                    name: SOURCE_LABELS[plat] || plat,
+                    data: platPts.map((v) => v ?? 0),
+                });
+                colors.push(SOURCE_ACCENTS[plat] || '#666666');
             }
+            return { series, colors, showLegend: true };
         } else {
-            // Single line mode
-            dotEnd.style.display = '';
-            areaEl.setAttribute('points',
-                `${coords[0].x},${vh} ` + coords.map((c) => `${c.x},${c.y}`).join(' ') + ` ${coords[coords.length - 1].x},${vh}`
-            );
-            lineEl.setAttribute('points', coords.map((c) => `${c.x},${c.y}`).join(' '));
-
-            const last = coords[coords.length - 1];
-            dotEnd.setAttribute('cx', last.x);
-            dotEnd.setAttribute('cy', last.y);
+            return {
+                series: [{ name: d.label, data: d.points }],
+                colors: [resolveAccent()],
+                showLegend: false,
+            };
         }
-
-        dotHover.style.display = 'none';
-        dotGlow.style.display = 'none';
-        guideEl.style.display = 'none';
-        tooltip.style.opacity = '0';
-
-        // Resolve color — platform color for single-platform views, or config override, or accent
-        const cfg = TREND_METRIC_CONFIG[activeTrendMetric];
-        const rawColor = cfg?.color
-            ? getComputedStyle(document.documentElement).getPropertyValue(cfg.color.replace('var(', '').replace(')', '')).trim() || cfg.color
-            : null;
-        const accent = rawColor || resolveAccent();
-        if (!hasPlatforms) {
-            lineEl.setAttribute('stroke', accent);
-            dotEnd.setAttribute('fill', accent);
-        }
-        dotHover.setAttribute('fill', accent);
-        dotGlow.setAttribute('stroke', hexToRgba(accent, 0.3));
-
-        // Update area gradient to match current accent
-        const grad = document.getElementById('areaGrad');
-        if (grad) {
-            grad.children[0]?.setAttribute('stop-color', hexToRgba(accent, 0.2));
-            grad.children[1]?.setAttribute('stop-color', hexToRgba(accent, 0));
-        }
-
-        // X-axis
-        renderXAxis(stepX);
-
-        // Hit areas for hover
-        hitGroup.innerHTML = '';
-        coords.forEach((c, i) => {
-            const rect = document.createElementNS(ns, 'rect');
-            rect.setAttribute('x', c.x - stepX / 2);
-            rect.setAttribute('y', 0);
-            rect.setAttribute('width', stepX);
-            rect.setAttribute('height', vh);
-            rect.setAttribute('fill', 'transparent');
-            rect.style.cursor = 'crosshair';
-
-            rect.addEventListener('mouseenter', () => {
-                if (!hasPlatforms) {
-                    dotHover.setAttribute('cx', c.x);
-                    dotHover.setAttribute('cy', c.y);
-                    dotGlow.setAttribute('cx', c.x);
-                    dotGlow.setAttribute('cy', c.y);
-                    dotHover.style.display = '';
-                    dotGlow.style.display = '';
-                }
-                guideEl.setAttribute('x1', c.x);
-                guideEl.setAttribute('y1', pad);
-                guideEl.setAttribute('x2', c.x);
-                guideEl.setAttribute('y2', vh);
-                guideEl.style.display = '';
-                const svgRect = svgEl.getBoundingClientRect();
-                const pctX = c.x / vw;
-                let leftPx = pctX * svgRect.width;
-                // Clamp tooltip to chart bounds
-                const tipW = 180;
-                leftPx = Math.max(tipW / 2, Math.min(leftPx, svgRect.width - tipW / 2));
-                tooltip.style.left = leftPx + 'px';
-                tooltip.style.opacity = '1';
-
-                if (hasPlatforms) {
-                    const parts = Object.entries(d.platforms)
-                        .filter(([, platPts]) => platPts[i] != null)
-                        .map(([plat, platPts]) => {
-                            const label = getPlatformColors()[plat]?.label || plat;
-                            return `${label}: ${platPts[i]}${d.suffix}`;
-                        });
-                    tooltip.textContent = parts.length > 0
-                        ? `${weekDates[i]} · ${parts.join(' / ')}`
-                        : weekDates[i];
-                } else {
-                    tooltip.textContent = `${weekDates[i]}: ${pts[i]}${d.suffix}`;
-                }
-            });
-
-            rect.addEventListener('mouseleave', () => {
-                dotHover.style.display = 'none';
-                dotGlow.style.display = 'none';
-                guideEl.style.display = 'none';
-                tooltip.style.opacity = '0';
-            });
-
-            hitGroup.appendChild(rect);
-        });
     }
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const mutedColor = cssVar('--muted') || '#888';
+    const initial = buildSeriesAndColors(activeTrendMetric);
+    const initialSuffix = trendData[activeTrendMetric]?.suffix || '';
+
+    const options = {
+        chart: {
+            type: 'area',
+            height: 220,
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            toolbar: { show: false },
+            zoom: { enabled: false },
+            background: 'transparent',
+            animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 400,
+            },
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 2.5,
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.35,
+                opacityTo: 0.02,
+                stops: [0, 95],
+            },
+        },
+        colors: initial.colors,
+        series: initial.series,
+        xaxis: {
+            categories: weekDates,
+            labels: {
+                style: { colors: mutedColor, fontSize: '11px' },
+                rotate: 0,
+                hideOverlappingLabels: true,
+            },
+            tickAmount: 7,
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+        },
+        yaxis: {
+            show: false,
+            min: 0,
+        },
+        grid: {
+            show: false,
+            padding: { left: 16, right: 16, top: -8, bottom: 0 },
+        },
+        legend: { show: false },
+        tooltip: {
+            shared: true,
+            intersect: false,
+            theme: isDark ? 'dark' : 'light',
+            y: {
+                formatter: (val) => val != null ? Math.round(val) + initialSuffix : '--',
+            },
+            style: { fontSize: '12px', fontFamily: "'JetBrains Mono', monospace" },
+        },
+        dataLabels: { enabled: false },
+    };
+
+    // Destroy existing instance before re-creating
+    if (trendChartInstance) {
+        trendChartInstance.destroy();
+        trendChartInstance = null;
+    }
+
+    trendChartInstance = new ApexCharts(chartEl, options);
+    trendChartInstance.render();
 
     function setMetric(key) {
         if (!trendData[key]) return;
         activeTrendMetric = key;
         const d = trendData[key];
-        const config = TREND_METRIC_CONFIG[key];
         const headlineRaw = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
         valEl.textContent = (key === 'activity' ? formatCompact(headlineRaw) : headlineRaw) + d.suffix;
-        labelEl.textContent = `${d.label} · ${weekly.length}-week trend`;
-        // Set headline color to match platform/accent
+        labelEl.textContent = `${d.label} \u00B7 ${weekly.length}-week trend`;
+
+        // Set headline color
         const trendPanel = valEl.closest('.trend-panel');
         if (trendPanel) {
-            const headlineColor = config?.color
-                ? getComputedStyle(document.documentElement).getPropertyValue(config.color.replace('var(', '').replace(')', '')).trim() || config.color
-                : resolveAccent();
-            trendPanel.style.setProperty('--trend-color', headlineColor);
+            trendPanel.style.setProperty('--trend-color', resolveAccent());
         }
-        const descEl = document.getElementById('trendDesc');
-        if (descEl) descEl.textContent = config?.desc || '';
+
         document.querySelectorAll('.metric-tab').forEach((t) =>
             t.classList.toggle('active', t.dataset.metric === key)
         );
-        render();
+
+        const { series, colors, showLegend } = buildSeriesAndColors(key);
+        const suffix = d.suffix || '';
+
+        // Update inline legend
+        const legendEl = document.getElementById('trendLegend');
+        if (legendEl) {
+            legendEl.innerHTML = '';
+            if (showLegend) {
+                for (const s of series) {
+                    const plat = Object.entries(SOURCE_LABELS).find(([, v]) => v === s.name)?.[0];
+                    const color = plat ? SOURCE_ACCENTS[plat] : '#666';
+                    const pill = document.createElement('span');
+                    pill.className = 'trend-legend-pill';
+                    pill.innerHTML = `<span class="trend-legend-dot" style="background:${color}"></span>${s.name}`;
+                    legendEl.appendChild(pill);
+                }
+                legendEl.style.display = '';
+            } else {
+                legendEl.style.display = 'none';
+            }
+        }
+
+        trendChartInstance.updateOptions({
+            colors,
+            tooltip: {
+                y: {
+                    formatter: (val) => val != null ? Math.round(val) + suffix : '--',
+                },
+            },
+        }, false, false);
+        trendChartInstance.updateSeries(series);
     }
 
     document.querySelectorAll('.metric-tab').forEach((tab) => {
@@ -716,7 +616,7 @@ function renderView(sourceKey) {
     const wordsTypedValue = el('wordsTypedValue');
     if (wordsTypedValue) wordsTypedValue.textContent = formatCompact(volume.total_words_human);
     const wordsTypedSubtitle = el('wordsTypedSubtitle');
-    if (wordsTypedSubtitle) wordsTypedSubtitle.textContent = `${formatCompact(volume.total_words_assistant)} from assistants`;
+    if (wordsTypedSubtitle) wordsTypedSubtitle.textContent = `${volume.avg_words_per_prompt ?? 0} words avg`;
 
     const nightOwlValue = el('nightOwlValue');
     if (nightOwlValue) nightOwlValue.textContent = `${temporal.night_owl_pct ?? 0}%`;
@@ -726,8 +626,6 @@ function renderView(sourceKey) {
     if (peakHourValue) peakHourValue.textContent = formatHour12(temporal.peak_hour);
     const peakDayValue = el('peakDayValue');
     if (peakDayValue) peakDayValue.textContent = temporal.peak_day || 'N/A';
-    const responseRatioValue = el('responseRatioValue');
-    if (responseRatioValue) responseRatioValue.textContent = `${view.response_ratio || 0}x`;
 
     // Player card
     renderPlayerCard(persona, view.nlp || {}, politeness, view);
@@ -735,8 +633,8 @@ function renderView(sourceKey) {
     // Heatmap
     renderHeatmap(temporal.heatmap);
 
-    // SVG trend chart
-    initSvgTrend(view);
+    // Trend chart
+    initTrendChart(view);
 }
 
 // === Source filter ===
@@ -1841,15 +1739,15 @@ document.getElementById('wizardDone')?.addEventListener('click', async () => {
 // === Init ===
 
 async function init() {
-    initThemeToggle('dashboard-theme');
+    initThemeToggle();
     fixLocalLinks();
     initTabs();
     initCardTilt();
 
-    // Re-render SVG trend on theme toggle
+    // Re-render trend chart on theme toggle
     document.getElementById('themeToggle')?.addEventListener('click', () => {
         requestAnimationFrame(() => {
-            if (activeView) initSvgTrend(activeView);
+            if (activeView) initTrendChart(activeView);
         });
     });
 

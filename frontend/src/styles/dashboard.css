@@ -53,25 +53,23 @@
 .stat-card-value.highlight{color:var(--text);font-weight:800}
 .stat-card-sub{font-size:13px;color:var(--muted);margin-top:4px}
 
-/* === TREND CHART (SVG) === */
-.trend-panel{background:var(--surface);border-radius:var(--ui-radius-sm);padding:18px 20px;box-shadow:var(--shadow);flex:1;min-height:0;min-width:0;display:flex;flex-direction:column}
-.trend-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;min-width:0}
+/* === TREND CHART === */
+.trend-panel{background:var(--surface);border-radius:var(--ui-radius-sm);padding:14px 20px 10px;box-shadow:var(--shadow);flex:1;min-height:0;min-width:0;display:flex;flex-direction:column}
+.trend-header{display:flex;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px 12px;min-width:0}
 .trend-title{font-size:16px;font-weight:700}
-.metric-tabs{display:flex;gap:4px;flex-wrap:wrap;min-width:0}
-.metric-tab{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.trend-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.trend-legend-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap}
+.trend-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.metric-tabs{display:flex;gap:4px;flex-wrap:wrap;min-width:0;margin-left:auto}
+.metric-tab{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;position:relative}
+.metric-tab[data-tooltip]:hover::after{content:attr(data-tooltip);position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:6px 12px;border-radius:8px;white-space:normal;width:max-content;max-width:220px;z-index:20;pointer-events:none;line-height:1.4}
+.metric-tab[data-tooltip]:hover::before{content:'';position:absolute;top:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:var(--text);z-index:20;pointer-events:none}
 .metric-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .metric-tab:hover:not(.active){border-color:var(--accent);color:var(--accent)}
-.trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
 .trend-current-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--trend-color, var(--accent))}
 .trend-current-label{font-size:13px;color:var(--muted)}
-.trend-desc{font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.4}
-.trend-chart-wrap{position:relative;cursor:crosshair;flex:1;min-height:60px}
-.trend-chart-wrap svg{width:100%;height:100%;display:block}
-.trend-dot{transition:r .1s}
-.trend-dot-hover{display:none}
-.trend-guide{display:none}
-.trend-tooltip{position:absolute;top:6px;background:var(--text);color:var(--bg);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .1s;white-space:nowrap;z-index:10;transform:translateX(-50%)}
-.trend-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--text)}
+.trend-chart-wrap{position:relative;flex:1;min-height:60px}
 
 /* === HEATMAP === */
 .heatmap-panel{background:var(--surface);border-radius:var(--ui-radius-sm);padding:14px 18px;box-shadow:var(--shadow);flex-shrink:0}

@@ -2,19 +2,20 @@
 
 /* ─── Theme tokens ─── */
 @theme {
-  /* Coffee palette colors — used by Tailwind utilities (bg-bg, text-muted, etc.) */
-  --color-bg: #f5f3f0;
-  --color-surface: #fff;
-  --color-surface-raised: #faf8f5;
-  --color-text: #3c3226;
-  --color-subtext: #6b5e50;
-  --color-muted: #8a7d6f;
-  --color-border: #d9d2c9;
-  --color-border-light: #ebe5dc;
-  --color-accent: #5c3d2e;
-  --color-accent-soft: #ede6de;
-  --color-stat-b: #1a5bdb;
-  --color-stat-r: #d20f39;
+  /* Coffee palette colors — reference runtime CSS vars so .dark overrides propagate
+     through Tailwind utilities (bg-bg, text-muted, text-text/80, etc.) */
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-text: var(--text);
+  --color-subtext: var(--subtext);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-stat-b: var(--stat-b);
+  --color-stat-r: var(--stat-r);
 
   /* Fonts */
   --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
@@ -34,10 +35,12 @@
 :root {
   --bg: #f5f3f0;
   --surface: #fff;
+  --surface-raised: #faf8f5;
   --text: #3c3226;
   --subtext: #6b5e50;
   --muted: #8a7d6f;
   --border: #d9d2c9;
+  --border-light: #ebe5dc;
   --accent: #5c3d2e;
   --accent-soft: #ede6de;
   --accent-rgb: 92,61,46;
@@ -52,10 +55,12 @@
 .dark {
   --bg: #1c1816;
   --surface: #2a2420;
+  --surface-raised: #332c26;
   --text: #e0d6cc;
   --subtext: #b0a596;
   --muted: #8a7d6f;
   --border: #3d342c;
+  --border-light: #4a3f35;
   --accent: #c9a882;
   --accent-soft: #2e261f;
   --accent-rgb: 201,168,130;

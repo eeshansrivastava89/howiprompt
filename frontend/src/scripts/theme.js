@@ -1,7 +1,7 @@
 // theme.js — Shared theme toggle logic
 // Dashboard uses 'dashboard-theme' key, wrapped uses 'theme' key.
 
-export function initThemeToggle(storageKey = 'dashboard-theme') {
+export function initThemeToggle(storageKey = 'hip-theme') {
     const html = document.documentElement;
     const themeToggle = document.getElementById('themeToggle');
     if (!themeToggle) return;

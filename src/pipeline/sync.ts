@@ -34,7 +34,7 @@ export function syncClaudeCode(destDir: string): SyncResult {
   }
 
   const filesCopied = copyMatchingRecursive(sourceDir, destDir, (_srcPath, entryName) =>
-    entryName.endsWith(".jsonl"),
+    entryName.endsWith(".jsonl") || entryName.includes(".jsonl.backup."),
   );
   return { files: filesCopied, source: sourceDir };
 }

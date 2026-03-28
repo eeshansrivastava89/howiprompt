@@ -7,11 +7,6 @@ import { classifyPersona } from "./persona.js";
 import { computeNormalized } from "./registry.js";
 import { computeTrendMetrics } from "./trends.js";
 
-function round(n: number, decimals: number): number {
-  const f = 10 ** decimals;
-  return Math.round(n * f) / f;
-}
-
 function countAllMatches(texts: string[], pattern: RegExp): number {
   let total = 0;
   for (const t of texts) {
@@ -19,6 +14,11 @@ function countAllMatches(texts: string[], pattern: RegExp): number {
     pattern.lastIndex = 0;
   }
   return total;
+}
+
+function round(n: number, decimals: number): number {
+  const f = 10 ** decimals;
+  return Math.round(n * f) / f;
 }
 
 export async function computeModelUsage(
@@ -127,25 +127,23 @@ export async function computeMetrics(
 ): Promise<Record<string, any>> {
   const pf = platformFilter(platform);
 
-  // Volume
+  // Volume (human-only — the universal unit across all platforms)
   const vol = (await client.execute({
-    sql: `SELECT COUNT(*) as total, SUM(CASE WHEN role = 'human' THEN 1 ELSE 0 END) as human, SUM(CASE WHEN role = 'assistant' THEN 1 ELSE 0 END) as assistant, SUM(CASE WHEN role = 'human' THEN word_count ELSE 0 END) as words_h, SUM(CASE WHEN role = 'assistant' THEN word_count ELSE 0 END) as words_a, COUNT(DISTINCT conversation_id) as convos FROM messages WHERE 1=1${pf.clause}`,
+    sql: `SELECT COUNT(*) as total, SUM(CASE WHEN role = 'human' THEN 1 ELSE 0 END) as human, SUM(CASE WHEN role = 'human' THEN word_count ELSE 0 END) as words_h, COUNT(DISTINCT conversation_id) as convos FROM messages WHERE 1=1${pf.clause}`,
     args: pf.args,
   })).rows[0];
 
   const totalMessages = Number(vol.total);
   const totalHuman = Number(vol.human);
-  const totalAssistant = Number(vol.assistant);
   const totalWordsHuman = Number(vol.words_h ?? 0);
-  const totalWordsAssistant = Number(vol.words_a ?? 0);
   const totalConversations = Number(vol.convos);
 
   if (!totalHuman) throw new Error("No human messages found in data");
   const avgWordsPerPrompt = totalWordsHuman / totalHuman;
 
-  // Conversation depth
+  // Conversation depth (human turns only — comparable across all platforms)
   const depthRows = (await client.execute({
-    sql: `SELECT conversation_id, COUNT(*) as cnt FROM messages WHERE 1=1${pf.clause} GROUP BY conversation_id`,
+    sql: `SELECT conversation_id, COUNT(*) as cnt FROM messages WHERE role = 'human'${pf.clause} GROUP BY conversation_id`,
     args: pf.args,
   })).rows;
   const turns = depthRows.map((r) => Number(r.cnt));
@@ -154,7 +152,6 @@ export async function computeMetrics(
   const quickAsks = turns.filter((t) => t <= 3).length;
   const workingSessions = turns.filter((t) => t >= 4 && t <= 10).length;
   const deepDives = turns.filter((t) => t > 10).length;
-  const responseRatio = totalWordsHuman ? totalWordsAssistant / totalWordsHuman : 0;
 
   // Temporal
   const heatmapRows = (await client.execute({
@@ -195,9 +192,9 @@ export async function computeMetrics(
   }
   const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
+  // "You're right" affirmation count
   const assistantMsgs = await queryMessages(client, { role: Role.ASSISTANT, platform });
   const assistantTexts = assistantMsgs.map((m) => m.content);
-
   const yrPattern = /you'?re (absolutely |completely |totally )?right|(?:that'?s |this is )(?:a )?(?:great|good|excellent) (?:point|idea|suggestion|approach|call)|(?:exactly|precisely|absolutely)[!.,]|great (?:catch|observation|question)/gi;
   const yrCount = countAllMatches(assistantTexts, yrPattern);
   const yrPerConvo = totalConversations ? yrCount / totalConversations : 0;
@@ -235,9 +232,7 @@ export async function computeMetrics(
     volume: {
       total_messages: totalMessages,
       total_human: totalHuman,
-      total_assistant: totalAssistant,
       total_words_human: totalWordsHuman,
-      total_words_assistant: totalWordsAssistant,
       total_conversations: totalConversations,
       avg_words_per_prompt: round(avgWordsPerPrompt, 1),
     },
@@ -248,7 +243,6 @@ export async function computeMetrics(
       working_sessions: workingSessions,
       deep_dives: deepDives,
     },
-    response_ratio: round(responseRatio, 1),
     temporal: {
       heatmap,
       night_owl_pct: round(nightOwlPct, 1),

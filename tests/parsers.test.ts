@@ -92,6 +92,36 @@ describe("parseClaudeCode", () => {
     expect(messages).toEqual([]);
   });
 
+  it("excludes subagent sidechain files", async () => {
+    const sessionDir = path.join(tmpDir, "project-1", "session-uuid");
+    const subagentDir = path.join(sessionDir, "subagents");
+    fs.mkdirSync(subagentDir, { recursive: true });
+
+    // Top-level session file — should be ingested
+    fs.writeFileSync(
+      path.join(sessionDir, "session-uuid.jsonl"),
+      JSON.stringify({
+        type: "user",
+        message: { role: "user", content: "top-level prompt" },
+        timestamp: "2026-02-01T10:00:00Z",
+      }),
+    );
+
+    // Subagent sidechain file — should be skipped
+    fs.writeFileSync(
+      path.join(subagentDir, "agent-a01f698.jsonl"),
+      JSON.stringify({
+        type: "user",
+        message: { role: "user", content: "subagent prompt" },
+        timestamp: "2026-02-01T10:01:00Z",
+      }),
+    );
+
+    const messages = await parseClaudeCode(tmpDir);
+    expect(messages).toHaveLength(1);
+    expect(messages[0].content).toBe("top-level prompt");
+  });
+
   it("handles array content (multi-part user messages)", async () => {
     const projectDir = path.join(tmpDir, "project-1");
     fs.mkdirSync(projectDir, { recursive: true });
@@ -113,6 +143,72 @@ describe("parseClaudeCode", () => {
     const messages = await parseClaudeCode(tmpDir);
     expect(messages.length).toBe(1);
     expect(messages[0].content).toBe("first part second part");
+  });
+
+  it("collapses fragmented assistant turns and skips tool results", async () => {
+    const projectDir = path.join(tmpDir, "project-1");
+    fs.mkdirSync(projectDir, { recursive: true });
+    const lines = [
+      JSON.stringify({
+        type: "user",
+        message: { role: "user", content: "fix the parser" },
+        timestamp: "2026-02-01T10:00:00Z",
+      }),
+      JSON.stringify({
+        type: "assistant",
+        message: {
+          role: "assistant",
+          id: "msg-1",
+          content: [{ type: "thinking", thinking: "internal" }],
+        },
+        timestamp: "2026-02-01T10:00:01Z",
+      }),
+      JSON.stringify({
+        type: "assistant",
+        message: {
+          role: "assistant",
+          id: "msg-1",
+          content: [{ type: "text", text: "I will inspect the parser." }],
+        },
+        timestamp: "2026-02-01T10:00:02Z",
+      }),
+      JSON.stringify({
+        type: "assistant",
+        message: {
+          role: "assistant",
+          id: "msg-1",
+          content: [{ type: "tool_use", id: "tool-1", name: "Read", input: { file: "x" } }],
+        },
+        timestamp: "2026-02-01T10:00:03Z",
+      }),
+      JSON.stringify({
+        type: "user",
+        sourceToolAssistantUUID: "assistant-uuid",
+        message: {
+          role: "user",
+          content: [{ type: "tool_result", tool_use_id: "tool-1", content: "parser.ts" }],
+        },
+        timestamp: "2026-02-01T10:00:04Z",
+      }),
+      JSON.stringify({
+        type: "assistant",
+        message: {
+          role: "assistant",
+          id: "msg-1",
+          content: [{ type: "text", text: "I found the root cause." }],
+        },
+        timestamp: "2026-02-01T10:00:05Z",
+      }),
+    ];
+    fs.writeFileSync(path.join(projectDir, "session-1.jsonl"), lines.join("\n"));
+
+    const messages = await parseClaudeCode(tmpDir);
+    expect(messages).toHaveLength(2);
+    expect(messages[0]).toMatchObject({ role: Role.HUMAN, content: "fix the parser" });
+    expect(messages[1]).toMatchObject({
+      role: Role.ASSISTANT,
+      content: "I will inspect the parser. I found the root cause.",
+    });
   });
 });
 

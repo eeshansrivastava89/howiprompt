@@ -162,7 +162,6 @@ function hydrateWrapped(m) {
     const t = m.temporal || {};
     const yr = m.youre_right || {};
     const cd = m.conversation_depth || {};
-    const rr = m.response_ratio || 0;
     const dr = m.date_range || {};
     const nlp = m.nlp || {};
     const p = m.persona || {};
@@ -177,6 +176,7 @@ function hydrateWrapped(m) {
     setText('yrCount', yr.count || 0);
     setText('yrPerConvo', `${yr.per_conversation || 0}x`);
     setText('dateRangeDisplay', dateRangeDisplay);
+    setText('dateRange', dateRangeDisplay);
 
     // Platform-aware attribution
     const ps = m.platform_stats || {};
@@ -195,7 +195,6 @@ function hydrateWrapped(m) {
     setText('totalConversations', (v.total_conversations || 0).toLocaleString());
     setText('totalWordsK', `${Math.round((v.total_words_human || 0) / 1000)}K`);
     setText('avgTurns', cd.avg_turns || 0);
-    setText('responseRatio', `${rr}x`);
     setText('maxTurns', cd.max_turns || 0);
     setText('deepDives', cd.deep_dives || 0);
 
@@ -467,7 +466,7 @@ document.addEventListener('keydown', (e) => {
 // === Init ===
 
 async function init() {
-    initThemeToggle('theme');
+    initThemeToggle();
     fixLocalLinks();
     initAnimations();
 

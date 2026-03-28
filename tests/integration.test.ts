@@ -91,7 +91,6 @@ describe("full pipeline integration", () => {
     const metrics = await computeMetrics(client, config);
 
     expect(metrics.volume.total_human).toBe(30); // 3 human per day * 10 days
-    expect(metrics.volume.total_assistant).toBe(10);
     expect(metrics.volume.total_conversations).toBeGreaterThan(0);
     expect(metrics.volume.avg_words_per_prompt).toBeGreaterThan(0);
 

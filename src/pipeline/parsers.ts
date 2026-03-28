@@ -7,9 +7,9 @@ function findJsonlFiles(dir: string, excludedDirs: Set<string> = new Set()): str
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (excludedDirs.has(entry.name)) continue;
+      if (excludedDirs.has(entry.name) || entry.name === "subagents") continue;
       results.push(...findJsonlFiles(full, excludedDirs));
-    } else if (entry.name.endsWith(".jsonl")) results.push(full);
+    } else if (entry.name.endsWith(".jsonl") || entry.name.includes(".jsonl.backup.")) results.push(full);
   }
   return results;
 }
@@ -56,63 +56,86 @@ export async function parseClaudeCode(
   const allFiles = findJsonlFiles(sourceDir, excludedDirs);
 
   for (const filePath of allFiles) {
-      const sessionId = path.basename(filePath, ".jsonl");
+    const sessionId = path.basename(filePath, ".jsonl");
+    const lines = fs.readFileSync(filePath, "utf-8").split("\n");
 
-      const lines = fs.readFileSync(filePath, "utf-8").split("\n");
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      let entry: any;
+      try {
+        entry = JSON.parse(line);
+      } catch {
+        continue;
+      }
 
-      for (const line of lines) {
-        if (!line.trim()) continue;
-        let entry: any;
-        try {
-          entry = JSON.parse(line);
-        } catch {
-          continue;
-        }
+      const entryType = entry.type;
+      if (entryType !== "user" && entryType !== "assistant") continue;
+      if (entry.isMeta) continue;
 
-        const entryType = entry.type;
-        if (entryType !== "user" && entryType !== "assistant") continue;
-        if (entry.isMeta) continue;
+      const tsStr = entry.timestamp;
+      if (!tsStr) continue;
+      const timestamp = new Date(tsStr);
+      if (isNaN(timestamp.getTime())) continue;
 
-        const msgData = entry.message ?? {};
-        let content = "";
-        let role: Role;
-
-        if (msgData.role === "user") {
-          content = extractContent(msgData.content);
-          role = Role.HUMAN;
-        } else if (msgData.role === "assistant") {
-          content = extractContentBlocks(msgData.content);
-          role = Role.ASSISTANT;
-        } else {
-          continue;
-        }
-
-        if (!content || !content.trim()) continue;
+      const msgData = entry.message ?? {};
+      if (msgData.role === "user") {
+        if (entry.sourceToolAssistantUUID || entry.toolUseResult) continue;
+        const content = extractContent(msgData.content).trim();
+        if (!content) continue;
         if (content.startsWith("<command-") || content.startsWith("<local-command")) continue;
 
-        const tsStr = entry.timestamp;
-        if (!tsStr) continue;
-        let timestamp: Date;
-        try {
-          timestamp = new Date(tsStr);
-          if (isNaN(timestamp.getTime())) continue;
-        } catch {
-          continue;
-        }
-
-        messages.push({
+        appendClaudeTurn(messages, {
           timestamp,
           platform: Platform.CLAUDE_CODE,
-          role,
+          role: Role.HUMAN,
           content,
           conversationId: sessionId,
           wordCount: content.split(/\s+/).filter(Boolean).length,
           sourceFile: filePath,
         });
+        continue;
       }
+
+      if (msgData.role !== "assistant") continue;
+      const content = extractContentBlocks(msgData.content).trim();
+      if (!content) continue;
+
+      appendClaudeTurn(messages, {
+        timestamp,
+        platform: Platform.CLAUDE_CODE,
+        role: Role.ASSISTANT,
+        content,
+        conversationId: sessionId,
+        wordCount: content.split(/\s+/).filter(Boolean).length,
+        sourceFile: filePath,
+      });
+    }
   }
 
   return sortMessages(messages);
+}
+
+function appendClaudeTurn(messages: Message[], next: Message): void {
+  const prev = messages[messages.length - 1];
+  if (!prev) {
+    messages.push(next);
+    return;
+  }
+
+  if (
+    prev.platform === next.platform
+    && prev.conversationId === next.conversationId
+    && prev.role === next.role
+  ) {
+    if (!prev.content.includes(next.content)) {
+      prev.content = `${prev.content} ${next.content}`.trim();
+      prev.wordCount = prev.content.split(/\s+/).filter(Boolean).length;
+    }
+    if (next.timestamp < prev.timestamp) prev.timestamp = next.timestamp;
+    return;
+  }
+
+  messages.push(next);
 }
 
 function extractContent(content: unknown): string {
