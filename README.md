@@ -1,20 +1,47 @@
 > **Disclaimer:** This is an independent personal project, **not affiliated with, endorsed by, or connected to Anthropic or Claude** in any way. This is a non-commercial, open-source tool created for personal use and educational purposes only.
 
+<div align="center">
+
 # How I Prompt
 
-A local-first analytics dashboard for your AI coding assistant conversations. It syncs local logs, computes prompting metrics on-device, and opens an interactive dashboard in your browser.
+**Local-first analytics for your AI coding conversations — prompts, personas, trends, and a personal wrapped view.**
 
-**[View Live Demo →](https://howiprompt.eeshans.com)**
+[![npm](https://img.shields.io/npm/v/@eeshans/howiprompt)](https://www.npmjs.com/package/@eeshans/howiprompt)
+[![license](https://img.shields.io/github/license/eeshansrivastava89/howiprompt)](LICENSE)
+[![node](https://img.shields.io/node/v/@eeshans/howiprompt)](package.json)
+[![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-blue)]()
+[![demo](https://img.shields.io/badge/demo-live-cb9f6a)](https://howiprompt.eeshans.com)
 
-<img width="1179" height="859" alt="image" src="https://github.com/user-attachments/assets/12c6fc86-0d08-45c1-b94b-39c3bfbff93d" />
-
----
-
-## Quick Start
+[Live Dashboard](https://howiprompt.eeshans.com) • [Live Wrapped](https://howiprompt.eeshans.com/wrapped) • [Source](https://github.com/eeshansrivastava89/howiprompt)
 
 ```bash
 npx @eeshans/howiprompt
 ```
+
+> **Requirements:** [Node.js 18+](https://nodejs.org/). Works with Claude Code, Codex, Copilot Chat, Cursor, and LM Studio logs. The local package ships with analytics disabled.
+
+</div>
+
+<br>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/12c6fc86-0d08-45c1-b94b-39c3bfbff93d" alt="How I Prompt dashboard" width="900">
+</p>
+
+## Highlights
+
+| | |
+|---|---|
+| **Local-first pipeline** | Sync, parsing, embeddings, classifier scoring, and metrics run on your machine |
+| **Multi-source support** | Claude Code, Codex, Copilot Chat, Cursor, and LM Studio |
+| **Two ways to explore** | Standard dashboard plus a scroll-through wrapped experience |
+| **Metrics that feel personal** | Vibe Coder Index, Politeness, activity trends, heatmaps, and personas |
+| **Private by default** | Raw logs stay local and the npm package ships with analytics disabled |
+| **Fast repeat refreshes** | Incremental rebuilds reuse the local DB, caches, and exclusions |
+
+## What it does
+
+How I Prompt syncs local AI conversation logs, computes prompting metrics on-device, and opens a browser dashboard with both an overview page and a scroll-through wrapped experience.
 
 That starts a local server and opens the dashboard. On first run, a setup wizard detects supported backends, lets you confirm sources, and then runs the pipeline.
 
