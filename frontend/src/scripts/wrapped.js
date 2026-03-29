@@ -35,6 +35,324 @@ function getSourceDisplayName(key, short = false) {
     return formatSourceLabel(key);
 }
 
+let settingsOpener = null;
+let detectedBackendCache = null;
+let detectedBackendFetch = null;
+
+function getCachedDetectedBackends() {
+    return Array.isArray(detectedBackendCache) ? detectedBackendCache : [];
+}
+
+function setDetectedBackends(backends) {
+    detectedBackendCache = Array.isArray(backends) ? backends : [];
+    return detectedBackendCache;
+}
+
+function summarizeDetectionChanges(previousBackends = [], nextBackends = [], knownBackendIds = []) {
+    const previousById = new Map((previousBackends || []).map((backend) => [backend.id, backend]));
+    const knownIds = new Set(knownBackendIds);
+    const badges = {};
+
+    for (const backend of nextBackends || []) {
+        const previous = previousById.get(backend.id);
+        if (!previous) {
+            if (!knownIds.has(backend.id)) badges[backend.id] = 'New';
+            continue;
+        }
+        if (previous.status !== backend.status || previous.detected !== backend.detected) {
+            badges[backend.id] = 'Updated';
+        }
+    }
+
+    return badges;
+}
+
+async function fetchDetectedBackends(options = {}) {
+    const { useCache = true, force = false } = options;
+
+    if (!force) {
+        const cached = getCachedDetectedBackends();
+        if (useCache && cached.length > 0) return cached;
+        if (detectedBackendFetch) return detectedBackendFetch;
+    }
+
+    detectedBackendFetch = fetch('/api/detect')
+        .then((r) => r.json())
+        .then((payload) => setDetectedBackends(payload.backends || []))
+        .catch(() => getCachedDetectedBackends())
+        .finally(() => {
+            detectedBackendFetch = null;
+        });
+
+    return detectedBackendFetch;
+}
+
+function renderSettingsBackends(configRes = {}, detectedBackends = [], options = {}) {
+    const { isRefreshing = false, badges = {} } = options;
+    const container = document.getElementById('settingsBackends');
+    if (!container) return;
+
+    const detectedById = new Map((detectedBackends || []).map((backend) => [backend.id, backend]));
+    const backendIds = Array.from(new Set([
+        ...Object.keys(configRes.backends || {}),
+        ...Array.from(detectedById.keys()),
+    ]));
+
+    if (backendIds.length === 0) {
+        container.innerHTML = `<div class="wizard-loading">${isRefreshing ? 'Checking installed backends...' : 'No backend settings yet.'}</div>`;
+        return;
+    }
+
+    container.innerHTML = backendIds.map(id => {
+        const toggle = configRes.backends?.[id] || { enabled: false, exclusions: [] };
+        const info = detectedById.get(id);
+        const disabled = info ? (info.supported === false || info.status === 'coming_soon' || info.status === 'not_found') : false;
+        let detail = isRefreshing ? 'Checking installation...' : 'Saved configuration';
+        if (info?.status === 'available') detail = 'Ready to analyze';
+        if (info?.status === 'coming_soon') detail = 'Detected, but analysis support is not shipped yet';
+        if (info?.status === 'not_found') detail = 'Not installed';
+        const badge = badges[id] ? `<span class="settings-backend-badge">${badges[id]}</span>` : '';
+        return `<div class="settings-backend-row">
+            <label class="wizard-toggle ${disabled ? 'is-disabled' : ''}">
+                <input type="checkbox" data-backend="${id}" ${toggle.enabled !== false ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+                <span class="settings-backend-title">${formatSourceLabel(id)}${badge}</span>
+            </label>
+            <div class="settings-backend-detail">${detail}</div>
+        </div>`;
+    }).join('');
+}
+
+async function pickAndAddExclusion(chipContainerId) {
+    const container = document.getElementById(chipContainerId);
+    if (!container) return;
+
+    let dirPath;
+    try {
+        const res = await fetch('/api/pick-directory');
+        const data = await res.json();
+        dirPath = data.path;
+    } catch {
+        return;
+    }
+    if (!dirPath) return;
+    if (container.querySelector(`[data-path="${CSS.escape(dirPath)}"]`)) return;
+
+    let messageCount = 0;
+    try {
+        const res = await fetch('/api/exclusion-count', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: dirPath }),
+        });
+        const data = await res.json();
+        messageCount = data.messageCount || 0;
+    } catch {}
+
+    addExclusionChip(container, dirPath, messageCount);
+}
+
+function addExclusionChip(container, dirPath, messageCount) {
+    const chip = document.createElement('div');
+    chip.className = 'exclusion-chip';
+    chip.dataset.path = dirPath;
+    const shortName = dirPath.split('/').pop() || dirPath;
+    const countLabel = messageCount > 0 ? `${messageCount.toLocaleString()} messages` : 'no data found';
+    chip.innerHTML = `
+        <span class="exclusion-chip-path" title="${dirPath}">${shortName}</span>
+        <span class="exclusion-chip-count">${countLabel}</span>
+        <button class="exclusion-chip-remove" type="button" aria-label="Remove">&times;</button>
+    `;
+    chip.querySelector('.exclusion-chip-remove').addEventListener('click', () => chip.remove());
+    container.appendChild(chip);
+}
+
+function getExclusionPaths(chipContainerId) {
+    const container = document.getElementById(chipContainerId);
+    if (!container) return [];
+    return [...container.querySelectorAll('.exclusion-chip')].map((chip) => chip.dataset.path);
+}
+
+async function loadExclusionChips(chipContainerId, exclusions) {
+    const container = document.getElementById(chipContainerId);
+    if (!container) return;
+    container.innerHTML = '';
+    for (const dirPath of exclusions) {
+        let messageCount = 0;
+        try {
+            const res = await fetch('/api/exclusion-count', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: dirPath }),
+            });
+            const data = await res.json();
+            messageCount = data.messageCount || 0;
+        } catch {}
+        addExclusionChip(container, dirPath, messageCount);
+    }
+}
+
+async function openSettings() {
+    const modal = document.getElementById('settingsModal');
+    if (!modal) return;
+
+    settingsOpener = document.activeElement;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    const configRes = await fetch('/api/config').then((r) => r.json()).catch(() => ({}));
+    const initialDetected = getCachedDetectedBackends();
+    renderSettingsBackends(configRes, initialDetected, { isRefreshing: true });
+
+    const excSection = document.getElementById('settingsExclusionSection');
+    if (excSection && configRes.backends?.claude_code) {
+        excSection.style.display = 'block';
+        const exclusions = configRes.backends.claude_code.exclusions ?? [];
+        loadExclusionChips('settingsExclusionChips', exclusions);
+    } else if (excSection) {
+        excSection.style.display = 'none';
+    }
+
+    fetchDetectedBackends({ force: true })
+        .then((backends) => {
+            const stillOpen = document.getElementById('settingsModal')?.classList.contains('active');
+            if (!stillOpen) return;
+            const knownBackendIds = [
+                ...initialDetected.map((backend) => backend.id),
+                ...Object.keys(configRes.backends || {}),
+            ];
+            const badges = summarizeDetectionChanges(initialDetected, backends, knownBackendIds);
+            renderSettingsBackends(configRes, backends, { isRefreshing: false, badges });
+        })
+        .catch(() => {});
+}
+
+function closeSettings() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        if (settingsOpener) {
+            settingsOpener.focus();
+            settingsOpener = null;
+        }
+    }
+}
+
+function startRefreshModal() {
+    const modal = document.getElementById('refreshModal');
+    const log = document.getElementById('refreshLog');
+    const bar = document.getElementById('refreshProgressBar');
+    const resultEl = document.getElementById('refreshModalResult');
+    const closeBtn = document.getElementById('refreshModalClose');
+    if (!modal || !log || !bar || !resultEl || !closeBtn) return null;
+
+    log.innerHTML = '<div class="wizard-log-entry">Starting pipeline...</div>';
+    bar.style.width = '0';
+    resultEl.style.display = 'none';
+    closeBtn.style.display = 'none';
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    return { modal, log, bar, resultEl, closeBtn };
+}
+
+async function handleRefresh() {
+    const ui = startRefreshModal();
+    if (!ui) {
+        window.location.reload();
+        return;
+    }
+
+    const { log, bar, resultEl, closeBtn } = ui;
+    const stages = ['sync', 'parse', 'insert', 'nlp', 'embedding', 'classifiers', 'metrics'];
+    let maxStageIdx = 0;
+    let refreshDone = false;
+    const evtSource = new EventSource('/api/pipeline/stream');
+
+    const showResult = (html) => {
+        resultEl.innerHTML = html;
+        resultEl.style.display = 'block';
+        closeBtn.style.display = 'inline-block';
+        closeBtn.focus();
+    };
+
+    evtSource.addEventListener('progress', (e) => {
+        const data = JSON.parse(e.data);
+        const entry = document.createElement('div');
+        entry.className = 'wizard-log-entry';
+        entry.textContent = `${data.stage}: ${data.detail}`;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+        const idx = stages.indexOf(data.stage);
+        if (idx >= 0 && idx > maxStageIdx) maxStageIdx = idx;
+        bar.style.width = `${((maxStageIdx + 1) / stages.length) * 100}%`;
+    });
+
+    evtSource.addEventListener('complete', (e) => {
+        refreshDone = true;
+        evtSource.close();
+        const data = JSON.parse(e.data);
+        bar.style.width = '100%';
+        const entry = document.createElement('div');
+        entry.className = 'wizard-log-entry done';
+        entry.textContent = `Done! ${data.stats.totalMessages.toLocaleString()} messages analyzed.`;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+
+        if (data.metrics) {
+            sourceViews = data.metrics.source_views || { both: data.metrics };
+            if (!sourceViews.claude_code && sourceViews.claude) sourceViews.claude_code = sourceViews.claude;
+            sourceViews.both = sourceViews.both || data.metrics;
+            if (!sourceViews[activeSourceKey]) activeSourceKey = 'both';
+            initSourceFilter();
+        }
+
+        showResult('Re-analysis complete. Wrapped has been updated with the latest metrics.');
+    });
+
+    evtSource.addEventListener('pipeline_error', (e) => {
+        refreshDone = true;
+        evtSource.close();
+        const data = JSON.parse(e.data);
+        showResult(`Refresh failed: ${data.message}`);
+    });
+
+    evtSource.onerror = () => {
+        if (!refreshDone) {
+            evtSource.close();
+            showResult('Refresh failed -- is the server running?');
+        }
+    };
+}
+
+async function saveSettings() {
+    const checked = document.querySelectorAll('#settingsBackends input[type=checkbox]:checked');
+    if (checked.length === 0) {
+        alert('Please enable at least one backend to analyze.');
+        return;
+    }
+
+    const toggles = {};
+    document.querySelectorAll('#settingsBackends input[type=checkbox]').forEach((cb) => {
+        toggles[cb.dataset.backend] = { enabled: cb.checked, exclusions: [] };
+    });
+    if (toggles.claude_code) {
+        toggles.claude_code.exclusions = getExclusionPaths('settingsExclusionChips');
+    }
+
+    await fetch('/api/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backends: toggles }),
+    });
+
+    closeSettings();
+    handleRefresh();
+}
+
+window.openSettings = openSettings;
+window.closeSettings = closeSettings;
+
 // === Formatting helpers ===
 
 function formatHour12(hour) {
@@ -379,79 +697,6 @@ function initSourceFilter() {
     selectSource(selected);
 }
 
-// === Share card ===
-
-async function captureCard() {
-    if (typeof html2canvas === 'undefined') return null;
-    const element = document.getElementById('terminalCard');
-    if (!element) return null;
-    const canvas = await html2canvas(element, { backgroundColor: null, scale: 2, useCORS: true });
-    return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), 'image/png'));
-}
-
-function showShareToast(msg) {
-    const toast = document.getElementById('shareToast');
-    if (!toast) return;
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-}
-
-function getShareText() {
-    const persona = document.getElementById('personaName')?.textContent || '';
-    return `My AI prompting persona: ${persona}. See yours at howiprompt.eeshans.com`;
-}
-
-async function handleShareAction(action) {
-    const menu = document.getElementById('shareMenu');
-    if (menu) menu.style.display = 'none';
-    try {
-        if (action === 'download') {
-            const blob = await captureCard();
-            if (!blob) return;
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'howiprompt-wrapped.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showShareToast('Card downloaded!');
-        } else if (action === 'copy') {
-            const blob = await captureCard();
-            if (!blob) return;
-            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-            showShareToast('Copied to clipboard!');
-        } else if (action === 'twitter') {
-            const text = encodeURIComponent(getShareText());
-            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-        } else if (action === 'linkedin') {
-            const text = encodeURIComponent(getShareText());
-            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://howiprompt.eeshans.com')}&summary=${text}`, '_blank');
-        }
-    } catch (err) {
-        console.warn('Share action failed:', err.message);
-        showShareToast('Share failed — try downloading instead');
-    }
-}
-
-document.getElementById('shareToggle')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const menu = document.getElementById('shareMenu');
-    if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-});
-
-document.getElementById('shareMenu')?.addEventListener('click', (e) => {
-    const item = e.target.closest('[data-action]');
-    if (item) handleShareAction(item.dataset.action);
-});
-
-document.addEventListener('click', () => {
-    const menu = document.getElementById('shareMenu');
-    if (menu) menu.style.display = 'none';
-});
-
 // === Methodology modal ===
 
 let methodologyOpener = null;
@@ -479,14 +724,41 @@ function closeMethodology() {
 window.openMethodology = openMethodology;
 window.closeMethodology = closeMethodology;
 
+document.getElementById('settingsAddExclusion')?.addEventListener('click', () => pickAndAddExclusion('settingsExclusionChips'));
+document.getElementById('settingsSave')?.addEventListener('click', saveSettings);
+document.getElementById('settingsReset')?.addEventListener('click', () => {
+    document.getElementById('resetConfirmModal')?.classList.add('active');
+});
+document.getElementById('resetCancel')?.addEventListener('click', () => {
+    document.getElementById('resetConfirmModal')?.classList.remove('active');
+});
+document.getElementById('resetConfirm')?.addEventListener('click', async () => {
+    await fetch('/api/reset', { method: 'POST' });
+    window.location.reload();
+});
+document.getElementById('settingsModal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeSettings();
+});
+document.getElementById('refreshModalClose')?.addEventListener('click', () => {
+    const modal = document.getElementById('refreshModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+});
+
 document.getElementById('methodologyModal')?.addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeMethodology();
 });
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeMethodology();
-    // Focus trap for methodology modal
-    const modal = document.getElementById('methodologyModal');
+    if (e.key === 'Escape') {
+        closeMethodology();
+        closeSettings();
+    }
+    const modal = document.getElementById('settingsModal')?.classList.contains('active')
+        ? document.getElementById('settingsModal')
+        : document.getElementById('methodologyModal');
     if (e.key === 'Tab' && modal?.classList.contains('active')) {
         const focusable = modal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
         if (focusable.length === 0) return;

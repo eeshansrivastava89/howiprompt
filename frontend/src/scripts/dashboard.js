@@ -204,7 +204,7 @@ let activeTrendMetric = 'vibe';
 
 const TREND_METRIC_CONFIG = {
     vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '/100', desc: 'How much you vibe-code. Higher = more intent-driven, less spec-heavy.', invert: true },
-    polite:    { key: 'politeness',          label: 'Politeness',        suffix: '/100', desc: 'How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.' },
+    polite:    { key: 'politeness',          label: 'Politeness',        suffix: '/100', desc: 'How collaborative your tone is. Higher = warmer, more appreciative prompting style.' },
     activity:  { key: '_prompts',            label: 'Activity',          suffix: '/wk', desc: 'Prompts per week.' },
 };
 
@@ -239,13 +239,17 @@ function initTrendChart(view) {
     const chartEl = document.getElementById('trendChart');
     const valEl = document.getElementById('trendVal');
     const labelEl = document.getElementById('trendLabel');
+    const defEl = document.getElementById('trendMetricDef');
 
     if (!chartEl) return;
 
     // Build week date labels
-    const weekDates = weekly.map((w) => {
+    const weekDates = weekly.map((w, index) => {
         const d = new Date(w.week_start || w.date);
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const base = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const prev = index > 0 ? new Date(weekly[index - 1].week_start || weekly[index - 1].date) : null;
+        const showYear = index === 0 || !prev || prev.getFullYear() !== d.getFullYear();
+        return showYear ? `${base} '${String(d.getFullYear()).slice(-2)}` : base;
     });
 
     // Lifetime averages for headline display
@@ -270,6 +274,7 @@ function initTrendChart(view) {
             const entry = {
                 points: points.map((p) => p ?? 0),
                 label: config.label,
+                desc: config.desc,
                 suffix: config.suffix,
                 lifetime: config.invert && rawLifetime != null ? 100 - rawLifetime : rawLifetime,
             };
@@ -380,7 +385,7 @@ function initTrendChart(view) {
         },
         grid: {
             show: false,
-            padding: { left: 16, right: 16, top: -8, bottom: 0 },
+            padding: { left: 28, right: 28, top: -8, bottom: 0 },
         },
         legend: { show: false },
         tooltip: {
@@ -410,7 +415,8 @@ function initTrendChart(view) {
         const d = trendData[key];
         const headlineRaw = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
         valEl.textContent = (key === 'activity' ? formatCompact(headlineRaw) : headlineRaw) + d.suffix;
-        labelEl.textContent = `${d.label} \u00B7 ${weekly.length}-week trend`;
+        labelEl.textContent = '';
+        if (defEl) defEl.textContent = d.desc || '';
 
         // Set headline color
         const trendPanel = valEl.closest('.trend-panel');
@@ -478,81 +484,6 @@ function initCardTilt() {
     });
     dock.addEventListener('mouseleave', () => { card.style.transform = ''; });
 }
-
-// === Share / Download Card ===
-
-async function captureCard() {
-    if (typeof html2canvas === 'undefined') return null;
-    const element = document.getElementById('playerCard');
-    if (!element) return null;
-    const canvas = await html2canvas(element, { backgroundColor: null, scale: 2, useCORS: true });
-    return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), 'image/png'));
-}
-
-function showShareToast(msg) {
-    const toast = document.getElementById('shareToast');
-    if (!toast) return;
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-}
-
-function getShareText() {
-    const persona = document.getElementById('personaName')?.textContent || '';
-    return `My AI prompting persona: ${persona}. See yours at howiprompt.eeshans.com`;
-}
-
-async function handleShareAction(action) {
-    const dropdown = document.getElementById('shareDropdown');
-    dropdown?.classList.remove('open');
-
-    try {
-        if (action === 'download') {
-            const blob = await captureCard();
-            if (!blob) return;
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'howiprompt-card.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showShareToast('Card downloaded!');
-        } else if (action === 'copy') {
-            const blob = await captureCard();
-            if (!blob) return;
-            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-            showShareToast('Copied to clipboard!');
-        } else if (action === 'twitter') {
-            const text = encodeURIComponent(getShareText());
-            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-        } else if (action === 'linkedin') {
-            const text = encodeURIComponent(getShareText());
-            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://howiprompt.eeshans.com')}&summary=${text}`, '_blank');
-        }
-    } catch (err) {
-        console.warn('Share action failed:', err.message);
-        showShareToast('Share failed — try downloading instead');
-    }
-}
-
-// Toggle dropdown
-document.getElementById('shareToggle')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('shareDropdown')?.classList.toggle('open');
-});
-
-// Handle menu item clicks
-document.getElementById('shareMenu')?.addEventListener('click', (e) => {
-    const item = e.target.closest('[data-action]');
-    if (item) handleShareAction(item.dataset.action);
-});
-
-// Close dropdown on outside click
-document.addEventListener('click', () => {
-    document.getElementById('shareDropdown')?.classList.remove('open');
-});
 
 // === Main renderView ===
 

@@ -2,6 +2,8 @@
 import WrappedLayout from '../layouts/WrappedLayout.astro';
 import Header from '../components/Header.astro';
 import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
+import SettingsModal from '../components/dashboard/SettingsModal.astro';
+import RefreshModal from '../components/RefreshModal.astro';
 ---
 <WrappedLayout title="How I Prompt: Wrapped">
 
@@ -165,15 +167,15 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
     </section>
 
     <!-- Section 5: Persona Reveal -->
-    <section class="min-h-screen flex items-center justify-center px-6 py-20">
+    <section class="wrapped-persona-section min-h-screen flex items-center justify-center px-6 py-20">
         <div class="max-w-lg w-full">
-            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">Your Persona</p>
+            <p class="text-muted text-sm uppercase tracking-widest mb-6 text-center">Your Persona</p>
             <div class="card overflow-hidden">
                 <img class="wrapped-card-top" id="wrappedCardTop" src="/images/char_architect.png" alt="Persona character art" />
-                <div class="p-6 sm:p-8 text-center">
+                <div class="wrapped-persona-body text-center">
                     <h2 class="text-2xl sm:text-3xl font-bold gradient-text mb-3" id="personaName">--</h2>
                     <p class="text-muted text-sm sm:text-base max-w-md mx-auto mb-6" id="personaDesc">Loading...</p>
-                    <div class="flex flex-wrap justify-center gap-2 mb-8" id="personaTraits"></div>
+                    <div class="flex flex-wrap justify-center gap-2 mb-6" id="personaTraits"></div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="flex flex-col items-center gap-2">
                             <div class="donut-ring">
@@ -196,10 +198,10 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
     </section>
 
     <!-- Section 6: Terminal Summary -->
-    <section class="min-h-screen flex items-center justify-center px-6 py-20">
+    <section class="wrapped-receipt-section min-h-screen flex items-center justify-center px-6 py-20">
         <div class="max-w-lg w-full">
-            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">The Receipt</p>
-            <div class="card p-6 sm:p-8 font-mono text-sm" id="terminalCard" style="background:var(--surface)">
+            <p class="text-muted text-sm uppercase tracking-widest mb-6 text-center">The Receipt</p>
+            <div class="card receipt-card font-mono text-sm" id="terminalCard" style="background:var(--surface)">
                 <p class="text-xs text-muted mb-4 text-center" id="termDateRange">-- SUMMARY</p>
                 <div class="border-b border-border mb-4 pb-4 space-y-1">
                     <div class="flex justify-between"><span class="text-muted">Prompts</span><span class="font-bold" id="termPrompts">--</span></div>
@@ -242,10 +244,10 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
         </p>
     </footer>
 
-    <!-- Share toast -->
-    <div class="share-toast" id="shareToast"></div>
-
+    <RefreshModal />
     <MethodologyModal />
+    <SettingsModal />
 
+    <script src="../scripts/header-ui.js"></script>
     <script src="../scripts/wrapped.js"></script>
 </WrappedLayout>

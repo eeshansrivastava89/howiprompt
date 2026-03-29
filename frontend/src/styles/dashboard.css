@@ -4,32 +4,6 @@
 .page-frame{display:flex;flex-direction:column;height:100dvh;min-height:0}
 @media(max-width:1024px){.page-frame{height:auto;min-height:100dvh}}
 
-/* === HEADER === */
-.header{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;flex-wrap:wrap;gap:12px;flex-shrink:0}
-.header-left{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.header h1{font-size:24px;font-weight:700;letter-spacing:-0.02em}
-.header h1 span{color:var(--accent)}
-.header-subtitle{font-size:20px;font-weight:500;color:var(--muted)}
-.date-range{font-size:14px;color:var(--muted);font-weight:500}
-.header-right{display:flex;align-items:center;gap:12px}
-.nav-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;background:none;border:none;cursor:pointer;font-family:inherit;transition:color .15s}
-.nav-link:hover{color:var(--text)}
-.accent-link{font-size:13px;font-weight:600;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:var(--accent-soft);transition:background .15s}
-.accent-link:hover{background:rgba(var(--accent-rgb),0.15)}
-.source-select{appearance:none;border:1px solid var(--border);background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235c5f77' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;color:var(--text);padding:6px 28px 6px 12px;border-radius:20px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer}
-.theme-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s}
-.theme-btn:hover{border-color:var(--accent);color:var(--accent)}
-.dl-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;font-family:inherit;transition:transform .1s}
-.dl-btn:hover{transform:scale(1.03)}
-
-/* === SHARE DROPDOWN === */
-.share-dropdown{position:relative}
-.share-menu{display:none;position:absolute;top:100%;right:0;margin-top:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--ui-radius-sm);box-shadow:var(--shadow-hover);min-width:200px;z-index:40;overflow:hidden}
-.share-dropdown.open .share-menu{display:block}
-.share-menu-item{display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;font-size:13px;font-weight:500;color:var(--text);background:none;border:none;cursor:pointer;font-family:inherit;transition:background .1s}
-.share-menu-item:hover{background:var(--accent-soft)}
-.share-menu-item svg{color:var(--muted);flex-shrink:0}
-
 /* === DASHBOARD PANEL === */
 .dash-panel{display:flex;flex-direction:column;flex:1;min-height:0}
 
@@ -50,20 +24,24 @@
 
 /* === TREND CHART === */
 .trend-panel{background:var(--surface);border-radius:var(--ui-radius-sm);padding:14px 20px 10px;box-shadow:var(--shadow);flex:1;min-height:0;min-width:0;display:flex;flex-direction:column}
-.trend-header{display:flex;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px 12px;min-width:0}
+.trend-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:10px 16px;min-width:0}
+.trend-copy{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+.trend-copy-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
 .trend-title{font-size:16px;font-weight:700}
-.trend-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.trend-copy-sep{color:var(--border);font-size:13px;line-height:1}
+.trend-metric-def{font-size:12px;color:var(--muted);line-height:1.35;min-width:0}
+.trend-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:15px}
 .trend-legend-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap}
 .trend-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.metric-tabs{display:flex;gap:4px;flex-wrap:wrap;min-width:0;margin-left:auto}
+.metric-tabs{display:flex;gap:4px;flex-wrap:wrap;min-width:0;align-self:flex-start}
 .metric-tab{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;position:relative}
 .metric-tab[data-tooltip]:hover::after{content:attr(data-tooltip);position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:6px 12px;border-radius:8px;white-space:normal;width:max-content;max-width:220px;z-index:20;pointer-events:none;line-height:1.4}
 .metric-tab[data-tooltip]:hover::before{content:'';position:absolute;top:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:var(--text);z-index:20;pointer-events:none}
 .metric-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .metric-tab:hover:not(.active){border-color:var(--accent);color:var(--accent)}
-.trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+.trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
 .trend-current-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--trend-color, var(--accent))}
-.trend-current-label{font-size:13px;color:var(--muted)}
+.trend-current-label{display:none}
 .trend-chart-wrap{position:relative;flex:1;min-height:60px}
 
 /* === HEATMAP === */
@@ -197,7 +175,6 @@
   html,body{height:auto;overflow-x:hidden}
   .header{padding:10px 16px;gap:8px}
   .header-right{gap:8px}
-  .header-right .nav-link,.header-right .share-dropdown{display:none}
   .tab-bar{padding:0 16px}
   .dash-container{padding:0 12px}
   .main-grid{gap:12px}
@@ -223,6 +200,10 @@
   .stat-card-sub{font-size:11px}
   .trend-panel{min-height:220px;padding:14px 14px}
   .trend-header{gap:6px;flex-direction:column;align-items:flex-start}
+  .trend-copy{gap:4px;width:100%}
+  .trend-copy-row{gap:6px}
+  .trend-copy-sep{display:none}
+  .trend-metric-def{font-size:11px}
   .trend-title{font-size:14px}
   .metric-tabs{flex-wrap:wrap;gap:3px;width:100%}
   .metric-tab{padding:4px 8px;font-size:10px;border-radius:14px}

@@ -1,5 +1,5 @@
 {
-  "name": "howiprompt",
+  "name": "@eeshans/howiprompt",
   "version": "2.1.0",
   "description": "Local-first analytics dashboard for your AI coding assistant conversations",
   "type": "module",

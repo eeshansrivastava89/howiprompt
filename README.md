@@ -13,7 +13,7 @@ A local-first analytics dashboard for your AI coding assistant conversations. It
 ## Quick Start
 
 ```bash
-npx howiprompt
+npx @eeshans/howiprompt
 ```
 
 That starts a local server and opens the dashboard. On first run, a setup wizard detects supported backends, lets you confirm sources, and then runs the pipeline.
@@ -21,9 +21,9 @@ That starts a local server and opens the dashboard. On first run, a setup wizard
 ### Options
 
 ```bash
-npx howiprompt --no-open     # don't auto-open browser
-npx howiprompt --port 4000   # custom port
-npx howiprompt --help        # usage info
+npx @eeshans/howiprompt --no-open     # don't auto-open browser
+npx @eeshans/howiprompt --port 4000   # custom port
+npx @eeshans/howiprompt --help        # usage info
 ```
 
 ### What Happens
@@ -72,7 +72,7 @@ All supported sources are auto-synced into `~/.howiprompt/raw/` and reused acros
 - **Local by default** — Sync, parsing, embeddings, classifier scoring, and metrics run on your machine
 - **Persistent storage** — Raw copies, local DB, config, and metrics live under `~/.howiprompt/`
 - **No prompt text leaves your machine** — The app does not upload raw logs or prompt content
-- **No analytics in the local app** — The `npx howiprompt` package ships with analytics disabled. PostHog is only enabled on the hosted website
+- **No analytics in the local app** — The `npx @eeshans/howiprompt` package ships with analytics disabled. PostHog is only enabled on the hosted website
 - **Ancillary network requests** — The dashboard loads chart libraries (ApexCharts, html2canvas) from a CDN. The CLI checks npm for version updates. These do not transmit prompt data
 
 ---

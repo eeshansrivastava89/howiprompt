@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
 import SetupWizard from '../components/dashboard/SetupWizard.astro';
 import SettingsModal from '../components/dashboard/SettingsModal.astro';
+import RefreshModal from '../components/RefreshModal.astro';
 ---
 <DashboardLayout title="How I Prompt: Dashboard">
 <div class="page-frame">
@@ -47,8 +48,14 @@ import SettingsModal from '../components/dashboard/SettingsModal.astro';
         <!-- Trend Chart -->
         <div class="trend-panel animate delay-2">
           <div class="trend-header">
-            <div class="trend-title">Trends</div>
-            <div class="trend-legend" id="trendLegend"></div>
+            <div class="trend-copy">
+              <div class="trend-copy-row">
+                <div class="trend-title">Trends</div>
+                <span class="trend-copy-sep" aria-hidden="true">|</span>
+                <div class="trend-metric-def" id="trendMetricDef">How much you vibe-code. Higher = more intent-driven, less spec-heavy.</div>
+              </div>
+              <div class="trend-legend" id="trendLegend"></div>
+            </div>
             <div class="metric-tabs" id="metricTabs">
               <button class="metric-tab active" data-metric="vibe" data-tooltip="How much you vibe-code. Higher = more intent-driven, less spec-heavy.">Vibe Coder Index</button>
               <button class="metric-tab" data-metric="polite" data-tooltip="How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.">Politeness</button>
@@ -123,23 +130,12 @@ import SettingsModal from '../components/dashboard/SettingsModal.astro';
 
 </div><!-- /page-frame -->
 
-<!-- Refresh modal (reuses wizard-log/progress styles) -->
-<div class="modal-overlay" id="refreshModal" role="dialog" aria-modal="true" aria-labelledby="refreshModalTitle">
-  <div class="refresh-modal">
-    <h3 id="refreshModalTitle">Syncing Pipeline</h3>
-    <div class="wizard-progress" id="refreshProgress"><div class="wizard-progress-bar" id="refreshProgressBar"></div></div>
-    <div class="wizard-log" id="refreshLog"></div>
-    <div class="refresh-modal-result" id="refreshModalResult" style="display:none"></div>
-    <button class="refresh-modal-close" id="refreshModalClose" style="display:none">Done</button>
-  </div>
-</div>
-
-<!-- Share toast -->
-<div class="share-toast" id="shareToast">Screenshot saved!</div>
+<RefreshModal />
 
 <MethodologyModal />
 <SetupWizard />
 <SettingsModal />
 
+<script src="../scripts/header-ui.js"></script>
 <script src="../scripts/dashboard.js"></script>
 </DashboardLayout>

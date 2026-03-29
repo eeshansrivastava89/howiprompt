@@ -2,7 +2,7 @@
 
 /**
  * CLI entry point for How I Prompt.
- * Usage: npx howiprompt [--port <n>] [--no-open] [--help] [--version]
+ * Usage: npx @eeshans/howiprompt [--port <n>] [--no-open] [--help] [--version]
  */
 
 import fs from "node:fs";
@@ -148,7 +148,7 @@ try {
           (l[0] === c[0] && l[1] === c[1] && l[2] > c[2]);
         if (newer) {
           console.log(`  ${yellow("Update available:")} ${pkg.version} → ${green(latest)}`);
-          console.log(`  Run: ${bold("npx howiprompt@latest")}\n`);
+          console.log(`  Run: ${bold("npx @eeshans/howiprompt@latest")}\n`);
         }
       }
     } catch {
