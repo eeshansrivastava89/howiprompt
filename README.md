@@ -73,7 +73,7 @@ All supported sources are auto-synced into `~/.howiprompt/raw/` and reused acros
 - **Persistent storage** — Raw copies, local DB, config, and metrics live under `~/.howiprompt/`
 - **No prompt text leaves your machine** — The app does not upload raw logs or prompt content
 - **No analytics in the local app** — The `npx @eeshans/howiprompt` package ships with analytics disabled. PostHog is only enabled on the hosted website
-- **Ancillary network requests** — The dashboard loads chart libraries (ApexCharts, html2canvas) from a CDN. The CLI checks npm for version updates. These do not transmit prompt data
+- **Ancillary network requests** — The dashboard loads ApexCharts from a CDN. The CLI checks npm for version updates. These do not transmit prompt data
 
 ---
 

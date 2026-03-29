@@ -33,7 +33,14 @@
     "type": "git",
     "url": "https://github.com/eeshansrivastava89/howiprompt"
   },
+  "homepage": "https://github.com/eeshansrivastava89/howiprompt#readme",
+  "bugs": {
+    "url": "https://github.com/eeshansrivastava89/howiprompt/issues"
+  },
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
