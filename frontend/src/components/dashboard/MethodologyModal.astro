@@ -1,0 +1,317 @@
+---
+// Methodology modal: snap-scroll methodology guide with persona explorer
+---
+<div class="modal-overlay" id="methodologyModal" role="dialog" aria-modal="true" aria-labelledby="methodologyTitle">
+  <div class="meth-modal">
+    <div class="meth-progress"><div class="meth-progress-fill" id="methProgressFill"></div></div>
+
+    <!-- Header -->
+    <div class="meth-header">
+      <div class="meth-header-left">
+        <div class="meth-logo">📊</div>
+        <div>
+          <div class="meth-header-title" id="methodologyTitle">The Method</div>
+          <div class="meth-header-sub">How your prompting profile is built</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeMethodology()" aria-label="Close methodology modal">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Snap-scroll container -->
+    <div class="meth-scroll" id="methScroll">
+
+      <!-- S1: Intro + Pipeline -->
+      <section class="meth-snap meth-s1" data-meth-section="0">
+        <div class="meth-s1-inner">
+          <div class="meth-hero">
+            <div class="meth-hero-kicker meth-reveal">🔬 Methodology</div>
+            <h1 class="meth-reveal d1">From raw chats to your <em>prompting profile</em></h1>
+            <p class="meth-hero-sub meth-reveal d2">Your prompts never leave your machine. We score them through on-device embeddings and behavioral analysis to build a profile that captures how you prompt.</p>
+          </div>
+
+          <div class="meth-pipeline-wrap meth-reveal d3">
+            <div class="meth-rule">The Pipeline</div>
+            <div class="meth-process">
+              <div class="meth-step">
+                <div class="meth-step-icon">📥</div>
+                <h3>Collect</h3>
+                <p>Read local histories from Claude Code, Codex, Copilot Chat, Cursor, and LM Studio.</p>
+              </div>
+              <div class="meth-step">
+                <div class="meth-step-icon">🔍</div>
+                <h3>Filter</h3>
+                <p>Keep human-authored prompts. Remove system messages, tool output, and assistant text.</p>
+              </div>
+              <div class="meth-step">
+                <div class="meth-step-icon">📐</div>
+                <h3>Score</h3>
+                <p>Embed each prompt with bge-small-en-v1.5 locally. Classify behavioral metrics via cosine similarity.</p>
+              </div>
+              <div class="meth-step">
+                <div class="meth-step-icon">🧭</div>
+                <h3>Classify</h3>
+                <p>Two axes — Detail Level and Communication Style — place you on a 2×2 grid validated on 21k prompts.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="meth-scroll-hint meth-reveal d4">
+            <span>Scroll</span>
+            <div class="meth-scroll-arrow"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S2: What We Measure -->
+      <section class="meth-snap meth-s2" data-meth-section="1">
+        <div class="meth-s2-inner">
+          <div class="meth-s2-header meth-reveal">
+            <h2>What We Measure</h2>
+            <p>Style scores use on-device embeddings. Persona axes use behavioral patterns validated on 21k prompts from open research datasets (WildChat, OpenAssistant).</p>
+          </div>
+
+          <div class="meth-taste-grid">
+            <div class="meth-taste-card meth-reveal d1" style="--tc:#5c3d2e">
+              <div class="meth-taste-cat">Volume</div>
+              <div class="meth-taste-list">
+                <div class="meth-taste-item"><span class="meth-taste-name">Prompts</span><span class="meth-taste-note">Total messages</span></div>
+                <div class="meth-taste-item"><span class="meth-taste-name">Conversations</span><span class="meth-taste-note">Distinct threads</span></div>
+                <div class="meth-taste-item"><span class="meth-taste-name">Words</span><span class="meth-taste-note">Total typed</span></div>
+              </div>
+            </div>
+            <div class="meth-taste-card meth-reveal d2" style="--tc:#7b5a42">
+              <div class="meth-taste-cat">Timing</div>
+              <div class="meth-taste-list">
+                <div class="meth-taste-item"><span class="meth-taste-name">Peak hour</span><span class="meth-taste-note">Most active time</span></div>
+                <div class="meth-taste-item"><span class="meth-taste-name">Night owl</span><span class="meth-taste-note">11pm–4am share</span></div>
+                <div class="meth-taste-item"><span class="meth-taste-name">Trend</span><span class="meth-taste-note">Volume over time</span></div>
+              </div>
+            </div>
+            <div class="meth-taste-card meth-reveal d3" style="--tc:#a08060">
+              <div class="meth-taste-cat">Style</div>
+              <div class="meth-taste-list">
+                <div class="meth-taste-item"><span class="meth-taste-name">Vibe Index</span><span class="meth-taste-note">Vibes vs. specs</span></div>
+                <div class="meth-taste-item"><span class="meth-taste-name">Politeness</span><span class="meth-taste-note">Tone warmth</span></div>
+              </div>
+            </div>
+            <div class="meth-taste-card meth-reveal d4" style="--tc:#c4a882">
+              <div class="meth-taste-cat">Persona Axes</div>
+              <div class="meth-taste-list">
+                <div class="meth-taste-item"><span class="meth-taste-name">Detail Level</span><span class="meth-taste-note">Prompt depth</span></div>
+                <div class="meth-taste-item"><span class="meth-taste-name">Comm Style</span><span class="meth-taste-note">How you direct</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S3: Persona Explorer -->
+      <section class="meth-snap meth-s3" data-meth-section="2">
+        <div class="meth-s3-inner">
+          <div class="meth-s3-header meth-reveal">
+            <h2>The 4 Personas</h2>
+            <p>Two axes form a 2×2 grid. Your quadrant determines which persona fits your prompting pattern.</p>
+          </div>
+
+          <div class="meth-persona-layout meth-reveal d1">
+            <div class="meth-persona-list" id="methPersonaList"></div>
+            <div class="meth-pd" id="methPersonaDetail"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="meth-bottom">
+      <span class="meth-bottom-note">🔒 Fully local — no data leaves your machine.</span>
+      <div class="meth-dot-nav" id="methDotNav">
+        <button class="meth-dot active" data-meth-idx="0"></button>
+        <button class="meth-dot" data-meth-idx="1"></button>
+        <button class="meth-dot" data-meth-idx="2"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const IMG = '/images/';
+  // Persona UX copy — intentionally more casual than pipeline definitions in
+  // src/pipeline/style.ts. Names and keys must stay in sync; descriptions
+  // are tailored for the modal context (signature prompts, one-liners).
+  const personas = [
+    { key:'commander', img:IMG+'char_commander.png', name:'The Commander',
+      badge:'Brief + Directive', trait:'Direct, efficient, decisive',
+      accent:'#41608e', accentDark:'#7da4d4',
+      gradient:'linear-gradient(160deg,#d4dde8,#c2cedd)',
+      gradientDark:'linear-gradient(160deg,#222830,#1a2028)',
+      desc:'You give precise orders in short bursts. No wasted words, no hand-holding — you know exactly what you want and expect the AI to deliver it on the first try.',
+      prompt:'\u201CPatch this regression, keep the API stable, and show me the exact files changed.\u201D',
+      liner:'You prefer decisive progress over collaborative wandering.',
+      axes:{'Detail Level':30,'Communication Style':25} },
+    { key:'partner', img:IMG+'char_partner.png', name:'The Partner',
+      badge:'Brief + Collaborative', trait:'Conversational, collaborative, adaptive',
+      accent:'#8a5d73', accentDark:'#c48aa8',
+      gradient:'linear-gradient(160deg,#e8d8e0,#ddc8d4)',
+      gradientDark:'linear-gradient(160deg,#2e2428,#261c22)',
+      desc:'You keep it short but keep it human. Quick exchanges, polite nudges, and a conversational flow that treats AI as a co-pilot, not a tool.',
+      prompt:'\u201CBetter, but not there yet. Keep the tone, reduce complexity, and give me a second version with a stronger opening.\u201D',
+      liner:'You keep pushing until the output finally clicks.',
+      axes:{'Detail Level':30,'Communication Style':75} },
+    { key:'architect', img:IMG+'char_architect.png', name:'The Architect',
+      badge:'Detailed + Directive', trait:'Precise, methodical, thorough',
+      accent:'#7b5a42', accentDark:'#c4a07a',
+      gradient:'linear-gradient(160deg,#e8ddd2,#ddd0c2)',
+      gradientDark:'linear-gradient(160deg,#342c24,#2a2218)',
+      desc:'You write specs, not prompts. Every request comes with constraints, file paths, and numbered requirements. You leave nothing to chance.',
+      prompt:'\u201CUse the existing component API. Keep the interaction model unchanged. Add keyboard support, tests, and a migration note.\u201D',
+      liner:'You like the model to be powerful, but not unsupervised.',
+      axes:{'Detail Level':80,'Communication Style':25} },
+    { key:'explorer', img:IMG+'char_explorer.png', name:'The Explorer',
+      badge:'Detailed + Collaborative', trait:'Curious, analytical, open-minded',
+      accent:'#3f7a6e', accentDark:'#6abfae',
+      gradient:'linear-gradient(160deg,#d4e8e3,#c2ddd6)',
+      gradientDark:'linear-gradient(160deg,#222e2b,#1a2624)',
+      desc:'You bring context and ask questions. Every conversation is an investigation — you explain what you\u2019re thinking, ask for alternatives, and dig into the details together.',
+      prompt:'\u201CCompare these three approaches, surface tradeoffs, and tell me what an experienced engineer would worry about.\u201D',
+      liner:'You use the model as an idea space, not just a task runner.',
+      axes:{'Detail Level':80,'Communication Style':75} }
+  ];
+
+  const isDark = () => document.documentElement.classList.contains('dark');
+  let activeKey = 'commander';
+  const listEl = document.getElementById('methPersonaList');
+  const detailEl = document.getElementById('methPersonaDetail');
+  if (!listEl || !detailEl) return;
+
+  function renderList() {
+    listEl.innerHTML = personas.map(p => `
+      <button class="meth-p-thumb ${p.key===activeKey?'active':''}" data-pkey="${p.key}"
+              style="--pa:${isDark()?p.accentDark:p.accent}">
+        <div class="meth-p-thumb-img"><img src="${p.img}" alt="${p.name}"/></div>
+        <div class="meth-p-thumb-text">
+          <div class="meth-p-thumb-name">${p.name.replace('The ','')}</div>
+          <div class="meth-p-thumb-trait">${p.trait}</div>
+        </div>
+      </button>`).join('');
+  }
+
+  function renderDetail(key, animate) {
+    const p = personas.find(x => x.key === key);
+    if (!p) return;
+    const dark = isDark();
+    const ac = dark ? p.accentDark : p.accent;
+    detailEl.style.setProperty('--pa', ac);
+    detailEl.style.setProperty('--pd-gradient', p.gradient);
+    detailEl.style.setProperty('--pd-gradient-dark', p.gradientDark);
+
+    detailEl.innerHTML = `
+      <div class="meth-pd-art">
+        <img src="${p.img}" alt="${p.name}" style="opacity:0;transform:scale(.9)"/>
+      </div>
+      <div class="meth-pd-copy">
+        <div class="meth-pd-badge" style="color:${ac}">${p.badge}</div>
+        <div class="meth-pd-name">${p.name}</div>
+        <p class="meth-pd-desc">${p.desc}</p>
+        <div class="meth-pd-cards">
+          <div class="meth-pd-card">
+            <div class="meth-pd-card-label">Signature prompt</div>
+            <div class="meth-pd-card-text">${p.prompt}</div>
+          </div>
+          <div class="meth-pd-card">
+            <div class="meth-pd-card-label">In a nutshell</div>
+            <div class="meth-pd-card-text">${p.liner}</div>
+          </div>
+        </div>
+        <div class="meth-pd-axes">
+          ${Object.entries(p.axes).map(([k,v])=>`
+            <div class="meth-ax">
+              <div class="meth-ax-label"><span>${k}</span><span>${v}</span></div>
+              <div class="meth-ax-track"><div class="meth-ax-fill" style="width:0%;background:${ac}"></div></div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+
+    requestAnimationFrame(() => {
+      const img = detailEl.querySelector('.meth-pd-art img');
+      if (img) { img.style.opacity = '1'; img.style.transform = 'scale(1)'; }
+      detailEl.querySelectorAll('.meth-ax-fill').forEach((f, i) => {
+        const w = Object.values(p.axes)[i];
+        setTimeout(() => f.style.width = w + '%', 50 + i * 60);
+      });
+    });
+  }
+
+  function selectPersona(key) {
+    activeKey = key;
+    renderList();
+    renderDetail(key, true);
+  }
+
+  listEl.addEventListener('click', e => {
+    const btn = e.target.closest('[data-pkey]');
+    if (btn) selectPersona(btn.dataset.pkey);
+  });
+
+  // Initial render
+  renderList();
+  renderDetail('commander', false);
+
+  // Re-render on theme change to swap accent colors
+  const themeObs = new MutationObserver(() => { renderList(); renderDetail(activeKey, false); });
+  themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+  // Intersection Observer for reveals
+  const scroll = document.getElementById('methScroll');
+  if (!scroll) return;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: 0.1, root: scroll });
+  scroll.querySelectorAll('.meth-reveal').forEach(el => obs.observe(el));
+
+  // Scroll progress + dot nav
+  const sections = scroll.querySelectorAll('[data-meth-section]');
+  const dots = document.querySelectorAll('.meth-dot');
+  const pf = document.getElementById('methProgressFill');
+
+  scroll.addEventListener('scroll', () => {
+    const max = scroll.scrollHeight - scroll.clientHeight;
+    if (pf) pf.style.width = (max > 0 ? scroll.scrollTop / max * 100 : 0) + '%';
+    let cur = 0;
+    const sr = scroll.getBoundingClientRect();
+    sections.forEach((s, i) => {
+      if (s.getBoundingClientRect().top - sr.top < sr.height * 0.5) cur = i;
+    });
+    dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+  });
+
+  dots.forEach(d => d.addEventListener('click', () => {
+    const idx = parseInt(d.dataset.methIdx);
+    sections[idx]?.scrollIntoView({ behavior:'smooth' });
+  }));
+
+  // Reset scroll position when modal opens
+  const modal = document.getElementById('methodologyModal');
+  if (modal) {
+    const mo = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.target.classList.contains('active')) {
+          scroll.scrollTop = 0;
+          if (pf) pf.style.width = '0%';
+          dots.forEach((d, i) => d.classList.toggle('active', i === 0));
+          // Re-trigger reveals
+          scroll.querySelectorAll('.meth-reveal').forEach(el => el.classList.remove('vis'));
+          setTimeout(() => {
+            scroll.querySelectorAll('.meth-reveal').forEach(el => obs.observe(el));
+          }, 50);
+        }
+      }
+    });
+    mo.observe(modal, { attributes: true, attributeFilter: ['class'] });
+  }
+})();
+</script>

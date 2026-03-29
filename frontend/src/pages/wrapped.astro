@@ -1,0 +1,253 @@
+---
+import WrappedLayout from '../layouts/WrappedLayout.astro';
+import Header from '../components/Header.astro';
+import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
+import SettingsModal from '../components/dashboard/SettingsModal.astro';
+import RefreshModal from '../components/RefreshModal.astro';
+---
+<WrappedLayout title="How I Prompt: Wrapped">
+
+<div class="top-nav" id="topNav">
+  <Header page="wrapped" />
+  <nav class="source-bar" id="sourceBar"></nav>
+</div>
+
+    <!-- Section 1: Cold Open -->
+    <section class="min-h-screen flex flex-col items-center justify-center px-6 relative pt-14">
+        <div class="text-center max-w-3xl">
+            <p class="font-serif text-3xl md:text-5xl italic text-text/90 animate-fade-in">"You're absolutely right."</p>
+            <p class="text-muted/40 text-xs mt-2 animate-fade-in delay-1">and other agreement phrases</p>
+            <p class="text-muted text-lg mt-6 animate-fade-in delay-1">— <span id="yrAttribution">the AI</span>, <span class="stat-accent font-semibold" id="yrCount">--</span> times</p>
+            <p class="text-muted/60 text-sm mt-2 animate-fade-in delay-1">That's <span class="text-text/80" id="yrPerConvo">--</span> per conversation</p>
+            <div class="mt-16 animate-fade-in delay-2">
+                <p class="text-muted text-sm uppercase tracking-widest mb-2" id="dateRangeDisplay">--</p>
+                <h1 class="text-4xl md:text-6xl font-bold">How I <span class="gradient-text">Prompt</span></h1>
+            </div>
+        </div>
+        <div class="absolute bottom-12">
+            <p class="text-muted text-sm mb-2">Scroll</p>
+            <svg class="w-5 h-5 mx-auto text-muted scroll-hint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Section 2: The Numbers -->
+    <section class="min-h-screen flex items-center justify-center px-6 py-20">
+        <div class="max-w-3xl w-full">
+            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">The Numbers</p>
+            <div class="text-center mb-12">
+                <div class="text-7xl md:text-8xl font-bold gradient-text counter" id="mainCounter" data-target="0">--</div>
+                <p class="text-2xl text-text/80 mt-2">prompts sent</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold font-mono text-text" id="totalConversations">--</p>
+                    <p class="text-muted text-xs mt-1">conversations</p>
+                </div>
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold font-mono text-text" id="totalWordsK">--</p>
+                    <p class="text-muted text-xs mt-1">words typed</p>
+                </div>
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold font-mono text-text" id="avgTurns">--</p>
+                    <p class="text-muted text-xs mt-1">avg turns</p>
+                </div>
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold font-mono text-text" id="maxTurns">--</p>
+                    <p class="text-muted text-xs mt-1">longest session</p>
+                </div>
+                <div class="card p-4 text-center">
+                    <p class="text-2xl font-bold font-mono text-text" id="deepDives">--</p>
+                    <p class="text-muted text-xs mt-1">deep dives</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Temporal Patterns -->
+    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-20">
+        <div class="max-w-4xl w-full">
+            <p class="text-muted text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">When You Prompt</p>
+            <div class="card p-3 sm:p-4 md:p-8 mb-4 sm:mb-8 overflow-x-auto">
+                <p class="text-sm text-muted mb-6">Activity by Hour × Day</p>
+                <div class="w-full">
+                    <div class="hidden sm:flex mb-2 ml-12">
+                        <div class="flex-1 grid grid-cols-24 gap-[2px]">
+                            <span class="text-[10px] text-muted text-center">0</span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center">3</span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center">6</span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center">9</span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center">12</span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center">15</span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center">18</span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center">21</span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                            <span class="text-[10px] text-muted text-center"></span>
+                        </div>
+                    </div>
+                    <div id="heatmap" class="space-y-[2px]"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 sm:gap-4">
+                <div class="card p-3 sm:p-6 text-center overflow-hidden">
+                    <p class="text-xl sm:text-4xl font-bold font-mono stat-accent" id="peakHour">--</p>
+                    <p class="text-muted text-xs sm:text-sm mt-1">Peak hour</p>
+                    <p class="text-muted text-[10px] sm:text-xs" id="peakHourCount">-- prompts</p>
+                </div>
+                <div class="card p-3 sm:p-6 text-center overflow-hidden">
+                    <p class="text-xl sm:text-4xl font-bold font-mono text-text" id="nightOwlPct">--%</p>
+                    <p class="text-muted text-xs sm:text-sm mt-1">Night Owl</p>
+                    <p class="text-muted text-[10px] sm:text-xs">11pm – 4am</p>
+                </div>
+                <div class="card p-3 sm:p-6 text-center overflow-hidden">
+                    <p class="text-xl sm:text-4xl font-bold font-mono text-text truncate" id="peakDay">--</p>
+                    <p class="text-muted text-xs sm:text-sm mt-1">Peak day</p>
+                    <p class="text-muted text-[10px] sm:text-xs" id="peakDayCount">-- prompts</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Your Style (Embedding Hero Metrics) -->
+    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-20">
+        <div class="max-w-3xl w-full">
+            <p class="text-muted text-sm uppercase tracking-widest mb-4 text-center">Your Style</p>
+            <h2 class="text-3xl sm:text-5xl font-bold text-center mb-2" id="styleHeadline">--</h2>
+            <p class="text-muted text-base sm:text-lg text-center max-w-lg mx-auto mb-10" id="styleSubline">Loading your style profile...</p>
+            <div class="grid md:grid-cols-2 gap-4 sm:gap-6">
+                <!-- Vibe Coder Index Spectrum -->
+                <div class="card p-6 text-center">
+                    <p class="text-muted text-xs uppercase tracking-wider mb-4 font-semibold">Vibe Coder Index</p>
+                    <p class="text-4xl font-mono font-bold mb-1" id="wrappedVibeValue">--</p>
+                    <p class="text-muted text-sm mb-6" id="wrappedVibeLabel">Loading...</p>
+                    <div class="relative h-2 rounded-full mx-2" style="background: linear-gradient(to right, #a78bfa, var(--border) 50%, var(--accent));">
+                        <div class="absolute top-1/2 w-4 h-4 rounded-full border-2 shadow-md"
+                            style="background:var(--accent);border-color:var(--bg);transform: translate(-50%, -50%); left: 50%; transition: left 0.8s ease;"
+                            id="wrappedVibeMarker"></div>
+                    </div>
+                    <div class="flex justify-between text-muted text-xs mt-2 mx-2">
+                        <span>Engineer</span><span>Vibe Coder</span>
+                    </div>
+                </div>
+
+                <!-- Politeness Gauge -->
+                <div class="card p-6 text-center">
+                    <p class="text-muted text-xs uppercase tracking-wider mb-4 font-semibold">Politeness</p>
+                    <div class="arc-gauge">
+                        <svg viewBox="0 0 120 120">
+                            <circle fill="none" stroke="var(--border)" stroke-width="8" opacity="0.3" cx="60" cy="60" r="52" />
+                            <circle fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" id="wrappedPoliteArc" cx="60" cy="60" r="52"
+                                stroke-dasharray="326.73" stroke-dashoffset="326.73"
+                                transform="rotate(-90 60 60)" />
+                        </svg>
+                        <div class="arc-gauge-inner">
+                            <p class="text-3xl font-mono font-bold" id="wrappedPoliteValue">--</p>
+                            <p class="text-muted text-xs" id="wrappedPoliteLabel">Loading...</p>
+                        </div>
+                    </div>
+                    <p class="text-muted text-xs mt-3">Tone warmth &amp; collaboration</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Persona Reveal -->
+    <section class="wrapped-persona-section min-h-screen flex items-center justify-center px-6 py-20">
+        <div class="max-w-lg w-full">
+            <p class="text-muted text-sm uppercase tracking-widest mb-6 text-center">Your Persona</p>
+            <div class="card overflow-hidden">
+                <img class="wrapped-card-top" id="wrappedCardTop" src="/images/char_architect.png" alt="Persona character art" />
+                <div class="wrapped-persona-body text-center">
+                    <h2 class="text-2xl sm:text-3xl font-bold gradient-text mb-3" id="personaName">--</h2>
+                    <p class="text-muted text-sm sm:text-base max-w-md mx-auto mb-6" id="personaDesc">Loading...</p>
+                    <div class="flex flex-wrap justify-center gap-2 mb-6" id="personaTraits"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="donut-ring">
+                                <svg viewBox="0 0 44 44"><circle fill="none" stroke="var(--border)" stroke-width="5" cx="22" cy="22" r="20"/><circle fill="none" stroke="#4CAF50" stroke-width="5" stroke-linecap="round" id="wDonutDetail" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg>
+                                <div class="donut-val" id="wValDetail">--</div>
+                            </div>
+                            <span class="text-xs text-muted font-medium">Detail Level</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="donut-ring">
+                                <svg viewBox="0 0 44 44"><circle fill="none" stroke="var(--border)" stroke-width="5" cx="22" cy="22" r="20"/><circle fill="none" stroke="#7B1FA2" stroke-width="5" stroke-linecap="round" id="wDonutStyle" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg>
+                                <div class="donut-val" id="wValStyle">--</div>
+                            </div>
+                            <span class="text-xs text-muted font-medium">Comm Style</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 6: Terminal Summary -->
+    <section class="wrapped-receipt-section min-h-screen flex items-center justify-center px-6 py-20">
+        <div class="max-w-lg w-full">
+            <p class="text-muted text-sm uppercase tracking-widest mb-6 text-center">The Receipt</p>
+            <div class="card receipt-card font-mono text-sm" id="terminalCard" style="background:var(--surface)">
+                <p class="text-xs text-muted mb-4 text-center" id="termDateRange">-- SUMMARY</p>
+                <div class="border-b border-border mb-4 pb-4 space-y-1">
+                    <div class="flex justify-between"><span class="text-muted">Prompts</span><span class="font-bold" id="termPrompts">--</span></div>
+                    <div class="flex justify-between"><span class="text-muted">Conversations</span><span class="font-bold" id="termConversations">--</span></div>
+                    <div class="flex justify-between"><span class="text-muted">Words Typed</span><span class="font-bold" id="termWordsK">--</span></div>
+                    <div class="flex justify-between"><span class="text-muted">Avg Turns</span><span class="font-bold" id="termAvgTurns">--</span></div>
+                    <div class="flex justify-between"><span class="text-muted">Longest Session</span><span class="font-bold" id="termMaxTurns">--</span></div>
+                    <div class="flex justify-between"><span class="text-muted">Deep Dives</span><span class="font-bold" id="termDeepDives">--</span></div>
+                </div>
+                <div class="border-b border-border mb-4 pb-4 space-y-1">
+                    <div class="flex justify-between"><span class="text-muted">Peak Hour</span><span class="font-bold" id="termPeakHour">--</span></div>
+                    <div class="flex justify-between"><span class="text-muted">Peak Day</span><span class="font-bold" id="termPeakDay">--</span></div>
+                    <div class="flex justify-between"><span class="text-muted">Night Owl</span><span class="font-bold" id="termNightOwl">--</span></div>
+                </div>
+                <div class="border-b border-border mb-4 pb-4 space-y-1">
+                    <div class="flex justify-between"><span class="text-muted">Vibe Coder Index</span><span class="font-bold stat-accent" id="termVibe">--</span></div>
+                    <div class="flex justify-between"><span class="text-muted">Politeness</span><span class="font-bold" id="termPolite">--</span></div>
+                </div>
+                <div class="border-b border-border mb-4 pb-4 space-y-1" id="termPlatformSection">
+                </div>
+                <div class="space-y-1">
+                    <div class="flex justify-between"><span class="text-muted">"You're right"</span><span class="font-bold" id="termYrCount">--</span></div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-border text-center">
+                    <p class="font-bold stat-accent" id="termPersonaName">PERSONA: --</p>
+                    <p class="text-muted text-xs mt-1" id="termPersonaTraits">--</p>
+                </div>
+                <p class="text-center text-xs text-muted mt-4">howiprompt.eeshans.com</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center text-xs text-muted border-t border-border">
+        <p>&copy; 2025 Eeshan Srivastava &middot; MIT License &middot; Non-commercial</p>
+        <p class="mt-2">
+            <a href="https://github.com/eeshansrivastava89/howiprompt" target="_blank" class="text-muted hover:text-text transition-colors build-your-own-link">Source</a>
+            &middot;
+            <a href="https://www.linkedin.com/in/eeshans/" target="_blank" class="text-muted hover:text-text transition-colors">LinkedIn</a>
+        </p>
+    </footer>
+
+    <RefreshModal />
+    <MethodologyModal />
+    <SettingsModal />
+
+    <script src="../scripts/header-ui.js"></script>
+    <script src="../scripts/wrapped.js"></script>
+</WrappedLayout>

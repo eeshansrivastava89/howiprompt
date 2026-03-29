@@ -1,0 +1,19 @@
+{
+  "name": "howiprompt-frontend",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "build:web": "PUBLIC_ENABLE_ANALYTICS=true PUBLIC_POSTHOG_KEY=phc_zfue5Ca8VaxypRHPCi9j2h2R3Qy1eytEHt3TMPWlOOS PUBLIC_POSTHOG_HOST=https://api-v2.eeshans.com PUBLIC_POSTHOG_UI_HOST=https://us.posthog.com astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^5.7.0",
+    "tailwindcss": "^4.2.2"
+  },
+  "devDependencies": {
+    "playwright": "^1.58.2"
+  }
+}

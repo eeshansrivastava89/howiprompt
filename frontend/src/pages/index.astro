@@ -1,0 +1,141 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import Header from '../components/Header.astro';
+import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
+import SetupWizard from '../components/dashboard/SetupWizard.astro';
+import SettingsModal from '../components/dashboard/SettingsModal.astro';
+import RefreshModal from '../components/RefreshModal.astro';
+---
+<DashboardLayout title="How I Prompt: Dashboard">
+<div class="page-frame">
+
+<div class="top-nav" id="topNav">
+  <Header page="dashboard" />
+  <nav class="source-bar" id="sourceBar"></nav>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dash-panel" id="tab-dashboard">
+  <div class="dash-container">
+    <div class="main-grid">
+
+      <!-- LEFT 2fr -->
+      <div class="left">
+        <!-- Stat cards -->
+        <div class="stat-cards animate delay-1">
+          <div class="stat-card">
+            <div class="stat-card-label">Prompts</div>
+            <div class="stat-card-value" id="promptsValue">--</div>
+            <div class="stat-card-sub" id="promptsSubtitle">-- words avg</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Conversations</div>
+            <div class="stat-card-value" id="conversationsValue">--</div>
+            <div class="stat-card-sub" id="conversationsSubtitle">-- turns avg</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Words Typed</div>
+            <div class="stat-card-value" id="wordsTypedValue">--</div>
+            <div class="stat-card-sub" id="wordsTypedSubtitle">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Night Owl</div>
+            <div class="stat-card-value highlight" id="nightOwlValue">--%</div>
+            <div class="stat-card-sub">prompts 11pm–4am</div>
+          </div>
+        </div>
+
+        <!-- Trend Chart -->
+        <div class="trend-panel animate delay-2">
+          <div class="trend-header">
+            <div class="trend-copy">
+              <div class="trend-copy-row">
+                <div class="trend-title">Trends</div>
+                <span class="trend-copy-sep" aria-hidden="true">|</span>
+                <div class="trend-metric-def" id="trendMetricDef">How much you vibe-code. Higher = more intent-driven, less spec-heavy.</div>
+              </div>
+              <div class="trend-legend" id="trendLegend"></div>
+            </div>
+            <div class="metric-tabs" id="metricTabs">
+              <button class="metric-tab active" data-metric="vibe" data-tooltip="How much you vibe-code. Higher = more intent-driven, less spec-heavy.">Vibe Coder Index</button>
+              <button class="metric-tab" data-metric="polite" data-tooltip="How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.">Politeness</button>
+              <button class="metric-tab" data-metric="activity" data-tooltip="Prompts per week.">Activity</button>
+            </div>
+          </div>
+          <div class="trend-current">
+            <span class="trend-current-val" id="trendVal">--</span>
+            <span class="trend-current-label" id="trendLabel">--</span>
+          </div>
+          <div class="trend-chart-wrap" id="trendWrap">
+            <div id="trendChart"></div>
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="heatmap-panel animate delay-3">
+          <div class="heatmap-title">Activity Heatmap</div>
+          <div class="heatmap" id="heatmapGrid"></div>
+          <div class="heatmap-meta">
+            <span>Peak Hour: <strong id="peakHourValue">--</strong></span>
+            <span>Peak Day: <strong id="peakDayValue">--</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT 1fr -->
+      <div class="right-col">
+        <div class="card-dock">
+          <!-- Player card -->
+          <div class="player-card" id="playerCard">
+            <div class="card-top" id="cardTop">
+              <div class="card-top-content">
+                <div class="persona-name" id="personaName">--</div>
+                <div class="donut-grid">
+                  <div class="donut-item">
+                    <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" id="donutDetail" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg><div class="donut-val" id="valDetail">--</div></div>
+                    <div class="donut-label">Detail</div>
+                  </div>
+                  <div class="donut-item">
+                    <div class="donut-ring"><svg viewBox="0 0 44 44"><circle class="donut-track" cx="22" cy="22" r="20"/><circle class="donut-fill" id="donutStyle" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg><div class="donut-val" id="valStyle">--</div></div>
+                    <div class="donut-label">Collab</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="persona-desc" id="personaDescription">Loading persona data...</p>
+            </div>
+            <div class="stat-strip">
+              <div class="stat-block"><div class="stat-num" id="cardVibe">--</div><div class="stat-label">Vibe Coder Index</div><div class="stat-minibar"><div class="stat-minibar-fill b" id="cardVibeBar"></div></div></div>
+              <div class="stat-block"><div class="stat-num" id="cardPolite">--</div><div class="stat-label">Politeness</div><div class="stat-minibar"><div class="stat-minibar-fill r" id="cardPoliteBar"></div></div></div>
+            </div>
+            <div class="card-foot"><span>howiprompt.eeshans.com</span><span id="cardSerial">#0000</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span>&copy; 2025 Eeshan Srivastava</span>
+  <span>Personal project &middot; MIT License &middot; Non-commercial</span>
+  <span class="footer-links">
+    <a href="https://github.com/eeshansrivastava89/howiprompt" target="_blank" id="footerGithubLink">Source</a>
+    <a href="https://www.linkedin.com/in/eeshans/" target="_blank">LinkedIn</a>
+  </span>
+</footer>
+
+</div><!-- /page-frame -->
+
+<RefreshModal />
+
+<MethodologyModal />
+<SetupWizard />
+<SettingsModal />
+
+<script src="../scripts/header-ui.js"></script>
+<script src="../scripts/dashboard.js"></script>
+</DashboardLayout>

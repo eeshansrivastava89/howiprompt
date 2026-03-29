@@ -1,0 +1,66 @@
+{
+  "name": "@eeshans/howiprompt",
+  "version": "2.1.0",
+  "description": "Local-first analytics dashboard for your AI coding assistant conversations",
+  "type": "module",
+  "author": "Eeshan Srivastava (https://eeshans.com)",
+  "keywords": [
+    "ai",
+    "analytics",
+    "dashboard",
+    "productivity",
+    "developer-tools",
+    "claude",
+    "openai",
+    "cursor",
+    "prompting",
+    "nlp",
+    "embeddings"
+  ],
+  "bin": {
+    "howiprompt": "bin/cli.mjs"
+  },
+  "files": [
+    "bin/*.mjs",
+    "config/",
+    "data/claude_code/.gitkeep",
+    "data/codex/.gitkeep",
+    "data/reference_clusters.json",
+    "dist/",
+    "frontend/dist/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eeshansrivastava89/howiprompt"
+  },
+  "homepage": "https://github.com/eeshansrivastava89/howiprompt#readme",
+  "bugs": {
+    "url": "https://github.com/eeshansrivastava89/howiprompt/issues"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build:cli": "node scripts/build-cli.mjs",
+    "check:privacy": "node scripts/privacy-gate.mjs",
+    "prepack": "node scripts/build-cli.mjs && node scripts/privacy-gate.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.8.1",
+    "@libsql/client": "^0.17.0",
+    "open": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@vitest/ui": "^3.2.4",
+    "typescript": "^5.8",
+    "vitest": "^3.1"
+  }
+}

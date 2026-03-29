@@ -7,8 +7,10 @@ internal/
 # Data (user's private data)
 data/claude_code/*
 data/claude_ai/*
+data/codex/*
 !data/claude_code/.gitkeep
 !data/claude_ai/.gitkeep
+!data/codex/.gitkeep
 
 # Branding (personal config - use branding.example.json as template)
 branding.json
@@ -19,6 +21,10 @@ __pycache__/
 .venv/
 venv/
 
+# Jupyter
+.ipynb_checkpoints/
+notebooks/
+
 # macOS
 .DS_Store
 
@@ -26,5 +32,29 @@ venv/
 .vscode/
 .idea/
 
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.astro/
+
+# Node.js
+node_modules/
+dist/
+*.tgz
+
 # Claude Code local settings
 .claude/
+.codex/
+.pi/
+
+# QA artifacts (screenshots, mockups, utility scripts)
+qa-screenshots/
+mockups/
+frontend/qa-screenshot.mjs
+
+# Source art (frontend/public/images/ is the canonical copy)
+images/
+
+# Large generated data files
+*.npy
+*.npz

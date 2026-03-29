@@ -2,7 +2,7 @@
 
 # How I Prompt
 
-A personal analytics dashboard for your Claude AI conversations. See your prompting patterns at a glance.
+A local-first analytics dashboard for your AI coding assistant conversations. It syncs local logs, computes prompting metrics on-device, and opens an interactive dashboard in your browser.
 
 **[View Live Demo →](https://howiprompt.eeshans.com)**
 
@@ -10,66 +10,109 @@ A personal analytics dashboard for your Claude AI conversations. See your prompt
 
 ---
 
+## Quick Start
+
+```bash
+npx @eeshans/howiprompt
+```
+
+That starts a local server and opens the dashboard. On first run, a setup wizard detects supported backends, lets you confirm sources, and then runs the pipeline.
+
+### Options
+
+```bash
+npx @eeshans/howiprompt --no-open     # don't auto-open browser
+npx @eeshans/howiprompt --port 4000   # custom port
+npx @eeshans/howiprompt --help        # usage info
+```
+
+### What Happens
+
+1. Detects supported local backends and writes setup to `~/.howiprompt/config.json`
+2. Copies raw conversation data into `~/.howiprompt/raw/`
+3. Parses and stores messages in a local SQLite database at `~/.howiprompt/data.db`
+4. Runs embeddings and classifier scoring for dashboard metrics
+5. Writes `~/.howiprompt/metrics.json` and serves the dashboard at `localhost`
+
+Subsequent refreshes are incremental and reuse the local database, caches, and configured exclusions.
+
+---
+
 ## What You Get
 
 | Dashboard | Full Experience |
 |-----------|-----------------|
-| One-page overview of all your stats | Scroll-through "Wrapped" style presentation |
+| One-page overview of your stats | Scroll-through "Wrapped" presentation |
 | [howiprompt.eeshans.com](https://howiprompt.eeshans.com) | [howiprompt.eeshans.com/wrapped](https://howiprompt.eeshans.com/wrapped) |
 
-**Metrics include:** Total prompts, word counts, conversation depth, activity heatmap, prompt style analysis, and your AI persona classification.
+**Metrics include:** total prompts, conversation depth, activity heatmap, model usage, Vibe Coder Index, Politeness, persona classification (2×2: Detail Level × Communication Style), and trends.
 
 ---
 
-## Build Your Own
+## Data Sources
 
-```bash
-# 1. Clone
-git clone https://github.com/eeshansrivastava89/howiprompt.git
-cd howiprompt
+| Source | Location |
+|--------|----------|
+| **Claude Code** | `~/.claude/projects/*.jsonl` |
+| **Codex** | `~/.codex/history.jsonl` |
+| **Copilot Chat** | `~/Library/Application Support/Code/User/workspaceStorage` |
+| **Cursor** | `~/Library/Application Support/Cursor/User/workspaceStorage` |
+| **LM Studio** | `~/.lmstudio/conversations` |
 
-# 2. Add your data
-python build.py --copy-claude-code                    # Claude Code logs
-cp ~/Downloads/claude-export/conversations.json data/claude_ai/  # Claude.ai export
+All supported sources are auto-synced into `~/.howiprompt/raw/` and reused across refreshes.
 
-# 3. Build & open
-python build.py
-open output/dashboard.html   # Dashboard view
-open output/index.html       # Full wrapped experience
-```
+### Backend Status
 
-### Data Sources
-
-| Source | How to Get It |
-|--------|---------------|
-| **Claude Code** | Auto-copied with `--copy-claude-code` from `~/.claude/projects/` |
-| **Claude.ai** | Settings → Export Data → Download → copy `conversations.json` to `data/claude_ai/` |
+- Supported today: `Claude Code`, `Codex`, `Copilot Chat`, `Cursor`, `LM Studio`
 
 ---
 
 ## Privacy
 
-- **100% local** — Nothing leaves your machine
-- **You control the data** — Only processes files you explicitly add
-- **No conversation text in output** — Only aggregate statistics
+- **Local by default** — Sync, parsing, embeddings, classifier scoring, and metrics run on your machine
+- **Persistent storage** — Raw copies, local DB, config, and metrics live under `~/.howiprompt/`
+- **No prompt text leaves your machine** — The app does not upload raw logs or prompt content
+- **No analytics in the local app** — The `npx @eeshans/howiprompt` package ships with analytics disabled. PostHog is only enabled on the hosted website
+- **Ancillary network requests** — The dashboard loads ApexCharts from a CDN. The CLI checks npm for version updates. These do not transmit prompt data
 
 ---
 
 ## The 4 Personas
 
-Your style is classified on two axes: **Engagement** (questions + iteration) and **Politeness** (courtesy - commands).
+Your persona is derived from two independent axes: **Detail Level** (brief → detailed) and **Communication Style** (directive → collaborative). These form a 2×2 grid validated on 21k prompts.
 
-|                    | High Politeness | Low Politeness |
-|--------------------|-----------------|----------------|
-| **High Engagement** | Collaborator | Explorer |
-| **Low Engagement**  | Efficient | Pragmatist |
+- **The Commander**: Brief + Directive — short, decisive instructions
+- **The Partner**: Brief + Collaborative — quick exchanges, conversational flow
+- **The Architect**: Detailed + Directive — specs, constraints, numbered requirements
+- **The Explorer**: Detailed + Collaborative — context-rich, question-driven investigation
 
 ---
 
-## Requirements
+## Development
 
-- Python 3.10+ (no external dependencies)
-- macOS or Linux (Windows with minor tweaks)
+```bash
+# Install deps
+npm install
+
+# Build TypeScript
+npm run build
+
+# Run tests
+npm test
+
+# Build frontend
+cd frontend && npm run build
+
+# Build for distribution
+npm run build:cli
+
+# Privacy gate (run before publish)
+npm run check:privacy
+```
+
+### Requirements
+
+- Node.js 18+
 
 ---
 
