@@ -58,7 +58,7 @@ export async function startServer(opts: ServerOptions): Promise<http.Server> {
     if (req.method === "GET" && url.pathname === "/api/pick-directory") {
       try {
         const result = execSync(
-          `osascript -e 'tell application "Finder" to activate' -e 'return POSIX path of (choose folder with prompt "Select directory to exclude")'`,
+          `osascript -e 'return POSIX path of (choose folder with prompt "Select directory to exclude")'`,
           { timeout: 60000 },
         ).toString().trim();
         // Remove trailing slash

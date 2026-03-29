@@ -203,9 +203,9 @@ let trendData = {};
 let activeTrendMetric = 'vibe';
 
 const TREND_METRIC_CONFIG = {
-    vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '/100', desc: 'How much you vibe-code. Higher = more intent-driven, less spec-heavy.', invert: true },
-    polite:    { key: 'politeness',          label: 'Politeness',        suffix: '/100', desc: 'How collaborative your tone is. Higher = warmer, more appreciative prompting style.' },
-    activity:  { key: '_prompts',            label: 'Activity',          suffix: '/wk', desc: 'Prompts per week.' },
+    vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '/100', desc: '<strong>Higher</strong> = vibe coder. <strong>Lower</strong> = engineer.', invert: true },
+    polite:    { key: 'politeness',          label: 'Politeness',        suffix: '/100', desc: '<strong>Higher</strong> = warmer. <strong>Lower</strong> = sharper.', axisTop: 'Warmer', axisBottom: 'Sharper' },
+    activity:  { key: '_prompts',            label: 'Activity',          suffix: '/wk', desc: '<strong>Higher</strong> = heavier usage. <strong>Lower</strong> = quieter weeks.' },
 };
 
 function extractTrendPoints(weekly, metricKey) {
@@ -334,23 +334,40 @@ function initTrendChart(view) {
         }
     }
 
+    function getYAxisBounds(metricKey, series) {
+        if (metricKey === 'vibe' || metricKey === 'polite') {
+            return { min: 0, max: 100, tickAmount: 4 };
+        }
+
+        const values = series.flatMap((s) => s.data || []).filter((v) => Number.isFinite(v));
+        const maxValue = values.length > 0 ? Math.max(...values) : 0;
+        const paddedMax = maxValue <= 0 ? 10 : Math.ceil(maxValue * 1.15);
+        return { min: 0, max: paddedMax, tickAmount: 4 };
+    }
+
+    function getTickAmount() {
+        if (window.innerWidth <= 1100) return 4;
+        if (window.innerWidth <= 1400) return 5;
+        return 7;
+    }
+
     const isDark = document.documentElement.classList.contains('dark');
     const mutedColor = cssVar('--muted') || '#888';
+    const borderColor = cssVar('--border') || '#ddd';
     const initial = buildSeriesAndColors(activeTrendMetric);
     const initialSuffix = trendData[activeTrendMetric]?.suffix || '';
+    const initialYBounds = getYAxisBounds(activeTrendMetric, initial.series);
 
     const options = {
         chart: {
             type: 'area',
-            height: 220,
+            height: window.innerWidth <= 1100 ? 150 : window.innerWidth <= 1400 ? 170 : 190,
             fontFamily: "'DM Sans', system-ui, sans-serif",
             toolbar: { show: false },
             zoom: { enabled: false },
             background: 'transparent',
             animations: {
-                enabled: true,
-                easing: 'easeinout',
-                speed: 400,
+                enabled: false,
             },
         },
         stroke: {
@@ -375,17 +392,30 @@ function initTrendChart(view) {
                 rotate: 0,
                 hideOverlappingLabels: true,
             },
-            tickAmount: 7,
+            tickAmount: getTickAmount(),
             axisBorder: { show: false },
             axisTicks: { show: false },
         },
         yaxis: {
-            show: false,
-            min: 0,
+            show: true,
+            min: initialYBounds.min,
+            max: initialYBounds.max,
+            tickAmount: initialYBounds.tickAmount,
+            forceNiceScale: false,
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            labels: {
+                style: { colors: mutedColor, fontSize: '11px' },
+                formatter: (val) => activeTrendMetric === 'activity' ? formatCompact(Math.round(val)) : `${Math.round(val)}`,
+            },
         },
         grid: {
-            show: false,
-            padding: { left: 28, right: 28, top: -8, bottom: 0 },
+            show: true,
+            borderColor,
+            strokeDashArray: 3,
+            xaxis: { lines: { show: false } },
+            yaxis: { lines: { show: true } },
+            padding: { left: 12, right: 12, top: -8, bottom: 0 },
         },
         legend: { show: false },
         tooltip: {
@@ -416,7 +446,7 @@ function initTrendChart(view) {
         const headlineRaw = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
         valEl.textContent = (key === 'activity' ? formatCompact(headlineRaw) : headlineRaw) + d.suffix;
         labelEl.textContent = '';
-        if (defEl) defEl.textContent = d.desc || '';
+        if (defEl) defEl.innerHTML = d.desc || '';
 
         // Set headline color
         const trendPanel = valEl.closest('.trend-panel');
@@ -430,6 +460,7 @@ function initTrendChart(view) {
 
         const { series, colors, showLegend } = buildSeriesAndColors(key);
         const suffix = d.suffix || '';
+        const yBounds = getYAxisBounds(key, series);
 
         // Update inline legend
         const legendEl = document.getElementById('trendLegend');
@@ -451,14 +482,41 @@ function initTrendChart(view) {
         }
 
         trendChartInstance.updateOptions({
+            series,
             colors,
+            chart: {
+                animations: { enabled: false },
+            },
+            xaxis: {
+                categories: weekDates,
+                tickAmount: getTickAmount(),
+                labels: {
+                    style: { colors: mutedColor, fontSize: '11px' },
+                    rotate: 0,
+                    hideOverlappingLabels: true,
+                },
+                axisBorder: { show: false },
+                axisTicks: { show: false },
+            },
+            yaxis: {
+                show: true,
+                min: yBounds.min,
+                max: yBounds.max,
+                tickAmount: yBounds.tickAmount,
+                forceNiceScale: false,
+                axisBorder: { show: false },
+                axisTicks: { show: false },
+                labels: {
+                    style: { colors: mutedColor, fontSize: '11px' },
+                    formatter: (val) => key === 'activity' ? formatCompact(Math.round(val)) : `${Math.round(val)}`,
+                },
+            },
             tooltip: {
                 y: {
                     formatter: (val) => val != null ? Math.round(val) + suffix : '--',
                 },
             },
-        }, false, false);
-        trendChartInstance.updateSeries(series);
+        }, false, false, false);
     }
 
     document.querySelectorAll('.metric-tab').forEach((tab) => {

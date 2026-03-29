@@ -1,0 +1,52 @@
+name: Sync Pages Docs
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build web demo
+        run: npm run build:web
+        working-directory: frontend
+
+      - name: Sync build output into docs
+        run: |
+          rm -rf docs
+          mkdir -p docs
+          cp -R frontend/dist/. docs/
+          touch docs/.nojekyll
+
+      - name: Commit refreshed docs
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: sync GitHub Pages docs'
+          file_pattern: docs/**
