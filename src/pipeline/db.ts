@@ -123,6 +123,7 @@ export async function queryMessages(
   if (opts?.role) {
     sql += " AND role = ?";
     args.push(opts.role);
+    if (opts.role === "human") sql += " AND is_excluded = 0";
   }
   if (opts?.platform) {
     sql += " AND platform = ?";

@@ -107,15 +107,24 @@ const FORBIDDEN_IN_TARBALL = [
   /\.db$/,
   /\.db-journal$/,
   /\.db-wal$/,
+  /\.db-shm$/,
+  /\.jsonl$/,
   /config\.json$/,
   /branding\.json$/,
   /\.env\.local$/,
   /internal\//,
   /src-py\//,
+  /^package\/data\//,
+  /^package\/notebooks\//,
+  /^package\/mockups\//,
+  /^package\/tests\//,
 ];
 
+const MAX_TARBALL_FILES = 200;
+const MAX_TARBALL_SIZE_MB = 10;
+
 try {
-  const packList = execSync("npm pack --dry-run 2>&1", { encoding: "utf-8" });
+  const packList = execSync("npm pack --dry-run --ignore-scripts 2>&1", { encoding: "utf-8" });
   const lines = packList.split("\n").filter(
     (l) =>
       l.startsWith("npm notice") &&
@@ -147,12 +156,59 @@ try {
   if (!tarballForbiddenFound) {
     pass("No forbidden files in npm tarball");
   }
+
+  // Check total file count and size
+  const totalFilesMatch = packList.match(/total files:\s*(\d+)/);
+  const sizeMatch = packList.match(/package size:\s*([\d.]+)\s*([kMG]?B)/);
+  if (totalFilesMatch) {
+    const totalFiles = Number(totalFilesMatch[1]);
+    if (totalFiles > MAX_TARBALL_FILES) {
+      fail(`Tarball has ${totalFiles} files (max ${MAX_TARBALL_FILES}) — likely includes raw data`);
+    } else {
+      pass(`Tarball file count OK (${totalFiles} <= ${MAX_TARBALL_FILES})`);
+    }
+  }
+  if (sizeMatch) {
+    const size = Number(sizeMatch[1]);
+    const unit = sizeMatch[2];
+    const sizeMB = unit === "GB" ? size * 1024 : unit === "MB" ? size : unit === "kB" ? size / 1024 : size / (1024 * 1024);
+    if (sizeMB > MAX_TARBALL_SIZE_MB) {
+      fail(`Tarball is ${size} ${unit} (max ${MAX_TARBALL_SIZE_MB} MB) — likely includes raw data`);
+    } else {
+      pass(`Tarball size OK (${size} ${unit} <= ${MAX_TARBALL_SIZE_MB} MB)`);
+    }
+  }
 } catch (e) {
   console.warn("Warning: Could not run tarball content check:", e.message);
   warnings++;
 }
 
-// ── 4. No conversation content in dist ──────────────────────────────
+// ── 4. No analytics in package build ────────────────────────────────
+
+console.log("\n=== Analytics Gate ===\n");
+
+const ANALYTICS_MARKERS = ["posthog", "phc_", "api-v2.eeshans.com"];
+const packageHtmlFiles = ["frontend/dist/index.html", "frontend/dist/wrapped/index.html"];
+let analyticsLeakFound = false;
+
+for (const file of packageHtmlFiles) {
+  try {
+    const content = readFileSync(file, "utf-8");
+    for (const marker of ANALYTICS_MARKERS) {
+      if (content.includes(marker)) {
+        fail(`Analytics marker "${marker}" found in package build: ${file}`);
+        analyticsLeakFound = true;
+      }
+    }
+  } catch {
+    // File may not exist yet
+  }
+}
+if (!analyticsLeakFound) {
+  pass("No analytics code in package frontend build");
+}
+
+// ── 5. No conversation content in dist ──────────────────────────────
 
 console.log("\n=== Content Leak Gate ===\n");
 

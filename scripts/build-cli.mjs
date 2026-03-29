@@ -11,16 +11,15 @@ import { join, resolve } from "node:path";
 
 const run = (cmd) => execSync(cmd, { stdio: "inherit" });
 
-// 1. Compile TypeScript
+// 1. Clean and compile TypeScript
+console.log("Cleaning dist/...");
+rmSync("dist", { recursive: true, force: true });
 console.log("Compiling TypeScript...");
 run("npx tsc");
 
-// 2. Ensure frontend/dist exists
-if (!existsSync("frontend/dist")) {
-  console.error("Error: frontend/dist not found. Run `cd frontend && npm run build` first.");
-  process.exit(1);
-}
-console.log("Frontend dist found.");
+// 2. Rebuild frontend in local/package mode (analytics disabled)
+console.log("Building frontend (local mode, no analytics)...");
+run("cd frontend && npm run build");
 
 // 3. Copy platform-aware @libsql native binding
 const platformMap = {

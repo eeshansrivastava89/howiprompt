@@ -6,7 +6,7 @@ import { initThemeToggle } from './theme.js';
 
 let sourceViews = {};
 let activeSourceKey = 'both';
-const sourceFilter = document.getElementById('sourceFilter');
+const sourceBar = document.getElementById('sourceBar');
 const SOURCE_LABELS = {
     both: 'All',
     claude_code: 'Claude Code',
@@ -14,6 +14,13 @@ const SOURCE_LABELS = {
     copilot_chat: 'Copilot Chat',
     cursor: 'Cursor',
     lmstudio: 'LM Studio',
+};
+const SOURCE_ACCENTS = {
+    claude_code: '#e67e22',
+    codex: '#a855f7',
+    copilot_chat: '#06b6d4',
+    cursor: '#3b82f6',
+    lmstudio: '#22c55e',
 };
 
 function formatSourceLabel(key) {
@@ -50,19 +57,20 @@ function renderHeatmap(heatmapData) {
     const heatmapContainer = document.getElementById('heatmap');
     if (!heatmapContainer || data.length === 0) return;
 
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const isMobile = window.innerWidth < 640;
+    const days = isMobile ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const maxVal = Math.max(1, ...data.flat());
 
     heatmapContainer.innerHTML = '';
     data.forEach((row, dayIndex) => {
         const rowDiv = document.createElement('div');
-        rowDiv.className = 'flex items-center gap-[2px]';
+        rowDiv.className = 'flex items-center gap-[1px] sm:gap-[2px]';
         const dayLabel = document.createElement('span');
-        dayLabel.className = 'w-12 text-xs text-muted shrink-0';
+        dayLabel.className = (isMobile ? 'w-8' : 'w-12') + ' text-xs text-muted shrink-0';
         dayLabel.textContent = days[dayIndex];
         rowDiv.appendChild(dayLabel);
         const cellsContainer = document.createElement('div');
-        cellsContainer.className = 'flex-1 grid grid-cols-24 gap-[2px]';
+        cellsContainer.className = 'flex-1 grid grid-cols-24 gap-[1px] sm:gap-[2px]';
         row.forEach((value, hourIndex) => {
             const cell = document.createElement('div');
             const intensity = value > 0 ? Math.ceil((value / maxVal) * 5) : 0;
@@ -206,22 +214,40 @@ function hydrateWrapped(m) {
     setText('peakDayCount', `${t.peak_day_count || 0} prompts`);
 
     // Section 4: Your Style (embedding hero metrics)
-    const hitlScore = nlp.hitl_score?.avg_score;
-    const vibeScore = nlp.vibe_coder_index?.avg_score;
+    const vibeRaw = nlp.vibe_coder_index?.avg_score;
+    const vibeScore = vibeRaw != null ? 100 - vibeRaw : null;
     const politeScore = nlp.politeness?.avg_score;
 
-    setText('wrappedHitlValue', hitlScore != null ? Math.round(hitlScore) : '--');
-    setText('wrappedHitlLabel', hitlScore >= 66 ? 'High Impact' : hitlScore >= 33 ? 'Moderate' : hitlScore != null ? 'Passive' : 'No data');
-    setArc('wrappedHitlArc', hitlScore);
-
     setText('wrappedVibeValue', vibeScore != null ? Math.round(vibeScore) : '--');
-    setText('wrappedVibeLabel', vibeScore >= 70 ? 'Engineer' : vibeScore >= 50 ? 'Balanced' : vibeScore >= 30 ? 'Vibe-leaning' : vibeScore != null ? 'Vibe Coder' : 'No data');
+    setText('wrappedVibeLabel', vibeScore >= 50 ? 'Vibe Coder' : vibeScore != null ? 'Engineer' : 'No data');
     const vibeMarker = el('wrappedVibeMarker');
     if (vibeMarker && vibeScore != null) vibeMarker.style.left = `${Math.min(Math.max(vibeScore, 0), 100)}%`;
 
     setText('wrappedPoliteValue', politeScore != null ? Math.round(politeScore) : '--');
     setText('wrappedPoliteLabel', politeScore >= 66 ? 'Courteous' : politeScore >= 33 ? 'Balanced' : politeScore != null ? 'Direct' : 'No data');
     setArc('wrappedPoliteArc', politeScore);
+
+    // Dynamic style headline
+    if (vibeScore != null && politeScore != null) {
+        const v = Math.round(vibeScore);
+        const p = Math.round(politeScore);
+        let headline, subline;
+        if (v >= 50 && p >= 50) {
+            headline = 'Polite vibes only.';
+            subline = `You vibe-code with a ${v} and say please with a ${p}. Warm and loose — the AI loves working with you.`;
+        } else if (v >= 50 && p < 50) {
+            headline = 'Vibes, no filter.';
+            subline = `A ${v} on the vibe scale with a ${p} on politeness. You trust the AI with intent and skip the pleasantries.`;
+        } else if (v < 50 && p >= 50) {
+            headline = 'Spec-driven, still kind.';
+            subline = `A ${v} vibe score means you write specs, not wishes. But a ${p} politeness says you do it with warmth.`;
+        } else {
+            headline = 'All business.';
+            subline = `Vibe score ${v}, politeness ${p}. You're here to ship, not chat. Specs in, code out.`;
+        }
+        setText('styleHeadline', headline);
+        setText('styleSubline', subline);
+    }
 
     // Section 5: Persona Reveal (2×2 quadrant system)
     const QUADRANT_IMAGES = {
@@ -263,8 +289,7 @@ function hydrateWrapped(m) {
     setText('termPeakHour', peakHour12h);
     setText('termPeakDay', t.peak_day || 'N/A');
     setText('termNightOwl', `${t.night_owl_pct || 0}%`);
-    setText('termHitl', hitlScore != null ? Math.round(hitlScore) : '--');
-    setText('termVibe', vibeScore != null ? Math.round(vibeScore) : '--');
+    setText('termVibe', vibeScore != null ? Math.round(vibeScore) : '--');  // already inverted above
     setText('termPolite', politeScore != null ? Math.round(politeScore) : '--');
     setText('termYrCount', `${yr.count || 0}x`);
 
@@ -307,35 +332,51 @@ function hydrateWrapped(m) {
 // === Source filter ===
 
 function initSourceFilter() {
-    if (!sourceFilter) return;
+    if (!sourceBar) return;
     const available = Object.keys(sourceViews)
         .filter(k => k === 'both' || Boolean(sourceViews[k]))
         .sort((a, b) => {
-            if (a === 'both') return -1;
-            if (b === 'both') return 1;
+            if (a === 'both') return 1;
+            if (b === 'both') return -1;
             return formatSourceLabel(a).localeCompare(formatSourceLabel(b));
         });
 
-    sourceFilter.innerHTML = '';
+    sourceBar.innerHTML = '';
     for (const key of available) {
-        const opt = document.createElement('option');
-        opt.value = key;
-        opt.textContent = formatSourceLabel(key);
-        sourceFilter.appendChild(opt);
+        const btn = document.createElement('button');
+        btn.className = 'source-pill';
+        btn.dataset.source = key;
+        const color = SOURCE_ACCENTS[key];
+        if (color) {
+            const dot = document.createElement('span');
+            dot.className = 'source-pill-dot';
+            dot.style.background = color;
+            btn.appendChild(dot);
+        }
+        btn.appendChild(document.createTextNode(formatSourceLabel(key)));
+        sourceBar.appendChild(btn);
     }
 
-    let selected = localStorage.getItem('wrapped-source-filter') || 'both';
-    if (!available.includes(selected)) selected = available[0] || 'both';
-    sourceFilter.value = selected;
-    activeSourceKey = selected;
+    let selected = localStorage.getItem('wrapped-source-filter') || '';
+    if (selected === 'both' || !available.includes(selected)) {
+        selected = available.find(k => k !== 'both') || available[0] || 'both';
+    }
 
-    hydrateWrapped(sourceViews[selected]);
+    function selectSource(key) {
+        activeSourceKey = key;
+        sourceBar.querySelectorAll('.source-pill').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.source === key);
+        });
+        localStorage.setItem('wrapped-source-filter', key);
+        hydrateWrapped(sourceViews[key]);
+    }
 
-    sourceFilter.addEventListener('change', (e) => {
-        activeSourceKey = e.target.value;
-        localStorage.setItem('wrapped-source-filter', activeSourceKey);
-        hydrateWrapped(sourceViews[activeSourceKey]);
+    sourceBar.addEventListener('click', (e) => {
+        const btn = e.target.closest('.source-pill');
+        if (btn) selectSource(btn.dataset.source);
     });
+
+    selectSource(selected);
 }
 
 // === Share card ===
@@ -358,7 +399,7 @@ function showShareToast(msg) {
 
 function getShareText() {
     const persona = document.getElementById('personaName')?.textContent || '';
-    return `My AI prompting persona: ${persona}. See yours at howiprompt.com`;
+    return `My AI prompting persona: ${persona}. See yours at howiprompt.eeshans.com`;
 }
 
 async function handleShareAction(action) {
@@ -387,7 +428,7 @@ async function handleShareAction(action) {
             window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
         } else if (action === 'linkedin') {
             const text = encodeURIComponent(getShareText());
-            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://howiprompt.com')}&summary=${text}`, '_blank');
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://howiprompt.eeshans.com')}&summary=${text}`, '_blank');
         }
     } catch (err) {
         console.warn('Share action failed:', err.message);

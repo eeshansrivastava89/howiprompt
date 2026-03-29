@@ -7,6 +7,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 import { bootstrapDb } from "./bootstrap-db.mjs";
@@ -85,6 +86,29 @@ if (!fs.existsSync(metricsPath)) {
       fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2));
     }
   } catch { /* no config yet — wizard will show by default */ }
+}
+
+// ── Auto-build if needed ──────────────────────────────
+const projectRoot = path.join(__dirname, "..");
+
+process.stdout.write("  Building backend...            ");
+try {
+  execSync("npm run build", { cwd: projectRoot, stdio: "pipe" });
+  console.log(green("done"));
+} catch (e) {
+  console.log(red("failed"));
+  console.error(e.stderr?.toString() || e.message);
+  process.exit(1);
+}
+
+process.stdout.write("  Building frontend...           ");
+try {
+  execSync("npm run build", { cwd: path.join(projectRoot, "frontend"), stdio: "pipe" });
+  console.log(green("done"));
+} catch (e) {
+  console.log(red("failed"));
+  console.error(e.stderr?.toString() || e.message);
+  process.exit(1);
 }
 
 // ── Start server ───────────────────────────────────────

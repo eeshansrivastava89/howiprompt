@@ -27,13 +27,13 @@ export async function computeModelUsage(
 ): Promise<Record<string, any>> {
   const pf = platformFilter(platform);
 
-  const totalHuman = Number((await client.execute({ sql: `SELECT COUNT(*) as cnt FROM messages WHERE role = 'human'${pf.clause}`, args: pf.args })).rows[0].cnt);
-  const withMeta = Number((await client.execute({ sql: `SELECT COUNT(*) as cnt FROM messages WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause}`, args: pf.args })).rows[0].cnt);
+  const totalHuman = Number((await client.execute({ sql: `SELECT COUNT(*) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0${pf.clause}`, args: pf.args })).rows[0].cnt);
+  const withMeta = Number((await client.execute({ sql: `SELECT COUNT(*) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0 AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause}`, args: pf.args })).rows[0].cnt);
   const coveragePct = totalHuman ? round((withMeta / totalHuman) * 100, 1) : 0;
 
   // By model with source breakdown
   const modelSourceRows = (await client.execute({
-    sql: `SELECT COALESCE(model_id, 'unknown'), COALESCE(model_provider, 'unknown'), platform, COUNT(*) as cnt, SUM(word_count) as words FROM messages WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY 1, 2, platform`,
+    sql: `SELECT COALESCE(model_id, 'unknown'), COALESCE(model_provider, 'unknown'), platform, COUNT(*) as cnt, SUM(word_count) as words FROM messages WHERE role = 'human' AND is_excluded = 0 AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY 1, 2, platform`,
     args: pf.args,
   })).rows;
 
@@ -48,7 +48,7 @@ export async function computeModelUsage(
   }
 
   const convRows = (await client.execute({
-    sql: `SELECT COALESCE(model_id, 'unknown'), COALESCE(model_provider, 'unknown'), COUNT(DISTINCT conversation_id) as cnt FROM messages WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY 1, 2`,
+    sql: `SELECT COALESCE(model_id, 'unknown'), COALESCE(model_provider, 'unknown'), COUNT(DISTINCT conversation_id) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0 AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY 1, 2`,
     args: pf.args,
   })).rows;
   const convMap = new Map(convRows.map((r) => [`${r[0]}|${r[1]}`, Number(r.cnt ?? r[2])]));
@@ -59,7 +59,7 @@ export async function computeModelUsage(
 
   // By provider
   const provRows = (await client.execute({
-    sql: `SELECT COALESCE(model_provider, 'unknown'), platform, COUNT(*) as cnt, SUM(word_count) as words FROM messages WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY 1, platform`,
+    sql: `SELECT COALESCE(model_provider, 'unknown'), platform, COUNT(*) as cnt, SUM(word_count) as words FROM messages WHERE role = 'human' AND is_excluded = 0 AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY 1, platform`,
     args: pf.args,
   })).rows;
 
@@ -74,7 +74,7 @@ export async function computeModelUsage(
   }
 
   const provConvRows = (await client.execute({
-    sql: `SELECT COALESCE(model_provider, 'unknown'), COUNT(DISTINCT conversation_id) as cnt FROM messages WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY 1`,
+    sql: `SELECT COALESCE(model_provider, 'unknown'), COUNT(DISTINCT conversation_id) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0 AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY 1`,
     args: pf.args,
   })).rows;
   const provConvMap = new Map(provConvRows.map((r) => [String(r[0]), Number(r.cnt ?? r[1])]));
@@ -85,7 +85,7 @@ export async function computeModelUsage(
 
   // Time series
   const tsRows = (await client.execute({
-    sql: `SELECT platform, local_date, COALESCE(model_id, 'unknown') as mid, COUNT(*) as cnt FROM messages WHERE role = 'human' AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY platform, local_date, 3 ORDER BY platform, local_date`,
+    sql: `SELECT platform, local_date, COALESCE(model_id, 'unknown') as mid, COUNT(*) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0 AND (model_id IS NOT NULL OR model_provider IS NOT NULL)${pf.clause} GROUP BY platform, local_date, 3 ORDER BY platform, local_date`,
     args: pf.args,
   })).rows;
 
@@ -129,7 +129,7 @@ export async function computeMetrics(
 
   // Volume (human-only — the universal unit across all platforms)
   const vol = (await client.execute({
-    sql: `SELECT COUNT(*) as total, SUM(CASE WHEN role = 'human' THEN 1 ELSE 0 END) as human, SUM(CASE WHEN role = 'human' THEN word_count ELSE 0 END) as words_h, COUNT(DISTINCT conversation_id) as convos FROM messages WHERE 1=1${pf.clause}`,
+    sql: `SELECT COUNT(*) as total, SUM(CASE WHEN role = 'human' AND is_excluded = 0 THEN 1 ELSE 0 END) as human, SUM(CASE WHEN role = 'human' AND is_excluded = 0 THEN word_count ELSE 0 END) as words_h, COUNT(DISTINCT CASE WHEN role = 'human' AND is_excluded = 0 THEN conversation_id END) as convos FROM messages WHERE 1=1${pf.clause}`,
     args: pf.args,
   })).rows[0];
 
@@ -143,7 +143,7 @@ export async function computeMetrics(
 
   // Conversation depth (human turns only — comparable across all platforms)
   const depthRows = (await client.execute({
-    sql: `SELECT conversation_id, COUNT(*) as cnt FROM messages WHERE role = 'human'${pf.clause} GROUP BY conversation_id`,
+    sql: `SELECT conversation_id, COUNT(*) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0${pf.clause} GROUP BY conversation_id`,
     args: pf.args,
   })).rows;
   const turns = depthRows.map((r) => Number(r.cnt));
@@ -155,20 +155,20 @@ export async function computeMetrics(
 
   // Temporal
   const heatmapRows = (await client.execute({
-    sql: `SELECT local_weekday, local_hour, COUNT(*) as cnt FROM messages WHERE role = 'human'${pf.clause} GROUP BY local_weekday, local_hour`,
+    sql: `SELECT local_weekday, local_hour, COUNT(*) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0${pf.clause} GROUP BY local_weekday, local_hour`,
     args: pf.args,
   })).rows;
   const heatmap: number[][] = Array.from({ length: 7 }, () => Array(24).fill(0));
   for (const r of heatmapRows) heatmap[Number(r.local_weekday)][Number(r.local_hour)] = Number(r.cnt);
 
   const nightOwl = Number((await client.execute({
-    sql: `SELECT COUNT(*) as cnt FROM messages WHERE role = 'human' AND (local_hour >= 23 OR local_hour < 4)${pf.clause}`,
+    sql: `SELECT COUNT(*) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0 AND (local_hour >= 23 OR local_hour < 4)${pf.clause}`,
     args: pf.args,
   })).rows[0].cnt);
   const nightOwlPct = (nightOwl / totalHuman) * 100;
 
   const hourRows = (await client.execute({
-    sql: `SELECT local_hour, COUNT(*) as cnt FROM messages WHERE role = 'human'${pf.clause} GROUP BY local_hour`,
+    sql: `SELECT local_hour, COUNT(*) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0${pf.clause} GROUP BY local_hour`,
     args: pf.args,
   })).rows;
   const hourCounts: Record<number, number> = {};
@@ -181,7 +181,7 @@ export async function computeMetrics(
   }
 
   const dayRows = (await client.execute({
-    sql: `SELECT local_weekday, COUNT(*) as cnt FROM messages WHERE role = 'human'${pf.clause} GROUP BY local_weekday`,
+    sql: `SELECT local_weekday, COUNT(*) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0${pf.clause} GROUP BY local_weekday`,
     args: pf.args,
   })).rows;
   let peakDay = 0, peakDayCount = 0;
@@ -201,7 +201,7 @@ export async function computeMetrics(
 
   // Platform stats
   const platRows = (await client.execute({
-    sql: `SELECT platform, COUNT(*) as cnt, SUM(word_count) as words, COUNT(DISTINCT conversation_id) as convos, MIN(timestamp) as first_ts FROM messages WHERE role = 'human'${pf.clause} GROUP BY platform`,
+    sql: `SELECT platform, COUNT(*) as cnt, SUM(word_count) as words, COUNT(DISTINCT conversation_id) as convos, MIN(timestamp) as first_ts FROM messages WHERE role = 'human' AND is_excluded = 0${pf.clause} GROUP BY platform`,
     args: pf.args,
   })).rows;
   const platformStats: Record<string, any> = {};
@@ -216,7 +216,7 @@ export async function computeMetrics(
 
   // Date range
   const dateRange = (await client.execute({
-    sql: `SELECT MIN(timestamp) as first_ts, MAX(timestamp) as last_ts FROM messages WHERE role = 'human'${pf.clause}`,
+    sql: `SELECT MIN(timestamp) as first_ts, MAX(timestamp) as last_ts FROM messages WHERE role = 'human' AND is_excluded = 0${pf.clause}`,
     args: pf.args,
   })).rows[0];
 
@@ -285,7 +285,7 @@ export async function computeMetrics(
 
 export async function hasHumanMessages(client: Client, platform?: Platform): Promise<boolean> {
   const pf = platformFilter(platform);
-  const r = await client.execute({ sql: `SELECT COUNT(*) as cnt FROM messages WHERE role = 'human'${pf.clause}`, args: pf.args });
+  const r = await client.execute({ sql: `SELECT COUNT(*) as cnt FROM messages WHERE role = 'human' AND is_excluded = 0${pf.clause}`, args: pf.args });
   return Number(r.rows[0].cnt) > 0;
 }
 

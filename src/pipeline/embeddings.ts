@@ -79,7 +79,7 @@ export async function enrichEmbeddings(
 ): Promise<number> {
   // Find human messages without embeddings
   const result = await client.execute(
-    "SELECT id, content FROM messages WHERE role = 'human' AND embedding IS NULL",
+    "SELECT id, content FROM messages WHERE role = 'human' AND is_excluded = 0 AND embedding IS NULL",
   );
 
   if (result.rows.length === 0) return 0;

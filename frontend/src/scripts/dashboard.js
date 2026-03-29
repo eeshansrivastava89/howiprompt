@@ -2,23 +2,13 @@
 // Loads metrics.json via fetch() at runtime — no build-time data injection.
 
 import { initThemeToggle } from './theme.js';
-import {
-    CLIENT_ID_STORAGE_KEY,
-    USERNAME_STORAGE_KEY,
-    createStableClientId,
-    findEntryRank,
-    getSubmissionPayload as buildSubmissionPayload,
-    sortLeaderboardEntries,
-} from './leaderboard.js';
-
 let sourceViews = {};
 let defaultSource = 'both';
 let activeSourceKey = 'both';
 let activeView = null;
 let branding = {};
 
-const sourceFilter = document.getElementById('sourceFilter');
-const sourceFilterMobile = document.getElementById('sourceFilterMobile');
+const sourceBar = document.getElementById('sourceBar');
 const sourceStorageKey = 'dashboard-source-filter';
 const SOURCE_LABELS = {
     both: 'All',
@@ -118,15 +108,13 @@ function renderPlayerCard(persona, nlp, politeness, view) {
     setDonut('donutDetail', 'valDetail', persona.detail_score);
     setDonut('donutStyle', 'valStyle', persona.style_score);
 
-    const hitlScore = nlp?.hitl_score?.avg_score;
-    const vibeScore = nlp?.vibe_coder_index?.avg_score;
+    const vibeRaw = nlp?.vibe_coder_index?.avg_score;
+    const vibeScore = vibeRaw != null ? 100 - vibeRaw : null;
     const politeScore = nlp?.politeness?.avg_score;
 
     const el = (id) => document.getElementById(id);
-    if (el('cardHitl')) el('cardHitl').textContent = hitlScore != null ? Math.round(hitlScore) : '--';
     if (el('cardVibe')) el('cardVibe').textContent = vibeScore != null ? Math.round(vibeScore) : '--';
     if (el('cardPolite')) el('cardPolite').textContent = politeScore != null ? Math.round(politeScore) : '--';
-    if (el('cardHitlBar')) el('cardHitlBar').style.width = `${Math.min(hitlScore ?? 0, 100)}%`;
     if (el('cardVibeBar')) el('cardVibeBar').style.width = `${Math.min(vibeScore ?? 0, 100)}%`;
     if (el('cardPoliteBar')) el('cardPoliteBar').style.width = `${Math.min(politeScore, 100)}%`;
 
@@ -212,11 +200,10 @@ function renderHeatmap(heatmapData) {
 // === Trend Chart (ApexCharts) ===
 
 let trendData = {};
-let activeTrendMetric = 'hitl';
+let activeTrendMetric = 'vibe';
 
 const TREND_METRIC_CONFIG = {
-    hitl:      { key: 'hitl_score',          label: 'Human in the Loop', suffix: '/100', desc: 'How actively you steer AI output. Higher = more hands-on review and iteration.' },
-    vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '/100', desc: 'Engineer vs. vibe coder spectrum. Higher = more structured, spec-driven prompting.' },
+    vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '/100', desc: 'How much you vibe-code. Higher = more intent-driven, less spec-heavy.', invert: true },
     polite:    { key: 'politeness',          label: 'Politeness',        suffix: '/100', desc: 'How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.' },
     activity:  { key: '_prompts',            label: 'Activity',          suffix: '/wk', desc: 'Prompts per week.' },
 };
@@ -267,7 +254,6 @@ function initTrendChart(view) {
         ? Math.round(weekly.reduce((s, w) => s + w.prompts, 0) / weekly.length)
         : null;
     const lifetimeAvg = {
-        hitl: nlp.hitl_score?.avg_score,
         vibe: nlp.vibe_coder_index?.avg_score,
         polite: nlp.politeness?.avg_score,
         activity: avgPromptsPerWeek,
@@ -276,14 +262,16 @@ function initTrendChart(view) {
     // Build trendData structure
     trendData = {};
     for (const [key, config] of Object.entries(TREND_METRIC_CONFIG)) {
-        const points = extractTrendPoints(weekly, config.key);
+        const rawPoints = extractTrendPoints(weekly, config.key);
+        const points = config.invert ? rawPoints.map(p => p != null ? 100 - p : null) : rawPoints;
         const hasData = points.some((p) => p != null);
         if (hasData) {
+            const rawLifetime = lifetimeAvg[key];
             const entry = {
                 points: points.map((p) => p ?? 0),
                 label: config.label,
                 suffix: config.suffix,
-                lifetime: lifetimeAvg[key],
+                lifetime: config.invert && rawLifetime != null ? 100 - rawLifetime : rawLifetime,
             };
 
             if (isAllView) {
@@ -295,7 +283,10 @@ function initTrendChart(view) {
                         const pw = platByWeek.get(wk);
                         if (!pw) return 0;
                         if (config.key === '_prompts') return pw.prompts ?? 0;
-                        if (pw.nlp && pw.nlp[config.key] != null) return Math.round(pw.nlp[config.key]);
+                        if (pw.nlp && pw.nlp[config.key] != null) {
+                            const val = Math.round(pw.nlp[config.key]);
+                            return config.invert ? 100 - val : val;
+                        }
                         return 0;
                     });
                     if (platPoints.some((p) => p != null && p !== 0)) {
@@ -309,7 +300,7 @@ function initTrendChart(view) {
     }
 
     if (!trendData[activeTrendMetric]) {
-        activeTrendMetric = Object.keys(trendData)[0] || 'hitl';
+        activeTrendMetric = Object.keys(trendData)[0] || 'vibe';
     }
 
     function buildSeriesAndColors(metricKey) {
@@ -508,7 +499,7 @@ function showShareToast(msg) {
 
 function getShareText() {
     const persona = document.getElementById('personaName')?.textContent || '';
-    return `My AI prompting persona: ${persona}. See yours at howiprompt.com`;
+    return `My AI prompting persona: ${persona}. See yours at howiprompt.eeshans.com`;
 }
 
 async function handleShareAction(action) {
@@ -538,7 +529,7 @@ async function handleShareAction(action) {
             window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
         } else if (action === 'linkedin') {
             const text = encodeURIComponent(getShareText());
-            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://howiprompt.com')}&summary=${text}`, '_blank');
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://howiprompt.eeshans.com')}&summary=${text}`, '_blank');
         }
     } catch (err) {
         console.warn('Share action failed:', err.message);
@@ -573,8 +564,8 @@ function getAvailableSourceKeys() {
     return Object.keys(sourceViews)
         .filter((key) => key === 'both' || Boolean(getView(key)))
         .sort((a, b) => {
-            if (a === 'both') return -1;
-            if (b === 'both') return 1;
+            if (a === 'both') return 1;
+            if (b === 'both') return -1;
             return formatSourceLabel(a).localeCompare(formatSourceLabel(b));
         });
 }
@@ -634,42 +625,52 @@ function renderView(sourceKey) {
 
 // === Source filter ===
 
-function syncSourceSelectors(value) {
-    if (sourceFilter) sourceFilter.value = value;
-    if (sourceFilterMobile) sourceFilterMobile.value = value;
-}
-
 function initSourceFilter() {
-    if (!sourceFilter) return;
+    if (!sourceBar) return;
 
     const available = getAvailableSourceKeys();
-    [sourceFilter, sourceFilterMobile].filter(Boolean).forEach((select) => {
-        select.innerHTML = '';
-        for (const key of available) {
-            const opt = document.createElement('option');
-            opt.value = key;
-            opt.textContent = formatSourceLabel(key);
-            select.appendChild(opt);
-        }
-    });
+    sourceBar.innerHTML = '';
 
+    for (const key of available) {
+        const btn = document.createElement('button');
+        btn.className = 'source-pill';
+        btn.dataset.source = key;
+
+        const color = SOURCE_ACCENTS[key];
+        if (color) {
+            const dot = document.createElement('span');
+            dot.className = 'source-pill-dot';
+            dot.style.background = color;
+            btn.appendChild(dot);
+        }
+
+        const label = document.createTextNode(formatSourceLabel(key));
+        btn.appendChild(label);
+        sourceBar.appendChild(btn);
+    }
+
+    // Default to first alphabetical (not "both") — "both" is last
     let selected = localStorage.getItem(sourceStorageKey) || defaultSource;
     if (selected === 'claude' && available.includes('claude_code')) selected = 'claude_code';
-    if (!available.includes(selected)) selected = available[0] || 'both';
+    if (selected === 'both' || !available.includes(selected)) {
+        selected = available.find(k => k !== 'both') || available[0] || 'both';
+    }
 
-    syncSourceSelectors(selected);
-    renderView(selected);
+    function selectSource(key) {
+        sourceBar.querySelectorAll('.source-pill').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.source === key);
+        });
+        localStorage.setItem(sourceStorageKey, key);
+        renderView(key);
+    }
 
-    const handleChange = (event) => {
-        const next = event.target.value;
-        if (!available.includes(next)) return;
-        syncSourceSelectors(next);
-        localStorage.setItem(sourceStorageKey, next);
-        renderView(next);
-    };
+    sourceBar.addEventListener('click', (e) => {
+        const btn = e.target.closest('.source-pill');
+        if (!btn) return;
+        selectSource(btn.dataset.source);
+    });
 
-    sourceFilter.addEventListener('change', handleChange);
-    sourceFilterMobile?.addEventListener('change', handleChange);
+    selectSource(selected);
 }
 
 // === Methodology modal ===
@@ -925,9 +926,11 @@ function applyBranding(metricsData) {
 
 // === Refresh ===
 
+let refreshRunning = false;
+
 async function handleRefresh() {
-    const btn = document.getElementById('refreshBtn');
-    if (!btn || btn.classList.contains('refreshing')) return;
+    if (refreshRunning) return;
+    refreshRunning = true;
 
     const modal = document.getElementById('refreshModal');
     const log = document.getElementById('refreshLog');
@@ -935,8 +938,6 @@ async function handleRefresh() {
     const resultEl = document.getElementById('refreshModalResult');
     const closeBtn = document.getElementById('refreshModalClose');
 
-    // Show modal with starter message
-    btn.classList.add('refreshing');
     if (modal) {
         if (log) log.innerHTML = '<div class="wizard-log-entry">Starting pipeline...</div>';
         if (bar) bar.style.width = '0';
@@ -953,9 +954,7 @@ async function handleRefresh() {
             closeBtn.style.display = 'inline-block';
             closeBtn.focus();
         }
-        btn.classList.remove('refreshing');
-        const label = btn.querySelector('.refresh-label');
-        if (label) label.textContent = 'Refresh';
+        refreshRunning = false;
     };
 
     // Reuse same SSE log pattern as wizard
@@ -1034,246 +1033,6 @@ async function handleRefresh() {
 document.getElementById('refreshModalClose')?.addEventListener('click', () => {
     const modal = document.getElementById('refreshModal');
     if (modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
-});
-
-document.getElementById('refreshBtn')?.addEventListener('click', handleRefresh);
-
-// === Tab switching ===
-
-function initTabs() {
-    const tabs = document.querySelectorAll('.tab-bar .tab');
-    const panels = document.querySelectorAll('.tab-panel');
-
-    function switchTab(tabName) {
-        tabs.forEach((t) => {
-            const isActive = t.dataset.tab === tabName;
-            t.classList.toggle('active', isActive);
-            t.setAttribute('aria-selected', String(isActive));
-        });
-        panels.forEach((p) => p.classList.toggle('active', p.id === `tab-${tabName}`));
-        window.location.hash = tabName;
-
-        if (tabName === 'leaderboard') fetchLeaderboard();
-    }
-
-    tabs.forEach((tab) => {
-        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
-    });
-
-    const hash = window.location.hash.replace('#', '');
-    if (hash && document.getElementById(`tab-${hash}`)) switchTab(hash);
-
-    window.addEventListener('hashchange', () => {
-        const h = window.location.hash.replace('#', '');
-        if (h && document.getElementById(`tab-${h}`)) switchTab(h);
-    });
-}
-
-// === Leaderboard (Supabase PostgREST) ===
-
-const SUPABASE_URL = 'https://nazioidbiydxduonenmb.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemlvaWRiaXlkeGR1b25lbm1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NDEyMjQsImV4cCI6MjA3NjIxNzIyNH0.PjEzSI8wq74RCQpSkh7j4zhh_5nXc2nYX0M5vCjLEro';
-const LB_TABLE = '/rest/v1/howiprompt_leaderboard';
-
-function supaHeaders(includeContent = true) {
-    const h = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
-    if (includeContent) h['Content-Type'] = 'application/json';
-    return h;
-}
-
-let leaderboardData = [];
-let leaderboardLoaded = false;
-
-async function fetchLeaderboard() {
-    if (leaderboardLoaded) return;
-    try {
-        const res = await fetch(`${SUPABASE_URL}${LB_TABLE}?select=*&order=hitl_score.desc`, {
-            headers: supaHeaders(false),
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        leaderboardData = await res.json();
-        leaderboardLoaded = true;
-        renderLeaderboard();
-    } catch {
-        leaderboardData = [];
-        renderLeaderboard();
-    }
-}
-
-function renderLeaderboard() {
-    const table = document.getElementById('leaderboardTable');
-    const empty = document.getElementById('leaderboardEmpty');
-    const body = document.getElementById('leaderboardBody');
-    if (!table || !empty || !body) return;
-
-    if (leaderboardData.length === 0) {
-        table.style.display = 'none';
-        empty.style.display = '';
-        return;
-    }
-
-    empty.style.display = 'none';
-    table.style.display = '';
-
-    const sortKey = document.getElementById('leaderboardSort')?.value || 'hitl_score';
-    const sorted = sortLeaderboardEntries(leaderboardData, sortKey);
-    const clientId = localStorage.getItem(CLIENT_ID_STORAGE_KEY);
-
-    body.innerHTML = sorted.map((entry, i) => {
-        const isYou = clientId && entry.fingerprint === clientId;
-        return `
-        <tr${isYou ? ' class="is-you"' : ''}>
-            <td class="rank-col">${i + 1}</td>
-            <td><strong>${escapeHtml(entry.display_name || 'Anonymous')}</strong>${isYou ? ' <span style="font-size:11px;color:var(--accent)">(you)</span>' : ''}</td>
-            <td>${entry.hitl_score ?? '--'}</td>
-            <td>${entry.vibe_index ?? '--'}</td>
-            <td>${entry.politeness ?? '--'}</td>
-            <td>${(entry.total_prompts ?? 0).toLocaleString()}</td>
-            <td>${(entry.total_conversations ?? 0).toLocaleString()}</td>
-            <td>${escapeHtml(entry.persona || '--')}</td>
-            <td>${isYou ? '<button class="delete-entry-btn" onclick="deleteMySubmission()">✕</button>' : ''}</td>
-        </tr>`;
-    }).join('');
-}
-
-function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-}
-
-document.getElementById('leaderboardSort')?.addEventListener('change', renderLeaderboard);
-
-// === Username + Fingerprint ===
-
-function getOrCreateUsername() {
-    let name = localStorage.getItem(USERNAME_STORAGE_KEY);
-    if (!name && typeof window.generateRandomUsername === 'function') {
-        name = window.generateRandomUsername();
-        localStorage.setItem(USERNAME_STORAGE_KEY, name);
-    }
-    return name || 'Anonymous';
-}
-
-// === Submit to leaderboard ===
-
-function getSubmissionPayload() {
-    return buildSubmissionPayload(activeView, activeSourceKey);
-}
-
-function showSubmitModal() {
-    const modal = document.getElementById('submitModal');
-    const preview = document.getElementById('submitPreview');
-    const nameInput = document.getElementById('displayName');
-    if (!modal || !preview) return;
-
-    const payload = getSubmissionPayload();
-    if (!payload) return;
-
-    // Pre-fill username
-    if (nameInput) nameInput.value = getOrCreateUsername();
-
-    const labels = {
-        hitl_score: 'Human in the Loop', vibe_index: 'Vibe Index', politeness: 'Politeness',
-        total_prompts: 'Prompts', total_conversations: 'Conversations', persona: 'Persona', platform: 'Platform',
-    };
-    preview.innerHTML = Object.entries(payload)
-        .map(([k, v]) => `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="color:var(--muted)">${labels[k] || k}</span><span>${v}</span></div>`)
-        .join('');
-
-    modal.classList.add('active');
-    if (nameInput) nameInput.focus();
-}
-
-function hideSubmitModal() {
-    document.getElementById('submitModal')?.classList.remove('active');
-}
-
-async function submitToLeaderboard() {
-    const payload = getSubmissionPayload();
-    const nameInput = document.getElementById('displayName');
-    if (!payload || !nameInput) return;
-
-    const displayName = nameInput.value.trim().slice(0, 30);
-    if (!displayName) {
-        nameInput.style.borderColor = 'red';
-        nameInput.focus();
-        return;
-    }
-
-    const clientId = createStableClientId(localStorage);
-    if (!clientId) return;
-
-    payload.display_name = displayName;
-    payload.fingerprint = clientId;
-    payload.updated_at = new Date().toISOString();
-
-    localStorage.setItem(USERNAME_STORAGE_KEY, displayName);
-    hideSubmitModal();
-
-    const toast = document.getElementById('leaderboardToast');
-    try {
-        const res = await fetch(`${SUPABASE_URL}${LB_TABLE}`, {
-            method: 'POST',
-            headers: { ...supaHeaders(true), 'Prefer': 'resolution=merge-duplicates' },
-            body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        leaderboardLoaded = false;
-        await fetchLeaderboard();
-
-        // Find rank
-        const sortKey = document.getElementById('leaderboardSort')?.value || 'hitl_score';
-        const rank = findEntryRank(leaderboardData, sortKey, clientId);
-
-        if (toast) {
-            toast.textContent = rank > 0 ? `Submitted! You're ranked #${rank}` : 'Scores submitted!';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-    } catch {
-        if (toast) {
-            toast.textContent = 'Submit failed — try again later.';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-    }
-}
-
-async function deleteMySubmission() {
-    const clientId = localStorage.getItem(CLIENT_ID_STORAGE_KEY);
-    if (!clientId) return;
-    const toast = document.getElementById('leaderboardToast');
-    try {
-        const res = await fetch(`${SUPABASE_URL}${LB_TABLE}?fingerprint=eq.${clientId}`, {
-            method: 'DELETE',
-            headers: supaHeaders(false),
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        leaderboardLoaded = false;
-        fetchLeaderboard();
-        if (toast) {
-            toast.textContent = 'Submission deleted.';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-    } catch {
-        if (toast) {
-            toast.textContent = 'Delete failed — try again later.';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-    }
-}
-
-window.deleteMySubmission = deleteMySubmission;
-
-document.getElementById('submitLeaderboard')?.addEventListener('click', showSubmitModal);
-document.getElementById('cancelSubmit')?.addEventListener('click', hideSubmitModal);
-document.getElementById('confirmSubmit')?.addEventListener('click', submitToLeaderboard);
-document.getElementById('submitModal')?.addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) hideSubmitModal();
 });
 
 // === Setup Wizard ===
@@ -1736,7 +1495,6 @@ document.getElementById('wizardDone')?.addEventListener('click', async () => {
 async function init() {
     initThemeToggle();
     fixLocalLinks();
-    initTabs();
     initCardTilt();
 
     // Re-render trend chart on theme toggle
@@ -1745,12 +1503,6 @@ async function init() {
             if (activeView) initTrendChart(activeView);
         });
     });
-
-    // Show mobile nav on small screens
-    const mobileNav = document.getElementById('mobileNav');
-    if (mobileNav && window.innerWidth <= 640) {
-        mobileNav.style.display = 'flex';
-    }
 
     // Check if wizard is needed
     const wizardActive = await initWizard();

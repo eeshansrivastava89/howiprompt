@@ -92,10 +92,10 @@
 .meth-taste-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc,var(--accent))}
 .meth-taste-cat{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:16px}
 .meth-taste-list{display:flex;flex-direction:column}
-.meth-taste-item{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.meth-taste-item{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;gap:6px}
 .meth-taste-item:last-child{border-bottom:none}
-.meth-taste-name{font-weight:600;color:var(--text)}
-.meth-taste-note{color:var(--muted);font-size:12px;text-align:right}
+.meth-taste-name{font-weight:600;color:var(--text);white-space:nowrap}
+.meth-taste-note{color:var(--muted);font-size:11px;text-align:right}
 
 /* ── S3: Persona Explorer ── */
 .meth-s3{background:radial-gradient(ellipse 60% 50% at 30% 70%,rgba(var(--accent-rgb),.06),transparent)}
@@ -147,8 +147,8 @@
 .meth-pd-card{padding:14px 16px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--border)}
 .meth-pd-card-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
 .meth-pd-card-text{font-size:13px;line-height:1.55;color:var(--text)}
-.meth-pd-axes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-@media(max-width:600px){.meth-pd-axes{grid-template-columns:1fr 1fr}}
+.meth-pd-axes{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:600px){.meth-pd-axes{grid-template-columns:1fr}}
 .meth-ax{display:flex;flex-direction:column;gap:5px}
 .meth-ax-label{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--text)}
 .meth-ax-label span:last-child{font-family:'JetBrains Mono',monospace;color:var(--muted)}

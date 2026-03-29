@@ -5,7 +5,10 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
 ---
 <WrappedLayout title="How I Prompt: Wrapped">
 
-<Header page="wrapped" />
+<div class="top-nav" id="topNav">
+  <Header page="wrapped" />
+  <nav class="source-bar" id="sourceBar"></nav>
+</div>
 
     <!-- Section 1: Cold Open -->
     <section class="min-h-screen flex flex-col items-center justify-center px-6 relative pt-14">
@@ -66,8 +69,8 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
             <p class="text-muted text-sm uppercase tracking-widest mb-4 sm:mb-8 text-center">When You Prompt</p>
             <div class="card p-3 sm:p-4 md:p-8 mb-4 sm:mb-8 overflow-x-auto">
                 <p class="text-sm text-muted mb-6">Activity by Hour × Day</p>
-                <div class="min-w-[500px] md:min-w-0 w-full">
-                    <div class="flex mb-2 ml-12">
+                <div class="w-full">
+                    <div class="hidden sm:flex mb-2 ml-12">
                         <div class="flex-1 grid grid-cols-24 gap-[2px]">
                             <span class="text-[10px] text-muted text-center">0</span>
                             <span class="text-[10px] text-muted text-center"></span>
@@ -99,18 +102,18 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
                 </div>
             </div>
             <div class="grid grid-cols-3 gap-2 sm:gap-4">
-                <div class="card p-3 sm:p-6 text-center">
-                    <p class="text-2xl sm:text-4xl font-bold font-mono stat-accent" id="peakHour">--</p>
+                <div class="card p-3 sm:p-6 text-center overflow-hidden">
+                    <p class="text-xl sm:text-4xl font-bold font-mono stat-accent" id="peakHour">--</p>
                     <p class="text-muted text-xs sm:text-sm mt-1">Peak hour</p>
                     <p class="text-muted text-[10px] sm:text-xs" id="peakHourCount">-- prompts</p>
                 </div>
-                <div class="card p-3 sm:p-6 text-center">
-                    <p class="text-2xl sm:text-4xl font-bold font-mono text-text" id="nightOwlPct">--%</p>
+                <div class="card p-3 sm:p-6 text-center overflow-hidden">
+                    <p class="text-xl sm:text-4xl font-bold font-mono text-text" id="nightOwlPct">--%</p>
                     <p class="text-muted text-xs sm:text-sm mt-1">Night Owl</p>
                     <p class="text-muted text-[10px] sm:text-xs">11pm – 4am</p>
                 </div>
-                <div class="card p-3 sm:p-6 text-center">
-                    <p class="text-2xl sm:text-4xl font-bold font-mono text-text" id="peakDay">--</p>
+                <div class="card p-3 sm:p-6 text-center overflow-hidden">
+                    <p class="text-xl sm:text-4xl font-bold font-mono text-text truncate" id="peakDay">--</p>
                     <p class="text-muted text-xs sm:text-sm mt-1">Peak day</p>
                     <p class="text-muted text-[10px] sm:text-xs" id="peakDayCount">-- prompts</p>
                 </div>
@@ -121,29 +124,13 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
     <!-- Section 4: Your Style (Embedding Hero Metrics) -->
     <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-20">
         <div class="max-w-3xl w-full">
-            <p class="text-muted text-sm uppercase tracking-widest mb-8 text-center">Your Style</p>
-            <div class="grid md:grid-cols-3 gap-4 sm:gap-6">
-                <!-- HITL Arc Gauge -->
+            <p class="text-muted text-sm uppercase tracking-widest mb-4 text-center">Your Style</p>
+            <h2 class="text-3xl sm:text-5xl font-bold text-center mb-2" id="styleHeadline">--</h2>
+            <p class="text-muted text-base sm:text-lg text-center max-w-lg mx-auto mb-10" id="styleSubline">Loading your style profile...</p>
+            <div class="grid md:grid-cols-2 gap-4 sm:gap-6">
+                <!-- Vibe Coder Index Spectrum -->
                 <div class="card p-6 text-center">
-                    <p class="text-muted text-xs uppercase tracking-wider mb-4 font-semibold">Human Impact</p>
-                    <div class="arc-gauge">
-                        <svg viewBox="0 0 120 120">
-                            <circle fill="none" stroke="var(--border)" stroke-width="8" opacity="0.3" cx="60" cy="60" r="52" />
-                            <circle fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" id="wrappedHitlArc" cx="60" cy="60" r="52"
-                                stroke-dasharray="326.73" stroke-dashoffset="326.73"
-                                transform="rotate(-90 60 60)" />
-                        </svg>
-                        <div class="arc-gauge-inner">
-                            <p class="text-3xl font-mono font-bold" id="wrappedHitlValue">--</p>
-                            <p class="text-muted text-xs" id="wrappedHitlLabel">Loading...</p>
-                        </div>
-                    </div>
-                    <p class="text-muted text-xs mt-3">How much you steer the AI</p>
-                </div>
-
-                <!-- Vibe Spectrum -->
-                <div class="card p-6 text-center">
-                    <p class="text-muted text-xs uppercase tracking-wider mb-4 font-semibold">Vibe Index</p>
+                    <p class="text-muted text-xs uppercase tracking-wider mb-4 font-semibold">Vibe Coder Index</p>
                     <p class="text-4xl font-mono font-bold mb-1" id="wrappedVibeValue">--</p>
                     <p class="text-muted text-sm mb-6" id="wrappedVibeLabel">Loading...</p>
                     <div class="relative h-2 rounded-full mx-2" style="background: linear-gradient(to right, #a78bfa, var(--border) 50%, var(--accent));">
@@ -152,7 +139,7 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
                             id="wrappedVibeMarker"></div>
                     </div>
                     <div class="flex justify-between text-muted text-xs mt-2 mx-2">
-                        <span>Vibe Coder</span><span>Engineer</span>
+                        <span>Engineer</span><span>Vibe Coder</span>
                     </div>
                 </div>
 
@@ -228,8 +215,7 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
                     <div class="flex justify-between"><span class="text-muted">Night Owl</span><span class="font-bold" id="termNightOwl">--</span></div>
                 </div>
                 <div class="border-b border-border mb-4 pb-4 space-y-1">
-                    <div class="flex justify-between"><span class="text-muted">Human in the Loop</span><span class="font-bold stat-accent" id="termHitl">--</span></div>
-                    <div class="flex justify-between"><span class="text-muted">Vibe Index</span><span class="font-bold" id="termVibe">--</span></div>
+                    <div class="flex justify-between"><span class="text-muted">Vibe Coder Index</span><span class="font-bold stat-accent" id="termVibe">--</span></div>
                     <div class="flex justify-between"><span class="text-muted">Politeness</span><span class="font-bold" id="termPolite">--</span></div>
                 </div>
                 <div class="border-b border-border mb-4 pb-4 space-y-1" id="termPlatformSection">
@@ -241,7 +227,7 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
                     <p class="font-bold stat-accent" id="termPersonaName">PERSONA: --</p>
                     <p class="text-muted text-xs mt-1" id="termPersonaTraits">--</p>
                 </div>
-                <p class="text-center text-xs text-muted mt-4">howiprompt.com</p>
+                <p class="text-center text-xs text-muted mt-4">howiprompt.eeshans.com</p>
             </div>
         </div>
     </section>

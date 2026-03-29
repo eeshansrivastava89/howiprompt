@@ -111,13 +111,16 @@
 
   .refreshing .refresh-icon { animation: spin .8s linear infinite; }
 
-  /* ── Source select dropdown arrow ── */
-  .source-select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235c5f77' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-  }
+  /* ── Sticky top nav (header + source bar) ── */
+  .top-nav{position:sticky;top:0;z-index:50;background:var(--bg)}
+
+  /* ── Source filter pills (shared dashboard + wrapped) ── */
+  .source-bar{display:flex;gap:6px;padding:8px 24px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;align-items:center}
+  .source-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:1px solid var(--border);border-radius:999px;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+  .source-pill:hover{border-color:var(--text);color:var(--text)}
+  .source-pill.active{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
+  .source-pill-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  @media(max-width:640px){.source-bar{padding:6px 12px;gap:4px}.source-pill{padding:5px 10px;font-size:12px}}
 
   /* ── Player card 3D tilt ── */
   .card-dock { perspective: 1200px; }

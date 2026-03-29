@@ -45,7 +45,7 @@ Subsequent refreshes are incremental and reuse the local database, caches, and c
 | One-page overview of your stats | Scroll-through "Wrapped" presentation |
 | [howiprompt.eeshans.com](https://howiprompt.eeshans.com) | [howiprompt.eeshans.com/wrapped](https://howiprompt.eeshans.com/wrapped) |
 
-**Metrics include:** total prompts, conversation depth, activity heatmap, model usage, Human in the Loop, Vibe Coder Index, Politeness, four radar axes, trends, and persona classification.
+**Metrics include:** total prompts, conversation depth, activity heatmap, model usage, Vibe Coder Index, Politeness, persona classification (2×2: Detail Level × Communication Style), and trends.
 
 ---
 
@@ -72,19 +72,19 @@ All supported sources are auto-synced into `~/.howiprompt/raw/` and reused acros
 - **Local by default** — Sync, parsing, embeddings, classifier scoring, and metrics run on your machine
 - **Persistent storage** — Raw copies, local DB, config, and metrics live under `~/.howiprompt/`
 - **No prompt text leaves your machine** — The app does not upload raw logs or prompt content
-- **Optional leaderboard** — If you choose to submit, it sends aggregate metrics plus your public display name
+- **No analytics in the local app** — The `npx howiprompt` package ships with analytics disabled. PostHog is only enabled on the hosted website
+- **Ancillary network requests** — The dashboard loads chart libraries (ApexCharts, html2canvas) from a CDN. The CLI checks npm for version updates. These do not transmit prompt data
 
 ---
 
-## The 5 Personas
+## The 4 Personas
 
-Your persona is derived from four radar axes: **Precision**, **Curiosity**, **Tenacity**, and **Trust**.
+Your persona is derived from two independent axes: **Detail Level** (brief → detailed) and **Communication Style** (directive → collaborative). These form a 2×2 grid validated on 21k prompts.
 
-- **The Architect**: high precision, low trust
-- **The Explorer**: high curiosity
-- **The Commander**: high precision, low tenacity
-- **The Partner**: high tenacity
-- **The Delegator**: high trust
+- **The Commander**: Brief + Directive — short, decisive instructions
+- **The Partner**: Brief + Collaborative — quick exchanges, conversational flow
+- **The Architect**: Detailed + Directive — specs, constraints, numbered requirements
+- **The Explorer**: Detailed + Collaborative — context-rich, question-driven investigation
 
 ---
 

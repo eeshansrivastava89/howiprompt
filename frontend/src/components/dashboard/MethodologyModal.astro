@@ -1,5 +1,5 @@
 ---
-// Methodology modal: snap-scroll brew guide with persona explorer
+// Methodology modal: snap-scroll methodology guide with persona explorer
 ---
 <div class="modal-overlay" id="methodologyModal" role="dialog" aria-modal="true" aria-labelledby="methodologyTitle">
   <div class="meth-modal">
@@ -8,10 +8,10 @@
     <!-- Header -->
     <div class="meth-header">
       <div class="meth-header-left">
-        <div class="meth-logo">☕</div>
+        <div class="meth-logo">📊</div>
         <div>
-          <div class="meth-header-title" id="methodologyTitle">The Brew Guide</div>
-          <div class="meth-header-sub">How your prompting style gets scored</div>
+          <div class="meth-header-title" id="methodologyTitle">The Method</div>
+          <div class="meth-header-sub">How your prompting profile is built</div>
         </div>
       </div>
       <button class="modal-close" onclick="closeMethodology()" aria-label="Close methodology modal">
@@ -28,33 +28,33 @@
       <section class="meth-snap meth-s1" data-meth-section="0">
         <div class="meth-s1-inner">
           <div class="meth-hero">
-            <div class="meth-hero-kicker meth-reveal">☕ Methodology</div>
-            <h1 class="meth-reveal d1">From raw chats to your <em>signature blend</em></h1>
-            <p class="meth-hero-sub meth-reveal d2">We harvest your local chat history, roast it through embeddings, and brew a persona that captures how you prompt.</p>
+            <div class="meth-hero-kicker meth-reveal">🔬 Methodology</div>
+            <h1 class="meth-reveal d1">From raw chats to your <em>prompting profile</em></h1>
+            <p class="meth-hero-sub meth-reveal d2">Your prompts never leave your machine. We score them through on-device embeddings and behavioral analysis to build a profile that captures how you prompt.</p>
           </div>
 
           <div class="meth-pipeline-wrap meth-reveal d3">
-            <div class="meth-rule">The Brewing Process</div>
+            <div class="meth-rule">The Pipeline</div>
             <div class="meth-process">
               <div class="meth-step">
-                <div class="meth-step-icon">🫘</div>
-                <h3>Harvest</h3>
+                <div class="meth-step-icon">📥</div>
+                <h3>Collect</h3>
                 <p>Read local histories from Claude Code, Codex, Copilot Chat, Cursor, and LM Studio.</p>
               </div>
               <div class="meth-step">
-                <div class="meth-step-icon">⚙️</div>
-                <h3>Sort</h3>
+                <div class="meth-step-icon">🔍</div>
+                <h3>Filter</h3>
                 <p>Keep human-authored prompts. Remove system messages, tool output, and assistant text.</p>
               </div>
               <div class="meth-step">
-                <div class="meth-step-icon">🔥</div>
-                <h3>Roast</h3>
-                <p>Embed each prompt with bge-small-en-v1.5 locally. Score 7 metrics via cosine similarity.</p>
+                <div class="meth-step-icon">📐</div>
+                <h3>Score</h3>
+                <p>Embed each prompt with bge-small-en-v1.5 locally. Classify behavioral metrics via cosine similarity.</p>
               </div>
               <div class="meth-step">
-                <div class="meth-step-icon">☕</div>
-                <h3>Brew</h3>
-                <p>Four axes — Precision, Curiosity, Tenacity, Trust — map to the persona that fits you.</p>
+                <div class="meth-step-icon">🧭</div>
+                <h3>Classify</h3>
+                <p>Two axes — Detail Level and Communication Style — place you on a 2×2 grid validated on 21k prompts.</p>
               </div>
             </div>
           </div>
@@ -66,12 +66,12 @@
         </div>
       </section>
 
-      <!-- S2: Tasting Notes -->
+      <!-- S2: What We Measure -->
       <section class="meth-snap meth-s2" data-meth-section="1">
         <div class="meth-s2-inner">
           <div class="meth-s2-header meth-reveal">
-            <h2>Tasting Notes</h2>
-            <p>Seven metrics across four dimensions. Each one uses embeddings — not regex or keyword matching.</p>
+            <h2>What We Measure</h2>
+            <p>Style scores use on-device embeddings. Persona axes use behavioral patterns validated on 21k prompts from open research datasets (WildChat, OpenAssistant).</p>
           </div>
 
           <div class="meth-taste-grid">
@@ -94,18 +94,15 @@
             <div class="meth-taste-card meth-reveal d3" style="--tc:#a08060">
               <div class="meth-taste-cat">Style</div>
               <div class="meth-taste-list">
-                <div class="meth-taste-item"><span class="meth-taste-name">Human in Loop</span><span class="meth-taste-note">How you steer</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Vibe Coder</span><span class="meth-taste-note">Structured vs. free</span></div>
+                <div class="meth-taste-item"><span class="meth-taste-name">Vibe Index</span><span class="meth-taste-note">Vibes vs. specs</span></div>
                 <div class="meth-taste-item"><span class="meth-taste-name">Politeness</span><span class="meth-taste-note">Tone warmth</span></div>
               </div>
             </div>
             <div class="meth-taste-card meth-reveal d4" style="--tc:#c4a882">
               <div class="meth-taste-cat">Persona Axes</div>
               <div class="meth-taste-list">
-                <div class="meth-taste-item"><span class="meth-taste-name">Precision</span><span class="meth-taste-note">Instruction detail</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Curiosity</span><span class="meth-taste-note">Exploration</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Tenacity</span><span class="meth-taste-note">Depth</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Trust</span><span class="meth-taste-note">Delegation</span></div>
+                <div class="meth-taste-item"><span class="meth-taste-name">Detail Level</span><span class="meth-taste-note">Prompt depth</span></div>
+                <div class="meth-taste-item"><span class="meth-taste-name">Comm Style</span><span class="meth-taste-note">How you direct</span></div>
               </div>
             </div>
           </div>
@@ -116,8 +113,8 @@
       <section class="meth-snap meth-s3" data-meth-section="2">
         <div class="meth-s3-inner">
           <div class="meth-s3-header meth-reveal">
-            <h2>House Blends — The 5 Personas</h2>
-            <p>Your dominant axis determines which blend fits your prompting pattern.</p>
+            <h2>The 4 Personas</h2>
+            <p>Two axes form a 2×2 grid. Your quadrant determines which persona fits your prompting pattern.</p>
           </div>
 
           <div class="meth-persona-layout meth-reveal d1">
@@ -130,7 +127,7 @@
 
     <!-- Bottom bar -->
     <div class="meth-bottom">
-      <span class="meth-bottom-note">All analysis stays local. Persona is a pattern summary, not a fixed identity.</span>
+      <span class="meth-bottom-note">🔒 Fully local — no data leaves your machine.</span>
       <div class="meth-dot-nav" id="methDotNav">
         <button class="meth-dot active" data-meth-idx="0"></button>
         <button class="meth-dot" data-meth-idx="1"></button>
@@ -144,58 +141,49 @@
 (function() {
   const IMG = '/images/';
   // Persona UX copy — intentionally more casual than pipeline definitions in
-  // src/pipeline/models.ts. Names and keys must stay in sync; descriptions
-  // are tailored for the modal context (signature prompts, flavor notes).
+  // src/pipeline/style.ts. Names and keys must stay in sync; descriptions
+  // are tailored for the modal context (signature prompts, one-liners).
   const personas = [
-    { key:'architect', img:IMG+'char_architect.png', name:'The Architect',
-      badge:'Precision-led', trait:'Structured, exact, review-heavy',
-      accent:'#7b5a42', accentDark:'#c4a07a',
-      gradient:'linear-gradient(160deg,#e8ddd2,#ddd0c2)',
-      gradientDark:'linear-gradient(160deg,#342c24,#2a2218)',
-      desc:'You think in specs, constraints, and acceptance criteria. You want the AI to follow the plan closely and you review outputs carefully.',
-      prompt:'\u201CUse the existing component API. Keep the interaction model unchanged. Add keyboard support, tests, and a migration note.\u201D',
-      liner:'You like the model to be powerful, but not unsupervised.',
-      axes:{Precision:91,Curiosity:48,Tenacity:67,Trust:31} },
-    { key:'explorer', img:IMG+'char_explorer.png', name:'The Explorer',
-      badge:'Curiosity-led', trait:'Investigative, branching, exploratory',
-      accent:'#3f7a6e', accentDark:'#6abfae',
-      gradient:'linear-gradient(160deg,#d4e8e3,#c2ddd6)',
-      gradientDark:'linear-gradient(160deg,#222e2b,#1a2624)',
-      desc:'You probe, branch, and investigate. Your prompts open doors instead of closing them, and you use the AI to discover rather than execute.',
-      prompt:'\u201CCompare these three approaches, surface tradeoffs, and tell me what an experienced engineer would worry about.\u201D',
-      liner:'You use the model as an idea space, not just a task runner.',
-      axes:{Precision:63,Curiosity:92,Tenacity:59,Trust:46} },
     { key:'commander', img:IMG+'char_commander.png', name:'The Commander',
-      badge:'Direct + decisive', trait:'Efficient, concise, action-first',
+      badge:'Brief + Directive', trait:'Direct, efficient, decisive',
       accent:'#41608e', accentDark:'#7da4d4',
       gradient:'linear-gradient(160deg,#d4dde8,#c2cedd)',
       gradientDark:'linear-gradient(160deg,#222830,#1a2028)',
-      desc:'You issue clear, efficient instructions and move fast. Less discussion, more execution. You like momentum and concise control.',
+      desc:'You give precise orders in short bursts. No wasted words, no hand-holding — you know exactly what you want and expect the AI to deliver it on the first try.',
       prompt:'\u201CPatch this regression, keep the API stable, and show me the exact files changed.\u201D',
       liner:'You prefer decisive progress over collaborative wandering.',
-      axes:{Precision:82,Curiosity:38,Tenacity:34,Trust:49} },
+      axes:{'Detail Level':30,'Communication Style':25} },
     { key:'partner', img:IMG+'char_partner.png', name:'The Partner',
-      badge:'Tenacity-led', trait:'Iterative, collaborative, persistent',
+      badge:'Brief + Collaborative', trait:'Conversational, collaborative, adaptive',
       accent:'#8a5d73', accentDark:'#c48aa8',
       gradient:'linear-gradient(160deg,#e8d8e0,#ddc8d4)',
       gradientDark:'linear-gradient(160deg,#2e2428,#261c22)',
-      desc:'You stay with problems. Your prompts build through iteration, refinement, and back-and-forth until the result feels right.',
+      desc:'You keep it short but keep it human. Quick exchanges, polite nudges, and a conversational flow that treats AI as a co-pilot, not a tool.',
       prompt:'\u201CBetter, but not there yet. Keep the tone, reduce complexity, and give me a second version with a stronger opening.\u201D',
       liner:'You keep pushing until the output finally clicks.',
-      axes:{Precision:61,Curiosity:58,Tenacity:93,Trust:52} },
-    { key:'delegator', img:IMG+'char_delegator.png', name:'The Delegator',
-      badge:'Trust-led', trait:'Outcome-first, delegative, leveraged',
-      accent:'#8a7a44', accentDark:'#c4b46a',
-      gradient:'linear-gradient(160deg,#e8e2d0,#ddd6c0)',
-      gradientDark:'linear-gradient(160deg,#2c2a1e,#24221a)',
-      desc:'You define the goal, trust the system, and let the AI fill in the path. You optimize for outcomes more than hand-holding.',
-      prompt:'\u201CBuild the first draft end-to-end, choose sensible defaults, and then tell me what assumptions you made.\u201D',
-      liner:'You want lift and momentum, even if it means giving up some control.',
-      axes:{Precision:44,Curiosity:46,Tenacity:57,Trust:94} }
+      axes:{'Detail Level':30,'Communication Style':75} },
+    { key:'architect', img:IMG+'char_architect.png', name:'The Architect',
+      badge:'Detailed + Directive', trait:'Precise, methodical, thorough',
+      accent:'#7b5a42', accentDark:'#c4a07a',
+      gradient:'linear-gradient(160deg,#e8ddd2,#ddd0c2)',
+      gradientDark:'linear-gradient(160deg,#342c24,#2a2218)',
+      desc:'You write specs, not prompts. Every request comes with constraints, file paths, and numbered requirements. You leave nothing to chance.',
+      prompt:'\u201CUse the existing component API. Keep the interaction model unchanged. Add keyboard support, tests, and a migration note.\u201D',
+      liner:'You like the model to be powerful, but not unsupervised.',
+      axes:{'Detail Level':80,'Communication Style':25} },
+    { key:'explorer', img:IMG+'char_explorer.png', name:'The Explorer',
+      badge:'Detailed + Collaborative', trait:'Curious, analytical, open-minded',
+      accent:'#3f7a6e', accentDark:'#6abfae',
+      gradient:'linear-gradient(160deg,#d4e8e3,#c2ddd6)',
+      gradientDark:'linear-gradient(160deg,#222e2b,#1a2624)',
+      desc:'You bring context and ask questions. Every conversation is an investigation — you explain what you\u2019re thinking, ask for alternatives, and dig into the details together.',
+      prompt:'\u201CCompare these three approaches, surface tradeoffs, and tell me what an experienced engineer would worry about.\u201D',
+      liner:'You use the model as an idea space, not just a task runner.',
+      axes:{'Detail Level':80,'Communication Style':75} }
   ];
 
   const isDark = () => document.documentElement.classList.contains('dark');
-  let activeKey = 'architect';
+  let activeKey = 'commander';
   const listEl = document.getElementById('methPersonaList');
   const detailEl = document.getElementById('methPersonaDetail');
   if (!listEl || !detailEl) return;
@@ -235,7 +223,7 @@
             <div class="meth-pd-card-text">${p.prompt}</div>
           </div>
           <div class="meth-pd-card">
-            <div class="meth-pd-card-label">Flavor note</div>
+            <div class="meth-pd-card-label">In a nutshell</div>
             <div class="meth-pd-card-text">${p.liner}</div>
           </div>
         </div>
@@ -271,7 +259,7 @@
 
   // Initial render
   renderList();
-  renderDetail('architect', false);
+  renderDetail('commander', false);
 
   // Re-render on theme change to swap accent colors
   const themeObs = new MutationObserver(() => { renderList(); renderDetail(activeKey, false); });

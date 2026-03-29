@@ -15,4 +15,5 @@ export function initThemeToggle(storageKey = 'hip-theme') {
         html.classList.toggle('dark');
         localStorage.setItem(storageKey, html.classList.contains('dark') ? 'dark' : 'light');
     });
+
 }

@@ -1,7 +1,6 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
 import Header from '../components/Header.astro';
-import Leaderboard from '../components/dashboard/Leaderboard.astro';
 import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
 import SetupWizard from '../components/dashboard/SetupWizard.astro';
 import SettingsModal from '../components/dashboard/SettingsModal.astro';
@@ -9,16 +8,13 @@ import SettingsModal from '../components/dashboard/SettingsModal.astro';
 <DashboardLayout title="How I Prompt: Dashboard">
 <div class="page-frame">
 
-<Header page="dashboard" />
+<div class="top-nav" id="topNav">
+  <Header page="dashboard" />
+  <nav class="source-bar" id="sourceBar"></nav>
+</div>
 
-<!-- TAB BAR -->
-<nav class="tab-bar" role="tablist">
-  <button class="tab active" data-tab="dashboard" role="tab" aria-selected="true">Dashboard</button>
-  <button class="tab" data-tab="leaderboard" role="tab" aria-selected="false">Leaderboard</button>
-</nav>
-
-<!-- DASHBOARD TAB -->
-<div class="tab-panel active" id="tab-dashboard" role="tabpanel">
+<!-- DASHBOARD -->
+<div class="dash-panel" id="tab-dashboard">
   <div class="dash-container">
     <div class="main-grid">
 
@@ -54,8 +50,7 @@ import SettingsModal from '../components/dashboard/SettingsModal.astro';
             <div class="trend-title">Trends</div>
             <div class="trend-legend" id="trendLegend"></div>
             <div class="metric-tabs" id="metricTabs">
-              <button class="metric-tab active" data-metric="hitl" data-tooltip="How actively you steer AI output. Higher = more hands-on review and iteration.">Human in the Loop</button>
-              <button class="metric-tab" data-metric="vibe" data-tooltip="How much you rely on intent over specification. Higher = more structured, engineering-style prompts.">Vibe</button>
+              <button class="metric-tab active" data-metric="vibe" data-tooltip="How much you vibe-code. Higher = more intent-driven, less spec-heavy.">Vibe Coder Index</button>
               <button class="metric-tab" data-metric="polite" data-tooltip="How courteous and collaborative your tone is. Higher = warmer, more appreciative prompting style.">Politeness</button>
               <button class="metric-tab" data-metric="activity" data-tooltip="Prompts per week.">Activity</button>
             </div>
@@ -104,22 +99,16 @@ import SettingsModal from '../components/dashboard/SettingsModal.astro';
               <p class="persona-desc" id="personaDescription">Loading persona data...</p>
             </div>
             <div class="stat-strip">
-              <div class="stat-block"><div class="stat-num" id="cardHitl">--</div><div class="stat-label">Human in the Loop</div><div class="stat-minibar"><div class="stat-minibar-fill o" id="cardHitlBar"></div></div></div>
-              <div class="stat-block"><div class="stat-num" id="cardVibe">--</div><div class="stat-label">Vibe Index</div><div class="stat-minibar"><div class="stat-minibar-fill b" id="cardVibeBar"></div></div></div>
+              <div class="stat-block"><div class="stat-num" id="cardVibe">--</div><div class="stat-label">Vibe Coder Index</div><div class="stat-minibar"><div class="stat-minibar-fill b" id="cardVibeBar"></div></div></div>
               <div class="stat-block"><div class="stat-num" id="cardPolite">--</div><div class="stat-label">Politeness</div><div class="stat-minibar"><div class="stat-minibar-fill r" id="cardPoliteBar"></div></div></div>
             </div>
-            <div class="card-foot"><span>howiprompt.com</span><span id="cardSerial">#0000</span></div>
+            <div class="card-foot"><span>howiprompt.eeshans.com</span><span id="cardSerial">#0000</span></div>
           </div>
         </div>
       </div>
 
     </div>
   </div>
-</div>
-
-<!-- LEADERBOARD TAB -->
-<div class="tab-panel" id="tab-leaderboard" role="tabpanel">
-  <Leaderboard />
 </div>
 
 <!-- FOOTER -->
@@ -152,11 +141,5 @@ import SettingsModal from '../components/dashboard/SettingsModal.astro';
 <SetupWizard />
 <SettingsModal />
 
-<script>
-import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
-(window as any).generateRandomUsername = function() {
-    return uniqueNamesGenerator({ dictionaries: [adjectives, animals], separator: ' ', style: 'capital', length: 2 });
-};
-</script>
 <script src="../scripts/dashboard.js"></script>
 </DashboardLayout>

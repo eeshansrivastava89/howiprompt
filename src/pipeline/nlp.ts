@@ -112,7 +112,7 @@ export function computeIterationStyle(text: string): { score: number; confidence
 
 export async function enrichNlp(client: Client): Promise<number> {
   const result = await client.execute(
-    "SELECT m.id, m.content FROM messages m LEFT JOIN nlp_enrichments e ON m.id = e.message_id WHERE m.role = 'human' AND e.message_id IS NULL",
+    "SELECT m.id, m.content FROM messages m LEFT JOIN nlp_enrichments e ON m.id = e.message_id WHERE m.role = 'human' AND m.is_excluded = 0 AND e.message_id IS NULL",
   );
 
   const enrichments = result.rows.map((row) => {
@@ -143,7 +143,7 @@ async function aggregateClassifier(
   pf: { clause: string; args: any[] },
 ): Promise<{ avg_score: number | null; confidence: { mean: number; min: number; max: number } | null }> {
   const result = await client.execute({
-    sql: `SELECT AVG(e.${column}) as avg_s, AVG(e.${column.replace("_score", "_confidence")}) as avg_c, MIN(e.${column.replace("_score", "_confidence")}) as min_c, MAX(e.${column.replace("_score", "_confidence")}) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND e.${column} IS NOT NULL${pf.clause}`,
+    sql: `SELECT AVG(e.${column}) as avg_s, AVG(e.${column.replace("_score", "_confidence")}) as avg_c, MIN(e.${column.replace("_score", "_confidence")}) as min_c, MAX(e.${column.replace("_score", "_confidence")}) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND m.is_excluded = 0 AND e.${column} IS NOT NULL${pf.clause}`,
     args: pf.args,
   });
   const r = result.rows[0];
@@ -161,7 +161,7 @@ export async function computeNlpMetrics(
   const pf = platformFilter(platform);
 
   const totalResult = await client.execute({
-    sql: `SELECT COUNT(*) as cnt FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human'${pf.clause}`,
+    sql: `SELECT COUNT(*) as cnt FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND m.is_excluded = 0${pf.clause}`,
     args: pf.args,
   });
   const total = Number(totalResult.rows[0].cnt);
@@ -179,7 +179,7 @@ export async function computeNlpMetrics(
 
   // Intent
   const intentRows = await client.execute({
-    sql: `SELECT e.intent, COUNT(*) as cnt FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human'${pf.clause} GROUP BY e.intent ORDER BY cnt DESC, e.intent`,
+    sql: `SELECT e.intent, COUNT(*) as cnt FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND m.is_excluded = 0${pf.clause} GROUP BY e.intent ORDER BY cnt DESC, e.intent`,
     args: pf.args,
   });
   const intentCounts: Record<string, number> = {};
@@ -197,7 +197,7 @@ export async function computeNlpMetrics(
   }
 
   const intentConf = await client.execute({
-    sql: `SELECT AVG(e.intent_confidence) as avg_c, MIN(e.intent_confidence) as min_c, MAX(e.intent_confidence) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human'${pf.clause}`,
+    sql: `SELECT AVG(e.intent_confidence) as avg_c, MIN(e.intent_confidence) as min_c, MAX(e.intent_confidence) as max_c FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id WHERE m.role = 'human' AND m.is_excluded = 0${pf.clause}`,
     args: pf.args,
   });
   const ic = intentConf.rows[0];

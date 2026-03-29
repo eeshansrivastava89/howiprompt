@@ -252,7 +252,7 @@ async function enrichWeeklyNlp(
       AVG(e.politeness_score) as politeness
     FROM nlp_enrichments e
     JOIN messages m ON e.message_id = m.id
-    WHERE m.role = 'human' AND e.hitl_score IS NOT NULL${pf.clause}
+    WHERE m.role = 'human' AND m.is_excluded = 0 AND e.hitl_score IS NOT NULL${pf.clause}
     GROUP BY week_start
     ORDER BY week_start`,
     args: pf.args,
