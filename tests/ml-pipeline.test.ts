@@ -63,10 +63,6 @@ describe("ML pipeline integration", () => {
     const prompts = [
       clusters.hitl.course_correction[0],
       clusters.vibe.file_reference[0],
-      clusters.precision.detailed_spec[0],
-      clusters.curiosity.learning_inquiry[0],
-      clusters.tenacity.iterative_building[0],
-      clusters.trust.high_delegation[0],
       clusters.politeness.courteous[0],
     ];
 
@@ -108,18 +104,14 @@ describe("ML pipeline integration", () => {
     expect(Number(embeddingsResult.rows[0].cnt)).toBe(prompts.length);
 
     const classifierResult = await client.execute(
-      "SELECT COUNT(*) as cnt FROM nlp_enrichments WHERE hitl_score IS NOT NULL AND vibe_score IS NOT NULL AND precision_score IS NOT NULL AND politeness_score IS NOT NULL",
+      "SELECT COUNT(*) as cnt FROM nlp_enrichments WHERE hitl_score IS NOT NULL AND vibe_score IS NOT NULL AND politeness_score IS NOT NULL",
     );
     expect(Number(classifierResult.rows[0].cnt)).toBe(prompts.length);
 
     expect(metrics.nlp.hitl_score.avg_score).not.toBeNull();
     expect(metrics.nlp.vibe_coder_index.avg_score).not.toBeNull();
-    expect(metrics.nlp.precision.avg_score).not.toBeNull();
-    expect(metrics.nlp.curiosity.avg_score).not.toBeNull();
-    expect(metrics.nlp.tenacity.avg_score).not.toBeNull();
-    expect(metrics.nlp.trust.avg_score).not.toBeNull();
     expect(metrics.nlp.politeness.avg_score).not.toBeNull();
-    expect(metrics.persona.type).toBeTruthy();
+    expect(metrics.persona.quadrant).toBeTruthy();
     expect(metrics.trends.weekly_rollups[0]?.nlp?.hitl_score).not.toBeUndefined();
 
     fs.rmSync(dataDir, { recursive: true, force: true });

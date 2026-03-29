@@ -32,7 +32,7 @@ export function getSubmissionPayload(view, sourceKey) {
     politeness: Math.round(nlp.politeness?.avg_score ?? 0),
     total_prompts: volume.total_human || 0,
     total_conversations: volume.total_conversations || 0,
-    persona: persona.type || "unknown",
+    quadrant: persona.quadrant || "unknown",
     platform: sourceKey,
   };
 }

@@ -49,9 +49,9 @@ describe("stable leaderboard client id", () => {
 
 describe("leaderboard sorting and rank helpers", () => {
   const entries = [
-    { display_name: "Regular Otter", fingerprint: "hip_a", hitl_score: 40, vibe_index: 60, politeness: 30, total_prompts: 200, total_conversations: 30, persona: "partner" },
-    { display_name: "Bold Falcon", fingerprint: "hip_b", hitl_score: 90, vibe_index: 50, politeness: 80, total_prompts: 900, total_conversations: 90, persona: "architect" },
-    { display_name: "Calm Panda", fingerprint: "hip_c", hitl_score: 70, vibe_index: 85, politeness: 60, total_prompts: 500, total_conversations: 40, persona: "explorer" },
+    { display_name: "Regular Otter", fingerprint: "hip_a", hitl_score: 40, vibe_index: 60, politeness: 30, total_prompts: 200, total_conversations: 30, quadrant: "Brief + Collaborative" },
+    { display_name: "Bold Falcon", fingerprint: "hip_b", hitl_score: 90, vibe_index: 50, politeness: 80, total_prompts: 900, total_conversations: 90, quadrant: "Detailed + Directive" },
+    { display_name: "Calm Panda", fingerprint: "hip_c", hitl_score: 70, vibe_index: 85, politeness: 60, total_prompts: 500, total_conversations: 40, quadrant: "Detailed + Collaborative" },
   ];
 
   it("sorts by the selected metric", () => {
@@ -115,7 +115,7 @@ describe("frontend submission payload contract", () => {
       politeness: Math.round(metrics.nlp.politeness?.avg_score ?? 0),
       total_prompts: metrics.volume.total_human,
       total_conversations: metrics.volume.total_conversations,
-      persona: metrics.persona?.type ?? "unknown",
+      quadrant: metrics.persona?.quadrant ?? "unknown",
       platform: "both",
     });
   });

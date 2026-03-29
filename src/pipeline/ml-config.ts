@@ -25,10 +25,6 @@ export interface MlConfig {
   embedding: EmbeddingConfig;
   hitl: ClassifierConfig;
   vibe: ClassifierConfig;
-  precision: ClassifierConfig;
-  curiosity: ClassifierConfig;
-  tenacity: ClassifierConfig;
-  trust: ClassifierConfig;
   politeness: ClassifierConfig;
 }
 

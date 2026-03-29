@@ -82,11 +82,10 @@ function formatDateRange(dateRange) {
 // === Player card ===
 
 const CARD_IMAGES = {
-    architect: '/images/card_architect.png',
-    explorer: '/images/card_explorer.png',
-    commander: '/images/card_commander.png',
-    partner: '/images/card_partner.png',
-    delegator: '/images/card_delegator.png',
+    'The Architect': '/images/card_architect.png',
+    'The Explorer': '/images/card_explorer.png',
+    'The Commander': '/images/card_commander.png',
+    'The Partner': '/images/card_partner.png',
 };
 
 const DONUT_CIRCUMFERENCE = 125.66;
@@ -104,24 +103,20 @@ function setDonut(id, valId, score) {
 
 function renderPlayerCard(persona, nlp, politeness, view) {
     const cardTop = document.getElementById('cardTop');
-    const personaType = persona.type || 'architect';
+    const personaName = persona.name || 'The Explorer';
     if (cardTop) {
-        cardTop.style.backgroundImage = `url('${CARD_IMAGES[personaType] || CARD_IMAGES.architect}')`;
+        cardTop.style.backgroundImage = `url('${CARD_IMAGES[personaName] || CARD_IMAGES['The Explorer']}')`;
     }
 
-    const personaName = document.getElementById('personaName');
-    if (personaName) personaName.textContent = persona.name || 'No Persona';
+    const personaNameEl = document.getElementById('personaName');
+    if (personaNameEl) personaNameEl.textContent = personaName;
 
     const personaDesc = document.getElementById('personaDescription');
     if (personaDesc) personaDesc.textContent = persona.description || 'Not enough data.';
 
-    // Card shows lifetime averages (stable persona representation)
-    const radar = persona.radar || {};
-
-    setDonut('donutPrecision', 'valPrecision', radar.precision);
-    setDonut('donutTenacity', 'valTenacity', radar.tenacity);
-    setDonut('donutCuriosity', 'valCuriosity', radar.curiosity);
-    setDonut('donutTrust', 'valTrust', radar.trust);
+    // 2×2 axes replace old radar donuts
+    setDonut('donutDetail', 'valDetail', persona.detail_score);
+    setDonut('donutStyle', 'valStyle', persona.style_score);
 
     const hitlScore = nlp?.hitl_score?.avg_score;
     const vibeScore = nlp?.vibe_coder_index?.avg_score;

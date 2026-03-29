@@ -187,34 +187,20 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
                     <h2 class="text-2xl sm:text-3xl font-bold gradient-text mb-3" id="personaName">--</h2>
                     <p class="text-muted text-sm sm:text-base max-w-md mx-auto mb-6" id="personaDesc">Loading...</p>
                     <div class="flex flex-wrap justify-center gap-2 mb-8" id="personaTraits"></div>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 gap-4">
                         <div class="flex flex-col items-center gap-2">
                             <div class="donut-ring">
-                                <svg viewBox="0 0 44 44"><circle fill="none" stroke="var(--border)" stroke-width="5" cx="22" cy="22" r="20"/><circle fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" id="wDonutPrecision" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg>
-                                <div class="donut-val" id="wValPrecision">--</div>
+                                <svg viewBox="0 0 44 44"><circle fill="none" stroke="var(--border)" stroke-width="5" cx="22" cy="22" r="20"/><circle fill="none" stroke="#4CAF50" stroke-width="5" stroke-linecap="round" id="wDonutDetail" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg>
+                                <div class="donut-val" id="wValDetail">--</div>
                             </div>
-                            <span class="text-xs text-muted font-medium">Precision</span>
+                            <span class="text-xs text-muted font-medium">Detail Level</span>
                         </div>
                         <div class="flex flex-col items-center gap-2">
                             <div class="donut-ring">
-                                <svg viewBox="0 0 44 44"><circle fill="none" stroke="var(--border)" stroke-width="5" cx="22" cy="22" r="20"/><circle fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" id="wDonutCuriosity" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg>
-                                <div class="donut-val" id="wValCuriosity">--</div>
+                                <svg viewBox="0 0 44 44"><circle fill="none" stroke="var(--border)" stroke-width="5" cx="22" cy="22" r="20"/><circle fill="none" stroke="#7B1FA2" stroke-width="5" stroke-linecap="round" id="wDonutStyle" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg>
+                                <div class="donut-val" id="wValStyle">--</div>
                             </div>
-                            <span class="text-xs text-muted font-medium">Curiosity</span>
-                        </div>
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="donut-ring">
-                                <svg viewBox="0 0 44 44"><circle fill="none" stroke="var(--border)" stroke-width="5" cx="22" cy="22" r="20"/><circle fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" id="wDonutTenacity" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg>
-                                <div class="donut-val" id="wValTenacity">--</div>
-                            </div>
-                            <span class="text-xs text-muted font-medium">Tenacity</span>
-                        </div>
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="donut-ring">
-                                <svg viewBox="0 0 44 44"><circle fill="none" stroke="var(--border)" stroke-width="5" cx="22" cy="22" r="20"/><circle fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" id="wDonutTrust" cx="22" cy="22" r="20" stroke-dasharray="125.66" stroke-dashoffset="125.66"/></svg>
-                                <div class="donut-val" id="wValTrust">--</div>
-                            </div>
-                            <span class="text-xs text-muted font-medium">Trust</span>
+                            <span class="text-xs text-muted font-medium">Comm Style</span>
                         </div>
                     </div>
                 </div>

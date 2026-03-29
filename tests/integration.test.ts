@@ -100,17 +100,15 @@ describe("full pipeline integration", () => {
 
     expect(metrics.politeness.score).toBeGreaterThanOrEqual(0);
     expect(metrics.politeness.score).toBeLessThanOrEqual(100);
-    expect(metrics.persona).toHaveProperty("type");
     expect(metrics.persona).toHaveProperty("name");
-    expect(metrics.persona).toHaveProperty("radar");
+    expect(metrics.persona).toHaveProperty("quadrant");
+    expect(metrics.persona).toHaveProperty("detail_score");
+    expect(metrics.persona).toHaveProperty("style_score");
+    expect(metrics.persona).toHaveProperty("traits");
 
     expect(metrics.nlp.intent).toHaveProperty("counts");
     expect(metrics.nlp).toHaveProperty("hitl_score");
     expect(metrics.nlp).toHaveProperty("vibe_coder_index");
-    expect(metrics.nlp).toHaveProperty("precision");
-    expect(metrics.nlp).toHaveProperty("curiosity");
-    expect(metrics.nlp).toHaveProperty("tenacity");
-    expect(metrics.nlp).toHaveProperty("trust");
     expect(metrics.nlp).toHaveProperty("politeness");
 
     expect(metrics.trends).toHaveProperty("daily_rollups");
@@ -185,7 +183,7 @@ describe("full pipeline integration", () => {
     expect(Object.keys(nlp.intent.counts).length).toBeGreaterThan(0);
     expect(nlp.intent.confidence.mean).toBeGreaterThan(0);
     expect(nlp).toHaveProperty("hitl_score");
-    expect(nlp).toHaveProperty("precision");
+    expect(nlp).toHaveProperty("politeness");
   });
 
   it("trend metrics include rollups", async () => {

@@ -1,7 +1,7 @@
 {
   "hitl": {
     "course_correction": [
-      "no, not that — do it this way instead",
+      "no, not that \u2014 do it this way instead",
       "actually let's go a completely different direction",
       "revert that change, it's wrong",
       "stop, that's not what I asked for",
@@ -10,7 +10,7 @@
       "that's incorrect, the correct approach is",
       "wait, go back to the previous version",
       "don't do it that way, here's what I want",
-      "you misunderstood — let me clarify",
+      "you misunderstood \u2014 let me clarify",
       "scratch that, start over with a different approach",
       "nope, wrong direction entirely",
       "hold on, that breaks the existing behavior",
@@ -23,7 +23,7 @@
       "the architecture should use event sourcing",
       "I want to use Redis for caching here",
       "we should use WebSockets not polling",
-      "let's go with option B — the queue-based approach",
+      "let's go with option B \u2014 the queue-based approach",
       "use a B-tree index, not a hash index",
       "the data model should be normalized, not denormalized",
       "I prefer REST over GraphQL for this API",
@@ -55,17 +55,17 @@
       "just fix the bug, don't refactor anything else",
       "that's out of scope for now, defer it",
       "only change the files I mentioned",
-      "keep it simple — no extra features",
+      "keep it simple \u2014 no extra features",
       "don't add error handling for that edge case yet",
       "we'll deal with that in the next PR",
       "focus only on the login flow, nothing else",
-      "let's not gold-plate this — ship the minimum",
+      "let's not gold-plate this \u2014 ship the minimum",
       "remove that extra complexity, we don't need it",
       "ignore the performance optimization for now",
       "don't touch the database schema in this change",
       "stick to the happy path only",
       "we can add tests later, just get it working",
-      "not now — park that for phase 2",
+      "not now \u2014 park that for phase 2",
       "only the frontend changes, leave the backend alone"
     ],
     "review_qa": [
@@ -73,16 +73,16 @@
       "are you sure this handles null values?",
       "what happens if the network request fails?",
       "I see a potential race condition here",
-      "this will break on Windows — the path separator is wrong",
+      "this will break on Windows \u2014 the path separator is wrong",
       "the error message is misleading, fix it",
       "verify that the tests actually cover this scenario",
       "this looks like it could leak memory",
       "double check the SQL injection risk here",
       "the return type doesn't match the interface",
-      "this logic seems inverted — should it be >= not >?",
+      "this logic seems inverted \u2014 should it be >= not >?",
       "run the benchmarks before we merge this",
       "the variable name is confusing, rename it",
-      "looks wrong — the off-by-one error on line 42",
+      "looks wrong \u2014 the off-by-one error on line 42",
       "test this with empty input and see what happens"
     ],
     "tradeoff_nav": [
@@ -123,7 +123,7 @@
   "vibe": {
     "file_reference": [
       "in src/auth/middleware.ts, change the validateToken function",
-      "look at line 42 of config.py — the timeout is wrong",
+      "look at line 42 of config.py \u2014 the timeout is wrong",
       "the bug is in frontend/src/components/Header.tsx",
       "update the schema in prisma/schema.prisma",
       "check the error handler in src/api/routes/users.ts:89",
@@ -150,7 +150,7 @@
       "implement optimistic locking using version numbers",
       "the API should return 409 Conflict on concurrent writes",
       "use a bloom filter to check membership before the DB query",
-      "the migration needs to be online — no table locks",
+      "the migration needs to be online \u2014 no table locks",
       "implement circuit breaker with half-open state after 30s",
       "use HMAC-SHA256 for the webhook signature verification",
       "the batch processor should use backpressure, not unbounded queues"
@@ -177,8 +177,8 @@
       "wait, on second thought, use a Map instead of an object",
       "that's close but the sorting should be descending not ascending",
       "good, now also handle the case where the array is empty",
-      "one more thing — add a timeout parameter with default 5000",
-      "hmm, the naming is off — rename 'data' to 'payload'",
+      "one more thing \u2014 add a timeout parameter with default 5000",
+      "hmm, the naming is off \u2014 rename 'data' to 'payload'",
       "almost right but the null check should come first",
       "the logic is correct but extract it into a separate function",
       "yes but also add the same validation to the update endpoint",
@@ -187,7 +187,7 @@
       "ok now add the same pattern to the delete handler",
       "the test passes but add an edge case for empty strings",
       "good, now refactor the duplicate code between create and update",
-      "one last thing — add a JSDoc comment explaining the algorithm"
+      "one last thing \u2014 add a JSDoc comment explaining the algorithm"
     ],
     "high_level_delegation": [
       "build me a login page",
@@ -241,186 +241,6 @@
       "love it, let's go"
     ]
   },
-  "precision": {
-    "detailed_spec": [
-      "here's what I need: a middleware that intercepts all POST requests, validates the JSON body against a Zod schema, returns 422 with field-level errors if invalid, and passes the typed body to the handler",
-      "the component should accept a 'variant' prop with values 'primary' | 'secondary' | 'ghost', default to 'primary', and each variant needs distinct hover and active states matching the design tokens in theme.ts",
-      "create a migration that adds a 'status' enum column to the orders table with values 'pending', 'processing', 'shipped', 'delivered', 'cancelled'. Default to 'pending'. Add an index on (user_id, status) for the dashboard query.",
-      "the retry logic should: attempt 3 times, use exponential backoff starting at 100ms with jitter, only retry on 5xx and network errors, abort on 4xx, and log each attempt with the error and attempt number",
-      "build a debounced search input that waits 300ms after the user stops typing, cancels in-flight requests when a new one starts, shows a loading spinner during the fetch, and displays 'No results' when the array is empty",
-      "I need a rate limiter using the sliding window algorithm. Configuration: 100 requests per minute per API key. Store counters in Redis with MULTI/EXEC for atomicity. Return X-RateLimit-Remaining and Retry-After headers.",
-      "the form has 5 fields: name (required, 2-50 chars), email (required, valid format), password (required, 8+ chars, one uppercase, one number), confirm password (must match), and terms checkbox (must be checked). Show inline errors on blur.",
-      "implement a file upload endpoint that accepts multipart/form-data, validates file type (only .png, .jpg, .pdf), max size 10MB, streams to S3 with a UUID filename, returns the CDN URL, and cleans up on failure"
-    ],
-    "contextual_request": [
-      "the users table currently has columns id, email, name, created_at. We need to add a 'role' column. The existing admin check in middleware.ts hardcodes the admin email list — replace that with a role-based check using the new column.",
-      "we're using Next.js 14 with the app router. The current layout.tsx wraps everything in a single AuthProvider. I need to split it so that the /api routes don't go through the auth provider, but all /dashboard/* routes do.",
-      "the current flow is: user clicks 'Export' -> frontend calls GET /api/export -> server builds CSV in memory -> returns it. This breaks for large datasets (>100K rows). Switch to a streaming approach that starts sending chunks immediately.",
-      "our CI pipeline runs on GitHub Actions. The test step currently runs all 847 tests sequentially which takes 12 minutes. Split them into 4 parallel shards using the matrix strategy.",
-      "the monitoring shows that the /api/search endpoint has p99 latency of 2.3 seconds. The query joins 3 tables without proper indexes. Add the missing indexes and refactor the query to use a CTE for the user filter."
-    ],
-    "bare_command": [
-      "fix the bug",
-      "make it work",
-      "add a button",
-      "update the styles",
-      "clean this up",
-      "refactor this",
-      "add tests",
-      "deploy it",
-      "make it faster",
-      "fix the types",
-      "add logging",
-      "update dependencies",
-      "remove the warnings",
-      "fix the linter errors",
-      "add error handling"
-    ]
-  },
-  "curiosity": {
-    "learning_inquiry": [
-      "how does the garbage collector handle circular references in this case?",
-      "can you explain why we'd choose a B-tree over a hash index for this query pattern?",
-      "what's the difference between optimistic and pessimistic locking, and which is better here?",
-      "walk me through how the event loop processes this async code step by step",
-      "why does React re-render when I use useCallback here — shouldn't it memoize?",
-      "I don't understand the CAP theorem implications for our architecture. Can you break it down?",
-      "what happens under the hood when we call .pipe() on a Node stream?",
-      "help me understand why this regex is catastrophically backtracking",
-      "what's the mental model for thinking about database isolation levels?",
-      "why is eventual consistency acceptable here but not for the payment flow?",
-      "can you explain the tradeoffs between server-side rendering and client-side rendering for this page?",
-      "I've never used GraphQL subscriptions — how do they work compared to WebSockets?",
-      "what would happen if we removed the mutex here? Walk me through the race condition.",
-      "teach me how connection pooling works — why can't we just open a new connection per request?",
-      "why is this considered an anti-pattern? What problems does it cause in practice?"
-    ],
-    "exploration": [
-      "what if we approached this differently — instead of polling, what about server-sent events?",
-      "I'm not sure about the right approach here. What are our options?",
-      "brainstorm with me — how could we make this feature more resilient to failures?",
-      "let's think through the edge cases before we start implementing",
-      "what would a senior engineer critique about this design?",
-      "how would you design this if we had to support 100x the current traffic?",
-      "compare the approaches: monorepo vs polyrepo for our team size",
-      "what are the security implications of storing tokens in localStorage vs httpOnly cookies?",
-      "let me think out loud — we could either batch the requests or use a websocket. Which scales better?",
-      "before we build this, what are the unknowns we should investigate?",
-      "play devil's advocate — why might this approach fail?",
-      "sketch out three different architectures for this feature and let me pick",
-      "what's the worst case scenario if this fails in production?",
-      "I want to understand the design space before committing to an approach",
-      "what would we need to change if we wanted to support multi-tenancy later?"
-    ],
-    "pure_execution": [
-      "implement the login endpoint",
-      "fix the failing test",
-      "add the delete button to the user row",
-      "create the database migration",
-      "write the unit tests for the validator",
-      "deploy the staging environment",
-      "update the README with the new API endpoints",
-      "add the CSV export feature",
-      "fix the responsive layout on mobile",
-      "implement the pagination component",
-      "set up the GitHub Actions workflow",
-      "add the loading spinner to the submit button",
-      "create the error boundary component",
-      "wire up the WebSocket connection",
-      "add the rate limiting middleware"
-    ]
-  },
-  "tenacity": {
-    "iterative_building": [
-      "good, now also add validation for the email field",
-      "that works — next, wire it up to the API endpoint",
-      "ok now let's handle the error case too",
-      "the happy path is done. Now add the edge cases: empty input, network timeout, and invalid format.",
-      "nice. Now refactor the duplicate logic between the create and update handlers into a shared function.",
-      "one more thing — add a loading state while the request is in flight",
-      "now make the same change to the other three endpoints",
-      "the component is working. Let's add the keyboard shortcuts next.",
-      "great, that's step 1. For step 2, we need to add the WebSocket listener.",
-      "perfect. Now write the tests for all the cases we just implemented.",
-      "looks right. Now let's optimize — the query is doing a full table scan.",
-      "ok that handles users. Now extend it to also support teams and organizations.",
-      "the basic version works. Let's iterate — add sorting, filtering, and column resizing.",
-      "now let's connect this to the real API instead of the mock data",
-      "alright, the logic is solid. Now add proper TypeScript types to everything."
-    ],
-    "deep_refinement": [
-      "hmm, the spacing is off. Try 16px gap instead of 12px.",
-      "close, but the animation easing should be ease-out not ease-in",
-      "almost — can you make the border radius match the other cards? 12px.",
-      "the color is slightly wrong. Use oklch(0.7 0.15 250) instead.",
-      "that's better but the font weight should be 500, not 600",
-      "tweak the shadow — it's too heavy. Use 0 1px 3px rgba(0,0,0,0.08).",
-      "the transition duration feels sluggish. Try 150ms instead of 300ms.",
-      "nudge the icon 2px up — it's not visually centered with the text",
-      "the hover state needs more contrast. Darken the background by 5%.",
-      "make the text truncate with ellipsis instead of wrapping to a second line"
-    ],
-    "single_shot": [
-      "fix the typo on line 5",
-      "change the color to blue",
-      "rename the variable from x to userId",
-      "remove the console.log",
-      "add a semicolon",
-      "update the version to 2.0.0",
-      "change the port from 3000 to 8080",
-      "swap the order of the two parameters",
-      "delete the commented-out code",
-      "add the missing import"
-    ]
-  },
-  "trust": {
-    "high_delegation": [
-      "redesign the entire authentication system however you think is best",
-      "you know the codebase better at this point — restructure the files however makes sense",
-      "I trust your judgment on the implementation details, just make it work",
-      "pick whatever approach you think is cleanest",
-      "use your best judgment for the error handling strategy",
-      "architect this however you'd build it from scratch",
-      "organize the code however is most maintainable",
-      "choose the right data structure for this — you know the access patterns",
-      "implement it however makes sense, I don't have a preference on the approach",
-      "do what you think is right, I'll review the result",
-      "go ahead and refactor this whole module if you think it needs it",
-      "pick the testing strategy — unit, integration, whatever covers this best",
-      "handle the edge cases however you see fit",
-      "make the architectural decisions, I'll weigh in if I disagree",
-      "style it however looks good to you"
-    ],
-    "open_ended_task": [
-      "take a look at the codebase and suggest improvements",
-      "review this PR and tell me what you think",
-      "what should we prioritize for the next sprint?",
-      "audit the security of the authentication flow",
-      "suggest a better folder structure for this project",
-      "look at the performance profile and recommend optimizations",
-      "review the database schema and suggest normalization improvements",
-      "propose a testing strategy for this module",
-      "analyze the error logs and identify the top issues",
-      "evaluate whether we should migrate from Express to Fastify"
-    ],
-    "tight_control": [
-      "use exactly this implementation, don't change anything",
-      "follow my spec precisely — no creative interpretation",
-      "do NOT refactor anything outside the function I specified",
-      "use only the libraries I listed, no substitutions",
-      "implement it exactly as described in the ticket",
-      "match this design pixel for pixel",
-      "use this exact SQL query, don't optimize it",
-      "follow the naming convention I specified, not your preferred style",
-      "copy the pattern from the existing handler exactly",
-      "don't add any extra validation beyond what I listed",
-      "stick to my approach even if you think there's a better way",
-      "implement only what I asked for, nothing more",
-      "use the exact same file structure as the other module",
-      "don't deviate from the API contract in the spec",
-      "I want it done my way, not the textbook way"
-    ]
-  },
   "politeness": {
     "courteous": [
       "please help me fix this authentication issue",
@@ -435,7 +255,7 @@
       "no worries if this is hard, but can you try a different approach?",
       "thanks for catching that, you're right about the edge case",
       "could you please refactor this when you get a chance?",
-      "sorry, I wasn't clear — what I meant was change the return type",
+      "sorry, I wasn't clear \u2014 what I meant was change the return type",
       "that's really helpful, thank you. Can you also add types?",
       "please and thank you! Can you also run the linter?"
     ],

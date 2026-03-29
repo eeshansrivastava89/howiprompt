@@ -223,17 +223,16 @@ function hydrateWrapped(m) {
     setText('wrappedPoliteLabel', politeScore >= 66 ? 'Courteous' : politeScore >= 33 ? 'Balanced' : politeScore != null ? 'Direct' : 'No data');
     setArc('wrappedPoliteArc', politeScore);
 
-    // Section 5: Persona Reveal
-    const CARD_IMAGES = {
-        architect: '/images/char_architect.png',
-        explorer: '/images/char_explorer.png',
-        commander: '/images/char_commander.png',
-        partner: '/images/char_partner.png',
-        delegator: '/images/char_delegator.png',
+    // Section 5: Persona Reveal (2×2 quadrant system)
+    const QUADRANT_IMAGES = {
+        'The Architect': '/images/char_architect.png',
+        'The Explorer': '/images/char_explorer.png',
+        'The Commander': '/images/char_commander.png',
+        'The Partner': '/images/char_partner.png',
     };
 
     const cardTop = el('wrappedCardTop');
-    if (cardTop) cardTop.src = CARD_IMAGES[p.type] || CARD_IMAGES.architect;
+    if (cardTop) cardTop.src = QUADRANT_IMAGES[p.name] || QUADRANT_IMAGES['The Architect'];
 
     setText('personaName', p.name || '--');
     setText('personaDesc', p.description || '');
@@ -250,11 +249,8 @@ function hydrateWrapped(m) {
         });
     }
 
-    const radar = p.radar || {};
-    setDonut('wDonutPrecision', 'wValPrecision', radar.precision);
-    setDonut('wDonutCuriosity', 'wValCuriosity', radar.curiosity);
-    setDonut('wDonutTenacity', 'wValTenacity', radar.tenacity);
-    setDonut('wDonutTrust', 'wValTrust', radar.trust);
+    setDonut('wDonutDetail', 'wValDetail', p.detail_score);
+    setDonut('wDonutStyle', 'wValStyle', p.style_score);
 
     // Section 6: Terminal Summary
     setText('termDateRange', dateRangeDisplay.toUpperCase() + ' SUMMARY');

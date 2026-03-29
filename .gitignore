@@ -44,3 +44,16 @@ dist/
 # Claude Code local settings
 .claude/
 .codex/
+.pi/
+
+# QA artifacts (screenshots, mockups, utility scripts)
+qa-screenshots/
+mockups/
+frontend/qa-screenshot.mjs
+
+# Source art (frontend/public/images/ is the canonical copy)
+images/
+
+# Large generated data files
+*.npy
+*.npz

@@ -7,6 +7,7 @@ import { getEnabledBackends, getAllBackends } from "./pipeline/backends.js";
 import { enrichNlp } from "./pipeline/nlp.js";
 import { enrichEmbeddings } from "./pipeline/embeddings.js";
 import { enrichClassifiers } from "./pipeline/classifiers.js";
+import { enrichStyle } from "./pipeline/style.js";
 import { computeSourceViews } from "./pipeline/metrics.js";
 import {
   seedSystemRules,
@@ -191,8 +192,8 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
   );
   log({ stage: "embedding", detail: `${embedded.toLocaleString()} embeddings computed`, progress: 100 });
 
-  // Classifier enrichment (HITL + Vibe scores from embeddings)
-  log({ stage: "classifiers", detail: "Scoring personas...", progress: 10 });
+  // Classifier enrichment (HITL, Vibe, Politeness from embeddings)
+  log({ stage: "classifiers", detail: "Scoring hero metrics...", progress: 10 });
   const classified = await enrichClassifiers(client, mlConfig, opts.dataDir, (done, total) => {
     log({
       stage: "classifiers",
@@ -201,6 +202,17 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
     });
   });
   log({ stage: "classifiers", detail: `${classified.toLocaleString()} messages classified`, progress: 100 });
+
+  // Style scoring (2×2: detail level × communication style)
+  log({ stage: "style", detail: "Computing style scores...", progress: 10 });
+  const styled = await enrichStyle(client, (done, total) => {
+    log({
+      stage: "style",
+      detail: `Scored ${done.toLocaleString()} / ${total.toLocaleString()} messages`,
+      progress: total > 0 ? Math.round((done / total) * 100) : 100,
+    });
+  });
+  log({ stage: "style", detail: `${styled.toLocaleString()} messages scored`, progress: 100 });
 
   // Compute metrics
   log({ stage: "metrics", detail: "Aggregating metrics...", progress: 30 });

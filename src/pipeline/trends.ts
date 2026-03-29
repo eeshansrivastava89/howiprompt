@@ -249,10 +249,6 @@ async function enrichWeeklyNlp(
       strftime('%Y-%m-%d', date(m.local_date, 'weekday 0', '-6 days')) as week_start,
       AVG(e.hitl_score) as hitl,
       AVG(e.vibe_score) as vibe,
-      AVG(e.precision_score) as precision,
-      AVG(e.curiosity_score) as curiosity,
-      AVG(e.tenacity_score) as tenacity,
-      AVG(e.trust_score) as trust,
       AVG(e.politeness_score) as politeness
     FROM nlp_enrichments e
     JOIN messages m ON e.message_id = m.id
@@ -267,10 +263,6 @@ async function enrichWeeklyNlp(
     nlpByWeek.set(String(row.week_start), {
       hitl_score: row.hitl != null ? round(Number(row.hitl), 1) : 0,
       vibe_coder_index: row.vibe != null ? round(Number(row.vibe), 1) : 0,
-      precision: row.precision != null ? round(Number(row.precision), 1) : 0,
-      curiosity: row.curiosity != null ? round(Number(row.curiosity), 1) : 0,
-      tenacity: row.tenacity != null ? round(Number(row.tenacity), 1) : 0,
-      trust: row.trust != null ? round(Number(row.trust), 1) : 0,
       politeness: row.politeness != null ? round(Number(row.politeness), 1) : null,
     });
   }

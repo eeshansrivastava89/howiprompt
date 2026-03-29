@@ -3,7 +3,7 @@ import type { Config } from "./config.js";
 import { platformFilter, queryMessages } from "./db.js";
 import { PLATFORM_VALUES, type Platform, Role } from "./models.js";
 import { computeNlpMetrics } from "./nlp.js";
-import { classifyPersona } from "./persona.js";
+import { getPersona } from "./style.js";
 import { computeNormalized } from "./registry.js";
 import { computeTrendMetrics } from "./trends.js";
 
@@ -261,14 +261,21 @@ export async function computeMetrics(
     date_range: { first: String(dateRange.first_ts), last: String(dateRange.last_ts) },
   };
 
-  // Derive persona from radar scores
-  const radar = {
-    precision: nlp.precision?.avg_score ?? 50,
-    curiosity: nlp.curiosity?.avg_score ?? 50,
-    tenacity: nlp.tenacity?.avg_score ?? 50,
-    trust: nlp.trust?.avg_score ?? 50,
+  // Derive persona quadrant from 2×2 style scores (aggregated from nlp_enrichments)
+  const styleAgg = await client.execute({
+    sql: `SELECT AVG(e.detail_score) as avg_detail, AVG(e.style_score) as avg_style
+          FROM nlp_enrichments e JOIN messages m ON e.message_id = m.id
+          WHERE m.role = 'human' AND m.is_excluded = 0 AND e.detail_score IS NOT NULL${pf.clause}`,
+    args: pf.args,
+  });
+  const avgDetail = Math.round(Number(styleAgg.rows[0]?.avg_detail ?? 50) * 10) / 10;
+  const avgStyle = Math.round(Number(styleAgg.rows[0]?.avg_style ?? 50) * 10) / 10;
+  const persona = getPersona(avgDetail, avgStyle);
+  result.persona = {
+    ...persona,
+    detail_score: avgDetail,
+    style_score: avgStyle,
   };
-  result.persona = classifyPersona(radar);
 
   // Compute normalized 0-100 values for all registry metrics
   result.normalized = computeNormalized(result);

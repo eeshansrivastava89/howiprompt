@@ -81,6 +81,10 @@ const MIGRATIONS = [
   `ALTER TABLE messages ADD COLUMN matched_rule_id INTEGER REFERENCES exclusion_rules(id)`,
   // Rename flag: is_skill_invocation -> is_excluded (broader meaning)
   `ALTER TABLE messages ADD COLUMN is_excluded INTEGER DEFAULT 0`,
+  // 2×2 style scores (replaces old persona radar axes)
+  `ALTER TABLE nlp_enrichments ADD COLUMN detail_score REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN style_score REAL`,
+  `ALTER TABLE nlp_enrichments ADD COLUMN quadrant TEXT`,
 ];
 
 /**
