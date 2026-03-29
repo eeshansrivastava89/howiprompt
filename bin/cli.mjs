@@ -7,11 +7,10 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 import { bootstrapDb } from "./bootstrap-db.mjs";
-import { resolveDataDir, findFreePort, parseArgs, openBrowser, waitForServer } from "./cli-helpers.mjs";
+import { resolveDataDir, findFreePort, parseArgs, openBrowser } from "./cli-helpers.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pkgPath = path.join(__dirname, "..", "package.json");
@@ -88,26 +87,13 @@ if (!fs.existsSync(metricsPath)) {
   } catch { /* no config yet — wizard will show by default */ }
 }
 
-// ── Auto-build if needed ──────────────────────────────
 const projectRoot = path.join(__dirname, "..");
+const serverBundlePath = path.join(projectRoot, "dist", "server.js");
+const frontendBundlePath = path.join(projectRoot, "frontend", "dist", "index.html");
 
-process.stdout.write("  Building backend...            ");
-try {
-  execSync("npm run build", { cwd: projectRoot, stdio: "pipe" });
-  console.log(green("done"));
-} catch (e) {
-  console.log(red("failed"));
-  console.error(e.stderr?.toString() || e.message);
-  process.exit(1);
-}
-
-process.stdout.write("  Building frontend...           ");
-try {
-  execSync("npm run build", { cwd: path.join(projectRoot, "frontend"), stdio: "pipe" });
-  console.log(green("done"));
-} catch (e) {
-  console.log(red("failed"));
-  console.error(e.stderr?.toString() || e.message);
+if (!fs.existsSync(serverBundlePath) || !fs.existsSync(frontendBundlePath)) {
+  console.error(red("Bundled app assets are missing."));
+  console.error(dim("For local development, run `npm run build:cli` or `npm run dev:cli` from the repo."));
   process.exit(1);
 }
 
@@ -131,7 +117,7 @@ try {
       const controller = new AbortController();
       versionCheckTimeout = setTimeout(() => controller.abort(), 3000);
       versionCheckTimeout.unref?.();
-      const res = await fetch("https://registry.npmjs.org/howiprompt/latest", {
+      const res = await fetch("https://registry.npmjs.org/@eeshans%2fhowiprompt/latest", {
         signal: controller.signal,
       });
       clearTimeout(versionCheckTimeout);

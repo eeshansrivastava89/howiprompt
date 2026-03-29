@@ -1,6 +1,6 @@
 {
   "name": "@eeshans/howiprompt",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Local-first analytics dashboard for your AI coding assistant conversations",
   "type": "module",
   "author": "Eeshan Srivastava (https://eeshans.com)",
@@ -48,6 +48,7 @@
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
+    "dev:cli": "npm run build:cli && node bin/cli.mjs",
     "build:cli": "node scripts/build-cli.mjs",
     "check:privacy": "node scripts/privacy-gate.mjs",
     "prepack": "node scripts/build-cli.mjs && node scripts/privacy-gate.mjs"

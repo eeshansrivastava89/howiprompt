@@ -127,6 +127,9 @@ npm run build
 # Run tests
 npm test
 
+# Rebuild package assets, then launch the CLI locally
+npm run dev:cli
+
 # Build frontend
 cd frontend && npm run build
 
