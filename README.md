@@ -63,6 +63,18 @@ npx @eeshans/howiprompt --help        # usage info
 
 Subsequent refreshes are incremental and reuse the local database, caches, and configured exclusions.
 
+### Self-Host On GitHub Pages
+
+If you want to publish your own stats as a static site:
+
+```bash
+git clone https://github.com/eeshansrivastava89/howiprompt.git
+cd howiprompt && npm install && npm run dev:cli
+cd howiprompt/frontend && DEMO_DEPLOY=true npm run build
+```
+
+Then commit and push `docs/`, and enable GitHub Pages from `main` / `docs` in your repo settings.
+
 ---
 
 ## What You Get
@@ -132,6 +144,9 @@ npm run dev:cli
 
 # Build frontend
 cd frontend && npm run build
+
+# Build the hosted demo from ~/.howiprompt/metrics.json
+cd frontend && DEMO_DEPLOY=true npm run build
 
 # Build for distribution
 npm run build:cli

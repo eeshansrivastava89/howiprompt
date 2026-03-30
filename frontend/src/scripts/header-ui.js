@@ -22,56 +22,62 @@ function copyTextWithFallback(text) {
 }
 
 function initCreateDrawer() {
-    const dropdown = document.getElementById('createDropdown');
-    const toggle = document.getElementById('createToggle');
-    const menu = document.getElementById('createMenu');
-    const copyBtn = document.getElementById('createCopyBtn');
-    const copyLabel = copyBtn?.querySelector('.create-copy-label');
-    if (!dropdown || !toggle || !menu || !copyBtn) return;
+    const modal = document.getElementById('createModal');
+    const copyButtons = [...document.querySelectorAll('[data-copy-text]')];
+    if (!modal || copyButtons.length === 0) return;
 
-    let copyTimer = null;
+    const copyTimers = new WeakMap();
 
-    function setOpen(isOpen) {
-        dropdown.classList.toggle('open', isOpen);
-        toggle.setAttribute('aria-expanded', String(isOpen));
-        menu.hidden = !isOpen;
-    }
+    let opener = null;
 
-    toggle.addEventListener('click', (event) => {
-        event.stopPropagation();
-        setOpen(menu.hidden);
-    });
+    window.openCreateModal = () => {
+        opener = document.activeElement;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
 
-    menu.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    copyBtn.addEventListener('click', async () => {
-        const text = copyBtn.dataset.copyText || '';
-        try {
-            await copyTextWithFallback(text);
-            if (copyLabel) copyLabel.textContent = 'Copied';
-            copyBtn.classList.add('is-copied');
-            if (copyTimer) clearTimeout(copyTimer);
-            copyTimer = window.setTimeout(() => {
-                if (copyLabel) copyLabel.textContent = 'Copy';
-                copyBtn.classList.remove('is-copied');
-            }, 1600);
-        } catch {
-            if (copyLabel) copyLabel.textContent = 'Failed';
-            if (copyTimer) clearTimeout(copyTimer);
-            copyTimer = window.setTimeout(() => {
-                if (copyLabel) copyLabel.textContent = 'Copy';
-            }, 1600);
+    window.closeCreateModal = () => {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        if (opener && typeof opener.focus === 'function') {
+            opener.focus();
+            opener = null;
         }
+    };
+
+    copyButtons.forEach((copyBtn) => {
+        const copyLabel = copyBtn.querySelector('.create-copy-label');
+        copyBtn.addEventListener('click', async () => {
+            const text = copyBtn.dataset.copyText || '';
+            try {
+                await copyTextWithFallback(text);
+                if (copyLabel) copyLabel.textContent = 'Copied';
+                copyBtn.classList.add('is-copied');
+                const existingTimer = copyTimers.get(copyBtn);
+                if (existingTimer) clearTimeout(existingTimer);
+                const timer = window.setTimeout(() => {
+                    if (copyLabel) copyLabel.textContent = 'Copy';
+                    copyBtn.classList.remove('is-copied');
+                }, 1600);
+                copyTimers.set(copyBtn, timer);
+            } catch {
+                if (copyLabel) copyLabel.textContent = 'Failed';
+                const existingTimer = copyTimers.get(copyBtn);
+                if (existingTimer) clearTimeout(existingTimer);
+                const timer = window.setTimeout(() => {
+                    if (copyLabel) copyLabel.textContent = 'Copy';
+                }, 1600);
+                copyTimers.set(copyBtn, timer);
+            }
+        });
     });
 
-    document.addEventListener('click', () => {
-        setOpen(false);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) window.closeCreateModal();
     });
 
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') setOpen(false);
+        if (event.key === 'Escape') window.closeCreateModal();
     });
 }
 

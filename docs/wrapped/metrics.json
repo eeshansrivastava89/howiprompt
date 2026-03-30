@@ -1,7 +1,7 @@
 {
   "source_views": {
     "both": {
-      "generated_at": "2026-03-30T02:15:53.482Z",
+      "generated_at": "2026-03-30T03:59:09.669Z",
       "volume": {
         "total_messages": 11083,
         "total_human": 6158,
@@ -7561,7 +7561,7 @@
       }
     },
     "claude_code": {
-      "generated_at": "2026-03-30T02:15:53.577Z",
+      "generated_at": "2026-03-30T03:59:09.741Z",
       "volume": {
         "total_messages": 4916,
         "total_human": 2412,
@@ -9183,7 +9183,7 @@
       }
     },
     "codex": {
-      "generated_at": "2026-03-30T02:15:53.610Z",
+      "generated_at": "2026-03-30T03:59:09.767Z",
       "volume": {
         "total_messages": 1445,
         "total_human": 1412,
@@ -11637,7 +11637,7 @@
       }
     },
     "copilot_chat": {
-      "generated_at": "2026-03-30T02:15:53.690Z",
+      "generated_at": "2026-03-30T03:59:09.830Z",
       "volume": {
         "total_messages": 4531,
         "total_human": 2236,
@@ -14942,7 +14942,7 @@
       }
     },
     "cursor": {
-      "generated_at": "2026-03-30T02:15:53.693Z",
+      "generated_at": "2026-03-30T03:59:09.833Z",
       "volume": {
         "total_messages": 30,
         "total_human": 15,
@@ -15469,7 +15469,7 @@
       }
     },
     "lmstudio": {
-      "generated_at": "2026-03-30T02:15:53.695Z",
+      "generated_at": "2026-03-30T03:59:09.835Z",
       "volume": {
         "total_messages": 161,
         "total_human": 83,
