@@ -1,20 +1,20 @@
 {
   "source_views": {
     "both": {
-      "generated_at": "2026-03-30T03:59:09.669Z",
+      "generated_at": "2026-03-30T04:09:58.917Z",
       "volume": {
-        "total_messages": 11083,
-        "total_human": 6158,
-        "total_words_human": 257620,
-        "total_conversations": 392,
-        "avg_words_per_prompt": 41.8
+        "total_messages": 10885,
+        "total_human": 6062,
+        "total_words_human": 249188,
+        "total_conversations": 372,
+        "avg_words_per_prompt": 41.1
       },
       "conversation_depth": {
-        "avg_turns": 15.7,
+        "avg_turns": 16.3,
         "max_turns": 239,
-        "quick_asks": 167,
-        "working_sessions": 87,
-        "deep_dives": 138
+        "quick_asks": 157,
+        "working_sessions": 80,
+        "deep_dives": 135
       },
       "temporal": {
         "heatmap": [
@@ -45,14 +45,14 @@
             91
           ],
           [
-            94,
+            76,
             13,
             5,
             6,
             16,
             12,
             0,
-            30,
+            25,
             35,
             35,
             10,
@@ -116,15 +116,15 @@
             38,
             27,
             21,
-            22,
+            21,
             44,
-            126,
-            133,
-            131
+            123,
+            130,
+            125
           ],
           [
-            81,
-            66,
+            56,
+            57,
             0,
             0,
             0,
@@ -132,11 +132,11 @@
             6,
             14,
             53,
-            14,
-            15,
-            28,
-            28,
-            24,
+            12,
+            4,
+            25,
+            22,
+            19,
             7,
             5,
             7,
@@ -196,56 +196,56 @@
             78,
             62,
             23,
-            60,
+            61,
             65,
             86
           ]
         ],
-        "night_owl_pct": 33.6,
+        "night_owl_pct": 33.1,
         "peak_hour": 23,
-        "peak_hour_count": 850,
+        "peak_hour_count": 844,
         "peak_day": "Saturday",
         "peak_day_count": 1657,
         "hour_counts": {
-          "0": 670,
-          "1": 376,
+          "0": 627,
+          "1": 367,
           "2": 150,
           "3": 21,
           "4": 28,
           "5": 29,
           "6": 16,
-          "7": 82,
+          "7": 77,
           "8": 235,
-          "9": 144,
-          "10": 227,
-          "11": 166,
-          "12": 154,
-          "13": 183,
+          "9": 142,
+          "10": 216,
+          "11": 163,
+          "12": 148,
+          "13": 178,
           "14": 215,
           "15": 162,
           "16": 153,
           "17": 144,
           "18": 363,
-          "19": 325,
+          "19": 324,
           "20": 309,
-          "21": 487,
-          "22": 669,
-          "23": 850
+          "21": 485,
+          "22": 666,
+          "23": 844
         }
       },
       "politeness": {
-        "score": 57.2,
-        "total_prompts": 6158
+        "score": 57.3,
+        "total_prompts": 6062
       },
       "youre_right": {
-        "count": 491,
+        "count": 484,
         "per_conversation": 1.3
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2412,
-          "words": 122690,
-          "conversations": 251,
+          "messages": 2316,
+          "words": 114258,
+          "conversations": 231,
           "first_message": "2026-01-01T23:28:51.222Z"
         },
         "codex": {
@@ -275,9 +275,9 @@
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 6158,
+          "total_human_prompts": 6062,
           "prompts_with_model_metadata": 3536,
-          "metadata_coverage_pct": 57.4
+          "metadata_coverage_pct": 58.3
         },
         "by_model": [
           {
@@ -4008,23 +4008,6 @@
             }
           },
           {
-            "date": "2026-02-24",
-            "prompts": 23,
-            "source_counts": {
-              "claude_code": 23
-            },
-            "source_share_pct": {
-              "claude_code": 100
-            },
-            "style": {
-              "backtrack_per_100": 4.3,
-              "question_rate_pct": 13,
-              "command_rate_pct": 8.7
-            },
-            "model_prompts": 0,
-            "models": {}
-          },
-          {
             "date": "2026-02-25",
             "prompts": 3,
             "source_counts": {
@@ -4045,19 +4028,17 @@
           },
           {
             "date": "2026-02-26",
-            "prompts": 16,
+            "prompts": 3,
             "source_counts": {
-              "codex": 3,
-              "claude_code": 13
+              "codex": 3
             },
             "source_share_pct": {
-              "claude_code": 81.3,
-              "codex": 18.8
+              "codex": 100
             },
             "style": {
-              "backtrack_per_100": 6.3,
-              "question_rate_pct": 31.3,
-              "command_rate_pct": 12.5
+              "backtrack_per_100": 0,
+              "question_rate_pct": 66.7,
+              "command_rate_pct": 33.3
             },
             "model_prompts": 3,
             "models": {
@@ -4066,19 +4047,19 @@
           },
           {
             "date": "2026-02-27",
-            "prompts": 86,
+            "prompts": 25,
             "source_counts": {
-              "claude_code": 83,
-              "lmstudio": 3
+              "lmstudio": 3,
+              "claude_code": 22
             },
             "source_share_pct": {
-              "claude_code": 96.5,
-              "lmstudio": 3.5
+              "claude_code": 88,
+              "lmstudio": 12
             },
             "style": {
-              "backtrack_per_100": 3.5,
-              "question_rate_pct": 16.3,
-              "command_rate_pct": 11.6
+              "backtrack_per_100": 0,
+              "question_rate_pct": 12,
+              "command_rate_pct": 8
             },
             "model_prompts": 0,
             "models": {}
@@ -4642,16 +4623,16 @@
           },
           {
             "date": "2026-03-29",
-            "prompts": 12,
+            "prompts": 13,
             "source_counts": {
-              "claude_code": 12
+              "claude_code": 13
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 83.3,
-              "question_rate_pct": 8.3,
+              "backtrack_per_100": 76.9,
+              "question_rate_pct": 7.7,
               "command_rate_pct": 0
             },
             "model_prompts": 0,
@@ -4676,9 +4657,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 41.6,
-              "vibe_coder_index": 78.7,
-              "politeness": 50.7
+              "hitl_score": 42.3,
+              "vibe_coder_index": 78.9,
+              "politeness": 51
             }
           },
           {
@@ -4700,9 +4681,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 43.2,
-              "vibe_coder_index": 76.4,
-              "politeness": 50.9
+              "hitl_score": 43,
+              "vibe_coder_index": 76.5,
+              "politeness": 50.7
             }
           },
           {
@@ -4724,9 +4705,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 36.7,
-              "vibe_coder_index": 82.7,
-              "politeness": 53.2
+              "hitl_score": 35.8,
+              "vibe_coder_index": 82.2,
+              "politeness": 53.5
             }
           },
           {
@@ -4748,9 +4729,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 24.1,
-              "vibe_coder_index": 73.6,
-              "politeness": 56.9
+              "hitl_score": 23.7,
+              "vibe_coder_index": 73.5,
+              "politeness": 57
             }
           },
           {
@@ -4772,9 +4753,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 35.5,
+              "hitl_score": 35.7,
               "vibe_coder_index": 71.4,
-              "politeness": 56.5
+              "politeness": 56.7
             }
           },
           {
@@ -4794,9 +4775,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 34.7,
-              "vibe_coder_index": 71,
-              "politeness": 54.1
+              "hitl_score": 33.9,
+              "vibe_coder_index": 71.1,
+              "politeness": 54.4
             }
           },
           {
@@ -4816,8 +4797,8 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 51.9,
-              "vibe_coder_index": 72,
+              "hitl_score": 51.8,
+              "vibe_coder_index": 72.2,
               "politeness": 53.1
             }
           },
@@ -4838,9 +4819,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 60.6,
-              "vibe_coder_index": 79.9,
-              "politeness": 53.1
+              "hitl_score": 59.4,
+              "vibe_coder_index": 80.4,
+              "politeness": 52.9
             }
           },
           {
@@ -4863,9 +4844,9 @@
               "github.copilot-chat/claude-sonnet-4": 1
             },
             "nlp": {
-              "hitl_score": 27.8,
-              "vibe_coder_index": 54.8,
-              "politeness": 51.5
+              "hitl_score": 28.1,
+              "vibe_coder_index": 54.9,
+              "politeness": 51.1
             }
           },
           {
@@ -4887,9 +4868,9 @@
               "copilot/gpt-4.1": 2
             },
             "nlp": {
-              "hitl_score": 35.6,
-              "vibe_coder_index": 77.1,
-              "politeness": 45.5
+              "hitl_score": 36.7,
+              "vibe_coder_index": 77.4,
+              "politeness": 45.7
             }
           },
           {
@@ -4911,9 +4892,9 @@
               "copilot/gpt-4.1": 4
             },
             "nlp": {
-              "hitl_score": 41.3,
-              "vibe_coder_index": 69.2,
-              "politeness": 53.3
+              "hitl_score": 42.9,
+              "vibe_coder_index": 69.4,
+              "politeness": 53.4
             }
           },
           {
@@ -4937,9 +4918,9 @@
               "copilot/gpt-4.1": 6
             },
             "nlp": {
-              "hitl_score": 36.5,
-              "vibe_coder_index": 71.3,
-              "politeness": 49.4
+              "hitl_score": 36.9,
+              "vibe_coder_index": 71.4,
+              "politeness": 49.2
             }
           },
           {
@@ -4967,9 +4948,9 @@
               "openrouter/nousresearch/hermes-4-70b": 1
             },
             "nlp": {
-              "hitl_score": 35.7,
-              "vibe_coder_index": 68.3,
-              "politeness": 54.5
+              "hitl_score": 35.8,
+              "vibe_coder_index": 68.5,
+              "politeness": 54.4
             }
           },
           {
@@ -4997,8 +4978,8 @@
             },
             "nlp": {
               "hitl_score": 41.1,
-              "vibe_coder_index": 71.6,
-              "politeness": 55.1
+              "vibe_coder_index": 71.8,
+              "politeness": 55
             }
           },
           {
@@ -5021,9 +5002,9 @@
               "copilot/claude-sonnet-4": 1
             },
             "nlp": {
-              "hitl_score": 52.4,
-              "vibe_coder_index": 75.8,
-              "politeness": 53.7
+              "hitl_score": 50.9,
+              "vibe_coder_index": 75.7,
+              "politeness": 53.3
             }
           },
           {
@@ -5043,9 +5024,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 51.4,
-              "vibe_coder_index": 67.5,
-              "politeness": 61.1
+              "hitl_score": 53.8,
+              "vibe_coder_index": 68.6,
+              "politeness": 60.4
             }
           },
           {
@@ -5067,9 +5048,9 @@
               "copilot/claude-sonnet-4": 1
             },
             "nlp": {
-              "hitl_score": 36.6,
-              "vibe_coder_index": 76.3,
-              "politeness": 51.9
+              "hitl_score": 35.7,
+              "vibe_coder_index": 77.1,
+              "politeness": 51.8
             }
           },
           {
@@ -5094,8 +5075,8 @@
               "copilot/gpt-5-mini": 1
             },
             "nlp": {
-              "hitl_score": 46.7,
-              "vibe_coder_index": 71.2,
+              "hitl_score": 46.9,
+              "vibe_coder_index": 71.3,
               "politeness": 53.9
             }
           },
@@ -5128,8 +5109,8 @@
               "copilot/grok-code-fast-1": 1
             },
             "nlp": {
-              "hitl_score": 45.3,
-              "vibe_coder_index": 66.3,
+              "hitl_score": 45.4,
+              "vibe_coder_index": 66.4,
               "politeness": 54.1
             }
           },
@@ -5153,9 +5134,9 @@
               "copilot/gpt-5-codex": 8
             },
             "nlp": {
-              "hitl_score": 56.1,
+              "hitl_score": 56.4,
               "vibe_coder_index": 69.1,
-              "politeness": 56.4
+              "politeness": 56.7
             }
           },
           {
@@ -5185,7 +5166,7 @@
               "openrouter/qwen/qwen3-235b-a22b:free": 1
             },
             "nlp": {
-              "hitl_score": 54.3,
+              "hitl_score": 54.2,
               "vibe_coder_index": 70,
               "politeness": 56.6
             }
@@ -5215,8 +5196,8 @@
               "copilot/gemini-2.5-pro": 3
             },
             "nlp": {
-              "hitl_score": 52.8,
-              "vibe_coder_index": 67.8,
+              "hitl_score": 52.7,
+              "vibe_coder_index": 67.7,
               "politeness": 55.1
             }
           },
@@ -5242,7 +5223,7 @@
               "copilot/gpt-5.1": 2
             },
             "nlp": {
-              "hitl_score": 54,
+              "hitl_score": 53.9,
               "vibe_coder_index": 65.7,
               "politeness": 60.2
             }
@@ -5268,8 +5249,8 @@
               "copilot/grok-code-fast-1": 3
             },
             "nlp": {
-              "hitl_score": 54.6,
-              "vibe_coder_index": 66.3,
+              "hitl_score": 54.5,
+              "vibe_coder_index": 66.2,
               "politeness": 57.5
             }
           },
@@ -5292,8 +5273,8 @@
               "copilot/claude-opus-4.5": 92
             },
             "nlp": {
-              "hitl_score": 50.5,
-              "vibe_coder_index": 67.1,
+              "hitl_score": 50.3,
+              "vibe_coder_index": 67.2,
               "politeness": 55.3
             }
           },
@@ -5319,8 +5300,8 @@
               "copilot/gpt-5.2": 4
             },
             "nlp": {
-              "hitl_score": 52.5,
-              "vibe_coder_index": 67,
+              "hitl_score": 52.6,
+              "vibe_coder_index": 67.1,
               "politeness": 56
             }
           },
@@ -5346,7 +5327,7 @@
               "copilot/gemini-3-pro-preview": 6
             },
             "nlp": {
-              "hitl_score": 53,
+              "hitl_score": 53.1,
               "vibe_coder_index": 66,
               "politeness": 57.6
             }
@@ -5370,9 +5351,9 @@
               "gpt-5.2-codex": 195
             },
             "nlp": {
-              "hitl_score": 51.6,
-              "vibe_coder_index": 66.6,
-              "politeness": 57.8
+              "hitl_score": 51,
+              "vibe_coder_index": 66.3,
+              "politeness": 57.9
             }
           },
           {
@@ -5400,7 +5381,7 @@
             "nlp": {
               "hitl_score": 54.6,
               "vibe_coder_index": 68.3,
-              "politeness": 59
+              "politeness": 59.1
             }
           },
           {
@@ -5426,7 +5407,7 @@
               "gpt-5.2-codex": 95
             },
             "nlp": {
-              "hitl_score": 52.4,
+              "hitl_score": 52.5,
               "vibe_coder_index": 69,
               "politeness": 58.1
             }
@@ -5452,8 +5433,8 @@
               "gpt-5.2-codex": 42
             },
             "nlp": {
-              "hitl_score": 55.2,
-              "vibe_coder_index": 70.1,
+              "hitl_score": 55.1,
+              "vibe_coder_index": 70,
               "politeness": 58.9
             }
           },
@@ -5507,8 +5488,8 @@
             },
             "nlp": {
               "hitl_score": 43.5,
-              "vibe_coder_index": 68.5,
-              "politeness": 57.9
+              "vibe_coder_index": 68.6,
+              "politeness": 57.8
             }
           },
           {
@@ -5533,7 +5514,7 @@
               "gpt-5.2-codex": 6
             },
             "nlp": {
-              "hitl_score": 53.2,
+              "hitl_score": 53.3,
               "vibe_coder_index": 68.4,
               "politeness": 58.9
             }
@@ -5557,8 +5538,8 @@
               "gpt-5.3-codex": 159
             },
             "nlp": {
-              "hitl_score": 49,
-              "vibe_coder_index": 65.1,
+              "hitl_score": 48.9,
+              "vibe_coder_index": 65,
               "politeness": 57.1
             }
           },
@@ -5583,37 +5564,37 @@
               "gpt-5.3-codex": 65
             },
             "nlp": {
-              "hitl_score": 43.9,
+              "hitl_score": 43.8,
               "vibe_coder_index": 64.5,
-              "politeness": 57.4
+              "politeness": 57.3
             }
           },
           {
             "week_start": "2026-02-23",
-            "prompts": 128,
+            "prompts": 31,
             "source_counts": {
-              "claude_code": 119,
               "codex": 6,
-              "lmstudio": 3
+              "lmstudio": 3,
+              "claude_code": 22
             },
             "source_share_pct": {
-              "claude_code": 93,
-              "codex": 4.7,
-              "lmstudio": 2.3
+              "claude_code": 71,
+              "codex": 19.4,
+              "lmstudio": 9.7
             },
             "style": {
-              "backtrack_per_100": 3.9,
-              "question_rate_pct": 17.2,
-              "command_rate_pct": 10.9
+              "backtrack_per_100": 0,
+              "question_rate_pct": 16.1,
+              "command_rate_pct": 9.7
             },
             "model_prompts": 6,
             "models": {
               "gpt-5.3-codex": 6
             },
             "nlp": {
-              "hitl_score": 49.2,
-              "vibe_coder_index": 68.3,
-              "politeness": 54
+              "hitl_score": 48.2,
+              "vibe_coder_index": 68.1,
+              "politeness": 55.3
             }
           },
           {
@@ -5638,9 +5619,9 @@
               "gpt-5.3-codex": 8
             },
             "nlp": {
-              "hitl_score": 54.7,
-              "vibe_coder_index": 68.4,
-              "politeness": 56.7
+              "hitl_score": 54.8,
+              "vibe_coder_index": 68.3,
+              "politeness": 56.8
             }
           },
           {
@@ -5665,7 +5646,7 @@
               "gpt-5.3-codex": 106
             },
             "nlp": {
-              "hitl_score": 52.8,
+              "hitl_score": 52.9,
               "vibe_coder_index": 67.6,
               "politeness": 56.7
             }
@@ -5691,16 +5672,16 @@
               "gpt-5.4": 123
             },
             "nlp": {
-              "hitl_score": 52.1,
+              "hitl_score": 52,
               "vibe_coder_index": 66.8,
-              "politeness": 58.7
+              "politeness": 58.8
             }
           },
           {
             "week_start": "2026-03-23",
-            "prompts": 503,
+            "prompts": 504,
             "source_counts": {
-              "claude_code": 442,
+              "claude_code": 443,
               "codex": 60,
               "lmstudio": 1
             },
@@ -5712,24 +5693,24 @@
             "style": {
               "backtrack_per_100": 11.5,
               "question_rate_pct": 28.2,
-              "command_rate_pct": 6.8
+              "command_rate_pct": 6.7
             },
             "model_prompts": 60,
             "models": {
               "gpt-5.4": 60
             },
             "nlp": {
-              "hitl_score": 52.9,
-              "vibe_coder_index": 67.6,
+              "hitl_score": 53,
+              "vibe_coder_index": 67.7,
               "politeness": 58.9
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 71.9,
+            "avg_7d": 72,
             "avg_30d": 68.2,
-            "delta_pct": 5.4
+            "delta_pct": 5.6
           },
           "dominant_source_share_pct": {
             "avg_7d": 91.3,
@@ -5737,14 +5718,14 @@
             "delta_pct": 11.2
           },
           "backtrack_per_100": {
-            "avg_7d": 18.1,
-            "avg_30d": 11.1,
-            "delta_pct": 63.1
+            "avg_7d": 17.2,
+            "avg_30d": 10.8,
+            "delta_pct": 59.3
           },
           "question_rate_pct": {
-            "avg_7d": 24.2,
+            "avg_7d": 24.1,
             "avg_30d": 21.7,
-            "delta_pct": 11.5
+            "delta_pct": 11.1
           },
           "command_rate_pct": {
             "avg_7d": 7.8,
@@ -5798,10 +5779,10 @@
             "date": "2026-03-29",
             "type": "prompt_shift",
             "direction": "down",
-            "delta_prompts": -164,
+            "delta_prompts": -163,
             "prev_prompts": 176,
-            "curr_prompts": 12,
-            "magnitude": 164
+            "curr_prompts": 13,
+            "magnitude": 163
           },
           {
             "date": "2025-12-13",
@@ -5978,30 +5959,30 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 51.8,
-                "vibe_coder_index": 67.9,
+                "hitl_score": 51.6,
+                "vibe_coder_index": 67.8,
                 "politeness": 58
               }
             },
             {
               "week_start": "2026-02-23",
-              "prompts": 119,
+              "prompts": 22,
               "source_counts": {
-                "claude_code": 119
+                "claude_code": 22
               },
               "source_share_pct": {
                 "claude_code": 100
               },
               "style": {
-                "backtrack_per_100": 4.2,
-                "question_rate_pct": 15.1,
-                "command_rate_pct": 10.9
+                "backtrack_per_100": 0,
+                "question_rate_pct": 4.5,
+                "command_rate_pct": 9.1
               },
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 49.8,
-                "vibe_coder_index": 68.7,
+                "hitl_score": 50.6,
+                "vibe_coder_index": 69.9,
                 "politeness": 53.6
               }
             },
@@ -6022,9 +6003,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 55.2,
+                "hitl_score": 55.1,
                 "vibe_coder_index": 68.4,
-                "politeness": 55.8
+                "politeness": 55.9
               }
             },
             {
@@ -6044,7 +6025,7 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 52.3,
+                "hitl_score": 52.4,
                 "vibe_coder_index": 67.4,
                 "politeness": 55.7
               }
@@ -6066,23 +6047,23 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 52.5,
-                "vibe_coder_index": 67,
+                "hitl_score": 52.6,
+                "vibe_coder_index": 67.1,
                 "politeness": 58.8
               }
             },
             {
               "week_start": "2026-03-23",
-              "prompts": 442,
+              "prompts": 443,
               "source_counts": {
-                "claude_code": 442
+                "claude_code": 443
               },
               "source_share_pct": {
                 "claude_code": 100
               },
               "style": {
                 "backtrack_per_100": 12.4,
-                "question_rate_pct": 29.2,
+                "question_rate_pct": 29.1,
                 "command_rate_pct": 5
               },
               "model_prompts": 0,
@@ -6114,9 +6095,9 @@
                 "gpt-5.2-codex": 195
               },
               "nlp": {
-                "hitl_score": 51.6,
-                "vibe_coder_index": 66.6,
-                "politeness": 57.8
+                "hitl_score": 51,
+                "vibe_coder_index": 66.3,
+                "politeness": 57.9
               }
             },
             {
@@ -6139,8 +6120,8 @@
               },
               "nlp": {
                 "hitl_score": 55.5,
-                "vibe_coder_index": 68.5,
-                "politeness": 58.7
+                "vibe_coder_index": 68.6,
+                "politeness": 58.8
               }
             },
             {
@@ -6162,9 +6143,9 @@
                 "gpt-5.2-codex": 95
               },
               "nlp": {
-                "hitl_score": 54,
+                "hitl_score": 54.2,
                 "vibe_coder_index": 69.2,
-                "politeness": 58.7
+                "politeness": 58.8
               }
             },
             {
@@ -6186,8 +6167,8 @@
                 "gpt-5.2-codex": 42
               },
               "nlp": {
-                "hitl_score": 58.4,
-                "vibe_coder_index": 71.2,
+                "hitl_score": 57.6,
+                "vibe_coder_index": 70.8,
                 "politeness": 63.4
               }
             },
@@ -6211,7 +6192,7 @@
               },
               "nlp": {
                 "hitl_score": 52.8,
-                "vibe_coder_index": 68.9,
+                "vibe_coder_index": 69,
                 "politeness": 61.4
               }
             },
@@ -6234,7 +6215,7 @@
                 "gpt-5.2-codex": 201
               },
               "nlp": {
-                "hitl_score": 45.1,
+                "hitl_score": 45.2,
                 "vibe_coder_index": 67.2,
                 "politeness": 58.2
               }
@@ -6259,9 +6240,9 @@
                 "gpt-5.2-codex": 6
               },
               "nlp": {
-                "hitl_score": 56.2,
-                "vibe_coder_index": 69.5,
-                "politeness": 60.9
+                "hitl_score": 56.5,
+                "vibe_coder_index": 69.6,
+                "politeness": 60.7
               }
             },
             {
@@ -6283,8 +6264,8 @@
                 "gpt-5.3-codex": 159
               },
               "nlp": {
-                "hitl_score": 49,
-                "vibe_coder_index": 65.1,
+                "hitl_score": 48.9,
+                "vibe_coder_index": 65,
                 "politeness": 57.1
               }
             },
@@ -6307,8 +6288,8 @@
                 "gpt-5.3-codex": 65
               },
               "nlp": {
-                "hitl_score": 50.5,
-                "vibe_coder_index": 67.7,
+                "hitl_score": 50.6,
+                "vibe_coder_index": 67.8,
                 "politeness": 58
               }
             },
@@ -6331,9 +6312,9 @@
                 "gpt-5.3-codex": 6
               },
               "nlp": {
-                "hitl_score": 58.9,
-                "vibe_coder_index": 70.9,
-                "politeness": 61.9
+                "hitl_score": 59.5,
+                "vibe_coder_index": 71,
+                "politeness": 61.8
               }
             },
             {
@@ -6356,9 +6337,9 @@
                 "gpt-5.3-codex": 8
               },
               "nlp": {
-                "hitl_score": 53.6,
+                "hitl_score": 54,
                 "vibe_coder_index": 68.2,
-                "politeness": 58.8
+                "politeness": 58.7
               }
             },
             {
@@ -6381,7 +6362,7 @@
                 "gpt-5.3-codex": 106
               },
               "nlp": {
-                "hitl_score": 53.5,
+                "hitl_score": 53.4,
                 "vibe_coder_index": 68,
                 "politeness": 58.2
               }
@@ -6405,8 +6386,8 @@
                 "gpt-5.4": 123
               },
               "nlp": {
-                "hitl_score": 50.5,
-                "vibe_coder_index": 65.8,
+                "hitl_score": 50.2,
+                "vibe_coder_index": 65.7,
                 "politeness": 58.5
               }
             },
@@ -6429,9 +6410,9 @@
                 "gpt-5.4": 60
               },
               "nlp": {
-                "hitl_score": 50.8,
-                "vibe_coder_index": 65.9,
-                "politeness": 57.5
+                "hitl_score": 51.2,
+                "vibe_coder_index": 66,
+                "politeness": 57.6
               }
             }
           ],
@@ -6453,9 +6434,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 41.6,
-                "vibe_coder_index": 78.7,
-                "politeness": 50.7
+                "hitl_score": 42.3,
+                "vibe_coder_index": 78.9,
+                "politeness": 51
               }
             },
             {
@@ -6475,9 +6456,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 43.4,
-                "vibe_coder_index": 76.3,
-                "politeness": 51.4
+                "hitl_score": 43.5,
+                "vibe_coder_index": 76.5,
+                "politeness": 51.3
               }
             },
             {
@@ -6497,9 +6478,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 36.7,
-                "vibe_coder_index": 82.4,
-                "politeness": 53.1
+                "hitl_score": 35.6,
+                "vibe_coder_index": 82.2,
+                "politeness": 53.7
               }
             },
             {
@@ -6519,8 +6500,8 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 24,
-                "vibe_coder_index": 73.6,
+                "hitl_score": 22.4,
+                "vibe_coder_index": 73.2,
                 "politeness": 57.1
               }
             },
@@ -6541,9 +6522,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 35.1,
-                "vibe_coder_index": 71.2,
-                "politeness": 56.4
+                "hitl_score": 35.2,
+                "vibe_coder_index": 71.4,
+                "politeness": 56.6
               }
             },
             {
@@ -6563,9 +6544,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 34.7,
-                "vibe_coder_index": 71,
-                "politeness": 54.1
+                "hitl_score": 33.9,
+                "vibe_coder_index": 71.1,
+                "politeness": 54.4
               }
             },
             {
@@ -6585,8 +6566,8 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 51.9,
-                "vibe_coder_index": 72,
+                "hitl_score": 51.8,
+                "vibe_coder_index": 72.2,
                 "politeness": 53.1
               }
             },
@@ -6607,9 +6588,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 60.6,
-                "vibe_coder_index": 79.9,
-                "politeness": 53.1
+                "hitl_score": 59.4,
+                "vibe_coder_index": 80.4,
+                "politeness": 52.9
               }
             },
             {
@@ -6632,9 +6613,9 @@
                 "github.copilot-chat/claude-sonnet-4": 1
               },
               "nlp": {
-                "hitl_score": 27.8,
-                "vibe_coder_index": 54.8,
-                "politeness": 51.5
+                "hitl_score": 28.1,
+                "vibe_coder_index": 54.9,
+                "politeness": 51.1
               }
             },
             {
@@ -6656,9 +6637,9 @@
                 "copilot/gpt-4.1": 2
               },
               "nlp": {
-                "hitl_score": 35.6,
-                "vibe_coder_index": 77.1,
-                "politeness": 45.5
+                "hitl_score": 36.7,
+                "vibe_coder_index": 77.4,
+                "politeness": 45.7
               }
             },
             {
@@ -6680,9 +6661,9 @@
                 "copilot/gpt-4.1": 4
               },
               "nlp": {
-                "hitl_score": 41.3,
-                "vibe_coder_index": 69.2,
-                "politeness": 53.3
+                "hitl_score": 42.9,
+                "vibe_coder_index": 69.4,
+                "politeness": 53.4
               }
             },
             {
@@ -6704,9 +6685,9 @@
                 "copilot/gpt-4.1": 6
               },
               "nlp": {
-                "hitl_score": 37,
-                "vibe_coder_index": 70.2,
-                "politeness": 49.3
+                "hitl_score": 37.1,
+                "vibe_coder_index": 70.3,
+                "politeness": 49.2
               }
             },
             {
@@ -6732,8 +6713,8 @@
                 "openrouter/nousresearch/hermes-4-70b": 1
               },
               "nlp": {
-                "hitl_score": 36.9,
-                "vibe_coder_index": 69.1,
+                "hitl_score": 37,
+                "vibe_coder_index": 69.3,
                 "politeness": 54.4
               }
             },
@@ -6759,9 +6740,9 @@
                 "copilot/gpt-5-mini": 2
               },
               "nlp": {
-                "hitl_score": 43.1,
-                "vibe_coder_index": 73.7,
-                "politeness": 55.3
+                "hitl_score": 43.2,
+                "vibe_coder_index": 73.9,
+                "politeness": 55.1
               }
             },
             {
@@ -6784,9 +6765,9 @@
                 "copilot/claude-sonnet-4": 1
               },
               "nlp": {
-                "hitl_score": 52.4,
-                "vibe_coder_index": 75.8,
-                "politeness": 53.7
+                "hitl_score": 50.9,
+                "vibe_coder_index": 75.7,
+                "politeness": 53.3
               }
             },
             {
@@ -6808,9 +6789,9 @@
                 "copilot/claude-sonnet-4": 1
               },
               "nlp": {
-                "hitl_score": 36.6,
-                "vibe_coder_index": 76.3,
-                "politeness": 51.9
+                "hitl_score": 35.7,
+                "vibe_coder_index": 77.1,
+                "politeness": 51.8
               }
             },
             {
@@ -6833,9 +6814,9 @@
                 "copilot/gpt-5-mini": 1
               },
               "nlp": {
-                "hitl_score": 46.8,
-                "vibe_coder_index": 71.4,
-                "politeness": 53.5
+                "hitl_score": 46.9,
+                "vibe_coder_index": 71.5,
+                "politeness": 53.6
               }
             },
             {
@@ -6866,8 +6847,8 @@
               },
               "nlp": {
                 "hitl_score": 46,
-                "vibe_coder_index": 66.7,
-                "politeness": 54.2
+                "vibe_coder_index": 66.9,
+                "politeness": 54.1
               }
             },
             {
@@ -6890,9 +6871,9 @@
                 "copilot/gpt-5-codex": 8
               },
               "nlp": {
-                "hitl_score": 56.1,
+                "hitl_score": 56.4,
                 "vibe_coder_index": 69.1,
-                "politeness": 56.4
+                "politeness": 56.7
               }
             },
             {
@@ -6922,7 +6903,7 @@
                 "openrouter/qwen/qwen3-235b-a22b:free": 1
               },
               "nlp": {
-                "hitl_score": 54.3,
+                "hitl_score": 54.2,
                 "vibe_coder_index": 70,
                 "politeness": 56.6
               }
@@ -6950,9 +6931,9 @@
                 "copilot/gemini-2.5-pro": 3
               },
               "nlp": {
-                "hitl_score": 52.9,
-                "vibe_coder_index": 67.9,
-                "politeness": 55.2
+                "hitl_score": 52.8,
+                "vibe_coder_index": 67.8,
+                "politeness": 55.1
               }
             },
             {
@@ -6977,7 +6958,7 @@
                 "copilot/gpt-5.1": 2
               },
               "nlp": {
-                "hitl_score": 54,
+                "hitl_score": 53.9,
                 "vibe_coder_index": 65.7,
                 "politeness": 60.2
               }
@@ -7003,8 +6984,8 @@
                 "copilot/grok-code-fast-1": 3
               },
               "nlp": {
-                "hitl_score": 54.6,
-                "vibe_coder_index": 66.3,
+                "hitl_score": 54.5,
+                "vibe_coder_index": 66.2,
                 "politeness": 57.5
               }
             },
@@ -7027,8 +7008,8 @@
                 "copilot/claude-opus-4.5": 92
               },
               "nlp": {
-                "hitl_score": 50.5,
-                "vibe_coder_index": 67.1,
+                "hitl_score": 50.3,
+                "vibe_coder_index": 67.2,
                 "politeness": 55.3
               }
             },
@@ -7054,8 +7035,8 @@
                 "copilot/gpt-5.2": 4
               },
               "nlp": {
-                "hitl_score": 52.5,
-                "vibe_coder_index": 67,
+                "hitl_score": 52.6,
+                "vibe_coder_index": 67.1,
                 "politeness": 56
               }
             },
@@ -7081,7 +7062,7 @@
                 "copilot/gemini-3-pro-preview": 6
               },
               "nlp": {
-                "hitl_score": 53,
+                "hitl_score": 53.1,
                 "vibe_coder_index": 66,
                 "politeness": 57.6
               }
@@ -7105,9 +7086,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 40.9,
-                "vibe_coder_index": 77.2,
-                "politeness": 44.5
+                "hitl_score": 36.9,
+                "vibe_coder_index": 76.8,
+                "politeness": 44
               }
             },
             {
@@ -7127,9 +7108,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 36.7,
-                "vibe_coder_index": 83,
-                "politeness": 53.3
+                "hitl_score": 36,
+                "vibe_coder_index": 82.1,
+                "politeness": 53.2
               }
             },
             {
@@ -7149,9 +7130,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 24.2,
-                "vibe_coder_index": 73.7,
-                "politeness": 56.7
+                "hitl_score": 25,
+                "vibe_coder_index": 73.8,
+                "politeness": 56.9
               }
             },
             {
@@ -7171,9 +7152,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 35.9,
-                "vibe_coder_index": 71.6,
-                "politeness": 56.5
+                "hitl_score": 36.1,
+                "vibe_coder_index": 71.5,
+                "politeness": 56.8
               }
             }
           ],
@@ -7195,9 +7176,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 33.5,
-                "vibe_coder_index": 77.9,
-                "politeness": 50
+                "hitl_score": 35.8,
+                "vibe_coder_index": 78.2,
+                "politeness": 49.4
               }
             },
             {
@@ -7217,9 +7198,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 22.3,
-                "vibe_coder_index": 59.4,
-                "politeness": 55.5
+                "hitl_score": 22.9,
+                "vibe_coder_index": 59.7,
+                "politeness": 55.3
               }
             },
             {
@@ -7240,8 +7221,8 @@
               "models": {},
               "nlp": {
                 "hitl_score": 18.9,
-                "vibe_coder_index": 48.6,
-                "politeness": 53.8
+                "vibe_coder_index": 48.3,
+                "politeness": 54
               }
             },
             {
@@ -7261,9 +7242,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 51.4,
-                "vibe_coder_index": 67.5,
-                "politeness": 61.1
+                "hitl_score": 53.8,
+                "vibe_coder_index": 68.6,
+                "politeness": 60.4
               }
             },
             {
@@ -7283,9 +7264,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 44.9,
+                "hitl_score": 46.3,
                 "vibe_coder_index": 66.1,
-                "politeness": 66.9
+                "politeness": 66.6
               }
             },
             {
@@ -7305,9 +7286,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 19.6,
-                "vibe_coder_index": 47.8,
-                "politeness": 51.6
+                "hitl_score": 18.3,
+                "vibe_coder_index": 47.5,
+                "politeness": 51.4
               }
             },
             {
@@ -7327,8 +7308,8 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 8,
-                "vibe_coder_index": 40.3,
+                "hitl_score": 9.5,
+                "vibe_coder_index": 40.4,
                 "politeness": 47
               }
             },
@@ -7349,9 +7330,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 25.1,
-                "vibe_coder_index": 55.5,
-                "politeness": 53
+                "hitl_score": 25.2,
+                "vibe_coder_index": 55.1,
+                "politeness": 53.1
               }
             },
             {
@@ -7371,9 +7352,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 31.3,
+                "hitl_score": 31.2,
                 "vibe_coder_index": 54.7,
-                "politeness": 53.7
+                "politeness": 53.5
               }
             },
             {
@@ -7393,9 +7374,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 19.5,
-                "vibe_coder_index": 52.6,
-                "politeness": 52.9
+                "hitl_score": 19.6,
+                "vibe_coder_index": 52.7,
+                "politeness": 53.1
               }
             },
             {
@@ -7415,8 +7396,8 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 17,
-                "vibe_coder_index": 51.7,
+                "hitl_score": 16.1,
+                "vibe_coder_index": 51.4,
                 "politeness": 54.6
               }
             },
@@ -7437,9 +7418,9 @@
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 6.9,
-                "vibe_coder_index": 49.6,
-                "politeness": 53.9
+                "hitl_score": 7.4,
+                "vibe_coder_index": 49.8,
+                "politeness": 54.2
               }
             },
             {
@@ -7460,8 +7441,8 @@
               "models": {},
               "nlp": {
                 "hitl_score": 26.9,
-                "vibe_coder_index": 52.9,
-                "politeness": 51.7
+                "vibe_coder_index": 53.1,
+                "politeness": 51.8
               }
             }
           ]
@@ -7471,19 +7452,19 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 3945,
-            "build_feature": 704,
-            "debug_fix": 374,
-            "ops_commands": 309,
-            "planning_strategy": 298,
-            "explanation_learning": 281,
-            "analysis_research": 247
+            "other": 3895,
+            "build_feature": 693,
+            "debug_fix": 362,
+            "ops_commands": 300,
+            "planning_strategy": 289,
+            "explanation_learning": 278,
+            "analysis_research": 245
           },
           "rates_pct": {
-            "other": 64.1,
+            "other": 64.3,
             "build_feature": 11.4,
-            "debug_fix": 6.1,
-            "ops_commands": 5,
+            "debug_fix": 6,
+            "ops_commands": 4.9,
             "planning_strategy": 4.8,
             "explanation_learning": 4.6,
             "analysis_research": 4
@@ -7491,18 +7472,18 @@
           "top_intents": [
             {
               "intent": "other",
-              "count": 3945,
-              "rate_pct": 64.1
+              "count": 3895,
+              "rate_pct": 64.3
             },
             {
               "intent": "build_feature",
-              "count": 704,
+              "count": 693,
               "rate_pct": 11.4
             },
             {
               "intent": "debug_fix",
-              "count": 374,
-              "rate_pct": 6.1
+              "count": 362,
+              "rate_pct": 6
             }
           ],
           "confidence": {
@@ -7531,17 +7512,17 @@
         },
         "politeness": {
           "method": "embedding_similarity_v1",
-          "avg_score": 57.2,
+          "avg_score": 57.3,
           "confidence": {
             "mean": 0.86,
-            "min": 0.53,
+            "min": 0.52,
             "max": 0.95
           }
         }
       },
       "date_range": {
         "first": "2025-03-24T04:33:47.819Z",
-        "last": "2026-03-29T22:49:21.782Z"
+        "last": "2026-03-30T04:05:12.900Z"
       },
       "persona": {
         "name": "The Commander",
@@ -7557,24 +7538,24 @@
       },
       "normalized": {
         "vibe_index": 32.1,
-        "politeness": 57.2
+        "politeness": 57.3
       }
     },
     "claude_code": {
-      "generated_at": "2026-03-30T03:59:09.741Z",
+      "generated_at": "2026-03-30T04:09:58.998Z",
       "volume": {
-        "total_messages": 4916,
-        "total_human": 2412,
-        "total_words_human": 122690,
-        "total_conversations": 251,
-        "avg_words_per_prompt": 50.9
+        "total_messages": 4718,
+        "total_human": 2316,
+        "total_words_human": 114258,
+        "total_conversations": 231,
+        "avg_words_per_prompt": 49.3
       },
       "conversation_depth": {
-        "avg_turns": 9.6,
+        "avg_turns": 10,
         "max_turns": 94,
-        "quick_asks": 120,
-        "working_sessions": 55,
-        "deep_dives": 76
+        "quick_asks": 110,
+        "working_sessions": 48,
+        "deep_dives": 73
       },
       "temporal": {
         "heatmap": [
@@ -7605,14 +7586,14 @@
             49
           ],
           [
-            43,
+            25,
             0,
             0,
             0,
             0,
             0,
             0,
-            10,
+            5,
             13,
             3,
             0,
@@ -7676,15 +7657,15 @@
             26,
             14,
             10,
-            2,
+            1,
             9,
-            44,
-            37,
-            34
+            41,
+            34,
+            28
           ],
           [
-            51,
-            25,
+            26,
+            16,
             0,
             0,
             0,
@@ -7692,11 +7673,11 @@
             0,
             4,
             26,
-            7,
-            11,
-            4,
-            14,
-            24,
+            5,
+            0,
+            1,
+            8,
+            19,
             7,
             5,
             7,
@@ -7756,59 +7737,59 @@
             29,
             29,
             13,
-            20,
+            21,
             34,
             24
           ]
         ],
-        "night_owl_pct": 31.6,
+        "night_owl_pct": 30.4,
         "peak_hour": 23,
-        "peak_hour_count": 312,
+        "peak_hour_count": 306,
         "peak_day": "Saturday",
         "peak_day_count": 635,
         "hour_counts": {
-          "0": 269,
-          "1": 113,
+          "0": 226,
+          "1": 104,
           "2": 65,
           "3": 4,
-          "7": 29,
+          "7": 24,
           "8": 85,
-          "9": 18,
-          "10": 49,
-          "11": 48,
-          "12": 55,
-          "13": 69,
+          "9": 16,
+          "10": 38,
+          "11": 45,
+          "12": 49,
+          "13": 64,
           "14": 141,
           "15": 79,
           "16": 81,
           "17": 73,
           "18": 198,
-          "19": 158,
+          "19": 157,
           "20": 106,
-          "21": 195,
-          "22": 265,
-          "23": 312
+          "21": 193,
+          "22": 262,
+          "23": 306
         }
       },
       "politeness": {
-        "score": 57.7,
-        "total_prompts": 2412
+        "score": 57.9,
+        "total_prompts": 2316
       },
       "youre_right": {
-        "count": 263,
-        "per_conversation": 1
+        "count": 256,
+        "per_conversation": 1.1
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2412,
-          "words": 122690,
-          "conversations": 251,
+          "messages": 2316,
+          "words": 114258,
+          "conversations": 231,
           "first_message": "2026-01-01T23:28:51.222Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 2412,
+          "total_human_prompts": 2316,
           "prompts_with_model_metadata": 0,
           "metadata_coverage_pct": 0
         },
@@ -8210,52 +8191,18 @@
             "models": {}
           },
           {
-            "date": "2026-02-24",
-            "prompts": 23,
-            "source_counts": {
-              "claude_code": 23
-            },
-            "source_share_pct": {
-              "claude_code": 100
-            },
-            "style": {
-              "backtrack_per_100": 4.3,
-              "question_rate_pct": 13,
-              "command_rate_pct": 8.7
-            },
-            "model_prompts": 0,
-            "models": {}
-          },
-          {
-            "date": "2026-02-26",
-            "prompts": 13,
-            "source_counts": {
-              "claude_code": 13
-            },
-            "source_share_pct": {
-              "claude_code": 100
-            },
-            "style": {
-              "backtrack_per_100": 7.7,
-              "question_rate_pct": 23.1,
-              "command_rate_pct": 7.7
-            },
-            "model_prompts": 0,
-            "models": {}
-          },
-          {
             "date": "2026-02-27",
-            "prompts": 83,
+            "prompts": 22,
             "source_counts": {
-              "claude_code": 83
+              "claude_code": 22
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 3.6,
-              "question_rate_pct": 14.5,
-              "command_rate_pct": 12
+              "backtrack_per_100": 0,
+              "question_rate_pct": 4.5,
+              "command_rate_pct": 9.1
             },
             "model_prompts": 0,
             "models": {}
@@ -8704,16 +8651,16 @@
           },
           {
             "date": "2026-03-29",
-            "prompts": 12,
+            "prompts": 13,
             "source_counts": {
-              "claude_code": 12
+              "claude_code": 13
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 83.3,
-              "question_rate_pct": 8.3,
+              "backtrack_per_100": 76.9,
+              "question_rate_pct": 7.7,
               "command_rate_pct": 0
             },
             "model_prompts": 0,
@@ -8848,30 +8795,30 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 51.8,
-              "vibe_coder_index": 67.9,
+              "hitl_score": 51.6,
+              "vibe_coder_index": 67.8,
               "politeness": 58
             }
           },
           {
             "week_start": "2026-02-23",
-            "prompts": 119,
+            "prompts": 22,
             "source_counts": {
-              "claude_code": 119
+              "claude_code": 22
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 4.2,
-              "question_rate_pct": 15.1,
-              "command_rate_pct": 10.9
+              "backtrack_per_100": 0,
+              "question_rate_pct": 4.5,
+              "command_rate_pct": 9.1
             },
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 49.8,
-              "vibe_coder_index": 68.7,
+              "hitl_score": 50.6,
+              "vibe_coder_index": 69.9,
               "politeness": 53.6
             }
           },
@@ -8892,9 +8839,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 55.2,
+              "hitl_score": 55.1,
               "vibe_coder_index": 68.4,
-              "politeness": 55.8
+              "politeness": 55.9
             }
           },
           {
@@ -8914,7 +8861,7 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 52.3,
+              "hitl_score": 52.4,
               "vibe_coder_index": 67.4,
               "politeness": 55.7
             }
@@ -8936,23 +8883,23 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 52.5,
-              "vibe_coder_index": 67,
+              "hitl_score": 52.6,
+              "vibe_coder_index": 67.1,
               "politeness": 58.8
             }
           },
           {
             "week_start": "2026-03-23",
-            "prompts": 442,
+            "prompts": 443,
             "source_counts": {
-              "claude_code": 442
+              "claude_code": 443
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
               "backtrack_per_100": 12.4,
-              "question_rate_pct": 29.2,
+              "question_rate_pct": 29.1,
               "command_rate_pct": 5
             },
             "model_prompts": 0,
@@ -8966,9 +8913,9 @@
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 73.7,
+            "avg_7d": 73.8,
             "avg_30d": 51.9,
-            "delta_pct": 42
+            "delta_pct": 42.2
           },
           "dominant_source_share_pct": {
             "avg_7d": 100,
@@ -8976,14 +8923,14 @@
             "delta_pct": 0
           },
           "backtrack_per_100": {
-            "avg_7d": 20.8,
-            "avg_30d": 11.3,
-            "delta_pct": 84.1
+            "avg_7d": 19.8,
+            "avg_30d": 11,
+            "delta_pct": 80
           },
           "question_rate_pct": {
-            "avg_7d": 25,
+            "avg_7d": 24.9,
             "avg_30d": 21.9,
-            "delta_pct": 14.2
+            "delta_pct": 13.7
           },
           "command_rate_pct": {
             "avg_7d": 4.5,
@@ -9001,10 +8948,10 @@
             "date": "2026-03-29",
             "type": "prompt_shift",
             "direction": "down",
-            "delta_prompts": -161,
+            "delta_prompts": -160,
             "prev_prompts": 173,
-            "curr_prompts": 12,
-            "magnitude": 161
+            "curr_prompts": 13,
+            "magnitude": 160
           },
           {
             "date": "2026-03-21",
@@ -9034,15 +8981,6 @@
             "magnitude": 99
           },
           {
-            "date": "2026-03-02",
-            "type": "prompt_shift",
-            "direction": "down",
-            "delta_prompts": -82,
-            "prev_prompts": 83,
-            "curr_prompts": 1,
-            "magnitude": 82
-          },
-          {
             "date": "2026-03-16",
             "type": "prompt_shift",
             "direction": "down",
@@ -9070,15 +9008,6 @@
             "magnitude": 73
           },
           {
-            "date": "2026-02-27",
-            "type": "prompt_shift",
-            "direction": "up",
-            "delta_prompts": 70,
-            "prev_prompts": 13,
-            "curr_prompts": 83,
-            "magnitude": 70
-          },
-          {
             "date": "2026-01-28",
             "type": "prompt_shift",
             "direction": "down",
@@ -9086,6 +9015,24 @@
             "prev_prompts": 74,
             "curr_prompts": 5,
             "magnitude": 69
+          },
+          {
+            "date": "2026-02-07",
+            "type": "prompt_shift",
+            "direction": "up",
+            "delta_prompts": 66,
+            "prev_prompts": 17,
+            "curr_prompts": 83,
+            "magnitude": 66
+          },
+          {
+            "date": "2026-02-27",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -61,
+            "prev_prompts": 83,
+            "curr_prompts": 22,
+            "magnitude": 61
           }
         ]
       },
@@ -9093,38 +9040,38 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 1537,
-            "build_feature": 253,
-            "debug_fix": 151,
-            "planning_strategy": 133,
-            "explanation_learning": 114,
-            "ops_commands": 113,
-            "analysis_research": 111
+            "other": 1487,
+            "build_feature": 242,
+            "debug_fix": 139,
+            "planning_strategy": 124,
+            "explanation_learning": 111,
+            "analysis_research": 109,
+            "ops_commands": 104
           },
           "rates_pct": {
-            "other": 63.7,
-            "build_feature": 10.5,
-            "debug_fix": 6.3,
-            "planning_strategy": 5.5,
-            "explanation_learning": 4.7,
-            "ops_commands": 4.7,
-            "analysis_research": 4.6
+            "other": 64.2,
+            "build_feature": 10.4,
+            "debug_fix": 6,
+            "planning_strategy": 5.4,
+            "explanation_learning": 4.8,
+            "analysis_research": 4.7,
+            "ops_commands": 4.5
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 1537,
-              "rate_pct": 63.7
+              "count": 1487,
+              "rate_pct": 64.2
             },
             {
               "intent": "build_feature",
-              "count": 253,
-              "rate_pct": 10.5
+              "count": 242,
+              "rate_pct": 10.4
             },
             {
               "intent": "debug_fix",
-              "count": 151,
-              "rate_pct": 6.3
+              "count": 139,
+              "rate_pct": 6
             }
           ],
           "confidence": {
@@ -9135,7 +9082,7 @@
         },
         "hitl_score": {
           "method": "embedding_similarity_v1",
-          "avg_score": 51.9,
+          "avg_score": 52,
           "confidence": {
             "mean": 0.79,
             "min": 0.52,
@@ -9153,7 +9100,7 @@
         },
         "politeness": {
           "method": "embedding_similarity_v1",
-          "avg_score": 57.7,
+          "avg_score": 57.9,
           "confidence": {
             "mean": 0.86,
             "min": 0.6,
@@ -9163,7 +9110,7 @@
       },
       "date_range": {
         "first": "2026-01-01T23:28:51.222Z",
-        "last": "2026-03-29T22:49:21.782Z"
+        "last": "2026-03-30T04:05:12.900Z"
       },
       "persona": {
         "name": "The Commander",
@@ -9174,16 +9121,16 @@
           "Efficient",
           "Decisive"
         ],
-        "detail_score": 45.9,
-        "style_score": 46.9
+        "detail_score": 45.8,
+        "style_score": 47
       },
       "normalized": {
         "vibe_index": 31.5,
-        "politeness": 57.7
+        "politeness": 57.9
       }
     },
     "codex": {
-      "generated_at": "2026-03-30T03:59:09.767Z",
+      "generated_at": "2026-03-30T04:09:59.026Z",
       "volume": {
         "total_messages": 1445,
         "total_human": 1412,
@@ -9413,7 +9360,7 @@
         }
       },
       "politeness": {
-        "score": 58.4,
+        "score": 58.5,
         "total_prompts": 1412
       },
       "youre_right": {
@@ -11097,9 +11044,9 @@
               "gpt-5.2-codex": 195
             },
             "nlp": {
-              "hitl_score": 51.6,
-              "vibe_coder_index": 66.6,
-              "politeness": 57.8
+              "hitl_score": 51,
+              "vibe_coder_index": 66.3,
+              "politeness": 57.9
             }
           },
           {
@@ -11122,8 +11069,8 @@
             },
             "nlp": {
               "hitl_score": 55.5,
-              "vibe_coder_index": 68.5,
-              "politeness": 58.7
+              "vibe_coder_index": 68.6,
+              "politeness": 58.8
             }
           },
           {
@@ -11145,9 +11092,9 @@
               "gpt-5.2-codex": 95
             },
             "nlp": {
-              "hitl_score": 54,
+              "hitl_score": 54.2,
               "vibe_coder_index": 69.2,
-              "politeness": 58.7
+              "politeness": 58.8
             }
           },
           {
@@ -11169,8 +11116,8 @@
               "gpt-5.2-codex": 42
             },
             "nlp": {
-              "hitl_score": 58.4,
-              "vibe_coder_index": 71.2,
+              "hitl_score": 57.6,
+              "vibe_coder_index": 70.8,
               "politeness": 63.4
             }
           },
@@ -11194,7 +11141,7 @@
             },
             "nlp": {
               "hitl_score": 52.8,
-              "vibe_coder_index": 68.9,
+              "vibe_coder_index": 69,
               "politeness": 61.4
             }
           },
@@ -11217,7 +11164,7 @@
               "gpt-5.2-codex": 201
             },
             "nlp": {
-              "hitl_score": 45.1,
+              "hitl_score": 45.2,
               "vibe_coder_index": 67.2,
               "politeness": 58.2
             }
@@ -11242,9 +11189,9 @@
               "gpt-5.2-codex": 6
             },
             "nlp": {
-              "hitl_score": 56.2,
-              "vibe_coder_index": 69.5,
-              "politeness": 60.9
+              "hitl_score": 56.5,
+              "vibe_coder_index": 69.6,
+              "politeness": 60.7
             }
           },
           {
@@ -11266,8 +11213,8 @@
               "gpt-5.3-codex": 159
             },
             "nlp": {
-              "hitl_score": 49,
-              "vibe_coder_index": 65.1,
+              "hitl_score": 48.9,
+              "vibe_coder_index": 65,
               "politeness": 57.1
             }
           },
@@ -11290,8 +11237,8 @@
               "gpt-5.3-codex": 65
             },
             "nlp": {
-              "hitl_score": 50.5,
-              "vibe_coder_index": 67.7,
+              "hitl_score": 50.6,
+              "vibe_coder_index": 67.8,
               "politeness": 58
             }
           },
@@ -11314,9 +11261,9 @@
               "gpt-5.3-codex": 6
             },
             "nlp": {
-              "hitl_score": 58.9,
-              "vibe_coder_index": 70.9,
-              "politeness": 61.9
+              "hitl_score": 59.5,
+              "vibe_coder_index": 71,
+              "politeness": 61.8
             }
           },
           {
@@ -11339,9 +11286,9 @@
               "gpt-5.3-codex": 8
             },
             "nlp": {
-              "hitl_score": 53.6,
+              "hitl_score": 54,
               "vibe_coder_index": 68.2,
-              "politeness": 58.8
+              "politeness": 58.7
             }
           },
           {
@@ -11364,7 +11311,7 @@
               "gpt-5.3-codex": 106
             },
             "nlp": {
-              "hitl_score": 53.5,
+              "hitl_score": 53.4,
               "vibe_coder_index": 68,
               "politeness": 58.2
             }
@@ -11388,8 +11335,8 @@
               "gpt-5.4": 123
             },
             "nlp": {
-              "hitl_score": 50.5,
-              "vibe_coder_index": 65.8,
+              "hitl_score": 50.2,
+              "vibe_coder_index": 65.7,
               "politeness": 58.5
             }
           },
@@ -11412,9 +11359,9 @@
               "gpt-5.4": 60
             },
             "nlp": {
-              "hitl_score": 50.8,
-              "vibe_coder_index": 65.9,
-              "politeness": 57.5
+              "hitl_score": 51.2,
+              "vibe_coder_index": 66,
+              "politeness": 57.6
             }
           }
         ],
@@ -11589,7 +11536,7 @@
         },
         "hitl_score": {
           "method": "embedding_similarity_v1",
-          "avg_score": 51.4,
+          "avg_score": 51.3,
           "confidence": {
             "mean": 0.79,
             "min": 0.5,
@@ -11598,7 +11545,7 @@
         },
         "vibe_coder_index": {
           "method": "embedding_similarity_v1",
-          "avg_score": 67.4,
+          "avg_score": 67.3,
           "confidence": {
             "mean": 0.85,
             "min": 0.6,
@@ -11607,10 +11554,10 @@
         },
         "politeness": {
           "method": "embedding_similarity_v1",
-          "avg_score": 58.4,
+          "avg_score": 58.5,
           "confidence": {
             "mean": 0.86,
-            "min": 0.61,
+            "min": 0.63,
             "max": 0.95
           }
         }
@@ -11632,12 +11579,12 @@
         "style_score": 45.3
       },
       "normalized": {
-        "vibe_index": 32.6,
-        "politeness": 58.4
+        "vibe_index": 32.7,
+        "politeness": 58.5
       }
     },
     "copilot_chat": {
-      "generated_at": "2026-03-30T03:59:09.830Z",
+      "generated_at": "2026-03-30T04:09:59.099Z",
       "volume": {
         "total_messages": 4531,
         "total_human": 2236,
@@ -14089,9 +14036,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 41.6,
-              "vibe_coder_index": 78.7,
-              "politeness": 50.7
+              "hitl_score": 42.3,
+              "vibe_coder_index": 78.9,
+              "politeness": 51
             }
           },
           {
@@ -14111,9 +14058,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 43.4,
-              "vibe_coder_index": 76.3,
-              "politeness": 51.4
+              "hitl_score": 43.5,
+              "vibe_coder_index": 76.5,
+              "politeness": 51.3
             }
           },
           {
@@ -14133,9 +14080,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 36.7,
-              "vibe_coder_index": 82.4,
-              "politeness": 53.1
+              "hitl_score": 35.6,
+              "vibe_coder_index": 82.2,
+              "politeness": 53.7
             }
           },
           {
@@ -14155,8 +14102,8 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 24,
-              "vibe_coder_index": 73.6,
+              "hitl_score": 22.4,
+              "vibe_coder_index": 73.2,
               "politeness": 57.1
             }
           },
@@ -14177,9 +14124,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 35.1,
-              "vibe_coder_index": 71.2,
-              "politeness": 56.4
+              "hitl_score": 35.2,
+              "vibe_coder_index": 71.4,
+              "politeness": 56.6
             }
           },
           {
@@ -14199,9 +14146,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 34.7,
-              "vibe_coder_index": 71,
-              "politeness": 54.1
+              "hitl_score": 33.9,
+              "vibe_coder_index": 71.1,
+              "politeness": 54.4
             }
           },
           {
@@ -14221,8 +14168,8 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 51.9,
-              "vibe_coder_index": 72,
+              "hitl_score": 51.8,
+              "vibe_coder_index": 72.2,
               "politeness": 53.1
             }
           },
@@ -14243,9 +14190,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 60.6,
-              "vibe_coder_index": 79.9,
-              "politeness": 53.1
+              "hitl_score": 59.4,
+              "vibe_coder_index": 80.4,
+              "politeness": 52.9
             }
           },
           {
@@ -14268,9 +14215,9 @@
               "github.copilot-chat/claude-sonnet-4": 1
             },
             "nlp": {
-              "hitl_score": 27.8,
-              "vibe_coder_index": 54.8,
-              "politeness": 51.5
+              "hitl_score": 28.1,
+              "vibe_coder_index": 54.9,
+              "politeness": 51.1
             }
           },
           {
@@ -14292,9 +14239,9 @@
               "copilot/gpt-4.1": 2
             },
             "nlp": {
-              "hitl_score": 35.6,
-              "vibe_coder_index": 77.1,
-              "politeness": 45.5
+              "hitl_score": 36.7,
+              "vibe_coder_index": 77.4,
+              "politeness": 45.7
             }
           },
           {
@@ -14316,9 +14263,9 @@
               "copilot/gpt-4.1": 4
             },
             "nlp": {
-              "hitl_score": 41.3,
-              "vibe_coder_index": 69.2,
-              "politeness": 53.3
+              "hitl_score": 42.9,
+              "vibe_coder_index": 69.4,
+              "politeness": 53.4
             }
           },
           {
@@ -14340,9 +14287,9 @@
               "copilot/gpt-4.1": 6
             },
             "nlp": {
-              "hitl_score": 37,
-              "vibe_coder_index": 70.2,
-              "politeness": 49.3
+              "hitl_score": 37.1,
+              "vibe_coder_index": 70.3,
+              "politeness": 49.2
             }
           },
           {
@@ -14368,8 +14315,8 @@
               "openrouter/nousresearch/hermes-4-70b": 1
             },
             "nlp": {
-              "hitl_score": 36.9,
-              "vibe_coder_index": 69.1,
+              "hitl_score": 37,
+              "vibe_coder_index": 69.3,
               "politeness": 54.4
             }
           },
@@ -14395,9 +14342,9 @@
               "copilot/gpt-5-mini": 2
             },
             "nlp": {
-              "hitl_score": 43.1,
-              "vibe_coder_index": 73.7,
-              "politeness": 55.3
+              "hitl_score": 43.2,
+              "vibe_coder_index": 73.9,
+              "politeness": 55.1
             }
           },
           {
@@ -14420,9 +14367,9 @@
               "copilot/claude-sonnet-4": 1
             },
             "nlp": {
-              "hitl_score": 52.4,
-              "vibe_coder_index": 75.8,
-              "politeness": 53.7
+              "hitl_score": 50.9,
+              "vibe_coder_index": 75.7,
+              "politeness": 53.3
             }
           },
           {
@@ -14444,9 +14391,9 @@
               "copilot/claude-sonnet-4": 1
             },
             "nlp": {
-              "hitl_score": 36.6,
-              "vibe_coder_index": 76.3,
-              "politeness": 51.9
+              "hitl_score": 35.7,
+              "vibe_coder_index": 77.1,
+              "politeness": 51.8
             }
           },
           {
@@ -14469,9 +14416,9 @@
               "copilot/gpt-5-mini": 1
             },
             "nlp": {
-              "hitl_score": 46.8,
-              "vibe_coder_index": 71.4,
-              "politeness": 53.5
+              "hitl_score": 46.9,
+              "vibe_coder_index": 71.5,
+              "politeness": 53.6
             }
           },
           {
@@ -14502,8 +14449,8 @@
             },
             "nlp": {
               "hitl_score": 46,
-              "vibe_coder_index": 66.7,
-              "politeness": 54.2
+              "vibe_coder_index": 66.9,
+              "politeness": 54.1
             }
           },
           {
@@ -14526,9 +14473,9 @@
               "copilot/gpt-5-codex": 8
             },
             "nlp": {
-              "hitl_score": 56.1,
+              "hitl_score": 56.4,
               "vibe_coder_index": 69.1,
-              "politeness": 56.4
+              "politeness": 56.7
             }
           },
           {
@@ -14558,7 +14505,7 @@
               "openrouter/qwen/qwen3-235b-a22b:free": 1
             },
             "nlp": {
-              "hitl_score": 54.3,
+              "hitl_score": 54.2,
               "vibe_coder_index": 70,
               "politeness": 56.6
             }
@@ -14586,9 +14533,9 @@
               "copilot/gemini-2.5-pro": 3
             },
             "nlp": {
-              "hitl_score": 52.9,
-              "vibe_coder_index": 67.9,
-              "politeness": 55.2
+              "hitl_score": 52.8,
+              "vibe_coder_index": 67.8,
+              "politeness": 55.1
             }
           },
           {
@@ -14613,7 +14560,7 @@
               "copilot/gpt-5.1": 2
             },
             "nlp": {
-              "hitl_score": 54,
+              "hitl_score": 53.9,
               "vibe_coder_index": 65.7,
               "politeness": 60.2
             }
@@ -14639,8 +14586,8 @@
               "copilot/grok-code-fast-1": 3
             },
             "nlp": {
-              "hitl_score": 54.6,
-              "vibe_coder_index": 66.3,
+              "hitl_score": 54.5,
+              "vibe_coder_index": 66.2,
               "politeness": 57.5
             }
           },
@@ -14663,8 +14610,8 @@
               "copilot/claude-opus-4.5": 92
             },
             "nlp": {
-              "hitl_score": 50.5,
-              "vibe_coder_index": 67.1,
+              "hitl_score": 50.3,
+              "vibe_coder_index": 67.2,
               "politeness": 55.3
             }
           },
@@ -14690,8 +14637,8 @@
               "copilot/gpt-5.2": 4
             },
             "nlp": {
-              "hitl_score": 52.5,
-              "vibe_coder_index": 67,
+              "hitl_score": 52.6,
+              "vibe_coder_index": 67.1,
               "politeness": 56
             }
           },
@@ -14717,7 +14664,7 @@
               "copilot/gemini-3-pro-preview": 6
             },
             "nlp": {
-              "hitl_score": 53,
+              "hitl_score": 53.1,
               "vibe_coder_index": 66,
               "politeness": 57.6
             }
@@ -14897,7 +14844,7 @@
           "avg_score": 51.9,
           "confidence": {
             "mean": 0.8,
-            "min": 0.61,
+            "min": 0.6,
             "max": 0.95
           }
         },
@@ -14905,8 +14852,8 @@
           "method": "embedding_similarity_v1",
           "avg_score": 68.1,
           "confidence": {
-            "mean": 0.87,
-            "min": 0.64,
+            "mean": 0.86,
+            "min": 0.61,
             "max": 0.95
           }
         },
@@ -14942,7 +14889,7 @@
       }
     },
     "cursor": {
-      "generated_at": "2026-03-30T03:59:09.833Z",
+      "generated_at": "2026-03-30T04:09:59.102Z",
       "volume": {
         "total_messages": 30,
         "total_human": 15,
@@ -15155,7 +15102,7 @@
         }
       },
       "politeness": {
-        "score": 55.5,
+        "score": 55.7,
         "total_prompts": 15
       },
       "youre_right": {
@@ -15269,9 +15216,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 40.9,
-              "vibe_coder_index": 77.2,
-              "politeness": 44.5
+              "hitl_score": 36.9,
+              "vibe_coder_index": 76.8,
+              "politeness": 44
             }
           },
           {
@@ -15291,9 +15238,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 36.7,
-              "vibe_coder_index": 83,
-              "politeness": 53.3
+              "hitl_score": 36,
+              "vibe_coder_index": 82.1,
+              "politeness": 53.2
             }
           },
           {
@@ -15313,9 +15260,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 24.2,
-              "vibe_coder_index": 73.7,
-              "politeness": 56.7
+              "hitl_score": 25,
+              "vibe_coder_index": 73.8,
+              "politeness": 56.9
             }
           },
           {
@@ -15335,9 +15282,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 35.9,
-              "vibe_coder_index": 71.6,
-              "politeness": 56.5
+              "hitl_score": 36.1,
+              "vibe_coder_index": 71.5,
+              "politeness": 56.8
             }
           }
         ],
@@ -15430,16 +15377,16 @@
         },
         "vibe_coder_index": {
           "method": "embedding_similarity_v1",
-          "avg_score": 73,
+          "avg_score": 72.9,
           "confidence": {
             "mean": 0.78,
-            "min": 0.7,
+            "min": 0.68,
             "max": 0.87
           }
         },
         "politeness": {
           "method": "embedding_similarity_v1",
-          "avg_score": 55.5,
+          "avg_score": 55.7,
           "confidence": {
             "mean": 0.76,
             "min": 0.62,
@@ -15464,12 +15411,12 @@
         "style_score": 52.4
       },
       "normalized": {
-        "vibe_index": 27,
-        "politeness": 55.5
+        "vibe_index": 27.1,
+        "politeness": 55.7
       }
     },
     "lmstudio": {
-      "generated_at": "2026-03-30T03:59:09.835Z",
+      "generated_at": "2026-03-30T04:09:59.105Z",
       "volume": {
         "total_messages": 161,
         "total_human": 83,
@@ -16006,9 +15953,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 33.5,
-              "vibe_coder_index": 77.9,
-              "politeness": 50
+              "hitl_score": 35.8,
+              "vibe_coder_index": 78.2,
+              "politeness": 49.4
             }
           },
           {
@@ -16028,9 +15975,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 22.3,
-              "vibe_coder_index": 59.4,
-              "politeness": 55.5
+              "hitl_score": 22.9,
+              "vibe_coder_index": 59.7,
+              "politeness": 55.3
             }
           },
           {
@@ -16051,8 +15998,8 @@
             "models": {},
             "nlp": {
               "hitl_score": 18.9,
-              "vibe_coder_index": 48.6,
-              "politeness": 53.8
+              "vibe_coder_index": 48.3,
+              "politeness": 54
             }
           },
           {
@@ -16072,9 +16019,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 51.4,
-              "vibe_coder_index": 67.5,
-              "politeness": 61.1
+              "hitl_score": 53.8,
+              "vibe_coder_index": 68.6,
+              "politeness": 60.4
             }
           },
           {
@@ -16094,9 +16041,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 44.9,
+              "hitl_score": 46.3,
               "vibe_coder_index": 66.1,
-              "politeness": 66.9
+              "politeness": 66.6
             }
           },
           {
@@ -16116,9 +16063,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 19.6,
-              "vibe_coder_index": 47.8,
-              "politeness": 51.6
+              "hitl_score": 18.3,
+              "vibe_coder_index": 47.5,
+              "politeness": 51.4
             }
           },
           {
@@ -16138,8 +16085,8 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 8,
-              "vibe_coder_index": 40.3,
+              "hitl_score": 9.5,
+              "vibe_coder_index": 40.4,
               "politeness": 47
             }
           },
@@ -16160,9 +16107,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 25.1,
-              "vibe_coder_index": 55.5,
-              "politeness": 53
+              "hitl_score": 25.2,
+              "vibe_coder_index": 55.1,
+              "politeness": 53.1
             }
           },
           {
@@ -16182,9 +16129,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 31.3,
+              "hitl_score": 31.2,
               "vibe_coder_index": 54.7,
-              "politeness": 53.7
+              "politeness": 53.5
             }
           },
           {
@@ -16204,9 +16151,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 19.5,
-              "vibe_coder_index": 52.6,
-              "politeness": 52.9
+              "hitl_score": 19.6,
+              "vibe_coder_index": 52.7,
+              "politeness": 53.1
             }
           },
           {
@@ -16226,8 +16173,8 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 17,
-              "vibe_coder_index": 51.7,
+              "hitl_score": 16.1,
+              "vibe_coder_index": 51.4,
               "politeness": 54.6
             }
           },
@@ -16248,9 +16195,9 @@
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 6.9,
-              "vibe_coder_index": 49.6,
-              "politeness": 53.9
+              "hitl_score": 7.4,
+              "vibe_coder_index": 49.8,
+              "politeness": 54.2
             }
           },
           {
@@ -16271,8 +16218,8 @@
             "models": {},
             "nlp": {
               "hitl_score": 26.9,
-              "vibe_coder_index": 52.9,
-              "politeness": 51.7
+              "vibe_coder_index": 53.1,
+              "politeness": 51.8
             }
           }
         ],
@@ -16398,9 +16345,9 @@
           "method": "embedding_similarity_v1",
           "avg_score": 53.3,
           "confidence": {
-            "mean": 0.74,
-            "min": 0.56,
-            "max": 0.91
+            "mean": 0.75,
+            "min": 0.54,
+            "max": 0.92
           }
         },
         "politeness": {
@@ -16408,8 +16355,8 @@
           "avg_score": 53.8,
           "confidence": {
             "mean": 0.77,
-            "min": 0.53,
-            "max": 0.92
+            "min": 0.52,
+            "max": 0.93
           }
         }
       },
@@ -16435,11 +16382,5 @@
       }
     }
   },
-  "default_view": "both",
-  "branding": {
-    "site_url": "https://eeshans.com",
-    "site_name": "eeshans.com",
-    "newsletter_url": "https://0to1datascience.substack.com",
-    "github_repo": "https://github.com/eeshansrivastava89/howiprompt"
-  }
+  "default_view": "both"
 }

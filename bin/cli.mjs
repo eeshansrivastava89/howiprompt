@@ -29,7 +29,7 @@ const parsed = parseArgs(process.argv.slice(2));
 if (parsed.help) {
   console.log(`
 ${bold("howiprompt")} v${pkg.version}
-Local-first analytics dashboard for Claude Code + Codex prompting patterns.
+Local-first analytics for your AI coding conversations — Claude Code, Codex, Copilot Chat, Cursor, and LM Studio.
 
 Usage: howiprompt [options]
 

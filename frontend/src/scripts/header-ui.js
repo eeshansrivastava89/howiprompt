@@ -21,19 +21,23 @@ function copyTextWithFallback(text) {
     });
 }
 
+// Define globally so Header's onclick never throws even if modal is absent
+window.openCreateModal = () => {};
+window.closeCreateModal = () => {};
+
 function initCreateDrawer() {
     const modal = document.getElementById('createModal');
-    const copyButtons = [...document.querySelectorAll('[data-copy-text]')];
-    if (!modal || copyButtons.length === 0) return;
+    if (!modal) return;
 
     const copyTimers = new WeakMap();
-
     let opener = null;
 
     window.openCreateModal = () => {
         opener = document.activeElement;
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        const closeBtn = modal.querySelector('.modal-close');
+        if (closeBtn) closeBtn.focus();
     };
 
     window.closeCreateModal = () => {
@@ -45,6 +49,7 @@ function initCreateDrawer() {
         }
     };
 
+    const copyButtons = [...document.querySelectorAll('[data-copy-text]')];
     copyButtons.forEach((copyBtn) => {
         const copyLabel = copyBtn.querySelector('.create-copy-label');
         copyBtn.addEventListener('click', async () => {
@@ -77,7 +82,20 @@ function initCreateDrawer() {
     });
 
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') window.closeCreateModal();
+        if (event.key === 'Escape' && modal.classList.contains('active')) {
+            window.closeCreateModal();
+        }
+        if (event.key === 'Tab' && modal.classList.contains('active')) {
+            const focusable = modal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+            if (focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault(); last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault(); first.focus();
+            }
+        }
     });
 }
 

@@ -2,6 +2,7 @@
 // Loads metrics.json via fetch() at runtime — no build-time data injection.
 
 import { initThemeToggle } from './theme.js';
+import { SOURCE_LABELS, SOURCE_ACCENTS, formatSourceLabel, getSourceDisplayName, formatHour12, formatDateRange } from './shared.js';
 let sourceViews = {};
 let defaultSource = 'both';
 let activeSourceKey = 'both';
@@ -10,33 +11,6 @@ let branding = {};
 
 const sourceBar = document.getElementById('sourceBar');
 const sourceStorageKey = 'dashboard-source-filter';
-const SOURCE_LABELS = {
-    both: 'All',
-    claude_code: 'Claude Code',
-    codex: 'Codex',
-    copilot_chat: 'Copilot Chat',
-    cursor: 'Cursor',
-    lmstudio: 'LM Studio',
-};
-const SOURCE_ACCENTS = {
-    claude_code: '#e67e22',
-    codex: '#a855f7',
-    copilot_chat: '#06b6d4',
-    cursor: '#3b82f6',
-    lmstudio: '#22c55e',
-};
-
-function formatSourceLabel(key) {
-    return SOURCE_LABELS[key] || key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function getSourceDisplayName(key, short = false) {
-    if (short) {
-        if (key === 'claude_code') return 'Claude';
-        if (key === 'copilot_chat') return 'Copilot';
-    }
-    return formatSourceLabel(key);
-}
 
 // === Formatting helpers ===
 
@@ -54,19 +28,6 @@ function formatCompact(value) {
     }
     const b = n / 1_000_000_000;
     return (b >= 100 ? Math.round(b) : b.toFixed(1).replace(/\.0$/, '')) + 'B';
-}
-
-function formatHour12(hour) {
-    const h = Number(hour) || 0;
-    return `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`;
-}
-
-function formatDateRange(dateRange) {
-    if (!dateRange || !dateRange.first || !dateRange.last) return '2025';
-    const first = new Date(dateRange.first);
-    const last = new Date(dateRange.last);
-    const opts = { month: 'short', day: '2-digit', year: 'numeric' };
-    return `${first.toLocaleDateString('en-US', opts)} – ${last.toLocaleDateString('en-US', opts)}`;
 }
 
 // === Player card ===
@@ -242,6 +203,11 @@ function initTrendChart(view) {
     const defEl = document.getElementById('trendMetricDef');
 
     if (!chartEl) return;
+
+    if (typeof ApexCharts === 'undefined') {
+        chartEl.innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 0;font-size:13px;">Chart library failed to load. Check your connection or firewall settings.</p>';
+        return;
+    }
 
     // Build week date labels
     const weekDates = weekly.map((w, index) => {
@@ -759,7 +725,11 @@ function renderSettingsBackends(configRes = {}, detectedBackends = [], options =
     ]));
 
     if (backendIds.length === 0) {
-        container.innerHTML = `<div class="wizard-loading">${isRefreshing ? 'Checking installed backends…' : 'No backend settings yet.'}</div>`;
+        const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        const emptyMsg = isRefreshing
+            ? 'Checking installed backends…'
+            : isLocal ? 'No backend settings yet.' : 'Settings are available when running locally via <code style="font-size:12px">npx @eeshans/howiprompt</code>';
+        container.innerHTML = `<div class="wizard-loading">${emptyMsg}</div>`;
         return;
     }
 

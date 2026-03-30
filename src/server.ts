@@ -54,19 +54,28 @@ export async function startServer(opts: ServerOptions): Promise<http.Server> {
       return;
     }
 
-    // API: pick directory (native macOS folder picker)
+    // API: pick directory (native folder picker — macOS + Linux)
     if (req.method === "GET" && url.pathname === "/api/pick-directory") {
       try {
-        const result = execSync(
-          `osascript -e 'return POSIX path of (choose folder with prompt "Select directory to exclude")'`,
-          { timeout: 60000 },
-        ).toString().trim();
+        let cmd: string;
+        if (os.platform() === "darwin") {
+          cmd = `osascript -e 'return POSIX path of (choose folder with prompt "Select directory to exclude")'`;
+        } else {
+          // Linux: try zenity (GTK), fall back to kdialog (KDE)
+          try {
+            execSync("which zenity", { stdio: "ignore" });
+            cmd = `zenity --file-selection --directory --title="Select directory to exclude"`;
+          } catch {
+            cmd = `kdialog --getexistingdirectory "$HOME" --title "Select directory to exclude"`;
+          }
+        }
+        const result = execSync(cmd, { timeout: 60000 }).toString().trim();
         // Remove trailing slash
         const dirPath = result.replace(/\/$/, "");
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ path: dirPath }));
       } catch {
-        // User cancelled or osascript failed
+        // User cancelled or picker failed
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ path: null }));
       }
