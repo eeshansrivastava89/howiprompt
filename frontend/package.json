@@ -4,8 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "build:web": "PUBLIC_ENABLE_ANALYTICS=true PUBLIC_POSTHOG_KEY=phc_zfue5Ca8VaxypRHPCi9j2h2R3Qy1eytEHt3TMPWlOOS PUBLIC_POSTHOG_HOST=https://api-v2.eeshans.com PUBLIC_POSTHOG_UI_HOST=https://us.posthog.com astro build",
+    "build": "node ./scripts/build-site.mjs",
     "preview": "astro preview"
   },
   "dependencies": {
