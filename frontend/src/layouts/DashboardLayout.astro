@@ -16,6 +16,11 @@ const { title = 'How I Prompt: Dashboard' } = Astro.props;
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
+    <!-- Prevent flash of light theme -->
+    <script is:inline>
+      (function(){var s=localStorage.getItem('hip-theme');if(s==='dark'||(!s&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')})();
+    </script>
+
     <!-- Open Graph -->
     <meta property="og:title" content={title}>
     <meta property="og:description" content="Local-first analytics for your AI coding conversations — prompts, personas, trends, and a personal wrapped view.">

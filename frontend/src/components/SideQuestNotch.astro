@@ -1,0 +1,92 @@
+---
+interface Props {
+  projectName?: string;
+  siteUrl?: string;
+  siteName?: string;
+}
+const { projectName, siteUrl = 'https://eeshans.com', siteName = 'eeshans.com' } = Astro.props;
+---
+<div class="sq-notch-bar">
+  <div class="sq-notch">
+    <span class="sq-label">a side quest{projectName ? ` — ${projectName}` : ''} by <a href={siteUrl} target="_blank" rel="noopener" class="sq-link">{siteName}</a></span>
+  </div>
+</div>
+
+<style>
+  .sq-notch-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 65;
+    pointer-events: none;
+  }
+
+  .sq-notch {
+    position: relative;
+    pointer-events: auto;
+    padding: 10px 30px 4px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 14px 14px;
+    /* Notch shape: hangs down from the top edge */
+  }
+
+  /* Curved "ears" connecting the notch to the top edge */
+  .sq-notch::before,
+  .sq-notch::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 14px;
+    height: 14px;
+    background: transparent;
+  }
+
+  .sq-notch::before {
+    left: -14px;
+    border-top-right-radius: 14px;
+    box-shadow: 5px 0 0 0 var(--surface);
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .sq-notch::after {
+    right: -14px;
+    border-top-left-radius: 14px;
+    box-shadow: -5px 0 0 0 var(--surface);
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+
+  .sq-label {
+    white-space: nowrap;
+    font-family: var(--font-sans);
+  }
+
+  .sq-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.15s;
+  }
+
+  .sq-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 480px) {
+    .sq-notch {
+      font-size: 10px;
+      padding: 5px 14px 0;
+    }
+  }
+</style>
