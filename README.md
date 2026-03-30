@@ -25,7 +25,11 @@ npx @eeshans/howiprompt
 <br>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/12c6fc86-0d08-45c1-b94b-39c3bfbff93d" alt="How I Prompt dashboard" width="900">
+  <img width="1478" height="892" alt="image" src="https://github.com/user-attachments/assets/7d9ecf37-74f3-4bab-9920-52bc13f3371a" />
+  <br />
+  <img width="1481" height="896" alt="image" src="https://github.com/user-attachments/assets/50331aa6-0d11-416e-8101-ff3fa5a5e01f" />
+  <br />
+  <img width="1011" height="732" alt="image" src="https://github.com/user-attachments/assets/00bfb685-934b-4eb6-b43b-78dba36f8524" />
 </p>
 
 ## Highlights
