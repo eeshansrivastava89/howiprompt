@@ -1,19 +1,19 @@
 {
   "source_views": {
     "both": {
-      "generated_at": "2026-03-29T15:39:39.882Z",
+      "generated_at": "2026-03-30T02:15:53.482Z",
       "volume": {
-        "total_messages": 11070,
-        "total_human": 6152,
-        "total_words_human": 257121,
-        "total_conversations": 389,
+        "total_messages": 11083,
+        "total_human": 6158,
+        "total_words_human": 257620,
+        "total_conversations": 392,
         "avg_words_per_prompt": 41.8
       },
       "conversation_depth": {
-        "avg_turns": 15.8,
+        "avg_turns": 15.7,
         "max_turns": 239,
-        "quick_asks": 165,
-        "working_sessions": 86,
+        "quick_asks": 167,
+        "working_sessions": 87,
         "deep_dives": 138
       },
       "temporal": {
@@ -190,7 +190,7 @@
             65,
             54,
             113,
-            38,
+            44,
             23,
             31,
             78,
@@ -222,7 +222,7 @@
           "12": 154,
           "13": 183,
           "14": 215,
-          "15": 156,
+          "15": 162,
           "16": 153,
           "17": 144,
           "18": 363,
@@ -235,17 +235,17 @@
       },
       "politeness": {
         "score": 57.2,
-        "total_prompts": 6152
+        "total_prompts": 6158
       },
       "youre_right": {
-        "count": 487,
+        "count": 491,
         "per_conversation": 1.3
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2406,
-          "words": 122191,
-          "conversations": 248,
+          "messages": 2412,
+          "words": 122690,
+          "conversations": 251,
           "first_message": "2026-01-01T23:28:51.222Z"
         },
         "codex": {
@@ -275,9 +275,9 @@
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 6152,
+          "total_human_prompts": 6158,
           "prompts_with_model_metadata": 3536,
-          "metadata_coverage_pct": 57.5
+          "metadata_coverage_pct": 57.4
         },
         "by_model": [
           {
@@ -4642,16 +4642,16 @@
           },
           {
             "date": "2026-03-29",
-            "prompts": 6,
+            "prompts": 12,
             "source_counts": {
-              "claude_code": 6
+              "claude_code": 12
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 166.7,
-              "question_rate_pct": 16.7,
+              "backtrack_per_100": 83.3,
+              "question_rate_pct": 8.3,
               "command_rate_pct": 0
             },
             "model_prompts": 0,
@@ -5698,20 +5698,20 @@
           },
           {
             "week_start": "2026-03-23",
-            "prompts": 497,
+            "prompts": 503,
             "source_counts": {
-              "claude_code": 436,
+              "claude_code": 442,
               "codex": 60,
               "lmstudio": 1
             },
             "source_share_pct": {
-              "claude_code": 87.7,
-              "codex": 12.1,
+              "claude_code": 87.9,
+              "codex": 11.9,
               "lmstudio": 0.2
             },
             "style": {
-              "backtrack_per_100": 11.7,
-              "question_rate_pct": 28.6,
+              "backtrack_per_100": 11.5,
+              "question_rate_pct": 28.2,
               "command_rate_pct": 6.8
             },
             "model_prompts": 60,
@@ -5720,16 +5720,16 @@
             },
             "nlp": {
               "hitl_score": 52.9,
-              "vibe_coder_index": 67.5,
+              "vibe_coder_index": 67.6,
               "politeness": 58.9
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 71,
-            "avg_30d": 68,
-            "delta_pct": 4.4
+            "avg_7d": 71.9,
+            "avg_30d": 68.2,
+            "delta_pct": 5.4
           },
           "dominant_source_share_pct": {
             "avg_7d": 91.3,
@@ -5737,14 +5737,14 @@
             "delta_pct": 11.2
           },
           "backtrack_per_100": {
-            "avg_7d": 30,
-            "avg_30d": 14,
-            "delta_pct": 114.3
+            "avg_7d": 18.1,
+            "avg_30d": 11.1,
+            "delta_pct": 63.1
           },
           "question_rate_pct": {
-            "avg_7d": 25.4,
-            "avg_30d": 22,
-            "delta_pct": 15.5
+            "avg_7d": 24.2,
+            "avg_30d": 21.7,
+            "delta_pct": 11.5
           },
           "command_rate_pct": {
             "avg_7d": 7.8,
@@ -5786,21 +5786,21 @@
             "magnitude": 174
           },
           {
-            "date": "2026-03-29",
-            "type": "prompt_shift",
-            "direction": "down",
-            "delta_prompts": -170,
-            "prev_prompts": 176,
-            "curr_prompts": 6,
-            "magnitude": 170
-          },
-          {
             "date": "2025-11-10",
             "type": "prompt_shift",
             "direction": "down",
             "delta_prompts": -164,
             "prev_prompts": 177,
             "curr_prompts": 13,
+            "magnitude": 164
+          },
+          {
+            "date": "2026-03-29",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -164,
+            "prev_prompts": 176,
+            "curr_prompts": 12,
             "magnitude": 164
           },
           {
@@ -6073,24 +6073,24 @@
             },
             {
               "week_start": "2026-03-23",
-              "prompts": 436,
+              "prompts": 442,
               "source_counts": {
-                "claude_code": 436
+                "claude_code": 442
               },
               "source_share_pct": {
                 "claude_code": 100
               },
               "style": {
-                "backtrack_per_100": 12.6,
-                "question_rate_pct": 29.6,
+                "backtrack_per_100": 12.4,
+                "question_rate_pct": 29.2,
                 "command_rate_pct": 5
               },
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "hitl_score": 53.2,
-                "vibe_coder_index": 67.8,
-                "politeness": 59.2
+                "hitl_score": 53.3,
+                "vibe_coder_index": 67.9,
+                "politeness": 59.1
               }
             }
           ],
@@ -7471,13 +7471,13 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 3942,
+            "other": 3945,
             "build_feature": 704,
             "debug_fix": 374,
             "ops_commands": 309,
             "planning_strategy": 298,
-            "explanation_learning": 279,
-            "analysis_research": 246
+            "explanation_learning": 281,
+            "analysis_research": 247
           },
           "rates_pct": {
             "other": 64.1,
@@ -7485,13 +7485,13 @@
             "debug_fix": 6.1,
             "ops_commands": 5,
             "planning_strategy": 4.8,
-            "explanation_learning": 4.5,
+            "explanation_learning": 4.6,
             "analysis_research": 4
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 3942,
+              "count": 3945,
               "rate_pct": 64.1
             },
             {
@@ -7513,7 +7513,7 @@
         },
         "hitl_score": {
           "method": "embedding_similarity_v1",
-          "avg_score": 51.3,
+          "avg_score": 51.4,
           "confidence": {
             "mean": 0.79,
             "min": 0.5,
@@ -7541,7 +7541,7 @@
       },
       "date_range": {
         "first": "2025-03-24T04:33:47.819Z",
-        "last": "2026-03-29T07:45:18.759Z"
+        "last": "2026-03-29T22:49:21.782Z"
       },
       "persona": {
         "name": "The Commander",
@@ -7561,19 +7561,19 @@
       }
     },
     "claude_code": {
-      "generated_at": "2026-03-29T15:39:39.963Z",
+      "generated_at": "2026-03-30T02:15:53.577Z",
       "volume": {
-        "total_messages": 4903,
-        "total_human": 2406,
-        "total_words_human": 122191,
-        "total_conversations": 248,
-        "avg_words_per_prompt": 50.8
+        "total_messages": 4916,
+        "total_human": 2412,
+        "total_words_human": 122690,
+        "total_conversations": 251,
+        "avg_words_per_prompt": 50.9
       },
       "conversation_depth": {
-        "avg_turns": 9.7,
+        "avg_turns": 9.6,
         "max_turns": 94,
-        "quick_asks": 118,
-        "working_sessions": 54,
+        "quick_asks": 120,
+        "working_sessions": 55,
         "deep_dives": 76
       },
       "temporal": {
@@ -7750,7 +7750,7 @@
             26,
             16,
             96,
-            19,
+            25,
             3,
             11,
             29,
@@ -7761,7 +7761,7 @@
             24
           ]
         ],
-        "night_owl_pct": 31.7,
+        "night_owl_pct": 31.6,
         "peak_hour": 23,
         "peak_hour_count": 312,
         "peak_day": "Saturday",
@@ -7779,7 +7779,7 @@
           "12": 55,
           "13": 69,
           "14": 141,
-          "15": 73,
+          "15": 79,
           "16": 81,
           "17": 73,
           "18": 198,
@@ -7792,23 +7792,23 @@
       },
       "politeness": {
         "score": 57.7,
-        "total_prompts": 2406
+        "total_prompts": 2412
       },
       "youre_right": {
-        "count": 259,
+        "count": 263,
         "per_conversation": 1
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2406,
-          "words": 122191,
-          "conversations": 248,
+          "messages": 2412,
+          "words": 122690,
+          "conversations": 251,
           "first_message": "2026-01-01T23:28:51.222Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 2406,
+          "total_human_prompts": 2412,
           "prompts_with_model_metadata": 0,
           "metadata_coverage_pct": 0
         },
@@ -8704,16 +8704,16 @@
           },
           {
             "date": "2026-03-29",
-            "prompts": 6,
+            "prompts": 12,
             "source_counts": {
-              "claude_code": 6
+              "claude_code": 12
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 166.7,
-              "question_rate_pct": 16.7,
+              "backtrack_per_100": 83.3,
+              "question_rate_pct": 8.3,
               "command_rate_pct": 0
             },
             "model_prompts": 0,
@@ -8943,32 +8943,32 @@
           },
           {
             "week_start": "2026-03-23",
-            "prompts": 436,
+            "prompts": 442,
             "source_counts": {
-              "claude_code": 436
+              "claude_code": 442
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 12.6,
-              "question_rate_pct": 29.6,
+              "backtrack_per_100": 12.4,
+              "question_rate_pct": 29.2,
               "command_rate_pct": 5
             },
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "hitl_score": 53.2,
-              "vibe_coder_index": 67.8,
-              "politeness": 59.2
+              "hitl_score": 53.3,
+              "vibe_coder_index": 67.9,
+              "politeness": 59.1
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 72.7,
-            "avg_30d": 51.6,
-            "delta_pct": 40.9
+            "avg_7d": 73.7,
+            "avg_30d": 51.9,
+            "delta_pct": 42
           },
           "dominant_source_share_pct": {
             "avg_7d": 100,
@@ -8976,14 +8976,14 @@
             "delta_pct": 0
           },
           "backtrack_per_100": {
-            "avg_7d": 34.7,
-            "avg_30d": 14.4,
-            "delta_pct": 141
+            "avg_7d": 20.8,
+            "avg_30d": 11.3,
+            "delta_pct": 84.1
           },
           "question_rate_pct": {
-            "avg_7d": 26.4,
-            "avg_30d": 22.3,
-            "delta_pct": 18.4
+            "avg_7d": 25,
+            "avg_30d": 21.9,
+            "delta_pct": 14.2
           },
           "command_rate_pct": {
             "avg_7d": 4.5,
@@ -9001,10 +9001,10 @@
             "date": "2026-03-29",
             "type": "prompt_shift",
             "direction": "down",
-            "delta_prompts": -167,
+            "delta_prompts": -161,
             "prev_prompts": 173,
-            "curr_prompts": 6,
-            "magnitude": 167
+            "curr_prompts": 12,
+            "magnitude": 161
           },
           {
             "date": "2026-03-21",
@@ -9093,28 +9093,28 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 1534,
+            "other": 1537,
             "build_feature": 253,
             "debug_fix": 151,
             "planning_strategy": 133,
+            "explanation_learning": 114,
             "ops_commands": 113,
-            "explanation_learning": 112,
-            "analysis_research": 110
+            "analysis_research": 111
           },
           "rates_pct": {
-            "other": 63.8,
+            "other": 63.7,
             "build_feature": 10.5,
             "debug_fix": 6.3,
             "planning_strategy": 5.5,
-            "ops_commands": 4.7,
             "explanation_learning": 4.7,
+            "ops_commands": 4.7,
             "analysis_research": 4.6
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 1534,
-              "rate_pct": 63.8
+              "count": 1537,
+              "rate_pct": 63.7
             },
             {
               "intent": "build_feature",
@@ -9163,7 +9163,7 @@
       },
       "date_range": {
         "first": "2026-01-01T23:28:51.222Z",
-        "last": "2026-03-29T07:45:18.759Z"
+        "last": "2026-03-29T22:49:21.782Z"
       },
       "persona": {
         "name": "The Commander",
@@ -9183,7 +9183,7 @@
       }
     },
     "codex": {
-      "generated_at": "2026-03-29T15:39:39.990Z",
+      "generated_at": "2026-03-30T02:15:53.610Z",
       "volume": {
         "total_messages": 1445,
         "total_human": 1412,
@@ -11637,7 +11637,7 @@
       }
     },
     "copilot_chat": {
-      "generated_at": "2026-03-29T15:39:40.060Z",
+      "generated_at": "2026-03-30T02:15:53.690Z",
       "volume": {
         "total_messages": 4531,
         "total_human": 2236,
@@ -14942,7 +14942,7 @@
       }
     },
     "cursor": {
-      "generated_at": "2026-03-29T15:39:40.063Z",
+      "generated_at": "2026-03-30T02:15:53.693Z",
       "volume": {
         "total_messages": 30,
         "total_human": 15,
@@ -15469,7 +15469,7 @@
       }
     },
     "lmstudio": {
-      "generated_at": "2026-03-29T15:39:40.066Z",
+      "generated_at": "2026-03-30T02:15:53.695Z",
       "volume": {
         "total_messages": 161,
         "total_human": 83,
@@ -16435,5 +16435,11 @@
       }
     }
   },
-  "default_view": "both"
+  "default_view": "both",
+  "branding": {
+    "site_url": "https://eeshans.com",
+    "site_name": "eeshans.com",
+    "newsletter_url": "https://0to1datascience.substack.com",
+    "github_repo": "https://github.com/eeshansrivastava89/howiprompt"
+  }
 }
