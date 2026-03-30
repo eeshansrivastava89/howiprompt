@@ -1,5 +1,3 @@
-> **Disclaimer:** This is an independent personal project, **not affiliated with, endorsed by, or connected to Anthropic or Claude** in any way. This is a non-commercial, open-source tool created for personal use and educational purposes only.
-
 <div align="center">
 
 # How I Prompt
@@ -164,6 +162,8 @@ npm run check:privacy
 - Node.js 18+
 
 ---
+
+> **Disclaimer:** This is an independent personal project, **not affiliated with, endorsed by, or connected to Anthropic or Claude** in any way. This is a non-commercial, open-source tool created for personal use and educational purposes only.
 
 ## License
 
