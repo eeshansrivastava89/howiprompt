@@ -72,7 +72,7 @@ If you want to publish your own stats as a static site:
 ```bash
 git clone https://github.com/eeshansrivastava89/howiprompt.git
 cd howiprompt && npm install && npm run dev:cli
-cd howiprompt/frontend && DEMO_DEPLOY=true npm run build
+cd frontend && DEMO_DEPLOY=true npm run build
 ```
 
 Then commit and push `docs/`, and enable GitHub Pages from `main` / `docs` in your repo settings.
@@ -113,7 +113,7 @@ All supported sources are auto-synced into `~/.howiprompt/raw/` and reused acros
 - **Local by default** — Sync, parsing, embeddings, classifier scoring, and metrics run on your machine
 - **Persistent storage** — Raw copies, local DB, config, and metrics live under `~/.howiprompt/`
 - **No prompt text leaves your machine** — The app does not upload raw logs or prompt content
-- **No analytics in the local app** — The `npx @eeshans/howiprompt` package ships with analytics disabled. PostHog is only enabled on the hosted website
+- **No analytics in the local app** — The `npx @eeshans/howiprompt` package ships with analytics disabled. PostHog is only enabled on my [demo website](https://howiprompt.eeshans.com)
 - **Ancillary network requests** — The dashboard loads ApexCharts from a CDN. The CLI checks npm for version updates. These do not transmit prompt data
 
 ---
