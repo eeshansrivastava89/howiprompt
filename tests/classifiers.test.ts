@@ -1,106 +1,87 @@
-import { describe, it, expect } from "vitest";
-import { cosineSimilarity } from "../src/pipeline/embeddings.js";
-import { loadMlConfig } from "../src/pipeline/ml-config.js";
+import { describe, it, expect, beforeEach } from "vitest";
+import { scoreVibe, scorePoliteness, resetScorersForTests } from "../src/pipeline/scorers.js";
+import { extractFeatures } from "../src/pipeline/style.js";
 import fs from "node:fs";
 import path from "node:path";
 
-describe("reference_clusters.json", () => {
+describe("classifiers.json", () => {
+  const config = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "..", "config", "classifiers.json"), "utf-8"),
+  );
+
+  it("has required top-level keys", () => {
+    expect(config.features).toBeDefined();
+    expect(Array.isArray(config.features)).toBe(true);
+    expect(config.scaler).toBeDefined();
+    expect(config.vibe).toBeDefined();
+    expect(config.politeness).toBeDefined();
+  });
+
+  it("features list matches scaler dimensions", () => {
+    expect(config.scaler.mean.length).toBe(config.features.length);
+    expect(config.scaler.std.length).toBe(config.features.length);
+  });
+
+  it("vibe coefficients match feature count", () => {
+    for (const classCoef of config.vibe.coef) {
+      expect(classCoef.length).toBe(config.features.length);
+    }
+    expect(config.vibe.intercept.length).toBe(config.vibe.classes.length);
+  });
+
+  it("politeness coefficients match feature count", () => {
+    for (const classCoef of config.politeness.coef) {
+      expect(classCoef.length).toBe(config.features.length);
+    }
+    expect(config.politeness.intercept.length).toBe(config.politeness.classes.length);
+  });
+
+  it("all features in config are returned by extractFeatures", () => {
+    const features = extractFeatures("test prompt", 2);
+    for (const name of config.features) {
+      expect(features).toHaveProperty(name);
+    }
+  });
+});
+
+describe("reference_clusters.json (legacy)", () => {
   const clusters = JSON.parse(
     fs.readFileSync(path.join(__dirname, "..", "data", "reference_clusters.json"), "utf-8"),
   );
 
-  it("has hitl clusters with expected categories", () => {
-    expect(clusters.hitl).toBeDefined();
-    const expected = [
-      "course_correction", "architectural_decision", "constraint_spec",
-      "scope_control", "review_qa", "tradeoff_nav", "passive_delegation",
-    ];
-    for (const key of expected) {
-      expect(clusters.hitl[key]).toBeDefined();
-      expect(clusters.hitl[key].length).toBeGreaterThanOrEqual(10);
-    }
+  it("does not have hitl clusters (removed)", () => {
+    expect(clusters.hitl).toBeUndefined();
   });
 
-  it("has vibe clusters with expected categories", () => {
+  it("has vibe and politeness clusters", () => {
     expect(clusters.vibe).toBeDefined();
-    const expected = [
-      "file_reference", "technical_spec", "code_sharing",
-      "iterative_refinement", "high_level_delegation", "outcome_only", "acceptance",
-    ];
-    for (const key of expected) {
-      expect(clusters.vibe[key]).toBeDefined();
-      expect(clusters.vibe[key].length).toBeGreaterThanOrEqual(10);
-    }
-  });
-
-  it("has politeness clusters with expected categories", () => {
     expect(clusters.politeness).toBeDefined();
-    const expected = ["courteous", "warm_collaborative", "direct_neutral", "curt_dismissive"];
-    for (const key of expected) {
-      expect(clusters.politeness[key]).toBeDefined();
-      expect(clusters.politeness[key].length).toBeGreaterThanOrEqual(10);
-    }
-  });
-
-  it("all cluster examples are non-empty strings", () => {
-    for (const [classifier, clusterMap] of Object.entries(clusters)) {
-      for (const [cluster, examples] of Object.entries(clusterMap as Record<string, string[]>)) {
-        for (const example of examples) {
-          expect(typeof example).toBe("string");
-          expect(example.trim().length).toBeGreaterThan(0);
-        }
-      }
-    }
   });
 });
 
-describe("ml config weights match clusters", () => {
-  const config = loadMlConfig("/tmp/nonexistent");
-  const clusters = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "..", "data", "reference_clusters.json"), "utf-8"),
-  );
-
-  it("every hitl cluster has a weight", () => {
-    for (const cluster of Object.keys(clusters.hitl)) {
-      expect(config.hitl.weights[cluster]).toBeDefined();
-    }
+describe("scorer output validation", () => {
+  beforeEach(() => {
+    resetScorersForTests();
   });
 
-  it("every vibe cluster has a weight", () => {
-    for (const cluster of Object.keys(clusters.vibe)) {
-      expect(config.vibe.weights[cluster]).toBeDefined();
-    }
-  });
+  it("scores are bounded 0-100 for various inputs", () => {
+    const inputs = [
+      "yes",
+      "fix it",
+      "can you please help me refactor the auth module?",
+      "1. Update the schema\n2. Run migrations\n3. Test endpoint\n4. Deploy",
+      "```\nconst x = 42;\nconsole.log(x);\n```\nwhy does this not work?",
+    ];
 
-  it("every politeness cluster has a weight", () => {
-    for (const cluster of Object.keys(clusters.politeness)) {
-      expect(config.politeness.weights[cluster]).toBeDefined();
-    }
-  });
-});
+    for (const input of inputs) {
+      const features = extractFeatures(input, input.split(/\s+/).length);
+      const vibe = scoreVibe(features);
+      const pol = scorePoliteness(features);
 
-describe("scoring logic (unit, no model)", () => {
-  it("cosine similarity of normalized vectors is bounded [-1, 1]", () => {
-    // Simulate what the classifier does: compare embedding to centroid
-    const a = new Float32Array(384);
-    const b = new Float32Array(384);
-    // Fill with random values
-    for (let i = 0; i < 384; i++) {
-      a[i] = Math.random() - 0.5;
-      b[i] = Math.random() - 0.5;
+      expect(vibe.score).toBeGreaterThanOrEqual(0);
+      expect(vibe.score).toBeLessThanOrEqual(100);
+      expect(pol.score).toBeGreaterThanOrEqual(0);
+      expect(pol.score).toBeLessThanOrEqual(100);
     }
-    const sim = cosineSimilarity(a, b);
-    expect(sim).toBeGreaterThanOrEqual(-1);
-    expect(sim).toBeLessThanOrEqual(1);
-  });
-
-  it("similar vectors have high cosine similarity", () => {
-    const a = new Float32Array(384);
-    for (let i = 0; i < 384; i++) a[i] = Math.random();
-    // b = a + small noise
-    const b = new Float32Array(384);
-    for (let i = 0; i < 384; i++) b[i] = a[i] + (Math.random() - 0.5) * 0.1;
-    const sim = cosineSimilarity(a, b);
-    expect(sim).toBeGreaterThan(0.9);
   });
 });

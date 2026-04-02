@@ -3,7 +3,8 @@ import type { Config } from "./config.js";
 import { platformFilter, queryMessages } from "./db.js";
 import { PLATFORM_VALUES, type Platform, Role } from "./models.js";
 import { computeNlpMetrics } from "./nlp.js";
-import { getPersona } from "./style.js";
+import { getPersona, extractFeatures } from "./style.js";
+import { explainScore } from "./scorers.js";
 import { computeNormalized } from "./registry.js";
 import { computeTrendMetrics } from "./trends.js";
 
@@ -276,6 +277,26 @@ export async function computeMetrics(
     detail_score: avgDetail,
     style_score: avgStyle,
   };
+
+  // Compute explainability: aggregate features across all prompts
+  const humanMsgs = await queryMessages(client, { role: Role.HUMAN, platform });
+  if (humanMsgs.length > 0) {
+    const featureAccum: Record<string, number> = {};
+    let count = 0;
+    for (const msg of humanMsgs) {
+      const f = extractFeatures(msg.content, msg.wordCount);
+      for (const [k, v] of Object.entries(f)) {
+        featureAccum[k] = (featureAccum[k] ?? 0) + v;
+      }
+      count++;
+    }
+    const avgFeatures: Record<string, number> = {};
+    for (const [k, v] of Object.entries(featureAccum)) {
+      avgFeatures[k] = v / count;
+    }
+    result.vibe_explanation = explainScore("vibe", avgFeatures, totalHuman);
+    result.politeness_explanation = explainScore("politeness", avgFeatures, totalHuman);
+  }
 
   // Compute normalized 0-100 values for all registry metrics
   result.normalized = computeNormalized(result);

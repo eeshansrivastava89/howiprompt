@@ -17,12 +17,10 @@ interface ClassifierResult {
   topSignals: Array<{ signal: string; similarity: number }>;
 }
 
-let hitlCentroids: ClusterCentroid[] | null = null;
 let vibeCentroids: ClusterCentroid[] | null = null;
 let politenessCentroids: ClusterCentroid[] | null = null;
 
 export function resetClassifiersForTests(): void {
-  hitlCentroids = null;
   vibeCentroids = null;
   politenessCentroids = null;
 }
@@ -164,26 +162,12 @@ export async function initClassifiers(
 ): Promise<void> {
   const clusters = loadReferenceClusters();
 
-  hitlCentroids = await buildCentroids(
-    client, "hitl", clusters.hitl, mlConfig.hitl.weights, mlConfig, dataDir,
-  );
   vibeCentroids = await buildCentroids(
     client, "vibe", clusters.vibe, mlConfig.vibe.weights, mlConfig, dataDir,
   );
   politenessCentroids = await buildCentroids(
     client, "politeness", clusters.politeness, mlConfig.politeness.weights, mlConfig, dataDir,
   );
-}
-
-export function computeHitlScore(
-  embedding: Float32Array,
-  mlConfig: MlConfig,
-): ClassifierResult {
-  if (!hitlCentroids) throw new Error("Classifiers not initialized");
-  return scoreFromCentroids(embedding, hitlCentroids, {
-    ...mlConfig.hitl,
-    centerPoint: 0,
-  });
 }
 
 export function computeVibeIndex(
@@ -213,7 +197,7 @@ export async function enrichClassifiers(
     `SELECT m.id, m.embedding FROM messages m
      JOIN nlp_enrichments e ON m.id = e.message_id
      WHERE m.role = 'human' AND m.embedding IS NOT NULL
-       AND (e.hitl_score IS NULL OR e.vibe_score IS NULL OR e.politeness_score IS NULL)`,
+       AND (e.vibe_score IS NULL OR e.politeness_score IS NULL)`,
   );
 
   if (result.rows.length === 0) return 0;
@@ -228,18 +212,15 @@ export async function enrichClassifiers(
     const batch = result.rows.slice(i, i + batchSize);
     const stmts = batch.map((row) => {
       const embedding = new Float32Array(row.embedding as ArrayBuffer);
-      const hitl = computeHitlScore(embedding, mlConfig);
       const vibe = computeVibeIndex(embedding, mlConfig);
       const pol = computePoliteness(embedding, mlConfig);
 
       return {
         sql: `UPDATE nlp_enrichments SET
-          hitl_score = ?, hitl_confidence = ?,
           vibe_score = ?, vibe_confidence = ?,
           politeness_score = ?, politeness_confidence = ?
           WHERE message_id = ?`,
         args: [
-          hitl.score, hitl.confidence,
           vibe.score, vibe.confidence,
           pol.score, pol.confidence,
           Number(row.id),

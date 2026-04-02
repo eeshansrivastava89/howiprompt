@@ -85,6 +85,13 @@ function renderPlayerCard(persona, nlp, politeness, view) {
         serial.textContent = `#${hash}`;
     }
 
+    // Store explanation text for tooltip
+    const fmtWhy = (entries) => (entries || []).map(e => {
+        const arrow = e.contribution > 0 ? '\u2191' : '\u2193';
+        return `${arrow} ${e.label}: ${e.stat}`;
+    }).join('\n') || 'Not enough data';
+    window._whyText = { vibe: fmtWhy(view.vibe_explanation), politeness: fmtWhy(view.politeness_explanation) };
+
 }
 
 // === Heatmap ===
@@ -843,6 +850,40 @@ document.getElementById('settingsModal')?.addEventListener('click', (e) => {
 document.getElementById('methodologyModal')?.addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeMethodology();
 });
+
+// Why tooltip
+(function() {
+    const tip = document.getElementById('whyTip');
+    if (!tip) return;
+    const show = (pill, key) => {
+        const text = window._whyText?.[key];
+        if (!text) return;
+        tip.textContent = text;
+        tip.style.opacity = '0';
+        tip.style.left = '0';
+        tip.style.top = '0';
+        // Force layout so offsetWidth is correct
+        void tip.offsetWidth;
+        const rect = pill.getBoundingClientRect();
+        const tipW = tip.offsetWidth;
+        const tipH = tip.offsetHeight;
+        let left = rect.left + rect.width / 2 - tipW / 2;
+        // Clamp to viewport
+        left = Math.max(8, Math.min(left, window.innerWidth - tipW - 8));
+        const top = rect.top - tipH - 10;
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+        tip.style.opacity = '1';
+    };
+    const hide = () => { tip.style.opacity = '0'; };
+    ['whyVibe', 'whyPolite'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const key = id === 'whyVibe' ? 'vibe' : 'politeness';
+        el.addEventListener('mouseenter', () => show(el, key));
+        el.addEventListener('mouseleave', hide);
+    });
+})();
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { closeMethodology(); closeSettings(); }

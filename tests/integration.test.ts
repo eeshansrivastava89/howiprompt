@@ -107,7 +107,7 @@ describe("full pipeline integration", () => {
     expect(metrics.persona).toHaveProperty("traits");
 
     expect(metrics.nlp.intent).toHaveProperty("counts");
-    expect(metrics.nlp).toHaveProperty("hitl_score");
+    expect(metrics.nlp).not.toHaveProperty("hitl_score");
     expect(metrics.nlp).toHaveProperty("vibe_coder_index");
     expect(metrics.nlp).toHaveProperty("politeness");
 
@@ -182,7 +182,7 @@ describe("full pipeline integration", () => {
     const nlp = await computeNlpMetrics(client);
     expect(Object.keys(nlp.intent.counts).length).toBeGreaterThan(0);
     expect(nlp.intent.confidence.mean).toBeGreaterThan(0);
-    expect(nlp).toHaveProperty("hitl_score");
+    expect(nlp).not.toHaveProperty("hitl_score");
     expect(nlp).toHaveProperty("politeness");
   });
 

@@ -23,7 +23,6 @@ export interface ClassifierConfig {
 
 export interface MlConfig {
   embedding: EmbeddingConfig;
-  hitl: ClassifierConfig;
   vibe: ClassifierConfig;
   politeness: ClassifierConfig;
 }
@@ -62,7 +61,6 @@ export function loadMlConfig(dataDir: string): MlConfig {
       // Use hardcoded minimal defaults
       defaults = {
         embedding: { model: "onnx-community/bge-small-en-v1.5-ONNX", dtype: "int8", dimensions: 384, batchSize: 64 },
-        hitl: { weights: {}, similarityThreshold: 0.35, confidenceFloor: 0.5, normalizationScale: 8 },
         vibe: { weights: {}, similarityThreshold: 0.35, centerPoint: 50, normalizationScale: 5 },
       };
     }

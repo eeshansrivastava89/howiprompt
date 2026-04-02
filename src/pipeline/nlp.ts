@@ -171,7 +171,6 @@ export async function computeNlpMetrics(
   if (total === 0) {
     return {
       intent: { method: "deterministic_rules_v1", counts: {}, rates_pct: {}, top_intents: [], confidence: { mean: 0, min: 0, max: 0 } },
-      hitl_score: emptyClassifier,
       vibe_coder_index: emptyClassifier,
       politeness: emptyClassifier,
     };
@@ -203,8 +202,7 @@ export async function computeNlpMetrics(
   const ic = intentConf.rows[0];
 
   // Aggregate hero embedding classifiers in parallel
-  const [hitl, vibe, politeness] = await Promise.all([
-    aggregateClassifier(client, "hitl_score", pf),
+  const [vibe, politeness] = await Promise.all([
     aggregateClassifier(client, "vibe_score", pf),
     aggregateClassifier(client, "politeness_score", pf),
   ]);
@@ -217,7 +215,6 @@ export async function computeNlpMetrics(
       top_intents: topIntents,
       confidence: { mean: round(Number(ic.avg_c), 2), min: round(Number(ic.min_c), 2), max: round(Number(ic.max_c), 2) },
     },
-    hitl_score: { method: "embedding_similarity_v1", ...hitl },
     vibe_coder_index: { method: "embedding_similarity_v1", ...vibe },
     politeness: { method: "embedding_similarity_v1", ...politeness },
   };

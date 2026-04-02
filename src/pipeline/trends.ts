@@ -247,12 +247,11 @@ async function enrichWeeklyNlp(
   const rs = await client.execute({
     sql: `SELECT
       strftime('%Y-%m-%d', date(m.local_date, 'weekday 0', '-6 days')) as week_start,
-      AVG(e.hitl_score) as hitl,
       AVG(e.vibe_score) as vibe,
       AVG(e.politeness_score) as politeness
     FROM nlp_enrichments e
     JOIN messages m ON e.message_id = m.id
-    WHERE m.role = 'human' AND m.is_excluded = 0 AND e.hitl_score IS NOT NULL${pf.clause}
+    WHERE m.role = 'human' AND m.is_excluded = 0 AND e.vibe_score IS NOT NULL${pf.clause}
     GROUP BY week_start
     ORDER BY week_start`,
     args: pf.args,
@@ -261,7 +260,6 @@ async function enrichWeeklyNlp(
   const nlpByWeek = new Map<string, Record<string, number | null>>();
   for (const row of rs.rows) {
     nlpByWeek.set(String(row.week_start), {
-      hitl_score: row.hitl != null ? round(Number(row.hitl), 1) : 0,
       vibe_coder_index: row.vibe != null ? round(Number(row.vibe), 1) : 0,
       politeness: row.politeness != null ? round(Number(row.politeness), 1) : null,
     });

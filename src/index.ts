@@ -2,12 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { createDbClient, insertMessages, logSync } from "./pipeline/db.js";
 import { loadConfig, loadBranding } from "./pipeline/config.js";
-import { loadMlConfig } from "./pipeline/ml-config.js";
+
 import { getEnabledBackends, getAllBackends } from "./pipeline/backends.js";
 import { enrichNlp } from "./pipeline/nlp.js";
-import { enrichEmbeddings } from "./pipeline/embeddings.js";
-import { enrichClassifiers } from "./pipeline/classifiers.js";
 import { enrichStyle } from "./pipeline/style.js";
+import { enrichScores } from "./pipeline/scorers.js";
 import { computeSourceViews } from "./pipeline/metrics.js";
 import {
   seedSystemRules,
@@ -29,7 +28,7 @@ export interface PipelineStats {
   newMessages: number;
   totalMessages: number;
   enriched: number;
-  embedded: number;
+  scored: number;
 }
 
 export interface PipelineProgress {
@@ -40,7 +39,7 @@ export interface PipelineProgress {
 
 export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats> {
   const config = loadConfig(opts.dataDir);
-  const mlConfig = loadMlConfig(opts.dataDir);
+
   const client = createDbClient(opts.dbPath);
   const log = opts.onProgress ?? (() => {});
 
@@ -169,39 +168,26 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
   const enriched = await enrichNlp(client);
   log({ stage: "nlp", detail: `${enriched.toLocaleString()} messages enriched`, progress: 100 });
 
-  // Embedding enrichment (only un-embedded human messages)
-  log({ stage: "embedding", detail: "Computing embeddings...", progress: 10 });
-  const embedded = await enrichEmbeddings(
-    client, mlConfig, opts.dataDir,
-    (progress) => {
-      if (progress.status === "download" && progress.progress !== undefined) {
-        log({
-          stage: "embedding",
-          detail: `Downloading model: ${Math.round(progress.progress)}%`,
-          progress: Math.round(progress.progress),
-        });
-      }
-    },
-    (done, total) => {
-      log({
-        stage: "embedding",
-        detail: `Embedded ${done.toLocaleString()} / ${total.toLocaleString()} messages`,
-        progress: total > 0 ? Math.round((done / total) * 100) : 100,
-      });
-    },
+  // Migration: recompute scores if upgrading from embedding-based system
+  const hasEmbeddingScores = await client.execute(
+    `SELECT COUNT(*) as cnt FROM messages WHERE role = 'human' AND embedding IS NOT NULL`,
   );
-  log({ stage: "embedding", detail: `${embedded.toLocaleString()} embeddings computed`, progress: 100 });
-
-  // Classifier enrichment (HITL, Vibe, Politeness from embeddings)
-  log({ stage: "classifiers", detail: "Scoring hero metrics...", progress: 10 });
-  const classified = await enrichClassifiers(client, mlConfig, opts.dataDir, (done, total) => {
-    log({
-      stage: "classifiers",
-      detail: `Classified ${done.toLocaleString()} / ${total.toLocaleString()} messages`,
-      progress: total > 0 ? Math.round((done / total) * 100) : 100,
-    });
-  });
-  log({ stage: "classifiers", detail: `${classified.toLocaleString()} messages classified`, progress: 100 });
+  if (Number(hasEmbeddingScores.rows[0].cnt) > 0) {
+    const needsRescore = await client.execute(
+      `SELECT COUNT(*) as cnt FROM nlp_enrichments WHERE vibe_score IS NOT NULL`,
+    );
+    // If there are embedding-scored messages, null out old scores once
+    // so the new feature-based scorer recomputes everything on a consistent scale
+    const migrationDone = await client.execute(
+      `SELECT COUNT(*) as cnt FROM nlp_enrichments WHERE vibe_confidence IS NOT NULL AND vibe_confidence > 0.95`,
+    );
+    // Old embedding system produced confidence values up to 0.95, new system uses softmax (typically lower)
+    if (Number(migrationDone.rows[0].cnt) > 100) {
+      log({ stage: "migration", detail: "Upgrading scoring system...", progress: 50 });
+      await client.execute('UPDATE nlp_enrichments SET vibe_score = NULL, vibe_confidence = NULL, politeness_score = NULL, politeness_confidence = NULL');
+      log({ stage: "migration", detail: "Scores cleared for recomputation", progress: 100 });
+    }
+  }
 
   // Style scoring (2×2: detail level × communication style)
   log({ stage: "style", detail: "Computing style scores...", progress: 10 });
@@ -213,6 +199,17 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
     });
   });
   log({ stage: "style", detail: `${styled.toLocaleString()} messages scored`, progress: 100 });
+
+  // Vibe + Politeness scoring (logistic regression on extracted features)
+  log({ stage: "scoring", detail: "Scoring vibe & politeness...", progress: 10 });
+  const scored = await enrichScores(client, (done, total) => {
+    log({
+      stage: "scoring",
+      detail: `Scored ${done.toLocaleString()} / ${total.toLocaleString()} messages`,
+      progress: total > 0 ? Math.round((done / total) * 100) : 100,
+    });
+  });
+  log({ stage: "scoring", detail: `${scored.toLocaleString()} messages scored`, progress: 100 });
 
   // Compute metrics
   log({ stage: "metrics", detail: "Aggregating metrics...", progress: 30 });
@@ -238,5 +235,5 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
 
   client.close();
 
-  return { newMessages: inserted, totalMessages, enriched, embedded };
+  return { newMessages: inserted, totalMessages, enriched, scored };
 }

@@ -5,20 +5,6 @@
     "dimensions": 384,
     "batchSize": 64
   },
-  "hitl": {
-    "weights": {
-      "course_correction": 20,
-      "architectural_decision": 18,
-      "constraint_spec": 15,
-      "scope_control": 15,
-      "review_qa": 12,
-      "tradeoff_nav": 12,
-      "passive_delegation": -10
-    },
-    "similarityThreshold": 0.55,
-    "confidenceFloor": 0.5,
-    "normalizationScale": 20
-  },
   "vibe": {
     "weights": {
       "file_reference": 18,

@@ -34,7 +34,7 @@ npx @eeshans/howiprompt
 
 | | |
 |---|---|
-| **Local-first pipeline** | Sync, parsing, embeddings, classifier scoring, and metrics run on your machine |
+| **Local-first pipeline** | Sync, parsing, feature extraction, scoring, and metrics run on your machine |
 | **Multi-source support** | Claude Code, Codex, Copilot Chat, Cursor, and LM Studio |
 | **Two ways to explore** | Standard dashboard plus a scroll-through wrapped experience |
 | **Metrics that feel personal** | Vibe Coder Index, Politeness, activity trends, heatmaps, and personas |
@@ -60,7 +60,7 @@ npx @eeshans/howiprompt --help        # usage info
 1. Detects supported local backends and writes setup to `~/.howiprompt/config.json`
 2. Copies raw conversation data into `~/.howiprompt/raw/`
 3. Parses and stores messages in a local SQLite database at `~/.howiprompt/data.db`
-4. Runs embeddings and classifier scoring for dashboard metrics
+4. Extracts features and scores prompts for dashboard metrics (no model downloads needed)
 5. Writes `~/.howiprompt/metrics.json` and serves the dashboard at `localhost`
 
 Subsequent refreshes are incremental and reuse the local database, caches, and configured exclusions.
@@ -86,7 +86,7 @@ Then commit and push `docs/`, and enable GitHub Pages from `main` / `docs` in yo
 | One-page overview of your stats | Scroll-through "Wrapped" presentation |
 | [howiprompt.eeshans.com](https://howiprompt.eeshans.com) | [howiprompt.eeshans.com/wrapped](https://howiprompt.eeshans.com/wrapped) |
 
-**Metrics include:** total prompts, conversation depth, activity heatmap, model usage, Vibe Coder Index, Politeness, persona classification (2×2: Detail Level × Communication Style), and trends.
+**Metrics include:** total prompts, conversation depth, activity heatmap, model usage, Vibe Coder Index (with explainability), Politeness (with explainability), persona classification (2×2: Detail Level × Communication Style), and trends.
 
 ---
 
@@ -110,10 +110,11 @@ All supported sources are auto-synced into `~/.howiprompt/raw/` and reused acros
 
 ## Privacy
 
-- **Local by default** — Sync, parsing, embeddings, classifier scoring, and metrics run on your machine
+- **Local by default** — Sync, parsing, scoring, and metrics run on your machine. No model downloads, no network access required
 - **Persistent storage** — Raw copies, local DB, config, and metrics live under `~/.howiprompt/`
 - **No prompt text leaves your machine** — The app does not upload raw logs or prompt content
 - **No analytics in the local app** — The `npx @eeshans/howiprompt` package ships with analytics disabled. PostHog is only enabled on my [demo website](https://howiprompt.eeshans.com)
+- **Fully offline** — Unlike previous versions, no ML model download is required. All scoring uses lightweight pattern matching with learned weights
 - **Ancillary network requests** — The dashboard loads ApexCharts from a CDN. The CLI checks npm for version updates. These do not transmit prompt data
 
 ---
