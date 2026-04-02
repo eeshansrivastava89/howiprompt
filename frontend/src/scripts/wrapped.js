@@ -1,5 +1,5 @@
 // wrapped.js — Wrapped experience interactivity
-// Source filtering, heatmap, counter animations, embedding metrics, persona, share card.
+// Source filtering, heatmap, counter animations, behavior metrics, persona, share card.
 // Loads metrics.json via fetch() at runtime.
 
 import { initThemeToggle } from './theme.js';
@@ -242,7 +242,7 @@ async function handleRefresh() {
     }
 
     const { log, bar, resultEl, closeBtn } = ui;
-    const stages = ['sync', 'parse', 'insert', 'nlp', 'embedding', 'classifiers', 'metrics'];
+    const stages = ['sync', 'parse', 'insert', 'nlp', 'style', 'scoring', 'metrics'];
     let maxStageIdx = 0;
     let refreshDone = false;
     const evtSource = new EventSource('/api/pipeline/stream');
@@ -494,7 +494,7 @@ function hydrateWrapped(m) {
     setText('peakDay', t.peak_day || 'N/A');
     setText('peakDayCount', `${t.peak_day_count || 0} prompts`);
 
-    // Section 4: Your Style (embedding hero metrics)
+    // Section 4: Your Style (behavior metrics)
     const vibeRaw = nlp.vibe_coder_index?.avg_score;
     const vibeScore = vibeRaw != null ? 100 - vibeRaw : null;
     const politeScore = nlp.politeness?.avg_score;

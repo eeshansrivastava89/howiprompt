@@ -958,7 +958,7 @@ async function handleRefresh() {
     };
 
     // Reuse same SSE log pattern as wizard
-    const stages = ['sync', 'parse', 'insert', 'nlp', 'embedding', 'classifiers', 'metrics'];
+    const stages = ['sync', 'parse', 'insert', 'nlp', 'style', 'scoring', 'metrics'];
     let maxStageIdx = 0;
     let refreshDone = false;
     const evtSource = new EventSource('/api/pipeline/stream');
@@ -1009,8 +1009,8 @@ async function handleRefresh() {
             lines.push('Already up to date');
         }
         lines.push(`<span class="result-num">${formatCompact(stats.totalMessages)}</span> total messages`);
-        if (stats.embedded > 0) {
-            lines.push(`<span class="result-num">${stats.embedded}</span> embeddings computed`);
+        if (stats.scored > 0) {
+            lines.push(`<span class="result-num">${stats.scored}</span> prompts scored`);
         }
         showResult(lines.join('<br>'));
     });
@@ -1044,8 +1044,8 @@ const PIPELINE_STAGE_ORDER = [
     { key: 'parse', label: 'Parse Chats' },
     { key: 'insert', label: 'Store Messages' },
     { key: 'nlp', label: 'Language Scores' },
-    { key: 'embedding', label: 'Embeddings' },
-    { key: 'classifiers', label: 'Behavior Scores' },
+    { key: 'style', label: 'Persona Scoring' },
+    { key: 'scoring', label: 'Behavior Scores' },
     { key: 'metrics', label: 'Build Dashboard' },
 ];
 const PIPELINE_STAGE_INDEX = Object.fromEntries(PIPELINE_STAGE_ORDER.map((stage, index) => [stage.key, index]));
@@ -1104,7 +1104,7 @@ function createWizardPipelineTracker() {
         trickleTimer = window.setInterval(() => {
             if (completed || activeStage !== stageKey) return;
             const stage = stageState[stageKey];
-            const ceiling = stageKey === 'embedding' || stageKey === 'classifiers' ? 95 : 88;
+            const ceiling = stageKey === 'scoring' ? 95 : 88;
             if (stage.progress >= ceiling) return;
             stage.progress = Math.min(ceiling, stage.progress + (stage.progress < 30 ? 3 : 1));
             render();
