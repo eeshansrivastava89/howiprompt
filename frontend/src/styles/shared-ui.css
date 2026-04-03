@@ -112,6 +112,7 @@
   .header-right{gap:6px}
   .header-nav-item{display:none!important}
   .mobile-menu-btn{display:flex}
+  .accent-link,.dashboard-link{padding:6px 10px;font-size:12px}
   .create-modal{width:min(94vw,860px);border-radius:22px}
   .create-header{padding:16px 18px;align-items:flex-start}
   .create-body{padding:18px}
