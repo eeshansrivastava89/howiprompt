@@ -134,6 +134,10 @@
   .header-nav-item{display:none!important}
   .mobile-menu-btn{display:flex}
   .accent-link,.dashboard-link{padding:6px 10px;font-size:12px}
+  .hip-dd-trigger{padding:5px 10px;font-size:11px;gap:5px}
+  .hip-dd-ph{font-size:10px}
+  .hip-dd-dot{width:6px;height:6px}
+  .hip-dd-chevron{width:10px;height:10px}
   .create-modal{width:min(94vw,860px);border-radius:22px}
   .create-header{padding:16px 18px;align-items:flex-start}
   .create-body{padding:18px}

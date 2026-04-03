@@ -629,8 +629,8 @@ function initSourceFilter() {
     }));
 
     let selected = localStorage.getItem('wrapped-source-filter') || '';
-    if (selected === 'both' || !available.includes(selected)) {
-        selected = available.find(k => k !== 'both') || available[0] || 'both';
+    if (!available.includes(selected)) {
+        selected = available.includes('both') ? 'both' : available[0] || 'both';
     }
 
     const dd = createDropdown({

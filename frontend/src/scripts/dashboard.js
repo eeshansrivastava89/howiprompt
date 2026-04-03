@@ -168,7 +168,7 @@ function renderHeatmap(heatmapData) {
 // === Trend Chart (ApexCharts) ===
 
 let trendData = {};
-let activeTrendMetric = 'vibe';
+let activeTrendMetric = 'activity';
 
 const TREND_METRIC_CONFIG = {
     vibe:      { key: 'vibe_coder_index',    label: 'Vibe Coder Index',  suffix: '/100', desc: '<strong>Higher</strong> = vibe coder. <strong>Lower</strong> = engineer.', invert: true },
@@ -307,13 +307,29 @@ function initTrendChart(view) {
         }
     }
 
+    function isStacked(metricKey, series) {
+        return metricKey === 'activity' && series.length > 1;
+    }
+
     function getYAxisBounds(metricKey, series) {
         if (metricKey === 'vibe' || metricKey === 'polite') {
             return { min: 0, max: 100, tickAmount: 4 };
         }
 
-        const values = series.flatMap((s) => s.data || []).filter((v) => Number.isFinite(v));
-        const maxValue = values.length > 0 ? Math.max(...values) : 0;
+        let maxValue;
+        if (isStacked(metricKey, series)) {
+            // For stacked: sum per week across all series
+            const weekCount = series[0]?.data?.length || 0;
+            maxValue = 0;
+            for (let w = 0; w < weekCount; w++) {
+                let weekSum = 0;
+                for (const s of series) weekSum += (s.data?.[w] ?? 0);
+                if (weekSum > maxValue) maxValue = weekSum;
+            }
+        } else {
+            const values = series.flatMap((s) => s.data || []).filter((v) => Number.isFinite(v));
+            maxValue = values.length > 0 ? Math.max(...values) : 0;
+        }
         const paddedMax = maxValue <= 0 ? 10 : Math.ceil(maxValue * 1.15);
         return { min: 0, max: paddedMax, tickAmount: 4 };
     }
@@ -331,9 +347,11 @@ function initTrendChart(view) {
     const initialSuffix = trendData[activeTrendMetric]?.suffix || '';
     const initialYBounds = getYAxisBounds(activeTrendMetric, initial.series);
 
+    const initialStacked = isStacked(activeTrendMetric, initial.series);
     const options = {
         chart: {
             type: 'area',
+            stacked: initialStacked,
             height: '100%',
             fontFamily: "'DM Sans', system-ui, sans-serif",
             toolbar: { show: false },
@@ -450,10 +468,12 @@ function initTrendChart(view) {
             }
         }
 
+        const stacked = isStacked(key, series);
         trendChartInstance.updateOptions({
             series,
             colors,
             chart: {
+                stacked,
                 animations: { enabled: false },
             },
             xaxis: {
@@ -661,8 +681,8 @@ function initSourceFilter() {
 
     let selected = localStorage.getItem(sourceStorageKey) || defaultSource;
     if (selected === 'claude' && available.includes('claude_code')) selected = 'claude_code';
-    if (selected === 'both' || !available.includes(selected)) {
-        selected = available.find(k => k !== 'both') || available[0] || 'both';
+    if (!available.includes(selected)) {
+        selected = available.includes('both') ? 'both' : available[0] || 'both';
     }
 
     sourceDropdown = createDropdown({
