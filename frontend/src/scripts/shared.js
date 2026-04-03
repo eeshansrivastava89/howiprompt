@@ -45,3 +45,111 @@ export function formatDateRange(dateRange) {
     const opts = { month: 'short', day: '2-digit', year: 'numeric' };
     return `${first.toLocaleDateString('en-US', opts)} – ${last.toLocaleDateString('en-US', opts)}`;
 }
+
+// ── Custom dropdown component ───────────────────────
+
+const CHEVRON_SVG = `<svg class="hip-dd-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+
+/**
+ * Create a styled dropdown that replaces pill rows.
+ * @param {Object} opts
+ * @param {HTMLElement} opts.container - Element to render into
+ * @param {Array<{key:string, label:string, color?:string, desc?:string}>} opts.items
+ * @param {string} opts.selected - Initial selected key
+ * @param {string} [opts.placeholder] - Label shown before the selected item name
+ * @param {(key:string)=>void} opts.onSelect - Callback when selection changes
+ * @returns {{select:(key:string)=>void, update:(items:Array)=>void}}
+ */
+export function createDropdown({ container, items, selected, placeholder, onSelect }) {
+    container.classList.add('hip-dd');
+    container.innerHTML = '';
+
+    // Trigger button
+    const trigger = document.createElement('button');
+    trigger.className = 'hip-dd-trigger';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-expanded', 'false');
+    container.appendChild(trigger);
+
+    // Panel
+    const panel = document.createElement('div');
+    panel.className = 'hip-dd-panel';
+    panel.setAttribute('role', 'listbox');
+    container.appendChild(panel);
+
+    let currentKey = selected;
+    let currentItems = items;
+
+    function renderTrigger() {
+        const item = currentItems.find(i => i.key === currentKey) || currentItems[0];
+        if (!item) { trigger.innerHTML = placeholder || ''; return; }
+        const dot = item.color ? `<span class="hip-dd-dot" style="background:${item.color}"></span>` : '';
+        const pre = placeholder ? `<span class="hip-dd-ph">${placeholder}</span>` : '';
+        trigger.innerHTML = `${pre}${dot}<span class="hip-dd-val">${item.label}</span>${CHEVRON_SVG}`;
+    }
+
+    function renderPanel() {
+        panel.innerHTML = currentItems.map(item => {
+            const dot = item.color ? `<span class="hip-dd-dot" style="background:${item.color}"></span>` : '';
+            const check = item.key === currentKey ? `<svg class="hip-dd-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>` : '<span class="hip-dd-check-space"></span>';
+            const desc = item.desc ? `<span class="hip-dd-item-desc">${item.desc}</span>` : '';
+            return `<button class="hip-dd-item ${item.key === currentKey ? 'active' : ''}" data-key="${item.key}" role="option" aria-selected="${item.key === currentKey}">${check}${dot}<span class="hip-dd-item-label">${item.label}${desc}</span></button>`;
+        }).join('');
+    }
+
+    function open() {
+        panel.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        trigger.classList.add('open');
+    }
+
+    function close() {
+        panel.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.classList.remove('open');
+    }
+
+    function select(key) {
+        currentKey = key;
+        renderTrigger();
+        renderPanel();
+        close();
+        onSelect(key);
+    }
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.contains('open') ? close() : open();
+    });
+
+    panel.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-key]');
+        if (btn) select(btn.dataset.key);
+    });
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+        if (!container.contains(e.target)) close();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && panel.classList.contains('open')) {
+            close();
+            trigger.focus();
+        }
+    });
+
+    renderTrigger();
+    renderPanel();
+
+    return {
+        select(key) { select(key); },
+        update(newItems) {
+            currentItems = newItems;
+            if (!newItems.find(i => i.key === currentKey)) currentKey = newItems[0]?.key;
+            renderTrigger();
+            renderPanel();
+        },
+    };
+}

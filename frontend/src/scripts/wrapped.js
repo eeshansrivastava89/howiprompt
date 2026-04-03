@@ -3,7 +3,7 @@
 // Loads metrics.json via fetch() at runtime.
 
 import { initThemeToggle } from './theme.js';
-import { SOURCE_LABELS, SOURCE_ACCENTS, formatSourceLabel, getSourceDisplayName, formatHour12, formatDateRange } from './shared.js';
+import { SOURCE_LABELS, SOURCE_ACCENTS, formatSourceLabel, getSourceDisplayName, formatHour12, formatDateRange, createDropdown } from './shared.js';
 
 let sourceViews = {};
 let activeSourceKey = 'both';
@@ -622,42 +622,30 @@ function initSourceFilter() {
             return formatSourceLabel(a).localeCompare(formatSourceLabel(b));
         });
 
-    sourceBar.innerHTML = '';
-    for (const key of available) {
-        const btn = document.createElement('button');
-        btn.className = 'source-pill';
-        btn.dataset.source = key;
-        const color = SOURCE_ACCENTS[key];
-        if (color) {
-            const dot = document.createElement('span');
-            dot.className = 'source-pill-dot';
-            dot.style.background = color;
-            btn.appendChild(dot);
-        }
-        btn.appendChild(document.createTextNode(formatSourceLabel(key)));
-        sourceBar.appendChild(btn);
-    }
+    const items = available.map(key => ({
+        key,
+        label: formatSourceLabel(key),
+        color: SOURCE_ACCENTS[key],
+    }));
 
     let selected = localStorage.getItem('wrapped-source-filter') || '';
     if (selected === 'both' || !available.includes(selected)) {
         selected = available.find(k => k !== 'both') || available[0] || 'both';
     }
 
-    function selectSource(key) {
-        activeSourceKey = key;
-        sourceBar.querySelectorAll('.source-pill').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.source === key);
-        });
-        localStorage.setItem('wrapped-source-filter', key);
-        hydrateWrapped(sourceViews[key]);
-    }
-
-    sourceBar.addEventListener('click', (e) => {
-        const btn = e.target.closest('.source-pill');
-        if (btn) selectSource(btn.dataset.source);
+    const dd = createDropdown({
+        container: sourceBar,
+        items,
+        selected,
+        placeholder: 'Source',
+        onSelect(key) {
+            activeSourceKey = key;
+            localStorage.setItem('wrapped-source-filter', key);
+            hydrateWrapped(sourceViews[key]);
+        },
     });
 
-    selectSource(selected);
+    dd.select(selected);
 }
 
 // === Methodology modal ===

@@ -59,6 +59,27 @@
 .mobile-menu-item:hover{background:var(--accent-soft)}
 .mobile-menu-item svg{flex-shrink:0;color:var(--muted)}
 
+/* === CUSTOM DROPDOWN === */
+.hip-dd{position:relative;display:inline-flex}
+.hip-dd-trigger{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:20px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.hip-dd-trigger:hover{border-color:var(--accent);color:var(--accent)}
+.hip-dd-trigger.open{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent)}
+.hip-dd-chevron{transition:transform .2s;flex-shrink:0}
+.hip-dd-trigger.open .hip-dd-chevron{transform:rotate(180deg)}
+.hip-dd-ph{color:var(--muted);font-weight:500;margin-right:2px}
+.hip-dd-val{font-weight:700}
+.hip-dd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.hip-dd-panel{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);padding:4px;max-height:320px;overflow-y:auto}
+.dark .hip-dd-panel{box-shadow:0 4px 20px rgba(0,0,0,0.35),0 1px 4px rgba(0,0,0,0.2)}
+.hip-dd-panel.open{display:flex;flex-direction:column}
+.hip-dd-item{display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:13px;font-weight:500;color:var(--text);background:none;border:none;border-radius:8px;cursor:pointer;font-family:inherit;transition:background .1s;text-align:left;width:100%;white-space:nowrap}
+.hip-dd-item:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.hip-dd-item.active{font-weight:700;color:var(--accent)}
+.hip-dd-item-label{display:flex;flex-direction:column;gap:1px}
+.hip-dd-item-desc{font-size:11px;font-weight:400;color:var(--muted)}
+.hip-dd-check{color:var(--accent);flex-shrink:0}
+.hip-dd-check-space{width:14px;flex-shrink:0}
+
 /* === SHARED SETTINGS / REFRESH UI === */
 .wizard-config{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
 .wizard-toggle{display:flex;align-items:center;gap:12px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--ui-radius-sm);cursor:pointer;font-size:14px;font-weight:500;transition:border-color .15s}

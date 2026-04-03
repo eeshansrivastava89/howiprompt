@@ -14,7 +14,7 @@ import SideQuestNotch from '../components/SideQuestNotch.astro';
 <SideQuestNotch />
 <div class="top-nav" id="topNav">
   <Header page="dashboard" />
-  <nav class="source-bar" id="sourceBar"></nav>
+  <div class="source-bar" id="sourceBar"></div>
 </div>
 
 <!-- DASHBOARD -->
@@ -59,11 +59,7 @@ import SideQuestNotch from '../components/SideQuestNotch.astro';
               </div>
               <div class="trend-legend" id="trendLegend"></div>
             </div>
-            <div class="metric-tabs" id="metricTabs">
-              <button class="metric-tab active" data-metric="vibe" data-tooltip="Engineer on the left, vibe coder on the right. Higher means more instinct-led prompting.">Vibe Coder Index</button>
-              <button class="metric-tab" data-metric="polite" data-tooltip="Direct on the left, warm on the right. Higher means a kinder, more collaborative tone.">Politeness</button>
-              <button class="metric-tab" data-metric="activity" data-tooltip="Quiet weeks on the low end, heavy usage on the high end.">Activity</button>
-            </div>
+            <div class="metric-tabs" id="metricTabs"></div>
           </div>
           <div class="trend-current">
             <span class="trend-current-val" id="trendVal">--</span>

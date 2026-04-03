@@ -33,12 +33,7 @@
 .trend-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:15px}
 .trend-legend-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap}
 .trend-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.metric-tabs{display:flex;gap:4px;flex-wrap:wrap;min-width:0;align-self:flex-start}
-.metric-tab{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;position:relative}
-.metric-tab[data-tooltip]:hover::after{content:attr(data-tooltip);position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:6px 12px;border-radius:8px;white-space:normal;width:max-content;max-width:220px;z-index:20;pointer-events:none;line-height:1.4}
-.metric-tab[data-tooltip]:hover::before{content:'';position:absolute;top:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:var(--text);z-index:20;pointer-events:none}
-.metric-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.metric-tab:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+.metric-tabs{display:inline-flex;align-self:flex-start}
 .trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
 .trend-current-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--trend-color, var(--accent))}
 .trend-current-label{display:none}
@@ -216,8 +211,7 @@
   .trend-copy-sep{display:none}
   .trend-metric-def{font-size:11px}
   .trend-title{font-size:14px}
-  .metric-tabs{flex-wrap:wrap;gap:3px;width:100%}
-  .metric-tab{padding:4px 8px;font-size:10px;border-radius:14px}
+  .metric-tabs{width:100%}
   .trend-current-val{font-size:24px}
   .trend-current-label{font-size:12px}
   .trend-chart-wrap{min-height:80px}

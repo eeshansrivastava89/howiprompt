@@ -2,7 +2,7 @@
 // Loads metrics.json via fetch() at runtime — no build-time data injection.
 
 import { initThemeToggle } from './theme.js';
-import { SOURCE_LABELS, SOURCE_ACCENTS, formatSourceLabel, getSourceDisplayName, formatHour12, formatDateRange } from './shared.js';
+import { SOURCE_LABELS, SOURCE_ACCENTS, formatSourceLabel, getSourceDisplayName, formatHour12, formatDateRange, createDropdown } from './shared.js';
 let sourceViews = {};
 let defaultSource = 'both';
 let activeSourceKey = 'both';
@@ -427,10 +427,6 @@ function initTrendChart(view) {
             trendPanel.style.setProperty('--trend-color', resolveAccent());
         }
 
-        document.querySelectorAll('.metric-tab').forEach((t) =>
-            t.classList.toggle('active', t.dataset.metric === key)
-        );
-
         const { series, colors, showLegend } = buildSeriesAndColors(key);
         const suffix = d.suffix || '';
         const yBounds = getYAxisBounds(key, series);
@@ -492,9 +488,20 @@ function initTrendChart(view) {
         }, false, false, false);
     }
 
-    document.querySelectorAll('.metric-tab').forEach((tab) => {
-        tab.addEventListener('click', () => setMetric(tab.dataset.metric));
-    });
+    // Metric dropdown
+    const metricTabsEl = document.getElementById('metricTabs');
+    if (metricTabsEl) {
+        const metricItems = Object.entries(TREND_METRIC_CONFIG)
+            .filter(([k]) => trendData[k])
+            .map(([k, cfg]) => ({ key: k, label: cfg.label }));
+        createDropdown({
+            container: metricTabsEl,
+            items: metricItems,
+            selected: activeTrendMetric,
+            placeholder: 'Metric',
+            onSelect(key) { setMetric(key); },
+        });
+    }
 
     setMetric(activeTrendMetric);
 }
@@ -587,52 +594,36 @@ function renderView(sourceKey) {
 
 // === Source filter ===
 
+let sourceDropdown = null;
+
 function initSourceFilter() {
     if (!sourceBar) return;
 
     const available = getAvailableSourceKeys();
-    sourceBar.innerHTML = '';
+    const items = available.map(key => ({
+        key,
+        label: formatSourceLabel(key),
+        color: SOURCE_ACCENTS[key],
+    }));
 
-    for (const key of available) {
-        const btn = document.createElement('button');
-        btn.className = 'source-pill';
-        btn.dataset.source = key;
-
-        const color = SOURCE_ACCENTS[key];
-        if (color) {
-            const dot = document.createElement('span');
-            dot.className = 'source-pill-dot';
-            dot.style.background = color;
-            btn.appendChild(dot);
-        }
-
-        const label = document.createTextNode(formatSourceLabel(key));
-        btn.appendChild(label);
-        sourceBar.appendChild(btn);
-    }
-
-    // Default to first alphabetical (not "both") — "both" is last
     let selected = localStorage.getItem(sourceStorageKey) || defaultSource;
     if (selected === 'claude' && available.includes('claude_code')) selected = 'claude_code';
     if (selected === 'both' || !available.includes(selected)) {
         selected = available.find(k => k !== 'both') || available[0] || 'both';
     }
 
-    function selectSource(key) {
-        sourceBar.querySelectorAll('.source-pill').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.source === key);
-        });
-        localStorage.setItem(sourceStorageKey, key);
-        renderView(key);
-    }
-
-    sourceBar.addEventListener('click', (e) => {
-        const btn = e.target.closest('.source-pill');
-        if (!btn) return;
-        selectSource(btn.dataset.source);
+    sourceDropdown = createDropdown({
+        container: sourceBar,
+        items,
+        selected,
+        placeholder: 'Source',
+        onSelect(key) {
+            localStorage.setItem(sourceStorageKey, key);
+            renderView(key);
+        },
     });
 
-    selectSource(selected);
+    sourceDropdown.select(selected);
 }
 
 // === Methodology modal ===
