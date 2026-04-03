@@ -51,6 +51,14 @@
 .theme-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s}
 .theme-btn:hover{border-color:var(--accent);color:var(--accent)}
 
+/* Mobile menu: hamburger hidden by default, shown <640px */
+.mobile-menu-btn{display:none}
+.mobile-menu{display:none;position:absolute;top:100%;right:12px;z-index:55;background:var(--surface);border:1px solid var(--border);border-radius:var(--ui-radius-sm);box-shadow:var(--shadow-hover);padding:6px 0;min-width:180px}
+.mobile-menu.open{display:flex;flex-direction:column}
+.mobile-menu-item{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:14px;font-weight:500;color:var(--text);text-decoration:none;background:none;border:none;cursor:pointer;font-family:inherit;transition:background .1s;text-align:left;width:100%}
+.mobile-menu-item:hover{background:var(--accent-soft)}
+.mobile-menu-item svg{flex-shrink:0;color:var(--muted)}
+
 /* === SHARED SETTINGS / REFRESH UI === */
 .wizard-config{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
 .wizard-toggle{display:flex;align-items:center;gap:12px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--ui-radius-sm);cursor:pointer;font-size:14px;font-weight:500;transition:border-color .15s}
@@ -100,9 +108,10 @@
 .refresh-modal-close:hover{transform:scale(1.03)}
 
 @media(max-width:640px){
-  .header{padding:10px 16px;gap:8px}
-  .header-right{gap:8px}
-  .header-right .nav-link{font-size:12px;padding:6px 10px}
+  .header{padding:10px 16px;gap:6px}
+  .header-right{gap:6px}
+  .header-nav-item{display:none!important}
+  .mobile-menu-btn{display:flex}
   .create-modal{width:min(94vw,860px);border-radius:22px}
   .create-header{padding:16px 18px;align-items:flex-start}
   .create-body{padding:18px}

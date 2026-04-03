@@ -4,6 +4,7 @@ html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
 section { scroll-snap-align: start; scroll-snap-stop: always; }
 
 .top-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: var(--bg); }
+@media(max-width:640px){ .top-nav { position: relative; } }
 
 @keyframes fadeInWrapped { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }

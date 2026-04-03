@@ -120,7 +120,7 @@
   .source-pill:hover{border-color:var(--text);color:var(--text)}
   .source-pill.active{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
   .source-pill-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-  @media(max-width:640px){.source-bar{padding:6px 12px;gap:4px}.source-pill{padding:5px 10px;font-size:12px}}
+  @media(max-width:640px){.source-bar{padding:6px 12px;gap:4px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.source-bar::-webkit-scrollbar{display:none}.source-pill{padding:5px 10px;font-size:12px;flex-shrink:0}}
 
   /* ── Player card 3D tilt ── */
   .card-dock { perspective: 1200px; }

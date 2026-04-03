@@ -100,3 +100,35 @@ function initCreateDrawer() {
 }
 
 initCreateDrawer();
+
+// Mobile overflow menu
+(function initMobileMenu() {
+    const btn = document.getElementById('mobileMenuBtn');
+    const menu = document.getElementById('mobileMenu');
+    if (!btn || !menu) return;
+
+    window.closeMobileMenu = () => {
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+    };
+
+    btn.addEventListener('click', () => {
+        const open = menu.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(open));
+    });
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && !btn.contains(e.target)) {
+            window.closeMobileMenu();
+        }
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && menu.classList.contains('open')) {
+            window.closeMobileMenu();
+            btn.focus();
+        }
+    });
+})();

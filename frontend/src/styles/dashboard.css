@@ -23,7 +23,7 @@
 .stat-card-sub{font-size:13px;color:var(--muted);margin-top:4px}
 
 /* === TREND CHART === */
-.trend-panel{background:var(--surface);border-radius:var(--ui-radius-sm);padding:14px 20px 10px;box-shadow:var(--shadow);flex:1;min-height:340px;min-width:0;display:flex;flex-direction:column}
+.trend-panel{background:var(--surface);border-radius:var(--ui-radius-sm);padding:14px 20px 10px;box-shadow:var(--shadow);flex:3 1 340px;min-height:280px;min-width:0;display:flex;flex-direction:column}
 .trend-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:10px 16px;min-width:0}
 .trend-copy{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
 .trend-copy-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
@@ -42,15 +42,16 @@
 .trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
 .trend-current-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--trend-color, var(--accent))}
 .trend-current-label{display:none}
-.trend-chart-wrap{position:relative;flex:1;min-height:60px;min-width:0}
+.trend-chart-wrap{position:relative;flex:1;min-height:60px;min-width:0;overflow:hidden}
+.trend-chart-wrap>#trendChart{position:absolute;inset:0}
 
 /* === HEATMAP === */
-.heatmap-panel{background:var(--surface);border-radius:var(--ui-radius-sm);padding:14px 18px;box-shadow:var(--shadow);flex-shrink:0}
-.heatmap-title{font-size:14px;font-weight:700;margin-bottom:8px}
-.heatmap{display:grid;grid-template-columns:32px repeat(24,1fr);gap:1px;font-size:10px}
+.heatmap-panel{background:var(--surface);border-radius:var(--ui-radius-sm);padding:14px 18px;box-shadow:var(--shadow);flex:1 1 auto;min-height:120px;display:flex;flex-direction:column}
+.heatmap-title{font-size:14px;font-weight:700;margin-bottom:8px;flex-shrink:0}
+.heatmap{display:grid;grid-template-columns:32px repeat(24,1fr);gap:1px;font-size:10px;flex:1;align-content:stretch}
 .heatmap-label{display:flex;align-items:center;color:var(--muted);font-weight:500;font-size:10px}
 .heatmap-hour{text-align:center;color:var(--muted);font-size:10px;font-weight:500}
-.heatmap-cell{height:18px;border-radius:2px;background:var(--border);opacity:0.3}
+.heatmap-cell{min-height:14px;border-radius:2px;background:var(--border);opacity:0.3}
 .heatmap-cell.l1{background:var(--heatmap-color, var(--accent));opacity:0.2}
 .heatmap-cell.l2{background:var(--heatmap-color, var(--accent));opacity:0.35}
 .heatmap-cell.l3{background:var(--heatmap-color, var(--accent));opacity:0.55}
@@ -59,7 +60,7 @@
 .heatmap-tooltip{position:absolute;top:0;left:0;background:var(--text);color:var(--bg);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;pointer-events:none;opacity:0;transition:opacity .1s;white-space:nowrap;z-index:10;transform:translateX(-50%)}
 .heatmap-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--text)}
 .heatmap-panel{position:relative}
-.heatmap-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted)}
+.heatmap-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted);flex-shrink:0}
 
 /* === RIGHT COLUMN === */
 .right-col{display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
@@ -171,6 +172,7 @@
   .player-card{height:auto}
   .card-top-content{gap:8px}
   .trend-panel{flex:none;min-height:320px}
+  .heatmap-panel{flex:none;min-height:auto}
   .right-col{align-self:center;max-width:480px;width:100%}
 }
 
@@ -181,8 +183,9 @@
 /* === MOBILE (≤640) === */
 @media(max-width:640px){
   html,body{height:auto;overflow-x:hidden}
-  .header{padding:10px 16px;gap:8px}
-  .header-right{gap:8px}
+  .header{padding:10px 16px;gap:6px}
+  .header h1{font-size:20px}
+  .date-range{font-size:12px}
   .tab-bar{padding:0 16px}
   .dash-container{padding:0 12px}
   .main-grid{gap:12px}
@@ -218,12 +221,12 @@
   .trend-current-val{font-size:24px}
   .trend-current-label{font-size:12px}
   .trend-chart-wrap{min-height:80px}
-  .heatmap-panel{padding:10px 14px}
+  .heatmap-panel{padding:10px 14px;flex:none;min-height:auto}
   .heatmap-title{font-size:13px;margin-bottom:4px}
   .heatmap{grid-template-columns:14px repeat(24,1fr);gap:1px}
   .heatmap-hour{visibility:hidden;height:0;line-height:0;font-size:0}
   .heatmap-label{font-size:7px;width:14px;overflow:hidden;text-overflow:clip;white-space:nowrap}
-  .heatmap-cell{height:8px;border-radius:1px}
+  .heatmap-cell{min-height:8px;border-radius:1px}
   .heatmap-meta{font-size:10px;flex-wrap:wrap;gap:4px}
   .footer{flex-direction:column;gap:4px;text-align:center;padding:10px 12px;margin-top:8px;font-size:10px}
 }

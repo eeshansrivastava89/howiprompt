@@ -334,7 +334,7 @@ function initTrendChart(view) {
     const options = {
         chart: {
             type: 'area',
-            height: window.innerWidth <= 1100 ? 150 : window.innerWidth <= 1400 ? 170 : 190,
+            height: '100%',
             fontFamily: "'DM Sans', system-ui, sans-serif",
             toolbar: { show: false },
             zoom: { enabled: false },

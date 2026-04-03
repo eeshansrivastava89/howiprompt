@@ -58,3 +58,5 @@ images/
 # Large generated data files
 *.npy
 *.npz
+tests/screenshots/
+tests/visual-qa.mjs
