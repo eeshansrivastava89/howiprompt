@@ -44,21 +44,6 @@ describe("classifiers.json", () => {
   });
 });
 
-describe("reference_clusters.json (legacy)", () => {
-  const clusters = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "..", "data", "reference_clusters.json"), "utf-8"),
-  );
-
-  it("does not have hitl clusters (removed)", () => {
-    expect(clusters.hitl).toBeUndefined();
-  });
-
-  it("has vibe and politeness clusters", () => {
-    expect(clusters.vibe).toBeDefined();
-    expect(clusters.politeness).toBeDefined();
-  });
-});
-
 describe("scorer output validation", () => {
   beforeEach(() => {
     resetScorersForTests();

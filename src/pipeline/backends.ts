@@ -37,6 +37,38 @@ let detectionCache:
   }
   | null = null;
 
+// ── Platform helpers ───────────────────────────────────
+
+/**
+ * Resolve the user-data directory for VS Code-style apps across platforms.
+ *   macOS:   ~/Library/Application Support/{appName}/User/workspaceStorage
+ *   Windows: %APPDATA%/{appName}/User/workspaceStorage
+ *   Linux:   ~/.config/{appName}/User/workspaceStorage
+ */
+function vsCodeDataDir(appName: string): string {
+  const home = os.homedir();
+  switch (os.platform()) {
+    case "win32":
+      return path.join(
+        process.env.APPDATA ?? path.join(home, "AppData", "Roaming"),
+        appName,
+        "User",
+        "workspaceStorage",
+      );
+    case "linux":
+      return path.join(home, ".config", appName, "User", "workspaceStorage");
+    default: // darwin
+      return path.join(
+        home,
+        "Library",
+        "Application Support",
+        appName,
+        "User",
+        "workspaceStorage",
+      );
+  }
+}
+
 // ── Scan helpers ───────────────────────────────────────
 
 function findJsonlFilesRecursive(dir: string): string[] {
@@ -363,15 +395,12 @@ class CopilotChatBackend implements Backend {
   readonly id = "copilot_chat";
   readonly name = "Copilot Chat";
 
+  private sourceDir(): string {
+    return vsCodeDataDir("Code");
+  }
+
   detect(): BackendInfo {
-    const sourcePath = path.join(
-      os.homedir(),
-      "Library",
-      "Application Support",
-      "Code",
-      "User",
-      "workspaceStorage",
-    );
+    const sourcePath = this.sourceDir();
     const detected = fs.existsSync(sourcePath);
     return {
       id: this.id,
@@ -385,7 +414,7 @@ class CopilotChatBackend implements Backend {
 
   sync(config: Config): SyncResult {
     return syncVsCodeChatSessions(
-      path.join(os.homedir(), "Library", "Application Support", "Code", "User", "workspaceStorage"),
+      this.sourceDir(),
       config.copilotChatSource,
     );
   }
@@ -413,15 +442,12 @@ class CursorBackend implements Backend {
   readonly id = "cursor";
   readonly name = "Cursor";
 
+  private sourceDir(): string {
+    return vsCodeDataDir("Cursor");
+  }
+
   detect(): BackendInfo {
-    const sourcePath = path.join(
-      os.homedir(),
-      "Library",
-      "Application Support",
-      "Cursor",
-      "User",
-      "workspaceStorage",
-    );
+    const sourcePath = this.sourceDir();
     const detected = fs.existsSync(sourcePath);
     return {
       id: this.id,
@@ -435,7 +461,7 @@ class CursorBackend implements Backend {
 
   sync(config: Config): SyncResult {
     return syncVsCodeChatSessions(
-      path.join(os.homedir(), "Library", "Application Support", "Cursor", "User", "workspaceStorage"),
+      this.sourceDir(),
       config.cursorSource,
     );
   }

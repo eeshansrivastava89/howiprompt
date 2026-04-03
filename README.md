@@ -7,7 +7,7 @@
 [![npm](https://img.shields.io/npm/v/@eeshans/howiprompt)](https://www.npmjs.com/package/@eeshans/howiprompt)
 [![license](https://img.shields.io/github/license/eeshansrivastava89/howiprompt)](LICENSE)
 [![node](https://img.shields.io/node/v/@eeshans/howiprompt)](package.json)
-[![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-blue)]()
+[![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)]()
 [![demo](https://img.shields.io/badge/demo-live-cb9f6a)](https://howiprompt.eeshans.com)
 
 [Live Dashboard](https://howiprompt.eeshans.com) • [Live Wrapped](https://howiprompt.eeshans.com/wrapped) • [Source](https://github.com/eeshansrivastava89/howiprompt)
@@ -96,8 +96,8 @@ Then commit and push `docs/`, and enable GitHub Pages from `main` / `docs` in yo
 |--------|----------|
 | **Claude Code** | `~/.claude/projects/*.jsonl` |
 | **Codex** | `~/.codex/history.jsonl` |
-| **Copilot Chat** | `~/Library/Application Support/Code/User/workspaceStorage` |
-| **Cursor** | `~/Library/Application Support/Cursor/User/workspaceStorage` |
+| **Copilot Chat** | macOS: `~/Library/Application Support/Code/…` · Windows: `%APPDATA%\Code\…` · Linux: `~/.config/Code/…` |
+| **Cursor** | macOS: `~/Library/Application Support/Cursor/…` · Windows: `%APPDATA%\Cursor\…` · Linux: `~/.config/Cursor/…` |
 | **LM Studio** | `~/.lmstudio/conversations` |
 
 All supported sources are auto-synced into `~/.howiprompt/raw/` and reused across refreshes.

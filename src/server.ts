@@ -58,8 +58,11 @@ export async function startServer(opts: ServerOptions): Promise<http.Server> {
     if (req.method === "GET" && url.pathname === "/api/pick-directory") {
       try {
         let cmd: string;
-        if (os.platform() === "darwin") {
+        const platform = os.platform();
+        if (platform === "darwin") {
           cmd = `osascript -e 'return POSIX path of (choose folder with prompt "Select directory to exclude")'`;
+        } else if (platform === "win32") {
+          cmd = `powershell -NoProfile -Command "Add-Type -AssemblyName System.Windows.Forms; $f = New-Object System.Windows.Forms.FolderBrowserDialog; $f.Description = 'Select directory to exclude'; if ($f.ShowDialog() -eq 'OK') { $f.SelectedPath } else { exit 1 }"`;
         } else {
           // Linux: try zenity (GTK), fall back to kdialog (KDE)
           try {
@@ -70,8 +73,8 @@ export async function startServer(opts: ServerOptions): Promise<http.Server> {
           }
         }
         const result = execSync(cmd, { timeout: 60000 }).toString().trim();
-        // Remove trailing slash
-        const dirPath = result.replace(/\/$/, "");
+        // Normalize: remove trailing slash/backslash
+        const dirPath = result.replace(/[\\/]+$/, "");
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ path: dirPath }));
       } catch {
@@ -89,7 +92,8 @@ export async function startServer(opts: ServerOptions): Promise<http.Server> {
       const { path: dirPath } = JSON.parse(body);
 
       // Convert to Claude's directory format: /path/to/project -> -path-to-project
-      const claudeDir = dirPath.replace(/\//g, "-");
+      // Also handle Windows backslashes: drive:\path -> drive-path
+      const claudeDir = dirPath.replace(/[\\/]/g, "-");
       const projectsDir = path.join(os.homedir(), ".claude", "projects");
       const targetDir = path.join(projectsDir, claudeDir);
 

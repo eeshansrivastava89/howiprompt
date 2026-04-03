@@ -47,7 +47,7 @@ export async function runPipeline(opts: PipelineOptions): Promise<PipelineStats>
   // (user expects "reanalyze" to respect exclusion changes)
   const allExclusions = Object.entries(config.backends)
     .flatMap(([, toggle]) => toggle.exclusions)
-    .map((cwd) => cwd.replace(/\//g, "-").replace(/^-/, "-"));
+    .map((cwd) => cwd.replace(/[\\/]/g, "-"));
   for (const dirName of allExclusions) {
     const pattern = `%/raw/claude_code/${dirName}/%`;
     await client.execute({

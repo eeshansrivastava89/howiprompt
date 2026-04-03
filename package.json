@@ -14,8 +14,7 @@
     "openai",
     "cursor",
     "prompting",
-    "nlp",
-    "embeddings"
+    "nlp"
   ],
   "bin": {
     "howiprompt": "bin/cli.mjs"
@@ -25,7 +24,6 @@
     "config/",
     "data/claude_code/.gitkeep",
     "data/codex/.gitkeep",
-    "data/reference_clusters.json",
     "dist/",
     "frontend/dist/"
   ],
