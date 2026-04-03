@@ -1,10 +1,16 @@
 ---
 interface Props {
-  page?: 'dashboard' | 'wrapped';
+  page?: 'dashboard' | 'wrapped' | 'linguistics';
 }
 const { page = 'dashboard' } = Astro.props;
 const isDashboard = page === 'dashboard';
-const title = isDashboard ? 'How I <span>Prompt</span>' : 'How I <span>Prompt</span> <span class="header-subtitle">| Wrapped</span>';
+const isWrapped = page === 'wrapped';
+const isLinguistics = page === 'linguistics';
+const title = isDashboard
+  ? 'How I <span>Prompt</span>'
+  : isWrapped
+    ? 'How I <span>Prompt</span> <span class="header-subtitle">| Wrapped</span>'
+    : 'How I <span>Prompt</span> <span class="header-subtitle">| Linguistics</span>';
 ---
 <header class="header">
   <div class="header-left">
@@ -12,16 +18,23 @@ const title = isDashboard ? 'How I <span>Prompt</span>' : 'How I <span>Prompt</s
     <span class="date-range" id="dateRange">--</span>
   </div>
   <div class="header-right">
-    <!-- Full nav links — hidden on mobile, visible ≥640px -->
-    {isDashboard ? (
-      <a href="/wrapped" class="accent-link">
+    <!-- Primary nav -->
+    {!isDashboard && (
+      <a href="/" class={`accent-link dashboard-link ${!isWrapped && !isLinguistics ? 'is-current' : ''}`}>
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        Dashboard
+      </a>
+    )}
+    {!isWrapped && !isLinguistics && (
+      <a href="/wrapped" class={`accent-link ${isDashboard ? '' : 'header-nav-item'}`}>
         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
         Wrapped
       </a>
-    ) : (
-      <a href="/" class="accent-link dashboard-link">
-        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-        Dashboard
+    )}
+    {!isLinguistics && (
+      <a href="/linguistics" class="nav-link header-nav-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 12h5M8 17h8M5 7h.01M5 12h.01M5 17h.01"/></svg>
+        Linguistics
       </a>
     )}
     <button class="create-btn header-nav-item" id="createToggle" type="button" onclick="openCreateModal()" aria-label="Open create your own modal">
@@ -35,14 +48,15 @@ const title = isDashboard ? 'How I <span>Prompt</span>' : 'How I <span>Prompt</s
     <button class="theme-btn header-nav-item" id="settingsBtn" onclick="openSettings()" aria-label="Settings">
       <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
     </button>
-    <!-- Mobile overflow menu trigger — visible <640px -->
     <button class="theme-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu" aria-expanded="false">
       <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
     </button>
   </div>
 </header>
-<!-- Mobile dropdown menu -->
 <div class="mobile-menu" id="mobileMenu">
+  {!isDashboard && <a href="/" class="mobile-menu-item" onclick="closeMobileMenu()">Dashboard</a>}
+  {!isWrapped && <a href="/wrapped" class="mobile-menu-item" onclick="closeMobileMenu()">Wrapped</a>}
+  {!isLinguistics && <a href="/linguistics" class="mobile-menu-item" onclick="closeMobileMenu()">Linguistics</a>}
   <button class="mobile-menu-item" onclick="openCreateModal();closeMobileMenu()">
     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l-3 3 3 3m8-6l3 3-3 3M14 4l-4 16"/></svg>
     Create Your Own

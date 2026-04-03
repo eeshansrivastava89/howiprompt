@@ -1,0 +1,69 @@
+/* linguistics.css — dedicated linguistic analysis page */
+
+.ling-page-frame{height:auto;min-height:100dvh}
+.ling-page{flex:1;padding:24px;overflow:auto}
+.ling-shell{max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.ling-hero{display:grid;grid-template-columns:1.4fr .9fr;gap:16px;align-items:stretch}
+.ling-hero-card,.ling-summary-card,.ling-card{background:var(--surface);border:1px solid color-mix(in srgb,var(--border) 88%, transparent);border-radius:24px;box-shadow:var(--shadow)}
+.ling-hero-card{padding:24px 26px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%, var(--surface)),var(--surface) 55%,color-mix(in srgb,var(--bg) 82%, var(--surface)))}
+.ling-kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 22%, var(--border));background:color-mix(in srgb,var(--accent) 8%, transparent);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.ling-page-title{font-family:'Fraunces',serif;font-size:40px;line-height:1.02;letter-spacing:-0.03em;margin:0 0 10px;color:var(--text)}
+.ling-page-subtitle{max-width:62ch;font-size:15px;line-height:1.65;color:var(--muted);margin:0}
+.ling-summary-card{padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ling-summary-item{padding:12px 14px;border-radius:18px;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 56%, transparent),color-mix(in srgb,var(--surface) 90%, transparent));border:1px solid color-mix(in srgb,var(--border) 76%, transparent)}
+.ling-summary-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.ling-summary-value{font-size:18px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.ling-summary-value.mono{font-family:'JetBrains Mono',monospace;font-size:16px}
+
+.ling-section{display:flex;flex-direction:column;gap:16px}
+.ling-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ling-card{padding:18px 20px}
+.ling-card-wide{grid-column:span 1}
+.ling-card-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:14px}
+.ling-card-body{font-size:13px}
+
+.ling-opener-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ling-opener-label{width:88px;font-size:12px;font-weight:700;color:var(--text);flex-shrink:0}
+.ling-opener-bar{flex:1;height:20px;background:color-mix(in srgb,var(--border) 88%, transparent);border-radius:999px;overflow:hidden;position:relative}
+.ling-opener-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 88%, #fff 12%),color-mix(in srgb,var(--accent) 62%, #000 8%));transition:width .45s ease}
+.ling-opener-pct{font-size:11px;font-weight:700;color:var(--muted);width:38px;text-align:right;flex-shrink:0}
+
+.ling-hist{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:8px}
+.ling-hist-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.ling-hist-fill{width:100%;border-radius:6px 6px 2px 2px;background:color-mix(in srgb,var(--accent) 52%, var(--text));transition:height .45s ease;min-height:4px}
+.ling-hist-label{font-size:10px;color:var(--muted);margin-top:6px;white-space:nowrap}
+.ling-hist-count{font-size:11px;font-weight:800;color:var(--text);margin-bottom:5px}
+
+.ling-phrase-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ling-phrase-rank{font-size:11px;font-weight:800;color:var(--muted);width:18px;text-align:right;flex-shrink:0}
+.ling-phrase-text{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--text);flex:0 0 128px;min-width:0}
+.ling-phrase-bar{flex:1;height:16px;background:color-mix(in srgb,var(--border) 88%, transparent);border-radius:999px;overflow:hidden}
+.ling-phrase-fill{height:100%;border-radius:999px;background:color-mix(in srgb,var(--accent) 44%, var(--text));opacity:.9}
+.ling-phrase-count{font-size:11px;color:var(--muted);width:40px;text-align:right;flex-shrink:0}
+
+.ling-src-table{width:100%;border-collapse:collapse;font-size:12px}
+.ling-src-table th{text-align:left;font-size:11px;font-weight:700;color:var(--muted);padding:4px 8px 10px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em}
+.ling-src-table td{padding:8px;border-bottom:1px solid color-mix(in srgb,var(--border) 58%, transparent)}
+.ling-src-table td:first-child{font-weight:700;color:var(--text)}
+.ling-src-table tr:last-child td{border-bottom:none}
+.ling-src-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.ling-inline-note{font-size:12px;color:var(--muted)}
+
+@media(max-width:1024px){
+  .ling-page{padding:16px}
+  .ling-hero{grid-template-columns:1fr}
+}
+
+@media(max-width:640px){
+  .ling-page{padding:12px}
+  .ling-hero-card{padding:18px}
+  .ling-page-title{font-size:30px}
+  .ling-page-subtitle{font-size:14px}
+  .ling-summary-card{grid-template-columns:1fr 1fr;padding:14px}
+  .ling-grid{grid-template-columns:1fr;gap:12px}
+  .ling-card{padding:16px}
+  .ling-opener-label{width:74px;font-size:11px}
+  .ling-phrase-text{flex-basis:86px;font-size:11px}
+  .ling-src-table{font-size:11px}
+  .ling-src-table th,.ling-src-table td{padding-left:4px;padding-right:4px}
+}

@@ -10,6 +10,7 @@
 .header-right{display:flex;align-items:center;gap:12px}
 .nav-link,.accent-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--text);text-decoration:none;background:var(--surface);border:1px solid var(--border);border-radius:20px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
 .nav-link:hover,.accent-link:hover{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 10%, var(--surface))}
+.nav-link.is-current,.accent-link.is-current{border-color:color-mix(in srgb,var(--accent) 48%, var(--border));color:var(--accent);background:color-mix(in srgb,var(--accent) 10%, var(--surface))}
 .create-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 35%, var(--border));border-radius:20px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
 .create-btn:hover{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 18%, var(--surface))}
 .create-modal{background:var(--surface);border-radius:28px;max-width:860px;width:min(92vw,860px);box-shadow:var(--shadow-hover);overflow:hidden;border:1px solid var(--border);display:flex;flex-direction:column;max-height:min(88vh,860px)}

@@ -1,0 +1,91 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import Header from '../components/Header.astro';
+import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
+import SettingsModal from '../components/dashboard/SettingsModal.astro';
+import RefreshModal from '../components/RefreshModal.astro';
+import CreateModal from '../components/CreateModal.astro';
+---
+<DashboardLayout title="How I Prompt: Linguistics">
+<div class="page-frame ling-page-frame">
+
+<div class="top-nav" id="topNav">
+  <Header page="linguistics" />
+  <div class="filter-bar">
+    <div id="sourceBar"></div>
+  </div>
+</div>
+
+<div class="ling-page">
+  <div class="ling-shell">
+    <section class="ling-hero animate delay-1">
+      <div class="ling-hero-card">
+        <div class="ling-kicker">Prompt Style Analysis</div>
+        <h2 class="ling-page-title">Linguistic Patterns</h2>
+        <p class="ling-page-subtitle">
+          A dedicated read on how you actually phrase requests: your default opening move, how long your prompts run,
+          the phrases you repeat, and how your tone shifts across tools.
+        </p>
+      </div>
+      <div class="ling-summary-card">
+        <div class="ling-summary-item">
+          <div class="ling-summary-label">Source</div>
+          <div class="ling-summary-value" id="lingActiveSource">All</div>
+        </div>
+        <div class="ling-summary-item">
+          <div class="ling-summary-label">Average Prompt</div>
+          <div class="ling-summary-value" id="lingAvgWords">--</div>
+        </div>
+        <div class="ling-summary-item">
+          <div class="ling-summary-label">Top Phrase</div>
+          <div class="ling-summary-value mono" id="lingTopPhrase">--</div>
+        </div>
+        <div class="ling-summary-item">
+          <div class="ling-summary-label">Dominant Opener</div>
+          <div class="ling-summary-value" id="lingDominantOpener">--</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ling-section animate delay-2" id="lingSection">
+      <div class="ling-grid">
+        <div class="ling-card" id="lingOpeners">
+          <div class="ling-card-title">How You Start</div>
+          <div class="ling-card-body" id="lingOpenersBody"></div>
+        </div>
+        <div class="ling-card" id="lingLength">
+          <div class="ling-card-title">Prompt Length</div>
+          <div class="ling-card-body" id="lingLengthBody"></div>
+        </div>
+        <div class="ling-card ling-card-wide" id="lingPhrases">
+          <div class="ling-card-title">Top Phrases</div>
+          <div class="ling-card-body" id="lingPhrasesBody"></div>
+        </div>
+        <div class="ling-card ling-card-wide" id="lingComparison">
+          <div class="ling-card-title">Per-Source Comparison</div>
+          <div class="ling-card-body" id="lingComparisonBody"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <span>&copy; 2025–2026 Eeshan Srivastava</span>
+  <span>Personal project &middot; MIT License &middot; Non-commercial</span>
+  <span class="footer-links">
+    <a href="https://github.com/eeshansrivastava89/howiprompt" target="_blank" id="footerGithubLink">Source</a>
+    <a href="https://www.linkedin.com/in/eeshans/" target="_blank">LinkedIn</a>
+  </span>
+</footer>
+
+</div>
+
+<RefreshModal />
+<MethodologyModal />
+<CreateModal />
+<SettingsModal />
+
+<script src="../scripts/header-ui.js"></script>
+<script src="../scripts/dashboard.js"></script>
+</DashboardLayout>

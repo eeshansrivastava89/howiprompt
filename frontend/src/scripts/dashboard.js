@@ -623,11 +623,26 @@ function initCardTilt() {
 
 // === Linguistic Analysis ===
 
-function renderLinguistics(ling) {
+function renderLinguistics(ling, view = {}) {
     const section = document.getElementById('lingSection');
     if (!section) return;
     if (!ling || !ling.openers) { section.style.display = 'none'; return; }
     section.style.display = '';
+
+    const activeSourceEl = document.getElementById('lingActiveSource');
+    if (activeSourceEl) activeSourceEl.textContent = formatSourceLabel(activeSourceKey);
+
+    const avgWordsEl = document.getElementById('lingAvgWords');
+    if (avgWordsEl) avgWordsEl.textContent = `${Math.round(view?.volume?.avg_words_per_prompt ?? 0)} words avg`;
+
+    const topPhraseEl = document.getElementById('lingTopPhrase');
+    if (topPhraseEl) topPhraseEl.textContent = ling.top_phrases?.[0]?.phrase || '—';
+
+    const dominantOpenerEl = document.getElementById('lingDominantOpener');
+    if (dominantOpenerEl) {
+        const dominant = Object.entries(ling.openers || {}).sort((a, b) => b[1] - a[1])[0]?.[0] || 'other';
+        dominantOpenerEl.textContent = dominant.replace(/\b\w/g, (c) => c.toUpperCase());
+    }
 
     // 1. Openers
     const openersBody = document.getElementById('lingOpenersBody');
@@ -637,7 +652,8 @@ function renderLinguistics(ling) {
         const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]);
         openersBody.innerHTML = sorted.map(([cat, cnt]) => {
             const pct = Math.round((cnt / total) * 100);
-            return `<div class="ling-opener-row"><span class="ling-opener-label">${cat}</span><div class="ling-opener-bar"><div class="ling-opener-fill" style="width:${pct}%"></div></div><span class="ling-opener-pct">${pct}%</span></div>`;
+            const label = cat.replace(/\b\w/g, (c) => c.toUpperCase());
+            return `<div class="ling-opener-row"><span class="ling-opener-label">${label}</span><div class="ling-opener-bar"><div class="ling-opener-fill" style="width:${pct}%"></div></div><span class="ling-opener-pct">${pct}%</span></div>`;
         }).join('');
     }
 
@@ -748,8 +764,10 @@ function renderView(sourceKey) {
     // Trend chart
     initTrendChart(view);
 
-    // Linguistic analysis
-    renderLinguistics(view.linguistics);
+    // Linguistic analysis page
+    if (document.getElementById('lingSection')) {
+        renderLinguistics(view.linguistics, view);
+    }
 }
 
 // === Source filter ===
@@ -1349,7 +1367,7 @@ async function initWizard() {
     // Check if metrics.json exists — if it does, no wizard needed
     let hasMetrics = false;
     try {
-        const metricsRes = await fetch('./metrics.json');
+        const metricsRes = await fetch('/metrics.json');
         hasMetrics = metricsRes.ok;
     } catch { /* no metrics */ }
 
@@ -1662,7 +1680,7 @@ async function init() {
     fetchDetectedBackends({ useCache: true }).catch(() => {});
 
     try {
-        const response = await fetch('./metrics.json');
+        const response = await fetch('/metrics.json');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const metrics = await response.json();
 
