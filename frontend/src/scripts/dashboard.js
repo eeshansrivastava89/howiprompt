@@ -506,14 +506,16 @@ function initTrendChart(view) {
     setMetric(activeTrendMetric);
 }
 
-// === 3D Tilt (desktop hover) ===
+// === 3D Tilt (desktop hover + mobile gyroscope) ===
 
 function initCardTilt() {
     const card = document.getElementById('playerCard');
     const dock = card?.closest('.card-dock');
     if (!card || !dock) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const MAX_TILT = 12;
 
+    // Desktop: mouse hover tilt
     dock.addEventListener('mousemove', (e) => {
         const r = dock.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width;
@@ -521,6 +523,52 @@ function initCardTilt() {
         card.style.transform = `rotateY(${(x - 0.5) * MAX_TILT}deg) rotateX(${(0.5 - y) * MAX_TILT}deg)`;
     });
     dock.addEventListener('mouseleave', () => { card.style.transform = ''; });
+
+    // Mobile: gyroscope tilt
+    if (!window.DeviceOrientationEvent) return;
+    const GYRO_TILT = 6;
+    let gyroActive = false;
+    let smoothX = 0, smoothY = 0;
+    const LERP = 0.15; // smoothing factor
+
+    function handleOrientation(e) {
+        // beta = front-back tilt (-180..180), gamma = left-right tilt (-90..90)
+        const beta = e.beta;   // front-back
+        const gamma = e.gamma; // left-right
+        if (beta == null || gamma == null) return;
+
+        // Normalize: center around typical holding angle (~40° beta when upright)
+        // Clamp to ±30° range then map to -1..1
+        const rawY = Math.max(-30, Math.min(30, beta - 40)) / 30;
+        const rawX = Math.max(-30, Math.min(30, gamma)) / 30;
+
+        // Smooth with lerp to avoid jitter
+        smoothX += (rawX - smoothX) * LERP;
+        smoothY += (rawY - smoothY) * LERP;
+
+        card.style.transform = `rotateY(${smoothX * GYRO_TILT}deg) rotateX(${-smoothY * GYRO_TILT}deg)`;
+    }
+
+    function startGyro() {
+        if (gyroActive) return;
+        gyroActive = true;
+        window.addEventListener('deviceorientation', handleOrientation);
+    }
+
+    // iOS 13+ requires permission request
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // Request on first user interaction (touch)
+        const requestOnce = () => {
+            DeviceOrientationEvent.requestPermission()
+                .then((state) => { if (state === 'granted') startGyro(); })
+                .catch(() => {});
+            document.removeEventListener('touchstart', requestOnce);
+        };
+        document.addEventListener('touchstart', requestOnce, { once: true });
+    } else {
+        // Android and older iOS — just listen
+        startGyro();
+    }
 }
 
 // === Main renderView ===
