@@ -15,6 +15,8 @@ export interface Config {
   copilotChatSource: string;
   cursorSource: string;
   lmStudioSource: string;
+  piSource: string;
+  openCodeSource: string;
   engagementThreshold: number;
   politenessThreshold: number;
   agentCwds: string[];
@@ -29,6 +31,8 @@ function defaultBackends(agentCwds: string[]): Record<string, BackendToggle> {
     copilot_chat: { enabled: false, exclusions: [] },
     cursor: { enabled: false, exclusions: [] },
     lmstudio: { enabled: false, exclusions: [] },
+    pi: { enabled: true, exclusions: [] },
+    opencode: { enabled: true, exclusions: [] },
   };
 }
 
@@ -76,6 +80,8 @@ export function loadConfig(dataDir?: string): Config {
     copilotChatSource: path.join(dd, "raw", "copilot_chat"),
     cursorSource: path.join(dd, "raw", "cursor"),
     lmStudioSource: path.join(dd, "raw", "lmstudio"),
+    piSource: path.join(dd, "raw", "pi"),
+    openCodeSource: path.join(dd, "raw", "opencode"),
     engagementThreshold: 12.0,
     politenessThreshold: 4.5,
     agentCwds,

@@ -7,6 +7,8 @@ export const SOURCE_LABELS = {
     copilot_chat: 'Copilot Chat',
     cursor: 'Cursor',
     lmstudio: 'LM Studio',
+    pi: 'Pi',
+    opencode: 'OpenCode',
 };
 
 export const SOURCE_ACCENTS = {
@@ -15,6 +17,8 @@ export const SOURCE_ACCENTS = {
     copilot_chat: '#06b6d4',
     cursor: '#3b82f6',
     lmstudio: '#22c55e',
+    pi: '#f43f5e',
+    opencode: '#0ea5e9',
 };
 
 export function formatSourceLabel(key) {

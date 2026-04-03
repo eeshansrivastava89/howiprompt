@@ -4,6 +4,8 @@ export enum Platform {
   COPILOT_CHAT = "copilot_chat",
   CURSOR = "cursor",
   LMSTUDIO = "lmstudio",
+  PI = "pi",
+  OPENCODE = "opencode",
 }
 
 export const PLATFORM_VALUES: Platform[] = [
@@ -12,6 +14,8 @@ export const PLATFORM_VALUES: Platform[] = [
   Platform.COPILOT_CHAT,
   Platform.CURSOR,
   Platform.LMSTUDIO,
+  Platform.PI,
+  Platform.OPENCODE,
 ];
 
 export enum Role {

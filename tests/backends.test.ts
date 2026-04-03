@@ -6,15 +6,17 @@ import os from "node:os";
 import path from "node:path";
 
 describe("Backend Registry", () => {
-  it("returns all 5 backends", () => {
+  it("returns all 7 backends", () => {
     const backends = getAllBackends();
-    expect(backends).toHaveLength(5);
+    expect(backends).toHaveLength(7);
     expect(backends.map((b) => b.id)).toEqual([
       "claude_code",
       "codex",
       "copilot_chat",
       "cursor",
       "lmstudio",
+      "pi",
+      "opencode",
     ]);
   });
 
@@ -24,12 +26,14 @@ describe("Backend Registry", () => {
     expect(getBackend("copilot_chat")?.name).toBe("Copilot Chat");
     expect(getBackend("cursor")?.name).toBe("Cursor");
     expect(getBackend("lmstudio")?.name).toBe("LM Studio");
+    expect(getBackend("pi")?.name).toBe("Pi");
+    expect(getBackend("opencode")?.name).toBe("OpenCode");
     expect(getBackend("nonexistent")).toBeUndefined();
   });
 
   it("detectAll returns BackendInfo for each", () => {
     const infos = detectAll();
-    expect(infos).toHaveLength(5);
+    expect(infos).toHaveLength(7);
     for (const info of infos) {
       expect(info).toHaveProperty("id");
       expect(info).toHaveProperty("name");
@@ -42,7 +46,7 @@ describe("Backend Registry", () => {
 
   it("new chat backends are first-class supported backends", () => {
     const infos = detectAll();
-    for (const id of ["copilot_chat", "cursor", "lmstudio"]) {
+    for (const id of ["copilot_chat", "cursor", "lmstudio", "pi", "opencode"]) {
       const info = infos.find((candidate) => candidate.id === id)!;
       expect(info.supported).toBe(true);
       expect(["available", "not_found"]).toContain(info.status);
@@ -58,6 +62,8 @@ describe("Backend Registry", () => {
       copilot_chat: { enabled: false, exclusions: [] },
       cursor: { enabled: false, exclusions: [] },
       lmstudio: { enabled: false, exclusions: [] },
+      pi: { enabled: false, exclusions: [] },
+      opencode: { enabled: false, exclusions: [] },
     };
     const enabled = getEnabledBackends(config);
     const ids = enabled.map((b) => b.id);
@@ -65,6 +71,8 @@ describe("Backend Registry", () => {
     expect(ids).not.toContain("copilot_chat");
     expect(ids).not.toContain("cursor");
     expect(ids).not.toContain("lmstudio");
+    expect(ids).not.toContain("pi");
+    expect(ids).not.toContain("opencode");
   });
 });
 
@@ -85,6 +93,8 @@ describe("Config expansion", () => {
     expect(config.backends.copilot_chat).toEqual({ enabled: false, exclusions: [] });
     expect(config.backends.cursor).toEqual({ enabled: false, exclusions: [] });
     expect(config.backends.lmstudio).toEqual({ enabled: false, exclusions: [] });
+    expect(config.backends.pi).toEqual({ enabled: true, exclusions: [] });
+    expect(config.backends.opencode).toEqual({ enabled: true, exclusions: [] });
     expect(config.hasCompletedSetup).toBe(false);
     fs.rmSync(tmpDir, { recursive: true });
   });
@@ -103,6 +113,8 @@ describe("Config expansion", () => {
     expect(config.backends.codex.enabled).toBe(true);
     expect(config.backends.copilot_chat.enabled).toBe(false);
     expect(config.backends.lmstudio.enabled).toBe(false);
+    expect(config.backends.pi.enabled).toBe(true);
+    expect(config.backends.opencode.enabled).toBe(true);
     expect(config.hasCompletedSetup).toBe(true);
     fs.rmSync(tmpDir, { recursive: true });
   });
@@ -119,6 +131,8 @@ describe("Config expansion", () => {
     expect(raw.agentCwds).toEqual(["/a"]); // preserved
     expect(raw.backends.codex).toEqual({ enabled: true, exclusions: [] });
     expect(raw.backends.lmstudio).toEqual({ enabled: false, exclusions: [] });
+    expect(raw.backends.pi).toEqual({ enabled: true, exclusions: [] });
+    expect(raw.backends.opencode).toEqual({ enabled: true, exclusions: [] });
     fs.rmSync(tmpDir, { recursive: true });
   });
 
@@ -130,6 +144,8 @@ describe("Config expansion", () => {
     expect(raw.backends.claude_code.enabled).toBe(true);
     expect(raw.backends.copilot_chat.enabled).toBe(false);
     expect(raw.backends.lmstudio.enabled).toBe(false);
+    expect(raw.backends.pi.enabled).toBe(true);
+    expect(raw.backends.opencode.enabled).toBe(true);
     fs.rmSync(tmpDir, { recursive: true });
   });
 });

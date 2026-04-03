@@ -16,7 +16,7 @@
 npx @eeshans/howiprompt
 ```
 
-> **Requirements:** [Node.js 18+](https://nodejs.org/). Works with Claude Code, Codex, Copilot Chat, Cursor, and LM Studio logs. The local package ships with analytics disabled.
+> **Requirements:** [Node.js 18+](https://nodejs.org/). Works with Claude Code, Codex, Copilot Chat, Cursor, LM Studio, Pi, and OpenCode logs. The local package ships with analytics disabled.
 
 </div>
 
@@ -35,7 +35,7 @@ npx @eeshans/howiprompt
 | | |
 |---|---|
 | **Local-first pipeline** | Sync, parsing, feature extraction, scoring, and metrics run on your machine |
-| **Multi-source support** | Claude Code, Codex, Copilot Chat, Cursor, and LM Studio |
+| **Multi-source support** | Claude Code, Codex, Copilot Chat, Cursor, LM Studio, Pi, and OpenCode |
 | **Two ways to explore** | Standard dashboard plus a scroll-through wrapped experience |
 | **Metrics that feel personal** | Vibe Coder Index, Politeness, activity trends, heatmaps, and personas |
 | **Private by default** | Raw logs stay local and the npm package ships with analytics disabled |
@@ -99,12 +99,14 @@ Then commit and push `docs/`, and enable GitHub Pages from `main` / `docs` in yo
 | **Copilot Chat** | macOS: `~/Library/Application Support/Code/…` · Windows: `%APPDATA%\Code\…` · Linux: `~/.config/Code/…` |
 | **Cursor** | macOS: `~/Library/Application Support/Cursor/…` · Windows: `%APPDATA%\Cursor\…` · Linux: `~/.config/Cursor/…` |
 | **LM Studio** | `~/.lmstudio/conversations` |
+| **Pi** | `~/.pi/agent/sessions` |
+| **OpenCode** | macOS/Linux: `~/.local/share/opencode/storage` · Windows: `%LOCALAPPDATA%\opencode\storage` |
 
 All supported sources are auto-synced into `~/.howiprompt/raw/` and reused across refreshes.
 
 ### Backend Status
 
-- Supported today: `Claude Code`, `Codex`, `Copilot Chat`, `Cursor`, `LM Studio`
+- Supported today: `Claude Code`, `Codex`, `Copilot Chat`, `Cursor`, `LM Studio`, `Pi`, `OpenCode`
 
 ---
 

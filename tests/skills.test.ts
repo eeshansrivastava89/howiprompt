@@ -23,7 +23,7 @@ describe("Skill Discovery", () => {
     expect(withSkills.map((b) => b.id)).toEqual(
       expect.arrayContaining(["claude_code", "codex", "cursor"]),
     );
-    expect(withoutSkills.map((b) => b.id)).toEqual(["lmstudio"]);
+    expect(withoutSkills.map((b) => b.id)).toEqual(["lmstudio", "opencode"]);
   });
 
   it("claude_code skills include known skills", () => {

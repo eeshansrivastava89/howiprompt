@@ -529,3 +529,167 @@ export async function parseLmStudioConversations(sourceDir: string): Promise<Mes
 
   return sortMessages(messages);
 }
+
+// ── Pi agent ────────────────────────────────────────────
+
+export async function parsePiSessions(sourceDir: string): Promise<Message[]> {
+  if (!fs.existsSync(sourceDir)) return [];
+
+  const files = findFilesRecursive(sourceDir, (_fp, name) => name.endsWith(".jsonl"));
+  const messages: Message[] = [];
+
+  for (const filePath of files) {
+    let lines: string[];
+    try {
+      lines = fs.readFileSync(filePath, "utf-8").split("\n").filter(Boolean);
+    } catch {
+      continue;
+    }
+
+    let conversationId = path.basename(filePath, ".jsonl");
+    let currentModel: string | undefined;
+    let currentProvider: string | undefined;
+
+    for (const line of lines) {
+      let entry: any;
+      try {
+        entry = JSON.parse(line);
+      } catch {
+        continue;
+      }
+
+      const entryType = entry.type;
+
+      if (entryType === "session") {
+        conversationId = entry.id ?? conversationId;
+        continue;
+      }
+
+      if (entryType === "model_change") {
+        currentProvider = entry.provider;
+        currentModel = entry.modelId;
+        continue;
+      }
+
+      if (entryType !== "message") continue;
+
+      const msg = entry.message;
+      if (!msg || typeof msg.role !== "string") continue;
+
+      const tsStr = entry.timestamp;
+      if (!tsStr) continue;
+      const timestamp = new Date(tsStr);
+      if (isNaN(timestamp.getTime())) continue;
+
+      const content = extractContent(msg.content);
+      if (!content) continue;
+
+      const role = msg.role === "user" ? Role.HUMAN : msg.role === "assistant" ? Role.ASSISTANT : null;
+      if (!role) continue;
+
+      // Assistant messages carry their own model; user messages inherit from last model_change
+      const modelId = role === Role.ASSISTANT ? (msg.model ?? currentModel) : currentModel;
+      const modelProvider = role === Role.ASSISTANT ? (msg.provider ?? currentProvider) : currentProvider;
+
+      messages.push({
+        timestamp,
+        platform: Platform.PI,
+        role,
+        content,
+        conversationId,
+        wordCount: content.split(/\s+/).filter(Boolean).length,
+        modelId,
+        modelProvider,
+        sourceFile: filePath,
+      });
+    }
+  }
+
+  return sortMessages(messages);
+}
+
+// ── OpenCode ───────────────────────────────────────────
+
+export async function parseOpenCodeSessions(sourceDir: string): Promise<Message[]> {
+  if (!fs.existsSync(sourceDir)) return [];
+
+  const messageDir = path.join(sourceDir, "message");
+  const partDir = path.join(sourceDir, "part");
+  if (!fs.existsSync(messageDir)) return [];
+
+  const messages: Message[] = [];
+
+  // Iterate all session subdirectories under message/
+  let sessionDirs: string[];
+  try {
+    sessionDirs = fs.readdirSync(messageDir, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name);
+  } catch {
+    return [];
+  }
+
+  for (const sesDir of sessionDirs) {
+    const sesMsgDir = path.join(messageDir, sesDir);
+    let msgFiles: string[];
+    try {
+      msgFiles = fs.readdirSync(sesMsgDir)
+        .filter((f) => f.endsWith(".json"))
+        .sort();
+    } catch {
+      continue;
+    }
+
+    for (const msgFile of msgFiles) {
+      const msgData = safeJsonParse(path.join(sesMsgDir, msgFile));
+      if (!msgData || typeof msgData.role !== "string") continue;
+
+      const role = msgData.role === "user" ? Role.HUMAN : msgData.role === "assistant" ? Role.ASSISTANT : null;
+      if (!role) continue;
+
+      const ts = msgData.time?.created;
+      if (!ts) continue;
+      const timestamp = new Date(typeof ts === "number" ? ts : ts);
+      if (isNaN(timestamp.getTime())) continue;
+
+      // Reconstruct content from parts
+      const msgPartDir = path.join(partDir, msgData.id);
+      let content = "";
+      if (fs.existsSync(msgPartDir)) {
+        try {
+          const partFiles = fs.readdirSync(msgPartDir)
+            .filter((f) => f.endsWith(".json"))
+            .sort();
+          const textParts: string[] = [];
+          for (const pf of partFiles) {
+            const part = safeJsonParse(path.join(msgPartDir, pf));
+            if (part?.type === "text" && typeof part.text === "string" && part.text.trim()) {
+              textParts.push(part.text);
+            }
+          }
+          content = textParts.join("\n");
+        } catch { /* skip */ }
+      }
+
+      if (!content) continue;
+
+      const modelId = msgData.model?.modelID;
+      const modelProvider = msgData.model?.providerID;
+      const conversationId = msgData.sessionID ?? sesDir;
+
+      messages.push({
+        timestamp,
+        platform: Platform.OPENCODE,
+        role,
+        content,
+        conversationId,
+        wordCount: content.split(/\s+/).filter(Boolean).length,
+        modelId,
+        modelProvider,
+        sourceFile: path.join(sesMsgDir, msgFile),
+      });
+    }
+  }
+
+  return sortMessages(messages);
+}

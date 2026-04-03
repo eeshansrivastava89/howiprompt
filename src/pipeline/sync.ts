@@ -77,3 +77,39 @@ export function syncLmStudioConversations(
   );
   return { files: filesCopied, source: sourceDir };
 }
+
+export function syncPiSessions(
+  sourceDir: string,
+  destDir: string,
+): SyncResult {
+  if (!fs.existsSync(sourceDir)) {
+    return { files: 0, source: sourceDir };
+  }
+
+  const filesCopied = copyMatchingRecursive(sourceDir, destDir, (_srcPath, entryName) =>
+    entryName.endsWith(".jsonl"),
+  );
+  return { files: filesCopied, source: sourceDir };
+}
+
+export function syncOpenCodeStorage(
+  sourceDir: string,
+  destDir: string,
+): SyncResult {
+  if (!fs.existsSync(sourceDir)) {
+    return { files: 0, source: sourceDir };
+  }
+
+  // Copy message/*.json and part/*.json (session metadata not needed for parsing)
+  let filesCopied = 0;
+  for (const sub of ["message", "part"]) {
+    const srcSub = path.join(sourceDir, sub);
+    const destSub = path.join(destDir, sub);
+    if (fs.existsSync(srcSub)) {
+      filesCopied += copyMatchingRecursive(srcSub, destSub, (_srcPath, entryName) =>
+        entryName.endsWith(".json"),
+      );
+    }
+  }
+  return { files: filesCopied, source: sourceDir };
+}

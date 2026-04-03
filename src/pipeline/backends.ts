@@ -7,6 +7,8 @@ import {
   syncCodex,
   syncLmStudioConversations,
   syncVsCodeChatSessions,
+  syncPiSessions,
+  syncOpenCodeStorage,
 } from "./sync.js";
 import {
   parseClaudeCode,
@@ -14,6 +16,8 @@ import {
   parseCodexSessionMetadata,
   parseLmStudioConversations,
   parseVsCodeChatSessions,
+  parsePiSessions,
+  parseOpenCodeSessions,
 } from "./parsers.js";
 import { Platform, type Message } from "./models.js";
 import type { Config } from "./config.js";
@@ -508,6 +512,94 @@ class LmStudioBackend implements Backend {
   }
 }
 
+// ── Pi agent ──────────────────────────────────────────
+
+class PiBackend implements Backend {
+  readonly id = "pi";
+  readonly name = "Pi";
+
+  private sourceDir(): string {
+    return path.join(os.homedir(), ".pi", "agent", "sessions");
+  }
+
+  detect(): BackendInfo {
+    const sourcePath = this.sourceDir();
+    const detected = fs.existsSync(sourcePath);
+    return {
+      id: this.id,
+      name: this.name,
+      supported: true,
+      detected,
+      sourcePath,
+      status: detected ? "available" : "not_found",
+    };
+  }
+
+  sync(config: Config): SyncResult {
+    return syncPiSessions(this.sourceDir(), config.piSource);
+  }
+
+  async parse(config: Config): Promise<Message[]> {
+    return parsePiSessions(config.piSource);
+  }
+
+  discoverSkills(): SkillDefinition[] {
+    const home = os.homedir();
+    return scanSkillDirs(
+      [path.join(home, ".pi", "agent", "skills")],
+      (name) => `^(?:\\/skill:${name}\\b|\\[\\$${name}\\])`,
+    );
+  }
+}
+
+// ── OpenCode ──────────────────────────────────────────
+
+/**
+ * Resolve the OpenCode storage directory across platforms.
+ *   macOS/Linux: ~/.local/share/opencode/storage
+ *   Windows:     %LOCALAPPDATA%/opencode/storage
+ */
+function openCodeDataDir(): string {
+  if (os.platform() === "win32") {
+    return path.join(
+      process.env.LOCALAPPDATA ?? path.join(os.homedir(), "AppData", "Local"),
+      "opencode",
+      "storage",
+    );
+  }
+  return path.join(os.homedir(), ".local", "share", "opencode", "storage");
+}
+
+class OpenCodeBackend implements Backend {
+  readonly id = "opencode";
+  readonly name = "OpenCode";
+
+  private sourceDir(): string {
+    return openCodeDataDir();
+  }
+
+  detect(): BackendInfo {
+    const sourcePath = this.sourceDir();
+    const detected = fs.existsSync(sourcePath);
+    return {
+      id: this.id,
+      name: this.name,
+      supported: true,
+      detected,
+      sourcePath,
+      status: detected ? "available" : "not_found",
+    };
+  }
+
+  sync(config: Config): SyncResult {
+    return syncOpenCodeStorage(this.sourceDir(), config.openCodeSource);
+  }
+
+  async parse(config: Config): Promise<Message[]> {
+    return parseOpenCodeSessions(config.openCodeSource);
+  }
+}
+
 // ── Registry ───────────────────────────────────────────
 
 const ALL_BACKENDS: Backend[] = [
@@ -516,6 +608,8 @@ const ALL_BACKENDS: Backend[] = [
   new CopilotChatBackend(),
   new CursorBackend(),
   new LmStudioBackend(),
+  new PiBackend(),
+  new OpenCodeBackend(),
 ];
 
 export function getAllBackends(): Backend[] {
