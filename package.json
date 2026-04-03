@@ -1,6 +1,6 @@
 {
   "name": "@eeshans/howiprompt",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Local-first analytics dashboard for your AI coding assistant conversations",
   "type": "module",
   "author": "Eeshan Srivastava (https://eeshans.com)",
