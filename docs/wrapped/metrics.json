@@ -1,20 +1,20 @@
 {
   "source_views": {
     "both": {
-      "generated_at": "2026-04-03T02:34:36.125Z",
+      "generated_at": "2026-04-03T04:44:22.288Z",
       "volume": {
-        "total_messages": 11269,
-        "total_human": 6392,
-        "total_words_human": 252321,
-        "total_conversations": 649,
-        "avg_words_per_prompt": 39.5
+        "total_messages": 12656,
+        "total_human": 6758,
+        "total_words_human": 268378,
+        "total_conversations": 698,
+        "avg_words_per_prompt": 39.7
       },
       "conversation_depth": {
-        "avg_turns": 9.8,
+        "avg_turns": 9.7,
         "max_turns": 239,
-        "quick_asks": 433,
-        "working_sessions": 80,
-        "deep_dives": 136
+        "quick_asks": 459,
+        "working_sessions": 93,
+        "deep_dives": 146
       },
       "temporal": {
         "heatmap": [
@@ -37,8 +37,8 @@
             0,
             3,
             1,
-            21,
-            29,
+            24,
+            44,
             40,
             74,
             85,
@@ -53,7 +53,7 @@
             12,
             0,
             25,
-            37,
+            40,
             37,
             10,
             1,
@@ -68,17 +68,17 @@
             42,
             73,
             71,
-            185
+            189
           ],
           [
-            92,
+            96,
             21,
             1,
             2,
             8,
             0,
             0,
-            16,
+            22,
             56,
             16,
             20,
@@ -90,41 +90,41 @@
             13,
             23,
             54,
-            37,
-            56,
-            47,
-            137,
-            104
+            38,
+            74,
+            63,
+            178,
+            141
           ],
           [
-            89,
+            100,
             30,
-            17,
+            18,
             3,
             4,
             7,
             4,
-            23,
-            59,
+            33,
+            67,
             6,
             4,
             4,
             8,
-            9,
+            10,
             11,
             14,
             42,
-            36,
-            33,
-            27,
-            44,
-            123,
-            130,
-            125
+            38,
+            45,
+            37,
+            60,
+            134,
+            147,
+            140
           ],
           [
-            56,
-            57,
+            75,
+            62,
             0,
             0,
             0,
@@ -138,18 +138,18 @@
             21,
             1,
             4,
-            5,
+            11,
             7,
             20,
             44,
-            33,
-            18,
+            35,
+            24,
             31,
-            76,
-            88
+            88,
+            91
           ],
           [
-            119,
+            124,
             143,
             50,
             2,
@@ -157,22 +157,22 @@
             12,
             0,
             3,
-            12,
+            13,
             13,
             99,
-            53,
+            55,
             35,
             58,
-            88,
-            101,
+            90,
+            104,
             80,
             54,
             144,
             112,
-            104,
-            84,
-            112,
-            177
+            108,
+            90,
+            120,
+            188
           ],
           [
             161,
@@ -192,60 +192,60 @@
             113,
             44,
             23,
-            31,
-            78,
+            34,
+            83,
             62,
-            23,
+            24,
             65,
             69,
             100
           ]
         ],
-        "night_owl_pct": 32.5,
+        "night_owl_pct": 32.4,
         "peak_hour": 23,
-        "peak_hour_count": 870,
+        "peak_hour_count": 940,
         "peak_day": "Saturday",
-        "peak_day_count": 1657,
+        "peak_day_count": 1699,
         "hour_counts": {
-          "0": 656,
-          "1": 371,
-          "2": 154,
+          "0": 695,
+          "1": 376,
+          "2": 155,
           "3": 24,
           "4": 32,
           "5": 33,
           "6": 20,
-          "7": 90,
-          "8": 256,
+          "7": 106,
+          "8": 268,
           "9": 160,
           "10": 232,
-          "11": 178,
+          "11": 180,
           "12": 164,
-          "13": 174,
-          "14": 228,
-          "15": 178,
+          "13": 175,
+          "14": 230,
+          "15": 187,
           "16": 169,
-          "17": 166,
-          "18": 391,
-          "19": 342,
-          "20": 327,
-          "21": 497,
-          "22": 680,
-          "23": 870
+          "17": 171,
+          "18": 411,
+          "19": 370,
+          "20": 372,
+          "21": 530,
+          "22": 758,
+          "23": 940
         }
       },
       "politeness": {
-        "score": 42.3,
-        "total_prompts": 6392
+        "score": 42.5,
+        "total_prompts": 6758
       },
       "youre_right": {
-        "count": 492,
+        "count": 524,
         "per_conversation": 0.8
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2646,
-          "words": 117391,
-          "conversations": 508,
+          "messages": 2651,
+          "words": 117406,
+          "conversations": 513,
           "first_message": "2026-01-01T23:28:51.222Z"
         },
         "codex": {
@@ -271,13 +271,25 @@
           "words": 988,
           "conversations": 15,
           "first_message": "2025-09-06T06:35:13.631Z"
+        },
+        "opencode": {
+          "messages": 71,
+          "words": 1751,
+          "conversations": 22,
+          "first_message": "2025-12-25T08:41:26.471Z"
+        },
+        "pi": {
+          "messages": 290,
+          "words": 14291,
+          "conversations": 22,
+          "first_message": "2026-03-25T07:37:30.741Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 6392,
-          "prompts_with_model_metadata": 3536,
-          "metadata_coverage_pct": 55.3
+          "total_human_prompts": 6758,
+          "prompts_with_model_metadata": 3897,
+          "metadata_coverage_pct": 57.7
         },
         "by_model": [
           {
@@ -341,6 +353,16 @@
             "conversations": 3
           },
           {
+            "model_id": "claude-opus-4-6",
+            "model_provider": "anthropic",
+            "prompts": 216,
+            "words": 8952,
+            "sources": {
+              "pi": 216
+            },
+            "conversations": 11
+          },
+          {
             "model_id": "copilot/gpt-5.1-codex",
             "model_provider": "copilot",
             "prompts": 144,
@@ -381,6 +403,16 @@
             "conversations": 5
           },
           {
+            "model_id": "gpt-5.4",
+            "model_provider": "openai-codex",
+            "prompts": 35,
+            "words": 3355,
+            "sources": {
+              "pi": 35
+            },
+            "conversations": 6
+          },
+          {
             "model_id": "copilot/grok-code-fast-1",
             "model_provider": "copilot",
             "prompts": 34,
@@ -411,6 +443,16 @@
             "conversations": 2
           },
           {
+            "model_id": "minimax/minimax-m2.7",
+            "model_provider": "openrouter",
+            "prompts": 25,
+            "words": 1126,
+            "sources": {
+              "pi": 25
+            },
+            "conversations": 3
+          },
+          {
             "model_id": "copilot/gpt-5-codex",
             "model_provider": "copilot",
             "prompts": 23,
@@ -419,6 +461,26 @@
               "copilot_chat": 23
             },
             "conversations": 2
+          },
+          {
+            "model_id": "claude-opus-4-5",
+            "model_provider": "anthropic",
+            "prompts": 14,
+            "words": 404,
+            "sources": {
+              "opencode": 14
+            },
+            "conversations": 6
+          },
+          {
+            "model_id": "kimi-k2.5-free",
+            "model_provider": "opencode",
+            "prompts": 12,
+            "words": 220,
+            "sources": {
+              "opencode": 12
+            },
+            "conversations": 1
           },
           {
             "model_id": "copilot/gpt-5.2",
@@ -451,6 +513,16 @@
             "conversations": 4
           },
           {
+            "model_id": "qwen3:8b",
+            "model_provider": "ollama",
+            "prompts": 8,
+            "words": 120,
+            "sources": {
+              "opencode": 8
+            },
+            "conversations": 2
+          },
+          {
             "model_id": "openrouter/minimax/minimax-m2:free",
             "model_provider": "openrouter",
             "prompts": 7,
@@ -471,6 +543,86 @@
             "conversations": 5
           },
           {
+            "model_id": "gpt-5.2",
+            "model_provider": "openai",
+            "prompts": 6,
+            "words": 226,
+            "sources": {
+              "opencode": 6
+            },
+            "conversations": 3
+          },
+          {
+            "model_id": "glm-4.7-free",
+            "model_provider": "opencode",
+            "prompts": 5,
+            "words": 124,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 3
+          },
+          {
+            "model_id": "kimi-k2-thinking",
+            "model_provider": "kimi-for-coding",
+            "prompts": 5,
+            "words": 224,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 5
+          },
+          {
+            "model_id": "mlx-community/Qwen3-8B-4bit",
+            "model_provider": "mlx",
+            "prompts": 5,
+            "words": 24,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 4
+          },
+          {
+            "model_id": "moonshotai/kimi-k2.5",
+            "model_provider": "openrouter",
+            "prompts": 5,
+            "words": 176,
+            "sources": {
+              "pi": 5
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "Qwen3.5-9B-GGUF",
+            "model_provider": "llama-cpp",
+            "prompts": 4,
+            "words": 351,
+            "sources": {
+              "pi": 4
+            },
+            "conversations": 2
+          },
+          {
+            "model_id": "claude-sonnet-4-6",
+            "model_provider": "anthropic",
+            "prompts": 4,
+            "words": 20,
+            "sources": {
+              "pi": 4
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "mistralai/devstral-small-2-2512",
+            "model_provider": "lmstudio",
+            "prompts": 4,
+            "words": 4,
+            "sources": {
+              "opencode": 4
+            },
+            "conversations": 1
+          },
+          {
             "model_id": "openrouter/qwen/qwen3-235b-a22b:free",
             "model_provider": "openrouter",
             "prompts": 4,
@@ -481,6 +633,16 @@
             "conversations": 3
           },
           {
+            "model_id": "z-ai/glm-4.7",
+            "model_provider": "openrouter",
+            "prompts": 4,
+            "words": 122,
+            "sources": {
+              "opencode": 4
+            },
+            "conversations": 1
+          },
+          {
             "model_id": "copilot/gpt-5-mini",
             "model_provider": "copilot",
             "prompts": 3,
@@ -489,6 +651,16 @@
               "copilot_chat": 3
             },
             "conversations": 2
+          },
+          {
+            "model_id": "z-ai/glm-5",
+            "model_provider": "openrouter",
+            "prompts": 3,
+            "words": 275,
+            "sources": {
+              "opencode": 3
+            },
+            "conversations": 1
           },
           {
             "model_id": "copilot/gpt-5.1",
@@ -511,6 +683,16 @@
             "conversations": 2
           },
           {
+            "model_id": "qwen/qwen3-30b-a3b-2507",
+            "model_provider": "lmstudio",
+            "prompts": 2,
+            "words": 2,
+            "sources": {
+              "opencode": 2
+            },
+            "conversations": 1
+          },
+          {
             "model_id": "github.copilot-chat/claude-sonnet-4",
             "model_provider": "github.copilot-chat",
             "prompts": 1,
@@ -521,12 +703,52 @@
             "conversations": 1
           },
           {
+            "model_id": "minimax-m2.1-free",
+            "model_provider": "opencode",
+            "prompts": 1,
+            "words": 1,
+            "sources": {
+              "opencode": 1
+            },
+            "conversations": 1
+          },
+          {
             "model_id": "openrouter/nousresearch/hermes-4-70b",
             "model_provider": "openrouter",
             "prompts": 1,
             "words": 1,
             "sources": {
               "copilot_chat": 1
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "qwen/qwen3.6-plus:free",
+            "model_provider": "openrouter",
+            "prompts": 1,
+            "words": 311,
+            "sources": {
+              "pi": 1
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "qwen3-coder:30b",
+            "model_provider": "ollama",
+            "prompts": 1,
+            "words": 1,
+            "sources": {
+              "opencode": 1
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "qwen3-coder:30b-a3b-q4_K_M",
+            "model_provider": "ollama",
+            "prompts": 1,
+            "words": 4,
+            "sources": {
+              "opencode": 1
             },
             "conversations": 1
           }
@@ -543,21 +765,97 @@
           },
           {
             "model_provider": "openai",
-            "prompts": 1412,
-            "words": 66307,
+            "prompts": 1418,
+            "words": 66533,
             "sources": {
-              "codex": 1412
+              "codex": 1412,
+              "opencode": 6
             },
-            "conversations": 73
+            "conversations": 76
+          },
+          {
+            "model_provider": "anthropic",
+            "prompts": 234,
+            "words": 9376,
+            "sources": {
+              "opencode": 14,
+              "pi": 220
+            },
+            "conversations": 18
           },
           {
             "model_provider": "openrouter",
-            "prompts": 31,
-            "words": 847,
+            "prompts": 69,
+            "words": 2857,
             "sources": {
-              "copilot_chat": 31
+              "copilot_chat": 31,
+              "opencode": 7,
+              "pi": 31
             },
-            "conversations": 9
+            "conversations": 16
+          },
+          {
+            "model_provider": "openai-codex",
+            "prompts": 35,
+            "words": 3355,
+            "sources": {
+              "pi": 35
+            },
+            "conversations": 6
+          },
+          {
+            "model_provider": "opencode",
+            "prompts": 18,
+            "words": 345,
+            "sources": {
+              "opencode": 18
+            },
+            "conversations": 4
+          },
+          {
+            "model_provider": "ollama",
+            "prompts": 10,
+            "words": 125,
+            "sources": {
+              "opencode": 10
+            },
+            "conversations": 3
+          },
+          {
+            "model_provider": "lmstudio",
+            "prompts": 6,
+            "words": 6,
+            "sources": {
+              "opencode": 6
+            },
+            "conversations": 1
+          },
+          {
+            "model_provider": "kimi-for-coding",
+            "prompts": 5,
+            "words": 224,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 5
+          },
+          {
+            "model_provider": "mlx",
+            "prompts": 5,
+            "words": 24,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 4
+          },
+          {
+            "model_provider": "llama-cpp",
+            "prompts": 4,
+            "words": 351,
+            "sources": {
+              "pi": 4
+            },
+            "conversations": 2
           },
           {
             "model_provider": "github.copilot-chat",
@@ -1490,6 +1788,154 @@
                 "copilot/gpt-5.2": 7,
                 "copilot/gemini-3-pro-preview": 6,
                 "copilot/claude-sonnet-4.5": 5
+              }
+            }
+          ],
+          "opencode": [
+            {
+              "date": "2025-12-25",
+              "total_prompts": 7,
+              "models": {
+                "claude-opus-4-5": 3,
+                "glm-4.7-free": 2,
+                "kimi-k2-thinking": 2
+              }
+            },
+            {
+              "date": "2025-12-26",
+              "total_prompts": 2,
+              "models": {
+                "kimi-k2-thinking": 2
+              }
+            },
+            {
+              "date": "2025-12-28",
+              "total_prompts": 9,
+              "models": {
+                "claude-opus-4-5": 9
+              }
+            },
+            {
+              "date": "2026-01-09",
+              "total_prompts": 6,
+              "models": {
+                "glm-4.7-free": 3,
+                "claude-opus-4-5": 1,
+                "kimi-k2-thinking": 1,
+                "minimax-m2.1-free": 1
+              }
+            },
+            {
+              "date": "2026-01-13",
+              "total_prompts": 3,
+              "models": {
+                "gpt-5.2": 3
+              }
+            },
+            {
+              "date": "2026-01-16",
+              "total_prompts": 4,
+              "models": {
+                "gpt-5.2": 3,
+                "claude-opus-4-5": 1
+              }
+            },
+            {
+              "date": "2026-01-19",
+              "total_prompts": 18,
+              "models": {
+                "qwen3:8b": 8,
+                "mistralai/devstral-small-2-2512": 4,
+                "mlx-community/Qwen3-8B-4bit": 2,
+                "qwen/qwen3-30b-a3b-2507": 2,
+                "qwen3-coder:30b": 1,
+                "qwen3-coder:30b-a3b-q4_K_M": 1
+              }
+            },
+            {
+              "date": "2026-01-23",
+              "total_prompts": 4,
+              "models": {
+                "z-ai/glm-4.7": 4
+              }
+            },
+            {
+              "date": "2026-01-24",
+              "total_prompts": 3,
+              "models": {
+                "mlx-community/Qwen3-8B-4bit": 3
+              }
+            },
+            {
+              "date": "2026-01-30",
+              "total_prompts": 12,
+              "models": {
+                "kimi-k2.5-free": 12
+              }
+            },
+            {
+              "date": "2026-02-11",
+              "total_prompts": 3,
+              "models": {
+                "z-ai/glm-5": 3
+              }
+            }
+          ],
+          "pi": [
+            {
+              "date": "2026-03-25",
+              "total_prompts": 23,
+              "models": {
+                "gpt-5.4": 12,
+                "claude-opus-4-6": 11
+              }
+            },
+            {
+              "date": "2026-03-26",
+              "total_prompts": 70,
+              "models": {
+                "claude-opus-4-6": 66,
+                "Qwen3.5-9B-GGUF": 4
+              }
+            },
+            {
+              "date": "2026-03-27",
+              "total_prompts": 25,
+              "models": {
+                "claude-opus-4-6": 11,
+                "gpt-5.4": 11,
+                "minimax/minimax-m2.7": 3
+              }
+            },
+            {
+              "date": "2026-03-28",
+              "total_prompts": 39,
+              "models": {
+                "minimax/minimax-m2.7": 22,
+                "gpt-5.4": 12,
+                "moonshotai/kimi-k2.5": 5
+              }
+            },
+            {
+              "date": "2026-03-31",
+              "total_prompts": 4,
+              "models": {
+                "claude-sonnet-4-6": 4
+              }
+            },
+            {
+              "date": "2026-04-01",
+              "total_prompts": 97,
+              "models": {
+                "claude-opus-4-6": 97
+              }
+            },
+            {
+              "date": "2026-04-02",
+              "total_prompts": 32,
+              "models": {
+                "claude-opus-4-6": 31,
+                "qwen/qwen3.6-plus:free": 1
               }
             }
           ]
@@ -3053,40 +3499,48 @@
           },
           {
             "date": "2025-12-25",
-            "prompts": 109,
+            "prompts": 116,
             "source_counts": {
+              "opencode": 7,
               "codex": 109
             },
             "source_share_pct": {
-              "codex": 100
+              "codex": 94,
+              "opencode": 6
             },
             "style": {
-              "backtrack_per_100": 20.2,
-              "question_rate_pct": 11,
-              "command_rate_pct": 8.3
+              "backtrack_per_100": 19,
+              "question_rate_pct": 10.3,
+              "command_rate_pct": 8.6
             },
-            "model_prompts": 109,
+            "model_prompts": 116,
             "models": {
-              "gpt-5.2-codex": 109
+              "gpt-5.2-codex": 109,
+              "claude-opus-4-5": 3,
+              "glm-4.7-free": 2,
+              "kimi-k2-thinking": 2
             }
           },
           {
             "date": "2025-12-26",
-            "prompts": 32,
+            "prompts": 34,
             "source_counts": {
-              "codex": 32
+              "codex": 32,
+              "opencode": 2
             },
             "source_share_pct": {
-              "codex": 100
+              "codex": 94.1,
+              "opencode": 5.9
             },
             "style": {
-              "backtrack_per_100": 9.4,
-              "question_rate_pct": 18.8,
-              "command_rate_pct": 6.3
+              "backtrack_per_100": 8.8,
+              "question_rate_pct": 17.6,
+              "command_rate_pct": 5.9
             },
-            "model_prompts": 32,
+            "model_prompts": 34,
             "models": {
-              "gpt-5.2-codex": 32
+              "gpt-5.2-codex": 32,
+              "kimi-k2-thinking": 2
             }
           },
           {
@@ -3110,20 +3564,23 @@
           },
           {
             "date": "2025-12-28",
-            "prompts": 6,
+            "prompts": 15,
             "source_counts": {
+              "opencode": 9,
               "codex": 6
             },
             "source_share_pct": {
-              "codex": 100
+              "codex": 40,
+              "opencode": 60
             },
             "style": {
-              "backtrack_per_100": 0,
-              "question_rate_pct": 16.7,
-              "command_rate_pct": 33.3
+              "backtrack_per_100": 6.7,
+              "question_rate_pct": 26.7,
+              "command_rate_pct": 20
             },
-            "model_prompts": 6,
+            "model_prompts": 15,
             "models": {
+              "claude-opus-4-5": 9,
               "gpt-5.2-codex": 6
             }
           },
@@ -3258,23 +3715,29 @@
           },
           {
             "date": "2026-01-09",
-            "prompts": 68,
+            "prompts": 74,
             "source_counts": {
+              "opencode": 6,
               "claude_code": 33,
               "codex": 35
             },
             "source_share_pct": {
-              "claude_code": 48.5,
-              "codex": 51.5
+              "claude_code": 44.6,
+              "codex": 47.3,
+              "opencode": 8.1
             },
             "style": {
-              "backtrack_per_100": 4.4,
-              "question_rate_pct": 32.4,
-              "command_rate_pct": 7.4
+              "backtrack_per_100": 4.1,
+              "question_rate_pct": 31.1,
+              "command_rate_pct": 6.8
             },
-            "model_prompts": 35,
+            "model_prompts": 41,
             "models": {
-              "gpt-5.2-codex": 35
+              "gpt-5.2-codex": 35,
+              "glm-4.7-free": 3,
+              "claude-opus-4-5": 1,
+              "minimax-m2.1-free": 1,
+              "kimi-k2-thinking": 1
             }
           },
           {
@@ -3316,6 +3779,25 @@
             }
           },
           {
+            "date": "2026-01-13",
+            "prompts": 3,
+            "source_counts": {
+              "opencode": 3
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 0,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 3,
+            "models": {
+              "gpt-5.2": 3
+            }
+          },
+          {
             "date": "2026-01-14",
             "prompts": 46,
             "source_counts": {
@@ -3351,20 +3833,25 @@
           },
           {
             "date": "2026-01-16",
-            "prompts": 27,
+            "prompts": 31,
             "source_counts": {
-              "claude_code": 27
+              "claude_code": 27,
+              "opencode": 4
             },
             "source_share_pct": {
-              "claude_code": 100
+              "claude_code": 87.1,
+              "opencode": 12.9
             },
             "style": {
-              "backtrack_per_100": 7.4,
-              "question_rate_pct": 3.7,
-              "command_rate_pct": 3.7
+              "backtrack_per_100": 6.5,
+              "question_rate_pct": 9.7,
+              "command_rate_pct": 3.2
             },
-            "model_prompts": 0,
-            "models": {}
+            "model_prompts": 4,
+            "models": {
+              "gpt-5.2": 3,
+              "claude-opus-4-5": 1
+            }
           },
           {
             "date": "2026-01-18",
@@ -3389,25 +3876,33 @@
           },
           {
             "date": "2026-01-19",
-            "prompts": 68,
+            "prompts": 86,
             "source_counts": {
               "codex": 25,
               "claude_code": 23,
-              "lmstudio": 20
+              "lmstudio": 20,
+              "opencode": 18
             },
             "source_share_pct": {
-              "claude_code": 33.8,
-              "codex": 36.8,
-              "lmstudio": 29.4
+              "claude_code": 26.7,
+              "codex": 29.1,
+              "lmstudio": 23.3,
+              "opencode": 20.9
             },
             "style": {
-              "backtrack_per_100": 8.8,
-              "question_rate_pct": 32.4,
-              "command_rate_pct": 10.3
+              "backtrack_per_100": 7,
+              "question_rate_pct": 30.2,
+              "command_rate_pct": 11.6
             },
-            "model_prompts": 25,
+            "model_prompts": 43,
             "models": {
-              "gpt-5.2-codex": 25
+              "gpt-5.2-codex": 25,
+              "qwen3:8b": 8,
+              "mistralai/devstral-small-2-2512": 4,
+              "qwen/qwen3-30b-a3b-2507": 2,
+              "mlx-community/Qwen3-8B-4bit": 2,
+              "qwen3-coder:30b": 1,
+              "qwen3-coder:30b-a3b-q4_K_M": 1
             }
           },
           {
@@ -3465,39 +3960,46 @@
           },
           {
             "date": "2026-01-23",
-            "prompts": 3,
+            "prompts": 7,
             "source_counts": {
+              "opencode": 4,
               "codex": 3
             },
             "source_share_pct": {
-              "codex": 100
+              "codex": 42.9,
+              "opencode": 57.1
             },
             "style": {
               "backtrack_per_100": 0,
               "question_rate_pct": 0,
-              "command_rate_pct": 0
+              "command_rate_pct": 28.6
             },
-            "model_prompts": 3,
+            "model_prompts": 7,
             "models": {
+              "z-ai/glm-4.7": 4,
               "gpt-5.2-codex": 3
             }
           },
           {
             "date": "2026-01-24",
-            "prompts": 76,
+            "prompts": 79,
             "source_counts": {
-              "claude_code": 76
+              "claude_code": 76,
+              "opencode": 3
             },
             "source_share_pct": {
-              "claude_code": 100
+              "claude_code": 96.2,
+              "opencode": 3.8
             },
             "style": {
-              "backtrack_per_100": 13.2,
-              "question_rate_pct": 23.7,
-              "command_rate_pct": 7.9
+              "backtrack_per_100": 12.7,
+              "question_rate_pct": 22.8,
+              "command_rate_pct": 7.6
             },
-            "model_prompts": 0,
-            "models": {}
+            "model_prompts": 3,
+            "models": {
+              "mlx-community/Qwen3-8B-4bit": 3
+            }
           },
           {
             "date": "2026-01-25",
@@ -3590,20 +4092,24 @@
           },
           {
             "date": "2026-01-30",
-            "prompts": 3,
+            "prompts": 15,
             "source_counts": {
-              "claude_code": 3
+              "claude_code": 3,
+              "opencode": 12
             },
             "source_share_pct": {
-              "claude_code": 100
+              "claude_code": 20,
+              "opencode": 80
             },
             "style": {
-              "backtrack_per_100": 0,
-              "question_rate_pct": 0,
-              "command_rate_pct": 0
+              "backtrack_per_100": 6.7,
+              "question_rate_pct": 66.7,
+              "command_rate_pct": 40
             },
-            "model_prompts": 0,
-            "models": {}
+            "model_prompts": 12,
+            "models": {
+              "kimi-k2.5-free": 12
+            }
           },
           {
             "date": "2026-01-31",
@@ -3802,21 +4308,24 @@
           },
           {
             "date": "2026-02-11",
-            "prompts": 48,
+            "prompts": 51,
             "source_counts": {
-              "codex": 48
+              "codex": 48,
+              "opencode": 3
             },
             "source_share_pct": {
-              "codex": 100
+              "codex": 94.1,
+              "opencode": 5.9
             },
             "style": {
-              "backtrack_per_100": 14.6,
-              "question_rate_pct": 25,
-              "command_rate_pct": 10.4
+              "backtrack_per_100": 13.7,
+              "question_rate_pct": 25.5,
+              "command_rate_pct": 9.8
             },
-            "model_prompts": 48,
+            "model_prompts": 51,
             "models": {
-              "gpt-5.3-codex": 48
+              "gpt-5.3-codex": 48,
+              "z-ai/glm-5": 3
             }
           },
           {
@@ -4539,82 +5048,99 @@
           },
           {
             "date": "2026-03-25",
-            "prompts": 96,
+            "prompts": 119,
             "source_counts": {
               "claude_code": 65,
+              "pi": 23,
               "codex": 31
             },
             "source_share_pct": {
-              "claude_code": 67.7,
-              "codex": 32.3
+              "claude_code": 54.6,
+              "codex": 26.1,
+              "pi": 19.3
             },
             "style": {
-              "backtrack_per_100": 5.2,
-              "question_rate_pct": 25,
-              "command_rate_pct": 9.4
+              "backtrack_per_100": 5,
+              "question_rate_pct": 21,
+              "command_rate_pct": 9.2
             },
-            "model_prompts": 31,
+            "model_prompts": 54,
             "models": {
-              "gpt-5.4": 31
+              "gpt-5.4": 43,
+              "claude-opus-4-6": 11
             }
           },
           {
             "date": "2026-03-26",
-            "prompts": 17,
+            "prompts": 87,
             "source_counts": {
+              "pi": 70,
               "codex": 16,
               "lmstudio": 1
             },
             "source_share_pct": {
-              "codex": 94.1,
-              "lmstudio": 5.9
+              "codex": 18.4,
+              "lmstudio": 1.1,
+              "pi": 80.5
             },
             "style": {
-              "backtrack_per_100": 0,
-              "question_rate_pct": 23.5,
-              "command_rate_pct": 17.6
+              "backtrack_per_100": 2.3,
+              "question_rate_pct": 20.7,
+              "command_rate_pct": 14.9
             },
-            "model_prompts": 16,
+            "model_prompts": 86,
             "models": {
-              "gpt-5.4": 16
+              "claude-opus-4-6": 66,
+              "gpt-5.4": 16,
+              "Qwen3.5-9B-GGUF": 4
             }
           },
           {
             "date": "2026-03-27",
-            "prompts": 98,
+            "prompts": 123,
             "source_counts": {
+              "pi": 25,
               "claude_code": 98
             },
             "source_share_pct": {
-              "claude_code": 100
+              "claude_code": 79.7,
+              "pi": 20.3
             },
             "style": {
-              "backtrack_per_100": 20.4,
-              "question_rate_pct": 32.7,
-              "command_rate_pct": 7.1
+              "backtrack_per_100": 20.3,
+              "question_rate_pct": 32.5,
+              "command_rate_pct": 6.5
             },
-            "model_prompts": 0,
-            "models": {}
+            "model_prompts": 25,
+            "models": {
+              "claude-opus-4-6": 11,
+              "gpt-5.4": 11,
+              "minimax/minimax-m2.7": 3
+            }
           },
           {
             "date": "2026-03-28",
-            "prompts": 176,
+            "prompts": 215,
             "source_counts": {
               "claude_code": 173,
+              "pi": 39,
               "codex": 3
             },
             "source_share_pct": {
-              "claude_code": 98.3,
-              "codex": 1.7
+              "claude_code": 80.5,
+              "codex": 1.4,
+              "pi": 18.1
             },
             "style": {
-              "backtrack_per_100": 10.8,
-              "question_rate_pct": 31.8,
-              "command_rate_pct": 4
+              "backtrack_per_100": 9.8,
+              "question_rate_pct": 29.3,
+              "command_rate_pct": 5.6
             },
-            "model_prompts": 3,
+            "model_prompts": 42,
             "models": {
-              "gpt-5.4": 3
+              "minimax/minimax-m2.7": 22,
+              "gpt-5.4": 15,
+              "moonshotai/kimi-k2.5": 5
             }
           },
           {
@@ -4653,54 +5179,67 @@
           },
           {
             "date": "2026-03-31",
-            "prompts": 20,
+            "prompts": 24,
             "source_counts": {
-              "claude_code": 20
+              "claude_code": 20,
+              "pi": 4
             },
             "source_share_pct": {
-              "claude_code": 100
+              "claude_code": 83.3,
+              "pi": 16.7
             },
             "style": {
               "backtrack_per_100": 0,
-              "question_rate_pct": 35,
-              "command_rate_pct": 5
+              "question_rate_pct": 33.3,
+              "command_rate_pct": 8.3
             },
-            "model_prompts": 0,
-            "models": {}
+            "model_prompts": 4,
+            "models": {
+              "claude-sonnet-4-6": 4
+            }
           },
           {
             "date": "2026-04-01",
-            "prompts": 190,
+            "prompts": 287,
             "source_counts": {
-              "claude_code": 190
+              "claude_code": 190,
+              "pi": 97
             },
             "source_share_pct": {
-              "claude_code": 100
+              "claude_code": 66.2,
+              "pi": 33.8
             },
             "style": {
-              "backtrack_per_100": 1.1,
-              "question_rate_pct": 2.1,
-              "command_rate_pct": 1.1
+              "backtrack_per_100": 4.2,
+              "question_rate_pct": 12.9,
+              "command_rate_pct": 2.4
             },
-            "model_prompts": 0,
-            "models": {}
+            "model_prompts": 97,
+            "models": {
+              "claude-opus-4-6": 97
+            }
           },
           {
             "date": "2026-04-02",
-            "prompts": 99,
+            "prompts": 136,
             "source_counts": {
-              "claude_code": 99
+              "claude_code": 104,
+              "pi": 32
             },
             "source_share_pct": {
-              "claude_code": 100
+              "claude_code": 76.5,
+              "pi": 23.5
             },
             "style": {
-              "backtrack_per_100": 0,
-              "question_rate_pct": 0,
-              "command_rate_pct": 0
+              "backtrack_per_100": 1.5,
+              "question_rate_pct": 5.1,
+              "command_rate_pct": 1.5
             },
-            "model_prompts": 0,
-            "models": {}
+            "model_prompts": 32,
+            "models": {
+              "claude-opus-4-6": 31,
+              "qwen/qwen3.6-plus:free": 1
+            }
           }
         ],
         "weekly_rollups": [
@@ -5371,25 +5910,30 @@
           },
           {
             "week_start": "2025-12-22",
-            "prompts": 195,
+            "prompts": 213,
             "source_counts": {
-              "codex": 195
+              "codex": 195,
+              "opencode": 18
             },
             "source_share_pct": {
-              "codex": 100
+              "codex": 91.5,
+              "opencode": 8.5
             },
             "style": {
-              "backtrack_per_100": 13.8,
-              "question_rate_pct": 10.3,
-              "command_rate_pct": 8.7
+              "backtrack_per_100": 13.1,
+              "question_rate_pct": 10.8,
+              "command_rate_pct": 8.9
             },
-            "model_prompts": 195,
+            "model_prompts": 213,
             "models": {
-              "gpt-5.2-codex": 195
+              "gpt-5.2-codex": 195,
+              "claude-opus-4-5": 12,
+              "kimi-k2-thinking": 4,
+              "glm-4.7-free": 2
             },
             "nlp": {
-              "vibe_coder_index": 62.1,
-              "politeness": 40.9
+              "vibe_coder_index": 61.4,
+              "politeness": 41.6
             }
           },
           {
@@ -5421,106 +5965,128 @@
           },
           {
             "week_start": "2026-01-05",
-            "prompts": 140,
+            "prompts": 146,
             "source_counts": {
               "codex": 95,
               "lmstudio": 10,
-              "claude_code": 35
+              "claude_code": 35,
+              "opencode": 6
             },
             "source_share_pct": {
-              "claude_code": 25,
-              "codex": 67.9,
-              "lmstudio": 7.1
+              "claude_code": 24,
+              "codex": 65.1,
+              "lmstudio": 6.8,
+              "opencode": 4.1
             },
             "style": {
-              "backtrack_per_100": 5,
-              "question_rate_pct": 32.1,
-              "command_rate_pct": 6.4
+              "backtrack_per_100": 4.8,
+              "question_rate_pct": 31.5,
+              "command_rate_pct": 6.2
             },
-            "model_prompts": 95,
+            "model_prompts": 101,
             "models": {
-              "gpt-5.2-codex": 95
+              "gpt-5.2-codex": 95,
+              "glm-4.7-free": 3,
+              "claude-opus-4-5": 1,
+              "minimax-m2.1-free": 1,
+              "kimi-k2-thinking": 1
             },
             "nlp": {
-              "vibe_coder_index": 61.8,
-              "politeness": 41.7
+              "vibe_coder_index": 62.7,
+              "politeness": 42.3
             }
           },
           {
             "week_start": "2026-01-12",
-            "prompts": 195,
+            "prompts": 202,
             "source_counts": {
+              "opencode": 7,
               "claude_code": 153,
               "codex": 42
             },
             "source_share_pct": {
-              "claude_code": 78.5,
-              "codex": 21.5
+              "claude_code": 75.7,
+              "codex": 20.8,
+              "opencode": 3.5
             },
             "style": {
-              "backtrack_per_100": 6.7,
-              "question_rate_pct": 18.5,
-              "command_rate_pct": 6.7
+              "backtrack_per_100": 6.4,
+              "question_rate_pct": 18.8,
+              "command_rate_pct": 6.4
             },
-            "model_prompts": 42,
+            "model_prompts": 49,
             "models": {
-              "gpt-5.2-codex": 42
+              "gpt-5.2-codex": 42,
+              "gpt-5.2": 6,
+              "claude-opus-4-5": 1
             },
             "nlp": {
               "vibe_coder_index": 61.1,
-              "politeness": 48.5
+              "politeness": 48.6
             }
           },
           {
             "week_start": "2026-01-19",
-            "prompts": 345,
+            "prompts": 370,
             "source_counts": {
               "codex": 28,
               "claude_code": 283,
-              "lmstudio": 34
+              "lmstudio": 34,
+              "opencode": 25
             },
             "source_share_pct": {
-              "claude_code": 82,
-              "codex": 8.1,
-              "lmstudio": 9.9
+              "claude_code": 76.5,
+              "codex": 7.6,
+              "lmstudio": 9.2,
+              "opencode": 6.8
             },
             "style": {
-              "backtrack_per_100": 7.8,
-              "question_rate_pct": 31,
-              "command_rate_pct": 10.4
+              "backtrack_per_100": 7.3,
+              "question_rate_pct": 30,
+              "command_rate_pct": 11.1
             },
-            "model_prompts": 28,
+            "model_prompts": 53,
             "models": {
-              "gpt-5.2-codex": 28
+              "gpt-5.2-codex": 28,
+              "qwen3:8b": 8,
+              "mlx-community/Qwen3-8B-4bit": 5,
+              "mistralai/devstral-small-2-2512": 4,
+              "z-ai/glm-4.7": 4,
+              "qwen/qwen3-30b-a3b-2507": 2,
+              "qwen3-coder:30b": 1,
+              "qwen3-coder:30b-a3b-q4_K_M": 1
             },
             "nlp": {
-              "vibe_coder_index": 62.8,
-              "politeness": 49.9
+              "vibe_coder_index": 63.7,
+              "politeness": 49.8
             }
           },
           {
             "week_start": "2026-01-26",
-            "prompts": 495,
+            "prompts": 507,
             "source_counts": {
               "claude_code": 294,
-              "codex": 201
+              "codex": 201,
+              "opencode": 12
             },
             "source_share_pct": {
-              "claude_code": 59.4,
-              "codex": 40.6
+              "claude_code": 58,
+              "codex": 39.6,
+              "opencode": 2.4
             },
             "style": {
               "backtrack_per_100": 8.9,
-              "question_rate_pct": 16.4,
-              "command_rate_pct": 6.5
+              "question_rate_pct": 17.9,
+              "command_rate_pct": 7.5
             },
-            "model_prompts": 201,
+            "model_prompts": 213,
             "models": {
-              "gpt-5.2-codex": 201
+              "gpt-5.2-codex": 201,
+              "kimi-k2.5-free": 12
             },
             "nlp": {
               "vibe_coder_index": 56.8,
-              "politeness": 47.1
+              "politeness": 47.4
             }
           },
           {
@@ -5551,25 +6117,28 @@
           },
           {
             "week_start": "2026-02-09",
-            "prompts": 159,
+            "prompts": 162,
             "source_counts": {
-              "codex": 159
+              "codex": 159,
+              "opencode": 3
             },
             "source_share_pct": {
-              "codex": 100
+              "codex": 98.1,
+              "opencode": 1.9
             },
             "style": {
-              "backtrack_per_100": 6.9,
-              "question_rate_pct": 26.4,
-              "command_rate_pct": 23.3
+              "backtrack_per_100": 6.8,
+              "question_rate_pct": 26.5,
+              "command_rate_pct": 22.8
             },
-            "model_prompts": 159,
+            "model_prompts": 162,
             "models": {
-              "gpt-5.3-codex": 159
+              "gpt-5.3-codex": 159,
+              "z-ai/glm-5": 3
             },
             "nlp": {
-              "vibe_coder_index": 67.4,
-              "politeness": 38
+              "vibe_coder_index": 67.3,
+              "politeness": 38.2
             }
           },
           {
@@ -5701,94 +6270,124 @@
           },
           {
             "week_start": "2026-03-23",
-            "prompts": 526,
+            "prompts": 683,
             "source_counts": {
               "claude_code": 465,
               "codex": 60,
+              "pi": 157,
               "lmstudio": 1
             },
             "source_share_pct": {
-              "claude_code": 88.4,
-              "codex": 11.4,
-              "lmstudio": 0.2
+              "claude_code": 68.1,
+              "codex": 8.8,
+              "lmstudio": 0.1,
+              "pi": 23
             },
             "style": {
-              "backtrack_per_100": 11.6,
-              "question_rate_pct": 29.1,
-              "command_rate_pct": 6.5
+              "backtrack_per_100": 10.4,
+              "question_rate_pct": 26.8,
+              "command_rate_pct": 7.6
             },
-            "model_prompts": 60,
+            "model_prompts": 217,
             "models": {
-              "gpt-5.4": 60
+              "gpt-5.4": 95,
+              "claude-opus-4-6": 88,
+              "minimax/minimax-m2.7": 25,
+              "moonshotai/kimi-k2.5": 5,
+              "Qwen3.5-9B-GGUF": 4
             },
             "nlp": {
-              "vibe_coder_index": 61.8,
-              "politeness": 46.6
+              "vibe_coder_index": 62.3,
+              "politeness": 45.8
             }
           },
           {
             "week_start": "2026-03-30",
-            "prompts": 331,
+            "prompts": 469,
             "source_counts": {
-              "claude_code": 331
+              "claude_code": 336,
+              "pi": 133
             },
             "source_share_pct": {
-              "claude_code": 100
+              "claude_code": 71.6,
+              "pi": 28.4
             },
             "style": {
-              "backtrack_per_100": 2.1,
-              "question_rate_pct": 5.7,
-              "command_rate_pct": 1.2
+              "backtrack_per_100": 4.1,
+              "question_rate_pct": 12.8,
+              "command_rate_pct": 2.6
             },
-            "model_prompts": 0,
-            "models": {},
+            "model_prompts": 133,
+            "models": {
+              "claude-opus-4-6": 128,
+              "claude-sonnet-4-6": 4,
+              "qwen/qwen3.6-plus:free": 1
+            },
             "nlp": {
-              "vibe_coder_index": 77.4,
-              "politeness": 20.1
+              "vibe_coder_index": 72.8,
+              "politeness": 27.2
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 91.4,
-            "avg_30d": 76.1,
-            "delta_pct": 20.1
+            "avg_7d": 120.3,
+            "avg_30d": 86.2,
+            "delta_pct": 39.6
           },
           "dominant_source_share_pct": {
-            "avg_7d": 99.8,
-            "avg_30d": 83.1,
-            "delta_pct": 20.1
+            "avg_7d": 83.7,
+            "avg_30d": 78.3,
+            "delta_pct": 6.9
           },
           "backtrack_per_100": {
-            "avg_7d": 13.2,
-            "avg_30d": 8.3,
-            "delta_pct": 59
+            "avg_7d": 13.7,
+            "avg_30d": 8.5,
+            "delta_pct": 61.2
           },
           "question_rate_pct": {
-            "avg_7d": 24.6,
-            "avg_30d": 22.1,
-            "delta_pct": 11.3
+            "avg_7d": 26.3,
+            "avg_30d": 22.3,
+            "delta_pct": 17.9
           },
           "command_rate_pct": {
-            "avg_7d": 3.1,
-            "avg_30d": 10.3,
-            "delta_pct": -69.9
+            "avg_7d": 4.1,
+            "avg_30d": 10.5,
+            "delta_pct": -61
           },
           "model_coverage_pct": {
-            "avg_7d": 0.2,
-            "avg_30d": 24,
-            "delta_pct": -99.2
+            "avg_7d": 16.3,
+            "avg_30d": 28.5,
+            "delta_pct": -42.8
           }
         },
         "shift_markers": [
           {
+            "date": "2026-04-01",
+            "type": "prompt_shift",
+            "direction": "up",
+            "delta_prompts": 263,
+            "prev_prompts": 24,
+            "curr_prompts": 287,
+            "magnitude": 263
+          },
+          {
+            "date": "2026-03-29",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -180,
+            "prev_prompts": 215,
+            "curr_prompts": 35,
+            "magnitude": 180
+          },
+          {
             "date": "2026-01-31",
             "type": "prompt_shift",
             "direction": "up",
-            "delta_prompts": 191,
-            "prev_prompts": 3,
+            "delta_prompts": 179,
+            "prev_prompts": 15,
             "curr_prompts": 194,
-            "magnitude": 191
+            "magnitude": 179
           },
           {
             "date": "2026-02-02",
@@ -5809,15 +6408,6 @@
             "magnitude": 174
           },
           {
-            "date": "2026-04-01",
-            "type": "prompt_shift",
-            "direction": "up",
-            "delta_prompts": 170,
-            "prev_prompts": 20,
-            "curr_prompts": 190,
-            "magnitude": 170
-          },
-          {
             "date": "2025-11-10",
             "type": "prompt_shift",
             "direction": "down",
@@ -5825,6 +6415,15 @@
             "prev_prompts": 177,
             "curr_prompts": 13,
             "magnitude": 164
+          },
+          {
+            "date": "2026-04-02",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -151,
+            "prev_prompts": 287,
+            "curr_prompts": 136,
+            "magnitude": 151
           },
           {
             "date": "2025-12-13",
@@ -5845,15 +6444,6 @@
             "magnitude": 141
           },
           {
-            "date": "2026-03-29",
-            "type": "prompt_shift",
-            "direction": "down",
-            "delta_prompts": -141,
-            "prev_prompts": 176,
-            "curr_prompts": 35,
-            "magnitude": 141
-          },
-          {
             "date": "2026-03-14",
             "type": "prompt_shift",
             "direction": "up",
@@ -5861,15 +6451,6 @@
             "prev_prompts": 46,
             "curr_prompts": 176,
             "magnitude": 130
-          },
-          {
-            "date": "2025-11-24",
-            "type": "prompt_shift",
-            "direction": "up",
-            "delta_prompts": 126,
-            "prev_prompts": 4,
-            "curr_prompts": 130,
-            "magnitude": 126
           }
         ],
         "weekly_by_platform": {
@@ -6086,9 +6667,9 @@
             },
             {
               "week_start": "2026-03-30",
-              "prompts": 331,
+              "prompts": 336,
               "source_counts": {
-                "claude_code": 331
+                "claude_code": 336
               },
               "source_share_pct": {
                 "claude_code": 100
@@ -6102,7 +6683,7 @@
               "models": {},
               "nlp": {
                 "vibe_coder_index": 77.4,
-                "politeness": 20.1
+                "politeness": 20
               }
             }
           ],
@@ -7419,6 +8000,212 @@
                 "politeness": 15.4
               }
             }
+          ],
+          "pi": [
+            {
+              "week_start": "2026-03-23",
+              "prompts": 157,
+              "source_counts": {
+                "pi": 157
+              },
+              "source_share_pct": {
+                "pi": 100
+              },
+              "style": {
+                "backtrack_per_100": 6.4,
+                "question_rate_pct": 19.1,
+                "command_rate_pct": 11.5
+              },
+              "model_prompts": 157,
+              "models": {
+                "claude-opus-4-6": 88,
+                "gpt-5.4": 35,
+                "minimax/minimax-m2.7": 25,
+                "moonshotai/kimi-k2.5": 5,
+                "Qwen3.5-9B-GGUF": 4
+              },
+              "nlp": {
+                "vibe_coder_index": 64.1,
+                "politeness": 43.2
+              }
+            },
+            {
+              "week_start": "2026-03-30",
+              "prompts": 133,
+              "source_counts": {
+                "pi": 133
+              },
+              "source_share_pct": {
+                "pi": 100
+              },
+              "style": {
+                "backtrack_per_100": 9,
+                "question_rate_pct": 30.8,
+                "command_rate_pct": 6
+              },
+              "model_prompts": 133,
+              "models": {
+                "claude-opus-4-6": 128,
+                "claude-sonnet-4-6": 4,
+                "qwen/qwen3.6-plus:free": 1
+              },
+              "nlp": {
+                "vibe_coder_index": 61.3,
+                "politeness": 45.2
+              }
+            }
+          ],
+          "opencode": [
+            {
+              "week_start": "2025-12-22",
+              "prompts": 18,
+              "source_counts": {
+                "opencode": 18
+              },
+              "source_share_pct": {
+                "opencode": 100
+              },
+              "style": {
+                "backtrack_per_100": 5.6,
+                "question_rate_pct": 16.7,
+                "command_rate_pct": 11.1
+              },
+              "model_prompts": 18,
+              "models": {
+                "claude-opus-4-5": 12,
+                "kimi-k2-thinking": 4,
+                "glm-4.7-free": 2
+              },
+              "nlp": {
+                "vibe_coder_index": 53.9,
+                "politeness": 49.8
+              }
+            },
+            {
+              "week_start": "2026-01-05",
+              "prompts": 6,
+              "source_counts": {
+                "opencode": 6
+              },
+              "source_share_pct": {
+                "opencode": 100
+              },
+              "style": {
+                "backtrack_per_100": 0,
+                "question_rate_pct": 16.7,
+                "command_rate_pct": 0
+              },
+              "model_prompts": 6,
+              "models": {
+                "glm-4.7-free": 3,
+                "claude-opus-4-5": 1,
+                "minimax-m2.1-free": 1,
+                "kimi-k2-thinking": 1
+              },
+              "nlp": {
+                "vibe_coder_index": 85.4,
+                "politeness": 55.9
+              }
+            },
+            {
+              "week_start": "2026-01-12",
+              "prompts": 7,
+              "source_counts": {
+                "opencode": 7
+              },
+              "source_share_pct": {
+                "opencode": 100
+              },
+              "style": {
+                "backtrack_per_100": 0,
+                "question_rate_pct": 28.6,
+                "command_rate_pct": 0
+              },
+              "model_prompts": 7,
+              "models": {
+                "gpt-5.2": 6,
+                "claude-opus-4-5": 1
+              },
+              "nlp": {
+                "vibe_coder_index": 60.5,
+                "politeness": 51.3
+              }
+            },
+            {
+              "week_start": "2026-01-19",
+              "prompts": 25,
+              "source_counts": {
+                "opencode": 25
+              },
+              "source_share_pct": {
+                "opencode": 100
+              },
+              "style": {
+                "backtrack_per_100": 0,
+                "question_rate_pct": 16,
+                "command_rate_pct": 20
+              },
+              "model_prompts": 25,
+              "models": {
+                "qwen3:8b": 8,
+                "mlx-community/Qwen3-8B-4bit": 5,
+                "mistralai/devstral-small-2-2512": 4,
+                "z-ai/glm-4.7": 4,
+                "qwen/qwen3-30b-a3b-2507": 2,
+                "qwen3-coder:30b": 1,
+                "qwen3-coder:30b-a3b-q4_K_M": 1
+              },
+              "nlp": {
+                "vibe_coder_index": 76.7,
+                "politeness": 47.9
+              }
+            },
+            {
+              "week_start": "2026-01-26",
+              "prompts": 12,
+              "source_counts": {
+                "opencode": 12
+              },
+              "source_share_pct": {
+                "opencode": 100
+              },
+              "style": {
+                "backtrack_per_100": 8.3,
+                "question_rate_pct": 83.3,
+                "command_rate_pct": 50
+              },
+              "model_prompts": 12,
+              "models": {
+                "kimi-k2.5-free": 12
+              },
+              "nlp": {
+                "vibe_coder_index": 54.5,
+                "politeness": 62.5
+              }
+            },
+            {
+              "week_start": "2026-02-09",
+              "prompts": 3,
+              "source_counts": {
+                "opencode": 3
+              },
+              "source_share_pct": {
+                "opencode": 100
+              },
+              "style": {
+                "backtrack_per_100": 0,
+                "question_rate_pct": 33.3,
+                "command_rate_pct": 0
+              },
+              "model_prompts": 3,
+              "models": {
+                "z-ai/glm-5": 3
+              },
+              "nlp": {
+                "vibe_coder_index": 61.3,
+                "politeness": 47.6
+              }
+            }
           ]
         }
       },
@@ -7426,38 +8213,38 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 4203,
-            "build_feature": 699,
-            "debug_fix": 368,
-            "ops_commands": 300,
-            "planning_strategy": 291,
-            "explanation_learning": 282,
-            "analysis_research": 249
+            "other": 4444,
+            "build_feature": 728,
+            "debug_fix": 382,
+            "explanation_learning": 317,
+            "ops_commands": 317,
+            "planning_strategy": 302,
+            "analysis_research": 268
           },
           "rates_pct": {
             "other": 65.8,
-            "build_feature": 10.9,
-            "debug_fix": 5.8,
+            "build_feature": 10.8,
+            "debug_fix": 5.7,
+            "explanation_learning": 4.7,
             "ops_commands": 4.7,
-            "planning_strategy": 4.6,
-            "explanation_learning": 4.4,
-            "analysis_research": 3.9
+            "planning_strategy": 4.5,
+            "analysis_research": 4
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 4203,
+              "count": 4444,
               "rate_pct": 65.8
             },
             {
               "intent": "build_feature",
-              "count": 699,
-              "rate_pct": 10.9
+              "count": 728,
+              "rate_pct": 10.8
             },
             {
               "intent": "debug_fix",
-              "count": 368,
-              "rate_pct": 5.8
+              "count": 382,
+              "rate_pct": 5.7
             }
           ],
           "confidence": {
@@ -7477,7 +8264,7 @@
         },
         "politeness": {
           "method": "embedding_similarity_v1",
-          "avg_score": 42.3,
+          "avg_score": 42.5,
           "confidence": {
             "mean": 0.79,
             "min": 0.35,
@@ -7487,7 +8274,7 @@
       },
       "date_range": {
         "first": "2025-03-24T04:33:47.819Z",
-        "last": "2026-04-03T02:32:20.299Z"
+        "last": "2026-04-03T04:42:54.141Z"
       },
       "persona": {
         "name": "The Commander",
@@ -7499,78 +8286,78 @@
           "Decisive"
         ],
         "detail_score": 44.8,
-        "style_score": 45.9
+        "style_score": 46.1
       },
       "vibe_explanation": [
         {
           "feature": "constraint_count",
           "label": "Constraints/requirements",
-          "contribution": 0.372,
+          "contribution": 0.366,
           "stat": "avg 0.3 per prompt"
         },
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": 0.298,
+          "contribution": 0.284,
           "stat": "22% of prompts"
-        },
-        {
-          "feature": "has_numbered_list",
-          "label": "Structured requirements",
-          "contribution": 0.268,
-          "stat": "2% of prompts"
         },
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": -0.26,
-          "stat": "8% of prompts"
+          "contribution": -0.283,
+          "stat": "9% of prompts"
+        },
+        {
+          "feature": "has_numbered_list",
+          "label": "Structured requirements",
+          "contribution": 0.248,
+          "stat": "2% of prompts"
         }
       ],
       "politeness_explanation": [
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": -0.47,
+          "contribution": -0.48,
           "stat": "22% of prompts"
         },
         {
           "feature": "is_neutral_tone",
           "label": "Neutral tone",
-          "contribution": -0.256,
+          "contribution": -0.269,
           "stat": "57% of prompts"
         },
         {
           "feature": "word_count",
           "label": "Prompt length",
-          "contribution": 0.214,
-          "stat": "avg 39 words/prompt"
+          "contribution": 0.22,
+          "stat": "avg 40 words/prompt"
         },
         {
-          "feature": "constraint_count",
-          "label": "Constraints/requirements",
-          "contribution": -0.134,
-          "stat": "avg 0.3 per prompt"
+          "feature": "is_single_token",
+          "label": "Single-word prompts",
+          "contribution": 0.149,
+          "stat": "9% of prompts"
         }
       ],
       "normalized": {
         "vibe_index": 36.2,
-        "politeness": 42.3
+        "politeness": 42.5
       }
     },
     "claude_code": {
-      "generated_at": "2026-04-03T02:34:36.391Z",
+      "generated_at": "2026-04-03T04:44:22.572Z",
       "volume": {
-        "total_messages": 5102,
-        "total_human": 2646,
-        "total_words_human": 117391,
-        "total_conversations": 508,
-        "avg_words_per_prompt": 44.4
+        "total_messages": 5107,
+        "total_human": 2651,
+        "total_words_human": 117406,
+        "total_conversations": 513,
+        "avg_words_per_prompt": 44.3
       },
       "conversation_depth": {
         "avg_turns": 5.2,
         "max_turns": 94,
-        "quick_asks": 386,
+        "quick_asks": 391,
         "working_sessions": 48,
         "deep_dives": 74
       },
@@ -7674,7 +8461,7 @@
             30,
             23,
             22,
-            7,
+            12,
             9,
             41,
             34,
@@ -7784,7 +8571,7 @@
           "16": 97,
           "17": 95,
           "18": 226,
-          "19": 175,
+          "19": 180,
           "20": 124,
           "21": 205,
           "22": 276,
@@ -7793,7 +8580,7 @@
       },
       "politeness": {
         "score": 42.2,
-        "total_prompts": 2646
+        "total_prompts": 2651
       },
       "youre_right": {
         "count": 264,
@@ -7801,15 +8588,15 @@
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2646,
-          "words": 117391,
-          "conversations": 508,
+          "messages": 2651,
+          "words": 117406,
+          "conversations": 513,
           "first_message": "2026-01-01T23:28:51.222Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 2646,
+          "total_human_prompts": 2651,
           "prompts_with_model_metadata": 0,
           "metadata_coverage_pct": 0
         },
@@ -8705,9 +9492,9 @@
           },
           {
             "date": "2026-04-02",
-            "prompts": 99,
+            "prompts": 104,
             "source_counts": {
-              "claude_code": 99
+              "claude_code": 104
             },
             "source_share_pct": {
               "claude_code": 100
@@ -8934,9 +9721,9 @@
           },
           {
             "week_start": "2026-03-30",
-            "prompts": 331,
+            "prompts": 336,
             "source_counts": {
-              "claude_code": 331
+              "claude_code": 336
             },
             "source_share_pct": {
               "claude_code": 100
@@ -8950,15 +9737,15 @@
             "models": {},
             "nlp": {
               "vibe_coder_index": 77.4,
-              "politeness": 20.1
+              "politeness": 20
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 91,
-            "avg_30d": 60.9,
-            "delta_pct": 49.4
+            "avg_7d": 91.7,
+            "avg_30d": 61.1,
+            "delta_pct": 50.1
           },
           "dominant_source_share_pct": {
             "avg_7d": 100,
@@ -9036,10 +9823,10 @@
             "date": "2026-04-02",
             "type": "prompt_shift",
             "direction": "down",
-            "delta_prompts": -91,
+            "delta_prompts": -86,
             "prev_prompts": 190,
-            "curr_prompts": 99,
-            "magnitude": 91
+            "curr_prompts": 104,
+            "magnitude": 86
           },
           {
             "date": "2026-03-16",
@@ -9083,7 +9870,7 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 1795,
+            "other": 1800,
             "build_feature": 248,
             "debug_fix": 145,
             "planning_strategy": 126,
@@ -9092,7 +9879,7 @@
             "ops_commands": 104
           },
           "rates_pct": {
-            "other": 67.8,
+            "other": 67.9,
             "build_feature": 9.4,
             "debug_fix": 5.5,
             "planning_strategy": 4.8,
@@ -9103,8 +9890,8 @@
           "top_intents": [
             {
               "intent": "other",
-              "count": 1795,
-              "rate_pct": 67.8
+              "count": 1800,
+              "rate_pct": 67.9
             },
             {
               "intent": "build_feature",
@@ -9144,7 +9931,7 @@
       },
       "date_range": {
         "first": "2026-01-01T23:28:51.222Z",
-        "last": "2026-04-03T02:32:20.299Z"
+        "last": "2026-04-03T02:39:34.442Z"
       },
       "persona": {
         "name": "The Commander",
@@ -9162,19 +9949,19 @@
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": 0.492,
+          "contribution": 0.501,
           "stat": "26% of prompts"
         },
         {
           "feature": "constraint_count",
           "label": "Constraints/requirements",
-          "contribution": 0.352,
+          "contribution": 0.353,
           "stat": "avg 0.3 per prompt"
         },
         {
           "feature": "has_numbered_list",
           "label": "Structured requirements",
-          "contribution": 0.268,
+          "contribution": 0.269,
           "stat": "2% of prompts"
         },
         {
@@ -9188,7 +9975,7 @@
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": -0.499,
+          "contribution": -0.498,
           "stat": "26% of prompts"
         },
         {
@@ -9200,13 +9987,13 @@
         {
           "feature": "word_count",
           "label": "Prompt length",
-          "contribution": 0.169,
+          "contribution": 0.167,
           "stat": "avg 44 words/prompt"
         },
         {
           "feature": "directive_count",
           "label": "Directive language",
-          "contribution": 0.12,
+          "contribution": 0.119,
           "stat": "avg 0.8 per prompt"
         }
       ],
@@ -9216,7 +10003,7 @@
       }
     },
     "codex": {
-      "generated_at": "2026-04-03T02:34:36.489Z",
+      "generated_at": "2026-04-03T04:44:22.675Z",
       "volume": {
         "total_messages": 1445,
         "total_human": 1412,
@@ -11699,7 +12486,7 @@
       }
     },
     "copilot_chat": {
-      "generated_at": "2026-04-03T02:34:36.592Z",
+      "generated_at": "2026-04-03T04:44:22.785Z",
       "volume": {
         "total_messages": 4531,
         "total_human": 2236,
@@ -15021,7 +15808,7 @@
       }
     },
     "cursor": {
-      "generated_at": "2026-04-03T02:34:36.648Z",
+      "generated_at": "2026-04-03T04:44:22.844Z",
       "volume": {
         "total_messages": 30,
         "total_human": 15,
@@ -15587,7 +16374,7 @@
       }
     },
     "lmstudio": {
-      "generated_at": "2026-04-03T02:34:36.651Z",
+      "generated_at": "2026-04-03T04:44:22.847Z",
       "volume": {
         "total_messages": 161,
         "total_human": 83,
@@ -16580,6 +17367,1959 @@
       "normalized": {
         "vibe_index": 29.2,
         "politeness": 39.9
+      }
+    },
+    "pi": {
+      "generated_at": "2026-04-03T04:44:22.858Z",
+      "volume": {
+        "total_messages": 1224,
+        "total_human": 290,
+        "total_words_human": 14291,
+        "total_conversations": 22,
+        "avg_words_per_prompt": 49.3
+      },
+      "conversation_depth": {
+        "avg_turns": 13.2,
+        "max_turns": 72,
+        "quick_asks": 5,
+        "working_sessions": 9,
+        "deep_dives": 8
+      },
+      "temporal": {
+        "heatmap": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            4
+          ],
+          [
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            18,
+            13,
+            41,
+            37
+          ],
+          [
+            10,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            10,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            12,
+            5,
+            12,
+            11,
+            17,
+            15
+          ],
+          [
+            19,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3
+          ],
+          [
+            5,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            2,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            4,
+            6,
+            8,
+            11
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "night_owl_pct": 38.3,
+        "peak_hour": 23,
+        "peak_hour_count": 70,
+        "peak_day": "Wednesday",
+        "peak_day_count": 120,
+        "hour_counts": {
+          "0": 38,
+          "1": 3,
+          "7": 16,
+          "8": 9,
+          "11": 2,
+          "14": 2,
+          "17": 2,
+          "18": 12,
+          "19": 6,
+          "20": 34,
+          "21": 30,
+          "22": 66,
+          "23": 70
+        }
+      },
+      "politeness": {
+        "score": 44.1,
+        "total_prompts": 290
+      },
+      "youre_right": {
+        "count": 30,
+        "per_conversation": 1.4
+      },
+      "platform_stats": {
+        "pi": {
+          "messages": 290,
+          "words": 14291,
+          "conversations": 22,
+          "first_message": "2026-03-25T07:37:30.741Z"
+        }
+      },
+      "model_usage": {
+        "coverage": {
+          "total_human_prompts": 290,
+          "prompts_with_model_metadata": 290,
+          "metadata_coverage_pct": 100
+        },
+        "by_model": [
+          {
+            "model_id": "claude-opus-4-6",
+            "model_provider": "anthropic",
+            "prompts": 216,
+            "words": 8952,
+            "sources": {
+              "pi": 216
+            },
+            "conversations": 11
+          },
+          {
+            "model_id": "gpt-5.4",
+            "model_provider": "openai-codex",
+            "prompts": 35,
+            "words": 3355,
+            "sources": {
+              "pi": 35
+            },
+            "conversations": 6
+          },
+          {
+            "model_id": "minimax/minimax-m2.7",
+            "model_provider": "openrouter",
+            "prompts": 25,
+            "words": 1126,
+            "sources": {
+              "pi": 25
+            },
+            "conversations": 3
+          },
+          {
+            "model_id": "moonshotai/kimi-k2.5",
+            "model_provider": "openrouter",
+            "prompts": 5,
+            "words": 176,
+            "sources": {
+              "pi": 5
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "Qwen3.5-9B-GGUF",
+            "model_provider": "llama-cpp",
+            "prompts": 4,
+            "words": 351,
+            "sources": {
+              "pi": 4
+            },
+            "conversations": 2
+          },
+          {
+            "model_id": "claude-sonnet-4-6",
+            "model_provider": "anthropic",
+            "prompts": 4,
+            "words": 20,
+            "sources": {
+              "pi": 4
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "qwen/qwen3.6-plus:free",
+            "model_provider": "openrouter",
+            "prompts": 1,
+            "words": 311,
+            "sources": {
+              "pi": 1
+            },
+            "conversations": 1
+          }
+        ],
+        "by_provider": [
+          {
+            "model_provider": "anthropic",
+            "prompts": 220,
+            "words": 8972,
+            "sources": {
+              "pi": 220
+            },
+            "conversations": 12
+          },
+          {
+            "model_provider": "openai-codex",
+            "prompts": 35,
+            "words": 3355,
+            "sources": {
+              "pi": 35
+            },
+            "conversations": 6
+          },
+          {
+            "model_provider": "openrouter",
+            "prompts": 31,
+            "words": 1613,
+            "sources": {
+              "pi": 31
+            },
+            "conversations": 5
+          },
+          {
+            "model_provider": "llama-cpp",
+            "prompts": 4,
+            "words": 351,
+            "sources": {
+              "pi": 4
+            },
+            "conversations": 2
+          }
+        ],
+        "time_series_by_source": {
+          "pi": [
+            {
+              "date": "2026-03-25",
+              "total_prompts": 23,
+              "models": {
+                "gpt-5.4": 12,
+                "claude-opus-4-6": 11
+              }
+            },
+            {
+              "date": "2026-03-26",
+              "total_prompts": 70,
+              "models": {
+                "claude-opus-4-6": 66,
+                "Qwen3.5-9B-GGUF": 4
+              }
+            },
+            {
+              "date": "2026-03-27",
+              "total_prompts": 25,
+              "models": {
+                "claude-opus-4-6": 11,
+                "gpt-5.4": 11,
+                "minimax/minimax-m2.7": 3
+              }
+            },
+            {
+              "date": "2026-03-28",
+              "total_prompts": 39,
+              "models": {
+                "minimax/minimax-m2.7": 22,
+                "gpt-5.4": 12,
+                "moonshotai/kimi-k2.5": 5
+              }
+            },
+            {
+              "date": "2026-03-31",
+              "total_prompts": 4,
+              "models": {
+                "claude-sonnet-4-6": 4
+              }
+            },
+            {
+              "date": "2026-04-01",
+              "total_prompts": 97,
+              "models": {
+                "claude-opus-4-6": 97
+              }
+            },
+            {
+              "date": "2026-04-02",
+              "total_prompts": 32,
+              "models": {
+                "claude-opus-4-6": 31,
+                "qwen/qwen3.6-plus:free": 1
+              }
+            }
+          ]
+        }
+      },
+      "trends": {
+        "daily_rollups": [
+          {
+            "date": "2026-03-25",
+            "prompts": 23,
+            "source_counts": {
+              "pi": 23
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 4.3,
+              "question_rate_pct": 4.3,
+              "command_rate_pct": 8.7
+            },
+            "model_prompts": 23,
+            "models": {
+              "gpt-5.4": 12,
+              "claude-opus-4-6": 11
+            }
+          },
+          {
+            "date": "2026-03-26",
+            "prompts": 70,
+            "source_counts": {
+              "pi": 70
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 2.9,
+              "question_rate_pct": 20,
+              "command_rate_pct": 14.3
+            },
+            "model_prompts": 70,
+            "models": {
+              "claude-opus-4-6": 66,
+              "Qwen3.5-9B-GGUF": 4
+            }
+          },
+          {
+            "date": "2026-03-27",
+            "prompts": 25,
+            "source_counts": {
+              "pi": 25
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 20,
+              "question_rate_pct": 32,
+              "command_rate_pct": 4
+            },
+            "model_prompts": 25,
+            "models": {
+              "claude-opus-4-6": 11,
+              "gpt-5.4": 11,
+              "minimax/minimax-m2.7": 3
+            }
+          },
+          {
+            "date": "2026-03-28",
+            "prompts": 39,
+            "source_counts": {
+              "pi": 39
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 5.1,
+              "question_rate_pct": 17.9,
+              "command_rate_pct": 12.8
+            },
+            "model_prompts": 39,
+            "models": {
+              "minimax/minimax-m2.7": 22,
+              "gpt-5.4": 12,
+              "moonshotai/kimi-k2.5": 5
+            }
+          },
+          {
+            "date": "2026-03-31",
+            "prompts": 4,
+            "source_counts": {
+              "pi": 4
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 25,
+              "command_rate_pct": 25
+            },
+            "model_prompts": 4,
+            "models": {
+              "claude-sonnet-4-6": 4
+            }
+          },
+          {
+            "date": "2026-04-01",
+            "prompts": 97,
+            "source_counts": {
+              "pi": 97
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 10.3,
+              "question_rate_pct": 34,
+              "command_rate_pct": 5.2
+            },
+            "model_prompts": 97,
+            "models": {
+              "claude-opus-4-6": 97
+            }
+          },
+          {
+            "date": "2026-04-02",
+            "prompts": 32,
+            "source_counts": {
+              "pi": 32
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 6.3,
+              "question_rate_pct": 21.9,
+              "command_rate_pct": 6.3
+            },
+            "model_prompts": 32,
+            "models": {
+              "claude-opus-4-6": 31,
+              "qwen/qwen3.6-plus:free": 1
+            }
+          }
+        ],
+        "weekly_rollups": [
+          {
+            "week_start": "2026-03-23",
+            "prompts": 157,
+            "source_counts": {
+              "pi": 157
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 6.4,
+              "question_rate_pct": 19.1,
+              "command_rate_pct": 11.5
+            },
+            "model_prompts": 157,
+            "models": {
+              "claude-opus-4-6": 88,
+              "gpt-5.4": 35,
+              "minimax/minimax-m2.7": 25,
+              "moonshotai/kimi-k2.5": 5,
+              "Qwen3.5-9B-GGUF": 4
+            },
+            "nlp": {
+              "vibe_coder_index": 64.1,
+              "politeness": 43.2
+            }
+          },
+          {
+            "week_start": "2026-03-30",
+            "prompts": 133,
+            "source_counts": {
+              "pi": 133
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 9,
+              "question_rate_pct": 30.8,
+              "command_rate_pct": 6
+            },
+            "model_prompts": 133,
+            "models": {
+              "claude-opus-4-6": 128,
+              "claude-sonnet-4-6": 4,
+              "qwen/qwen3.6-plus:free": 1
+            },
+            "nlp": {
+              "vibe_coder_index": 61.3,
+              "politeness": 45.2
+            }
+          }
+        ],
+        "deltas_7d_vs_30d": {
+          "prompts_per_day": {
+            "avg_7d": 39.4,
+            "avg_30d": 41.4,
+            "delta_pct": -4.8
+          },
+          "dominant_source_share_pct": {
+            "avg_7d": 100,
+            "avg_30d": 100,
+            "delta_pct": 0
+          },
+          "backtrack_per_100": {
+            "avg_7d": 8.3,
+            "avg_30d": 7,
+            "delta_pct": 18.6
+          },
+          "question_rate_pct": {
+            "avg_7d": 26.2,
+            "avg_30d": 22.2,
+            "delta_pct": 18
+          },
+          "command_rate_pct": {
+            "avg_7d": 10.7,
+            "avg_30d": 10.9,
+            "delta_pct": -1.8
+          },
+          "model_coverage_pct": {
+            "avg_7d": 100,
+            "avg_30d": 100,
+            "delta_pct": 0
+          }
+        },
+        "shift_markers": [
+          {
+            "date": "2026-04-01",
+            "type": "prompt_shift",
+            "direction": "up",
+            "delta_prompts": 93,
+            "prev_prompts": 4,
+            "curr_prompts": 97,
+            "magnitude": 93
+          },
+          {
+            "date": "2026-04-02",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -65,
+            "prev_prompts": 97,
+            "curr_prompts": 32,
+            "magnitude": 65
+          },
+          {
+            "date": "2026-03-26",
+            "type": "prompt_shift",
+            "direction": "up",
+            "delta_prompts": 47,
+            "prev_prompts": 23,
+            "curr_prompts": 70,
+            "magnitude": 47
+          },
+          {
+            "date": "2026-03-27",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -45,
+            "prev_prompts": 70,
+            "curr_prompts": 25,
+            "magnitude": 45
+          },
+          {
+            "date": "2026-03-31",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -35,
+            "prev_prompts": 39,
+            "curr_prompts": 4,
+            "magnitude": 35
+          },
+          {
+            "date": "2026-03-28",
+            "type": "prompt_shift",
+            "direction": "up",
+            "delta_prompts": 14,
+            "prev_prompts": 25,
+            "curr_prompts": 39,
+            "magnitude": 14
+          }
+        ]
+      },
+      "nlp": {
+        "intent": {
+          "method": "deterministic_rules_v1",
+          "counts": {
+            "other": 182,
+            "explanation_learning": 30,
+            "build_feature": 26,
+            "analysis_research": 17,
+            "debug_fix": 13,
+            "ops_commands": 13,
+            "planning_strategy": 9
+          },
+          "rates_pct": {
+            "other": 62.8,
+            "explanation_learning": 10.3,
+            "build_feature": 9,
+            "analysis_research": 5.9,
+            "debug_fix": 4.5,
+            "ops_commands": 4.5,
+            "planning_strategy": 3.1
+          },
+          "top_intents": [
+            {
+              "intent": "other",
+              "count": 182,
+              "rate_pct": 62.8
+            },
+            {
+              "intent": "explanation_learning",
+              "count": 30,
+              "rate_pct": 10.3
+            },
+            {
+              "intent": "build_feature",
+              "count": 26,
+              "rate_pct": 9
+            }
+          ],
+          "confidence": {
+            "mean": 0.6,
+            "min": 0.5,
+            "max": 0.8
+          }
+        },
+        "vibe_coder_index": {
+          "method": "embedding_similarity_v1",
+          "avg_score": 62.8,
+          "confidence": {
+            "mean": 0.69,
+            "min": 0.36,
+            "max": 1
+          }
+        },
+        "politeness": {
+          "method": "embedding_similarity_v1",
+          "avg_score": 44.1,
+          "confidence": {
+            "mean": 0.84,
+            "min": 0.49,
+            "max": 0.99
+          }
+        }
+      },
+      "date_range": {
+        "first": "2026-03-25T07:37:30.741Z",
+        "last": "2026-04-03T04:42:54.141Z"
+      },
+      "persona": {
+        "name": "The Commander",
+        "quadrant": "Brief + Directive",
+        "description": "You give precise orders in short bursts. No wasted words, no hand-holding — you know exactly what you want and expect the AI to deliver it on the first try.",
+        "traits": [
+          "Direct",
+          "Efficient",
+          "Decisive"
+        ],
+        "detail_score": 45.8,
+        "style_score": 49.5
+      },
+      "vibe_explanation": [
+        {
+          "feature": "is_single_token",
+          "label": "Single-word prompts",
+          "contribution": -0.559,
+          "stat": "14% of prompts"
+        },
+        {
+          "feature": "constraint_count",
+          "label": "Constraints/requirements",
+          "contribution": 0.209,
+          "stat": "avg 0.4 per prompt"
+        },
+        {
+          "feature": "task_generate_count",
+          "label": "Generation tasks",
+          "contribution": -0.194,
+          "stat": "avg 0.1 per prompt"
+        },
+        {
+          "feature": "code_ratio",
+          "label": "Code-heavy content",
+          "contribution": 0.174,
+          "stat": "0% code characters"
+        }
+      ],
+      "politeness_explanation": [
+        {
+          "feature": "is_terse",
+          "label": "Very short prompts",
+          "contribution": -0.596,
+          "stat": "20% of prompts"
+        },
+        {
+          "feature": "is_single_token",
+          "label": "Single-word prompts",
+          "contribution": 0.514,
+          "stat": "14% of prompts"
+        },
+        {
+          "feature": "is_neutral_tone",
+          "label": "Neutral tone",
+          "contribution": -0.44,
+          "stat": "56% of prompts"
+        },
+        {
+          "feature": "word_count",
+          "label": "Prompt length",
+          "contribution": 0.288,
+          "stat": "avg 49 words/prompt"
+        }
+      ],
+      "normalized": {
+        "vibe_index": 37.2,
+        "politeness": 44.1
+      }
+    },
+    "opencode": {
+      "generated_at": "2026-04-03T04:44:22.871Z",
+      "volume": {
+        "total_messages": 158,
+        "total_human": 71,
+        "total_words_human": 1751,
+        "total_conversations": 22,
+        "avg_words_per_prompt": 24.7
+      },
+      "conversation_depth": {
+        "avg_turns": 3.2,
+        "max_turns": 12,
+        "quick_asks": 16,
+        "working_sessions": 4,
+        "deep_dives": 2
+      },
+      "temporal": {
+        "heatmap": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            15,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            0,
+            2,
+            6,
+            0,
+            12,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            5,
+            0,
+            1,
+            0,
+            0,
+            0
+          ]
+        ],
+        "night_owl_pct": 5.6,
+        "peak_hour": 19,
+        "peak_hour_count": 17,
+        "peak_day": "Friday",
+        "peak_day_count": 28,
+        "hour_counts": {
+          "0": 1,
+          "1": 2,
+          "2": 1,
+          "8": 3,
+          "13": 1,
+          "15": 9,
+          "17": 3,
+          "18": 8,
+          "19": 17,
+          "20": 11,
+          "21": 3,
+          "22": 12
+        }
+      },
+      "politeness": {
+        "score": 51.9,
+        "total_prompts": 71
+      },
+      "youre_right": {
+        "count": 2,
+        "per_conversation": 0.1
+      },
+      "platform_stats": {
+        "opencode": {
+          "messages": 71,
+          "words": 1751,
+          "conversations": 22,
+          "first_message": "2025-12-25T08:41:26.471Z"
+        }
+      },
+      "model_usage": {
+        "coverage": {
+          "total_human_prompts": 71,
+          "prompts_with_model_metadata": 71,
+          "metadata_coverage_pct": 100
+        },
+        "by_model": [
+          {
+            "model_id": "claude-opus-4-5",
+            "model_provider": "anthropic",
+            "prompts": 14,
+            "words": 404,
+            "sources": {
+              "opencode": 14
+            },
+            "conversations": 6
+          },
+          {
+            "model_id": "kimi-k2.5-free",
+            "model_provider": "opencode",
+            "prompts": 12,
+            "words": 220,
+            "sources": {
+              "opencode": 12
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "qwen3:8b",
+            "model_provider": "ollama",
+            "prompts": 8,
+            "words": 120,
+            "sources": {
+              "opencode": 8
+            },
+            "conversations": 2
+          },
+          {
+            "model_id": "gpt-5.2",
+            "model_provider": "openai",
+            "prompts": 6,
+            "words": 226,
+            "sources": {
+              "opencode": 6
+            },
+            "conversations": 3
+          },
+          {
+            "model_id": "glm-4.7-free",
+            "model_provider": "opencode",
+            "prompts": 5,
+            "words": 124,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 3
+          },
+          {
+            "model_id": "kimi-k2-thinking",
+            "model_provider": "kimi-for-coding",
+            "prompts": 5,
+            "words": 224,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 5
+          },
+          {
+            "model_id": "mlx-community/Qwen3-8B-4bit",
+            "model_provider": "mlx",
+            "prompts": 5,
+            "words": 24,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 4
+          },
+          {
+            "model_id": "mistralai/devstral-small-2-2512",
+            "model_provider": "lmstudio",
+            "prompts": 4,
+            "words": 4,
+            "sources": {
+              "opencode": 4
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "z-ai/glm-4.7",
+            "model_provider": "openrouter",
+            "prompts": 4,
+            "words": 122,
+            "sources": {
+              "opencode": 4
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "z-ai/glm-5",
+            "model_provider": "openrouter",
+            "prompts": 3,
+            "words": 275,
+            "sources": {
+              "opencode": 3
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "qwen/qwen3-30b-a3b-2507",
+            "model_provider": "lmstudio",
+            "prompts": 2,
+            "words": 2,
+            "sources": {
+              "opencode": 2
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "minimax-m2.1-free",
+            "model_provider": "opencode",
+            "prompts": 1,
+            "words": 1,
+            "sources": {
+              "opencode": 1
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "qwen3-coder:30b",
+            "model_provider": "ollama",
+            "prompts": 1,
+            "words": 1,
+            "sources": {
+              "opencode": 1
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "qwen3-coder:30b-a3b-q4_K_M",
+            "model_provider": "ollama",
+            "prompts": 1,
+            "words": 4,
+            "sources": {
+              "opencode": 1
+            },
+            "conversations": 1
+          }
+        ],
+        "by_provider": [
+          {
+            "model_provider": "opencode",
+            "prompts": 18,
+            "words": 345,
+            "sources": {
+              "opencode": 18
+            },
+            "conversations": 4
+          },
+          {
+            "model_provider": "anthropic",
+            "prompts": 14,
+            "words": 404,
+            "sources": {
+              "opencode": 14
+            },
+            "conversations": 6
+          },
+          {
+            "model_provider": "ollama",
+            "prompts": 10,
+            "words": 125,
+            "sources": {
+              "opencode": 10
+            },
+            "conversations": 3
+          },
+          {
+            "model_provider": "openrouter",
+            "prompts": 7,
+            "words": 397,
+            "sources": {
+              "opencode": 7
+            },
+            "conversations": 2
+          },
+          {
+            "model_provider": "lmstudio",
+            "prompts": 6,
+            "words": 6,
+            "sources": {
+              "opencode": 6
+            },
+            "conversations": 1
+          },
+          {
+            "model_provider": "openai",
+            "prompts": 6,
+            "words": 226,
+            "sources": {
+              "opencode": 6
+            },
+            "conversations": 3
+          },
+          {
+            "model_provider": "kimi-for-coding",
+            "prompts": 5,
+            "words": 224,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 5
+          },
+          {
+            "model_provider": "mlx",
+            "prompts": 5,
+            "words": 24,
+            "sources": {
+              "opencode": 5
+            },
+            "conversations": 4
+          }
+        ],
+        "time_series_by_source": {
+          "opencode": [
+            {
+              "date": "2025-12-25",
+              "total_prompts": 7,
+              "models": {
+                "claude-opus-4-5": 3,
+                "glm-4.7-free": 2,
+                "kimi-k2-thinking": 2
+              }
+            },
+            {
+              "date": "2025-12-26",
+              "total_prompts": 2,
+              "models": {
+                "kimi-k2-thinking": 2
+              }
+            },
+            {
+              "date": "2025-12-28",
+              "total_prompts": 9,
+              "models": {
+                "claude-opus-4-5": 9
+              }
+            },
+            {
+              "date": "2026-01-09",
+              "total_prompts": 6,
+              "models": {
+                "glm-4.7-free": 3,
+                "claude-opus-4-5": 1,
+                "kimi-k2-thinking": 1,
+                "minimax-m2.1-free": 1
+              }
+            },
+            {
+              "date": "2026-01-13",
+              "total_prompts": 3,
+              "models": {
+                "gpt-5.2": 3
+              }
+            },
+            {
+              "date": "2026-01-16",
+              "total_prompts": 4,
+              "models": {
+                "gpt-5.2": 3,
+                "claude-opus-4-5": 1
+              }
+            },
+            {
+              "date": "2026-01-19",
+              "total_prompts": 18,
+              "models": {
+                "qwen3:8b": 8,
+                "mistralai/devstral-small-2-2512": 4,
+                "mlx-community/Qwen3-8B-4bit": 2,
+                "qwen/qwen3-30b-a3b-2507": 2,
+                "qwen3-coder:30b": 1,
+                "qwen3-coder:30b-a3b-q4_K_M": 1
+              }
+            },
+            {
+              "date": "2026-01-23",
+              "total_prompts": 4,
+              "models": {
+                "z-ai/glm-4.7": 4
+              }
+            },
+            {
+              "date": "2026-01-24",
+              "total_prompts": 3,
+              "models": {
+                "mlx-community/Qwen3-8B-4bit": 3
+              }
+            },
+            {
+              "date": "2026-01-30",
+              "total_prompts": 12,
+              "models": {
+                "kimi-k2.5-free": 12
+              }
+            },
+            {
+              "date": "2026-02-11",
+              "total_prompts": 3,
+              "models": {
+                "z-ai/glm-5": 3
+              }
+            }
+          ]
+        }
+      },
+      "trends": {
+        "daily_rollups": [
+          {
+            "date": "2025-12-25",
+            "prompts": 7,
+            "source_counts": {
+              "opencode": 7
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 0,
+              "command_rate_pct": 14.3
+            },
+            "model_prompts": 7,
+            "models": {
+              "claude-opus-4-5": 3,
+              "glm-4.7-free": 2,
+              "kimi-k2-thinking": 2
+            }
+          },
+          {
+            "date": "2025-12-26",
+            "prompts": 2,
+            "source_counts": {
+              "opencode": 2
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 0,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 2,
+            "models": {
+              "kimi-k2-thinking": 2
+            }
+          },
+          {
+            "date": "2025-12-28",
+            "prompts": 9,
+            "source_counts": {
+              "opencode": 9
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 11.1,
+              "question_rate_pct": 33.3,
+              "command_rate_pct": 11.1
+            },
+            "model_prompts": 9,
+            "models": {
+              "claude-opus-4-5": 9
+            }
+          },
+          {
+            "date": "2026-01-09",
+            "prompts": 6,
+            "source_counts": {
+              "opencode": 6
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 16.7,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 6,
+            "models": {
+              "glm-4.7-free": 3,
+              "claude-opus-4-5": 1,
+              "minimax-m2.1-free": 1,
+              "kimi-k2-thinking": 1
+            }
+          },
+          {
+            "date": "2026-01-13",
+            "prompts": 3,
+            "source_counts": {
+              "opencode": 3
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 0,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 3,
+            "models": {
+              "gpt-5.2": 3
+            }
+          },
+          {
+            "date": "2026-01-16",
+            "prompts": 4,
+            "source_counts": {
+              "opencode": 4
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 50,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 4,
+            "models": {
+              "gpt-5.2": 3,
+              "claude-opus-4-5": 1
+            }
+          },
+          {
+            "date": "2026-01-19",
+            "prompts": 18,
+            "source_counts": {
+              "opencode": 18
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 22.2,
+              "command_rate_pct": 16.7
+            },
+            "model_prompts": 18,
+            "models": {
+              "qwen3:8b": 8,
+              "mistralai/devstral-small-2-2512": 4,
+              "qwen/qwen3-30b-a3b-2507": 2,
+              "mlx-community/Qwen3-8B-4bit": 2,
+              "qwen3-coder:30b": 1,
+              "qwen3-coder:30b-a3b-q4_K_M": 1
+            }
+          },
+          {
+            "date": "2026-01-23",
+            "prompts": 4,
+            "source_counts": {
+              "opencode": 4
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 0,
+              "command_rate_pct": 50
+            },
+            "model_prompts": 4,
+            "models": {
+              "z-ai/glm-4.7": 4
+            }
+          },
+          {
+            "date": "2026-01-24",
+            "prompts": 3,
+            "source_counts": {
+              "opencode": 3
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 0,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 3,
+            "models": {
+              "mlx-community/Qwen3-8B-4bit": 3
+            }
+          },
+          {
+            "date": "2026-01-30",
+            "prompts": 12,
+            "source_counts": {
+              "opencode": 12
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 8.3,
+              "question_rate_pct": 83.3,
+              "command_rate_pct": 50
+            },
+            "model_prompts": 12,
+            "models": {
+              "kimi-k2.5-free": 12
+            }
+          },
+          {
+            "date": "2026-02-11",
+            "prompts": 3,
+            "source_counts": {
+              "opencode": 3
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 33.3,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 3,
+            "models": {
+              "z-ai/glm-5": 3
+            }
+          }
+        ],
+        "weekly_rollups": [
+          {
+            "week_start": "2025-12-22",
+            "prompts": 18,
+            "source_counts": {
+              "opencode": 18
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 5.6,
+              "question_rate_pct": 16.7,
+              "command_rate_pct": 11.1
+            },
+            "model_prompts": 18,
+            "models": {
+              "claude-opus-4-5": 12,
+              "kimi-k2-thinking": 4,
+              "glm-4.7-free": 2
+            },
+            "nlp": {
+              "vibe_coder_index": 53.9,
+              "politeness": 49.8
+            }
+          },
+          {
+            "week_start": "2026-01-05",
+            "prompts": 6,
+            "source_counts": {
+              "opencode": 6
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 16.7,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 6,
+            "models": {
+              "glm-4.7-free": 3,
+              "claude-opus-4-5": 1,
+              "minimax-m2.1-free": 1,
+              "kimi-k2-thinking": 1
+            },
+            "nlp": {
+              "vibe_coder_index": 85.4,
+              "politeness": 55.9
+            }
+          },
+          {
+            "week_start": "2026-01-12",
+            "prompts": 7,
+            "source_counts": {
+              "opencode": 7
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 28.6,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 7,
+            "models": {
+              "gpt-5.2": 6,
+              "claude-opus-4-5": 1
+            },
+            "nlp": {
+              "vibe_coder_index": 60.5,
+              "politeness": 51.3
+            }
+          },
+          {
+            "week_start": "2026-01-19",
+            "prompts": 25,
+            "source_counts": {
+              "opencode": 25
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 16,
+              "command_rate_pct": 20
+            },
+            "model_prompts": 25,
+            "models": {
+              "qwen3:8b": 8,
+              "mlx-community/Qwen3-8B-4bit": 5,
+              "mistralai/devstral-small-2-2512": 4,
+              "z-ai/glm-4.7": 4,
+              "qwen/qwen3-30b-a3b-2507": 2,
+              "qwen3-coder:30b": 1,
+              "qwen3-coder:30b-a3b-q4_K_M": 1
+            },
+            "nlp": {
+              "vibe_coder_index": 76.7,
+              "politeness": 47.9
+            }
+          },
+          {
+            "week_start": "2026-01-26",
+            "prompts": 12,
+            "source_counts": {
+              "opencode": 12
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 8.3,
+              "question_rate_pct": 83.3,
+              "command_rate_pct": 50
+            },
+            "model_prompts": 12,
+            "models": {
+              "kimi-k2.5-free": 12
+            },
+            "nlp": {
+              "vibe_coder_index": 54.5,
+              "politeness": 62.5
+            }
+          },
+          {
+            "week_start": "2026-02-09",
+            "prompts": 3,
+            "source_counts": {
+              "opencode": 3
+            },
+            "source_share_pct": {
+              "opencode": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 33.3,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 3,
+            "models": {
+              "z-ai/glm-5": 3
+            },
+            "nlp": {
+              "vibe_coder_index": 61.3,
+              "politeness": 47.6
+            }
+          }
+        ],
+        "deltas_7d_vs_30d": {
+          "prompts_per_day": {
+            "avg_7d": 3,
+            "avg_30d": 6.7,
+            "delta_pct": -55.2
+          },
+          "dominant_source_share_pct": {
+            "avg_7d": 100,
+            "avg_30d": 100,
+            "delta_pct": 0
+          },
+          "backtrack_per_100": {
+            "avg_7d": 0,
+            "avg_30d": 1.2,
+            "delta_pct": -100
+          },
+          "question_rate_pct": {
+            "avg_7d": 33.3,
+            "avg_30d": 27,
+            "delta_pct": 23.3
+          },
+          "command_rate_pct": {
+            "avg_7d": 0,
+            "avg_30d": 16.7,
+            "delta_pct": -100
+          },
+          "model_coverage_pct": {
+            "avg_7d": 100,
+            "avg_30d": 100,
+            "delta_pct": 0
+          }
+        },
+        "shift_markers": [
+          {
+            "date": "2026-01-19",
+            "type": "prompt_shift",
+            "direction": "up",
+            "delta_prompts": 14,
+            "prev_prompts": 4,
+            "curr_prompts": 18,
+            "magnitude": 14
+          },
+          {
+            "date": "2026-01-23",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -14,
+            "prev_prompts": 18,
+            "curr_prompts": 4,
+            "magnitude": 14
+          }
+        ]
+      },
+      "nlp": {
+        "intent": {
+          "method": "deterministic_rules_v1",
+          "counts": {
+            "other": 54,
+            "explanation_learning": 5,
+            "ops_commands": 4,
+            "build_feature": 3,
+            "analysis_research": 2,
+            "planning_strategy": 2,
+            "debug_fix": 1
+          },
+          "rates_pct": {
+            "other": 76.1,
+            "explanation_learning": 7,
+            "ops_commands": 5.6,
+            "build_feature": 4.2,
+            "analysis_research": 2.8,
+            "planning_strategy": 2.8,
+            "debug_fix": 1.4
+          },
+          "top_intents": [
+            {
+              "intent": "other",
+              "count": 54,
+              "rate_pct": 76.1
+            },
+            {
+              "intent": "explanation_learning",
+              "count": 5,
+              "rate_pct": 7
+            },
+            {
+              "intent": "ops_commands",
+              "count": 4,
+              "rate_pct": 5.6
+            }
+          ],
+          "confidence": {
+            "mean": 0.56,
+            "min": 0.5,
+            "max": 0.8
+          }
+        },
+        "vibe_coder_index": {
+          "method": "embedding_similarity_v1",
+          "avg_score": 65.7,
+          "confidence": {
+            "mean": 0.73,
+            "min": 0.44,
+            "max": 0.99
+          }
+        },
+        "politeness": {
+          "method": "embedding_similarity_v1",
+          "avg_score": 51.9,
+          "confidence": {
+            "mean": 0.75,
+            "min": 0.5,
+            "max": 0.96
+          }
+        }
+      },
+      "date_range": {
+        "first": "2025-12-25T08:41:26.471Z",
+        "last": "2026-02-12T05:37:52.728Z"
+      },
+      "persona": {
+        "name": "The Commander",
+        "quadrant": "Brief + Directive",
+        "description": "You give precise orders in short bursts. No wasted words, no hand-holding — you know exactly what you want and expect the AI to deliver it on the first try.",
+        "traits": [
+          "Direct",
+          "Efficient",
+          "Decisive"
+        ],
+        "detail_score": 43.8,
+        "style_score": 49.5
+      },
+      "vibe_explanation": [
+        {
+          "feature": "is_single_token",
+          "label": "Single-word prompts",
+          "contribution": -0.682,
+          "stat": "21% of prompts"
+        },
+        {
+          "feature": "constraint_count",
+          "label": "Constraints/requirements",
+          "contribution": 0.46,
+          "stat": "avg 0.1 per prompt"
+        },
+        {
+          "feature": "has_greeting",
+          "label": "Greeting",
+          "contribution": 0.338,
+          "stat": "21% of prompts"
+        },
+        {
+          "feature": "code_ratio",
+          "label": "Code-heavy content",
+          "contribution": 0.23,
+          "stat": "1% code characters"
+        }
+      ],
+      "politeness_explanation": [
+        {
+          "feature": "is_neutral_tone",
+          "label": "Neutral tone",
+          "contribution": -0.478,
+          "stat": "44% of prompts"
+        },
+        {
+          "feature": "word_count",
+          "label": "Prompt length",
+          "contribution": 0.421,
+          "stat": "avg 25 words/prompt"
+        },
+        {
+          "feature": "is_single_token",
+          "label": "Single-word prompts",
+          "contribution": 0.39,
+          "stat": "21% of prompts"
+        },
+        {
+          "feature": "has_greeting",
+          "label": "Greeting",
+          "contribution": -0.38,
+          "stat": "21% of prompts"
+        }
+      ],
+      "normalized": {
+        "vibe_index": 34.3,
+        "politeness": 51.9
       }
     }
   },
