@@ -466,7 +466,7 @@ function initTrendChart(view) {
             headlineRaw = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
         }
         valEl.textContent = (key === 'activity' ? formatCompact(headlineRaw) : headlineRaw) + d.suffix;
-        labelEl.textContent = '';
+        labelEl.textContent = key === 'activity' ? 'this week' : 'avg';
         if (defEl) defEl.innerHTML = d.desc || '';
 
         // Set headline color

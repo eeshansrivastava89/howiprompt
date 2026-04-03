@@ -36,7 +36,7 @@
 .metric-tabs{display:inline-flex}
 .trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
 .trend-current-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--trend-color, var(--accent))}
-.trend-current-label{display:none}
+.trend-current-label{font-size:13px;color:var(--muted);font-weight:500}
 .trend-chart-wrap{position:relative;flex:1;min-height:60px;min-width:0;overflow:hidden}
 .trend-chart-wrap>#trendChart{position:absolute;inset:0}
 
