@@ -621,6 +621,65 @@ function initCardTilt() {
     }
 }
 
+// === Linguistic Analysis ===
+
+function renderLinguistics(ling) {
+    const section = document.getElementById('lingSection');
+    if (!section) return;
+    if (!ling || !ling.openers) { section.style.display = 'none'; return; }
+    section.style.display = '';
+
+    // 1. Openers
+    const openersBody = document.getElementById('lingOpenersBody');
+    if (openersBody) {
+        const cats = ling.openers;
+        const total = Object.values(cats).reduce((a, b) => a + b, 0) || 1;
+        const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+        openersBody.innerHTML = sorted.map(([cat, cnt]) => {
+            const pct = Math.round((cnt / total) * 100);
+            return `<div class="ling-opener-row"><span class="ling-opener-label">${cat}</span><div class="ling-opener-bar"><div class="ling-opener-fill" style="width:${pct}%"></div></div><span class="ling-opener-pct">${pct}%</span></div>`;
+        }).join('');
+    }
+
+    // 2. Length histogram
+    const lengthBody = document.getElementById('lingLengthBody');
+    if (lengthBody && ling.length_histogram) {
+        const hist = ling.length_histogram;
+        const maxCount = Math.max(...hist.map(b => b.count), 1);
+        lengthBody.innerHTML = `<div class="ling-hist">${hist.map(b => {
+            const h = Math.round((b.count / maxCount) * 100);
+            return `<div class="ling-hist-bar"><span class="ling-hist-count">${b.count}</span><div class="ling-hist-fill" style="height:${h}%"></div><span class="ling-hist-label">${b.label}</span></div>`;
+        }).join('')}</div>`;
+    }
+
+    // 3. Top phrases
+    const phrasesBody = document.getElementById('lingPhrasesBody');
+    if (phrasesBody && ling.top_phrases) {
+        const phrases = ling.top_phrases.slice(0, 10);
+        const maxCount = phrases[0]?.count || 1;
+        phrasesBody.innerHTML = phrases.map((p, i) => {
+            const w = Math.round((p.count / maxCount) * 100);
+            return `<div class="ling-phrase-row"><span class="ling-phrase-rank">${i + 1}</span><span class="ling-phrase-text">${p.phrase}</span><div class="ling-phrase-bar"><div class="ling-phrase-fill" style="width:${w}%"></div></div><span class="ling-phrase-count">${p.count}</span></div>`;
+        }).join('');
+    }
+
+    // 4. Per-source comparison
+    const compBody = document.getElementById('lingComparisonBody');
+    if (compBody && ling.source_comparison) {
+        const sources = Object.entries(ling.source_comparison)
+            .sort((a, b) => b[1].prompts - a[1].prompts);
+        if (sources.length <= 1) {
+            compBody.innerHTML = '<p style="color:var(--muted);font-size:12px">Select "All" to compare across sources.</p>';
+        } else {
+            compBody.innerHTML = `<table class="ling-src-table"><thead><tr><th>Source</th><th>Prompts</th><th>Avg Words</th><th>Questions</th><th>Terse</th></tr></thead><tbody>${sources.map(([plat, s]) => {
+                const color = SOURCE_ACCENTS[plat] || '#666';
+                const name = formatSourceLabel(plat);
+                return `<tr><td><span class="ling-src-dot" style="background:${color}"></span>${name}</td><td>${s.prompts.toLocaleString()}</td><td>${s.avg_words}</td><td>${s.question_pct}%</td><td>${s.terse_pct}%</td></tr>`;
+            }).join('')}</tbody></table>`;
+        }
+    }
+}
+
 // === Main renderView ===
 
 function getView(sourceKey) {
@@ -688,6 +747,9 @@ function renderView(sourceKey) {
 
     // Trend chart
     initTrendChart(view);
+
+    // Linguistic analysis
+    renderLinguistics(view.linguistics);
 }
 
 // === Source filter ===

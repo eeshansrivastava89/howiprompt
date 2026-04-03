@@ -22,6 +22,95 @@ function round(n: number, decimals: number): number {
   return Math.round(n * f) / f;
 }
 
+// ── Linguistic analysis ───────────────────────────────
+
+const STOPWORDS = new Set([
+  "the","a","an","to","and","of","in","is","it","that","this","for","with","on","at",
+  "be","as","or","by","are","was","not","but","from","have","has","i","you","we","my",
+  "your","me","do","if","so","can","will","would","should","could","just","also","up",
+  "out","all","no","one","some","them","their","our","its","been","had","did","does",
+  "am","an","than","then","too","very","here","there","when","what","how","which",
+]);
+
+function computeLinguistics(
+  messages: Array<{ content: string; wordCount: number; platform: string }>,
+): Record<string, any> {
+  if (messages.length === 0) return {};
+
+  // 1. Top bigrams
+  const bigramCounts = new Map<string, number>();
+  for (const msg of messages) {
+    const words = msg.content.toLowerCase().match(/[a-z']+/g) ?? [];
+    const filtered = words.filter((w) => !STOPWORDS.has(w) && w.length > 2);
+    for (let i = 0; i < filtered.length - 1; i++) {
+      const bg = `${filtered[i]} ${filtered[i + 1]}`;
+      bigramCounts.set(bg, (bigramCounts.get(bg) ?? 0) + 1);
+    }
+  }
+  const topPhrases = Array.from(bigramCounts.entries())
+    .filter(([, c]) => c >= 3)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 15)
+    .map(([phrase, count]) => ({ phrase, count, pct: round((count / messages.length) * 100, 1) }));
+
+  // 2. Opener categories
+  const openers: Record<string, number> = {
+    question: 0, directive: 0, context: 0, greeting: 0, affirmation: 0, other: 0,
+  };
+  for (const msg of messages) {
+    const first = msg.content.trim().toLowerCase().slice(0, 60);
+    if (/^(yes|yeah|yep|ok(?:ay)?|sure|correct|right|agreed|do it|go ahead|perfect|great|good)\b/.test(first)) openers.affirmation++;
+    else if (/^(hi|hey|hello|good morning|good evening)\b/.test(first)) openers.greeting++;
+    else if (/^(what|how|why|where|when|which|is |are |can |could |would |do |does |did )/.test(first)) openers.question++;
+    else if (/^(fix|add|create|make|update|remove|change|implement|write|build|run|show|list|get|set|move|rename|delete|install|deploy|test|check|refactor|clean|revert)\b/.test(first)) openers.directive++;
+    else if (/^(i |we |the |so |let|here|this|now|actually|basically|looking)/.test(first)) openers.context++;
+    else openers.other++;
+  }
+
+  // 3. Prompt length histogram
+  const buckets = [
+    { label: "1–5", min: 1, max: 5 },
+    { label: "6–15", min: 6, max: 15 },
+    { label: "16–30", min: 16, max: 30 },
+    { label: "31–60", min: 31, max: 60 },
+    { label: "61–100", min: 61, max: 100 },
+    { label: "100+", min: 101, max: Infinity },
+  ];
+  const lengthHistogram = buckets.map((b) => ({
+    label: b.label,
+    count: messages.filter((m) => m.wordCount >= b.min && m.wordCount <= b.max).length,
+  }));
+
+  // 4. Per-source comparison
+  const sourceLing: Record<string, any> = {};
+  const byPlatform = new Map<string, typeof messages>();
+  for (const msg of messages) {
+    if (!byPlatform.has(msg.platform)) byPlatform.set(msg.platform, []);
+    byPlatform.get(msg.platform)!.push(msg);
+  }
+  for (const [plat, platMsgs] of byPlatform) {
+    const wc = platMsgs.map((m) => m.wordCount);
+    const avgWords = wc.reduce((a, b) => a + b, 0) / wc.length;
+    const questionRate = platMsgs.filter((m) => m.content.trim().endsWith("?")).length / platMsgs.length;
+    const codeBlockRate = platMsgs.filter((m) => m.content.includes("\`\`\`")).length / platMsgs.length;
+    const terseRate = platMsgs.filter((m) => m.wordCount < 10).length / platMsgs.length;
+    sourceLing[plat] = {
+      prompts: platMsgs.length,
+      avg_words: round(avgWords, 1),
+      question_pct: round(questionRate * 100, 1),
+      code_block_pct: round(codeBlockRate * 100, 1),
+      terse_pct: round(terseRate * 100, 1),
+    };
+  }
+
+  return {
+    top_phrases: topPhrases,
+    openers,
+    length_histogram: lengthHistogram,
+    source_comparison: sourceLing,
+  };
+}
+
 export async function computeModelUsage(
   client: Client,
   platform?: Platform,
@@ -296,6 +385,11 @@ export async function computeMetrics(
     }
     result.vibe_explanation = explainScore("vibe", avgFeatures, totalHuman);
     result.politeness_explanation = explainScore("politeness", avgFeatures, totalHuman);
+
+    // Linguistic analysis
+    result.linguistics = computeLinguistics(
+      humanMsgs.map((m) => ({ content: m.content, wordCount: m.wordCount, platform: m.platform })),
+    );
   }
 
   // Compute normalized 0-100 values for all registry metrics

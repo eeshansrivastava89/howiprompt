@@ -114,6 +114,14 @@ describe("full pipeline integration", () => {
     expect(metrics.trends).toHaveProperty("daily_rollups");
     expect(metrics.trends).toHaveProperty("weekly_rollups");
 
+    expect(metrics.linguistics).toBeDefined();
+    expect(metrics.linguistics).toHaveProperty("top_phrases");
+    expect(metrics.linguistics).toHaveProperty("openers");
+    expect(metrics.linguistics).toHaveProperty("length_histogram");
+    expect(metrics.linguistics).toHaveProperty("source_comparison");
+    expect(Array.isArray(metrics.linguistics.top_phrases)).toBe(true);
+    expect(metrics.linguistics.length_histogram).toHaveLength(6);
+
     expect(metrics.model_usage.coverage.total_human_prompts).toBe(30);
 
     // Normalized scores
@@ -165,6 +173,11 @@ describe("full pipeline integration", () => {
     expect(sourceViews.copilot_chat.platform_stats).toHaveProperty("copilot_chat");
     expect(sourceViews.cursor.platform_stats).toHaveProperty("cursor");
     expect(sourceViews.lmstudio.platform_stats).toHaveProperty("lmstudio");
+
+    expect(sourceViews.both.linguistics.source_comparison).toHaveProperty("claude_code");
+    expect(sourceViews.both.linguistics.source_comparison).toHaveProperty("copilot_chat");
+    expect(Object.keys(sourceViews.claude_code.linguistics.source_comparison)).toEqual(["claude_code"]);
+    expect(sourceViews.claude_code.linguistics.length_histogram).toHaveLength(6);
   });
 
   it("hasHumanMessages works with platform filter", async () => {
