@@ -252,15 +252,9 @@ function initTrendChart(view) {
                 lifetime: config.invert && rawLifetime != null ? 100 - rawLifetime : rawLifetime,
             };
 
-            // Store per-week token estimates for activity tooltip
-            if (key === 'activity') {
-                entry.tokens = weekly.map((w) => w.est_tokens ?? 0);
-            }
-
             if (isAllView) {
                 const weekKeys = weekly.map((w) => w.week_start);
                 entry.platforms = {};
-                entry.platformTokens = {};
                 for (const [plat, platWeekly] of Object.entries(weeklyByPlatform)) {
                     const platByWeek = new Map(platWeekly.map((w) => [w.week_start, w]));
                     const platPoints = weekKeys.map((wk) => {
@@ -275,14 +269,6 @@ function initTrendChart(view) {
                     });
                     if (platPoints.some((p) => p != null && p !== 0)) {
                         entry.platforms[plat] = platPoints;
-                    }
-                    // Per-platform token estimates for activity
-                    if (key === 'activity') {
-                        const platTokens = weekKeys.map((wk) => {
-                            const pw = platByWeek.get(wk);
-                            return pw?.est_tokens ?? 0;
-                        });
-                        entry.platformTokens[plat] = platTokens;
                     }
                 }
             }
@@ -428,35 +414,21 @@ function initTrendChart(view) {
             intersect: false,
             theme: isDark ? 'dark' : 'light',
             custom: function({ series, seriesIndex, dataPointIndex, w }) {
-                const d = trendData[activeTrendMetric];
-                const suffix = d?.suffix || '';
-                const isAct = activeTrendMetric === 'activity';
+                const suffix = trendData[activeTrendMetric]?.suffix || '';
                 const stk = isStacked(activeTrendMetric, w.config.series);
                 const rows = [];
                 let total = 0;
-                let totalTokens = 0;
                 for (let i = 0; i < series.length; i++) {
                     const val = series[i]?.[dataPointIndex];
                     if (val == null || val === 0) continue;
                     total += val;
                     const color = w.config.colors[i] || '#666';
                     const name = w.config.series[i]?.name || '';
-                    // Find token count for this platform at this week
-                    let tokenStr = '';
-                    if (isAct && d?.platformTokens) {
-                        const platKey = Object.entries(SOURCE_LABELS).find(([, v]) => v === name)?.[0];
-                        const toks = platKey && d.platformTokens[platKey]?.[dataPointIndex];
-                        if (toks > 0) { totalTokens += toks; tokenStr = ` · ~${formatCompact(toks)} tok`; }
-                    } else if (isAct && d?.tokens) {
-                        const toks = d.tokens[dataPointIndex];
-                        if (toks > 0) { totalTokens += toks; tokenStr = ` · ~${formatCompact(toks)} tok`; }
-                    }
-                    rows.push(`<div style="display:flex;align-items:center;gap:6px;padding:2px 0"><span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></span><span style="flex:1">${name}</span><span style="font-weight:700">${Math.round(val)}${suffix}${tokenStr}</span></div>`);
+                    rows.push(`<div style="display:flex;align-items:center;gap:6px;padding:2px 0"><span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></span><span style="flex:1">${name}</span><span style="font-weight:700">${Math.round(val)}${suffix}</span></div>`);
                 }
                 if (rows.length === 0) return '';
                 if (stk && rows.length > 1) {
-                    const totalTokStr = isAct && totalTokens > 0 ? ` · ~${formatCompact(totalTokens)} tok` : '';
-                    rows.push(`<div style="border-top:1px solid rgba(128,128,128,0.3);margin-top:2px;padding-top:4px;display:flex;justify-content:space-between;font-weight:700"><span>Total</span><span>${Math.round(total)}${suffix}${totalTokStr}</span></div>`);
+                    rows.push(`<div style="border-top:1px solid rgba(128,128,128,0.3);margin-top:2px;padding-top:4px;display:flex;justify-content:space-between;font-weight:700"><span>Total</span><span>${Math.round(total)}${suffix}</span></div>`);
                 }
                 const cat = w.config.xaxis?.categories?.[dataPointIndex] || '';
                 const bg = isDark ? '#2a2420' : '#fff';
@@ -494,19 +466,7 @@ function initTrendChart(view) {
             headlineRaw = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
         }
         valEl.textContent = (key === 'activity' ? formatCompact(headlineRaw) : headlineRaw) + d.suffix;
-        // Token estimate for activity headline
-        let labelText = key === 'activity' ? 'this week' : 'avg';
-        if (key === 'activity' && d.tokens) {
-            const lastIdx = d.points.length - 1;
-            let weekTokens;
-            if (d.platformTokens && Object.keys(d.platformTokens).length > 1) {
-                weekTokens = Object.values(d.platformTokens).reduce((sum, pts) => sum + (pts[lastIdx] ?? 0), 0);
-            } else {
-                weekTokens = d.tokens[lastIdx] ?? 0;
-            }
-            labelText += ` · ~${formatCompact(weekTokens)} tokens est.`;
-        }
-        labelEl.textContent = labelText;
+        labelEl.textContent = key === 'activity' ? 'this week' : 'avg';
         if (defEl) defEl.innerHTML = d.desc || '';
 
         // Set headline color
