@@ -413,10 +413,28 @@ function initTrendChart(view) {
             shared: true,
             intersect: false,
             theme: isDark ? 'dark' : 'light',
-            y: {
-                formatter: (val) => val != null ? Math.round(val) + initialSuffix : '--',
+            custom: function({ series, seriesIndex, dataPointIndex, w }) {
+                const suffix = trendData[activeTrendMetric]?.suffix || '';
+                const stk = isStacked(activeTrendMetric, w.config.series);
+                const rows = [];
+                let total = 0;
+                for (let i = 0; i < series.length; i++) {
+                    const val = series[i]?.[dataPointIndex];
+                    if (val == null || val === 0) continue;
+                    total += val;
+                    const color = w.config.colors[i] || '#666';
+                    const name = w.config.series[i]?.name || '';
+                    rows.push(`<div style="display:flex;align-items:center;gap:6px;padding:2px 0"><span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></span><span style="flex:1">${name}</span><span style="font-weight:700">${Math.round(val)}${suffix}</span></div>`);
+                }
+                if (rows.length === 0) return '';
+                if (stk && rows.length > 1) {
+                    rows.push(`<div style="border-top:1px solid rgba(128,128,128,0.3);margin-top:2px;padding-top:4px;display:flex;justify-content:space-between;font-weight:700"><span>Total</span><span>${Math.round(total)}${suffix}</span></div>`);
+                }
+                const cat = w.config.xaxis?.categories?.[dataPointIndex] || '';
+                const bg = isDark ? '#2a2420' : '#fff';
+                const fg = isDark ? '#e0d6cc' : '#3c3226';
+                return `<div style="background:${bg};color:${fg};border:1px solid ${isDark?'#3d342c':'#d9d2c9'};border-radius:8px;padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;min-width:120px"><div style="font-weight:700;margin-bottom:4px;color:${isDark?'#8a7d6f':'#6b5e50'}">${cat}</div>${rows.join('')}</div>`;
             },
-            style: { fontSize: '12px', fontFamily: "'JetBrains Mono', monospace" },
         },
         dataLabels: { enabled: false },
     };
@@ -434,7 +452,19 @@ function initTrendChart(view) {
         if (!trendData[key]) return;
         activeTrendMetric = key;
         const d = trendData[key];
-        const headlineRaw = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
+        // Activity: show most recent week total. Others: lifetime average.
+        let headlineRaw;
+        if (key === 'activity') {
+            // For stacked (All view), sum all series for the last week
+            const lastIdx = d.points.length - 1;
+            if (d.platforms && Object.keys(d.platforms).length > 1) {
+                headlineRaw = Object.values(d.platforms).reduce((sum, pts) => sum + (pts[lastIdx] ?? 0), 0);
+            } else {
+                headlineRaw = d.points[lastIdx] ?? 0;
+            }
+        } else {
+            headlineRaw = d.lifetime != null ? Math.round(d.lifetime) : d.points[d.points.length - 1];
+        }
         valEl.textContent = (key === 'activity' ? formatCompact(headlineRaw) : headlineRaw) + d.suffix;
         labelEl.textContent = '';
         if (defEl) defEl.innerHTML = d.desc || '';
@@ -498,11 +528,6 @@ function initTrendChart(view) {
                 labels: {
                     style: { colors: mutedColor, fontSize: '11px' },
                     formatter: (val) => key === 'activity' ? formatCompact(Math.round(val)) : `${Math.round(val)}`,
-                },
-            },
-            tooltip: {
-                y: {
-                    formatter: (val) => val != null ? Math.round(val) + suffix : '--',
                 },
             },
         }, false, false, false);
