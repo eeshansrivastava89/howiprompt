@@ -5,6 +5,11 @@ import MethodologyModal from '../components/dashboard/MethodologyModal.astro';
 import SettingsModal from '../components/dashboard/SettingsModal.astro';
 import RefreshModal from '../components/RefreshModal.astro';
 import CreateModal from '../components/CreateModal.astro';
+
+const enableLinguistics = import.meta.env.PUBLIC_ENABLE_LINGUISTICS === 'true';
+if (!enableLinguistics) {
+  return Astro.redirect('/');
+}
 ---
 <DashboardLayout title="How I Prompt: Linguistics">
 <div class="page-frame ling-page-frame">
