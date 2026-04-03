@@ -14,7 +14,10 @@ import SideQuestNotch from '../components/SideQuestNotch.astro';
 <SideQuestNotch />
 <div class="top-nav" id="topNav">
   <Header page="dashboard" />
-  <div class="source-bar" id="sourceBar"></div>
+  <div class="filter-bar">
+    <div id="sourceBar"></div>
+    <div class="metric-tabs" id="metricTabs"></div>
+  </div>
 </div>
 
 <!-- DASHBOARD -->
@@ -59,7 +62,6 @@ import SideQuestNotch from '../components/SideQuestNotch.astro';
               </div>
               <div class="trend-legend" id="trendLegend"></div>
             </div>
-            <div class="metric-tabs" id="metricTabs"></div>
           </div>
           <div class="trend-current">
             <span class="trend-current-val" id="trendVal">--</span>

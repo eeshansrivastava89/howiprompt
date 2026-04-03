@@ -33,7 +33,7 @@
 .trend-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:15px}
 .trend-legend-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap}
 .trend-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.metric-tabs{display:inline-flex;align-self:flex-start}
+.metric-tabs{display:inline-flex}
 .trend-current{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
 .trend-current-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;letter-spacing:-0.03em;color:var(--trend-color, var(--accent))}
 .trend-current-label{display:none}
@@ -211,7 +211,7 @@
   .trend-copy-sep{display:none}
   .trend-metric-def{font-size:11px}
   .trend-title{font-size:14px}
-  .metric-tabs{width:100%}
+
   .trend-current-val{font-size:24px}
   .trend-current-label{font-size:12px}
   .trend-chart-wrap{min-height:80px}
