@@ -1,20 +1,20 @@
 {
   "source_views": {
     "both": {
-      "generated_at": "2026-04-03T04:44:22.288Z",
+      "generated_at": "2026-04-03T05:40:05.276Z",
       "volume": {
-        "total_messages": 12656,
-        "total_human": 6758,
-        "total_words_human": 268378,
-        "total_conversations": 698,
-        "avg_words_per_prompt": 39.7
+        "total_messages": 12763,
+        "total_human": 6780,
+        "total_words_human": 270546,
+        "total_conversations": 700,
+        "avg_words_per_prompt": 39.9
       },
       "conversation_depth": {
         "avg_turns": 9.7,
         "max_turns": 239,
-        "quick_asks": 459,
+        "quick_asks": 460,
         "working_sessions": 93,
-        "deep_dives": 146
+        "deep_dives": 147
       },
       "temporal": {
         "heatmap": [
@@ -118,8 +118,8 @@
             45,
             37,
             60,
-            134,
-            147,
+            139,
+            164,
             140
           ],
           [
@@ -201,7 +201,7 @@
             100
           ]
         ],
-        "night_owl_pct": 32.4,
+        "night_owl_pct": 32.3,
         "peak_hour": 23,
         "peak_hour_count": 940,
         "peak_day": "Saturday",
@@ -228,24 +228,24 @@
           "18": 411,
           "19": 370,
           "20": 372,
-          "21": 530,
-          "22": 758,
+          "21": 535,
+          "22": 775,
           "23": 940
         }
       },
       "politeness": {
         "score": 42.5,
-        "total_prompts": 6758
+        "total_prompts": 6780
       },
       "youre_right": {
-        "count": 524,
+        "count": 526,
         "per_conversation": 0.8
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2651,
-          "words": 117406,
-          "conversations": 513,
+          "messages": 2652,
+          "words": 117937,
+          "conversations": 514,
           "first_message": "2026-01-01T23:28:51.222Z"
         },
         "codex": {
@@ -279,17 +279,17 @@
           "first_message": "2025-12-25T08:41:26.471Z"
         },
         "pi": {
-          "messages": 290,
-          "words": 14291,
-          "conversations": 22,
+          "messages": 311,
+          "words": 15928,
+          "conversations": 23,
           "first_message": "2026-03-25T07:37:30.741Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 6758,
-          "prompts_with_model_metadata": 3897,
-          "metadata_coverage_pct": 57.7
+          "total_human_prompts": 6780,
+          "prompts_with_model_metadata": 3918,
+          "metadata_coverage_pct": 57.8
         },
         "by_model": [
           {
@@ -355,10 +355,10 @@
           {
             "model_id": "claude-opus-4-6",
             "model_provider": "anthropic",
-            "prompts": 216,
-            "words": 8952,
+            "prompts": 231,
+            "words": 9769,
             "sources": {
-              "pi": 216
+              "pi": 231
             },
             "conversations": 11
           },
@@ -405,12 +405,12 @@
           {
             "model_id": "gpt-5.4",
             "model_provider": "openai-codex",
-            "prompts": 35,
-            "words": 3355,
+            "prompts": 41,
+            "words": 4175,
             "sources": {
-              "pi": 35
+              "pi": 41
             },
-            "conversations": 6
+            "conversations": 7
           },
           {
             "model_id": "copilot/grok-code-fast-1",
@@ -775,11 +775,11 @@
           },
           {
             "model_provider": "anthropic",
-            "prompts": 234,
-            "words": 9376,
+            "prompts": 249,
+            "words": 10193,
             "sources": {
               "opencode": 14,
-              "pi": 220
+              "pi": 235
             },
             "conversations": 18
           },
@@ -796,12 +796,12 @@
           },
           {
             "model_provider": "openai-codex",
-            "prompts": 35,
-            "words": 3355,
+            "prompts": 41,
+            "words": 4175,
             "sources": {
-              "pi": 35
+              "pi": 41
             },
-            "conversations": 6
+            "conversations": 7
           },
           {
             "model_provider": "opencode",
@@ -1932,9 +1932,10 @@
             },
             {
               "date": "2026-04-02",
-              "total_prompts": 32,
+              "total_prompts": 53,
               "models": {
-                "claude-opus-4-6": 31,
+                "claude-opus-4-6": 46,
+                "gpt-5.4": 6,
                 "qwen/qwen3.6-plus:free": 1
               }
             }
@@ -1946,6 +1947,7 @@
           {
             "date": "2025-03-23",
             "prompts": 9,
+            "est_tokens": 102,
             "source_counts": {
               "copilot_chat": 9
             },
@@ -1963,6 +1965,7 @@
           {
             "date": "2025-03-25",
             "prompts": 10,
+            "est_tokens": 428,
             "source_counts": {
               "copilot_chat": 10
             },
@@ -1980,6 +1983,7 @@
           {
             "date": "2025-03-30",
             "prompts": 2,
+            "est_tokens": 20,
             "source_counts": {
               "copilot_chat": 1,
               "cursor": 1
@@ -1999,6 +2003,7 @@
           {
             "date": "2025-04-08",
             "prompts": 2,
+            "est_tokens": 32,
             "source_counts": {
               "copilot_chat": 1,
               "cursor": 1
@@ -2018,6 +2023,7 @@
           {
             "date": "2025-04-20",
             "prompts": 4,
+            "est_tokens": 837,
             "source_counts": {
               "copilot_chat": 2,
               "cursor": 2
@@ -2037,6 +2043,7 @@
           {
             "date": "2025-04-21",
             "prompts": 22,
+            "est_tokens": 2962,
             "source_counts": {
               "copilot_chat": 11,
               "cursor": 11
@@ -2056,6 +2063,7 @@
           {
             "date": "2025-05-11",
             "prompts": 5,
+            "est_tokens": 209,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -2073,6 +2081,7 @@
           {
             "date": "2025-05-21",
             "prompts": 15,
+            "est_tokens": 408,
             "source_counts": {
               "copilot_chat": 15
             },
@@ -2090,6 +2099,7 @@
           {
             "date": "2025-05-22",
             "prompts": 53,
+            "est_tokens": 1600,
             "source_counts": {
               "copilot_chat": 53
             },
@@ -2107,6 +2117,7 @@
           {
             "date": "2025-05-24",
             "prompts": 1,
+            "est_tokens": 14,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -2124,6 +2135,7 @@
           {
             "date": "2025-05-26",
             "prompts": 4,
+            "est_tokens": 374,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -2141,6 +2153,7 @@
           {
             "date": "2025-08-08",
             "prompts": 1,
+            "est_tokens": 5,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -2160,6 +2173,7 @@
           {
             "date": "2025-08-10",
             "prompts": 2,
+            "est_tokens": 7,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -2179,6 +2193,7 @@
           {
             "date": "2025-08-11",
             "prompts": 2,
+            "est_tokens": 26,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -2198,6 +2213,7 @@
           {
             "date": "2025-08-27",
             "prompts": 4,
+            "est_tokens": 64,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -2217,6 +2233,7 @@
           {
             "date": "2025-09-05",
             "prompts": 1,
+            "est_tokens": 12,
             "source_counts": {
               "lmstudio": 1
             },
@@ -2234,6 +2251,7 @@
           {
             "date": "2025-09-07",
             "prompts": 6,
+            "est_tokens": 85,
             "source_counts": {
               "copilot_chat": 6
             },
@@ -2253,6 +2271,7 @@
           {
             "date": "2025-09-10",
             "prompts": 3,
+            "est_tokens": 154,
             "source_counts": {
               "lmstudio": 3
             },
@@ -2270,6 +2289,7 @@
           {
             "date": "2025-09-11",
             "prompts": 18,
+            "est_tokens": 257,
             "source_counts": {
               "copilot_chat": 17,
               "lmstudio": 1
@@ -2291,6 +2311,7 @@
           {
             "date": "2025-09-12",
             "prompts": 3,
+            "est_tokens": 8,
             "source_counts": {
               "copilot_chat": 3
             },
@@ -2311,6 +2332,7 @@
           {
             "date": "2025-09-13",
             "prompts": 12,
+            "est_tokens": 647,
             "source_counts": {
               "copilot_chat": 12
             },
@@ -2330,6 +2352,7 @@
           {
             "date": "2025-09-14",
             "prompts": 11,
+            "est_tokens": 293,
             "source_counts": {
               "copilot_chat": 11
             },
@@ -2351,6 +2374,7 @@
           {
             "date": "2025-09-15",
             "prompts": 3,
+            "est_tokens": 216,
             "source_counts": {
               "copilot_chat": 3
             },
@@ -2370,6 +2394,7 @@
           {
             "date": "2025-09-16",
             "prompts": 34,
+            "est_tokens": 798,
             "source_counts": {
               "copilot_chat": 34
             },
@@ -2392,6 +2417,7 @@
           {
             "date": "2025-09-17",
             "prompts": 7,
+            "est_tokens": 343,
             "source_counts": {
               "copilot_chat": 7
             },
@@ -2411,6 +2437,7 @@
           {
             "date": "2025-09-18",
             "prompts": 4,
+            "est_tokens": 17,
             "source_counts": {
               "lmstudio": 4
             },
@@ -2428,6 +2455,7 @@
           {
             "date": "2025-09-28",
             "prompts": 4,
+            "est_tokens": 95,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -2448,6 +2476,7 @@
           {
             "date": "2025-10-01",
             "prompts": 1,
+            "est_tokens": 59,
             "source_counts": {
               "lmstudio": 1
             },
@@ -2465,6 +2494,7 @@
           {
             "date": "2025-10-12",
             "prompts": 1,
+            "est_tokens": 104,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -2484,6 +2514,7 @@
           {
             "date": "2025-10-14",
             "prompts": 9,
+            "est_tokens": 615,
             "source_counts": {
               "copilot_chat": 9
             },
@@ -2503,6 +2534,7 @@
           {
             "date": "2025-10-15",
             "prompts": 15,
+            "est_tokens": 661,
             "source_counts": {
               "copilot_chat": 15
             },
@@ -2522,6 +2554,7 @@
           {
             "date": "2025-10-16",
             "prompts": 22,
+            "est_tokens": 657,
             "source_counts": {
               "copilot_chat": 22
             },
@@ -2541,6 +2574,7 @@
           {
             "date": "2025-10-17",
             "prompts": 30,
+            "est_tokens": 1691,
             "source_counts": {
               "copilot_chat": 30
             },
@@ -2560,6 +2594,7 @@
           {
             "date": "2025-10-18",
             "prompts": 2,
+            "est_tokens": 78,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -2579,6 +2614,7 @@
           {
             "date": "2025-10-19",
             "prompts": 3,
+            "est_tokens": 300,
             "source_counts": {
               "lmstudio": 2,
               "copilot_chat": 1
@@ -2600,6 +2636,7 @@
           {
             "date": "2025-10-20",
             "prompts": 79,
+            "est_tokens": 2159,
             "source_counts": {
               "copilot_chat": 79
             },
@@ -2624,6 +2661,7 @@
           {
             "date": "2025-10-24",
             "prompts": 5,
+            "est_tokens": 187,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -2644,6 +2682,7 @@
           {
             "date": "2025-10-25",
             "prompts": 25,
+            "est_tokens": 554,
             "source_counts": {
               "lmstudio": 3,
               "copilot_chat": 22
@@ -2666,6 +2705,7 @@
           {
             "date": "2025-10-26",
             "prompts": 15,
+            "est_tokens": 597,
             "source_counts": {
               "copilot_chat": 15
             },
@@ -2685,6 +2725,7 @@
           {
             "date": "2025-10-28",
             "prompts": 24,
+            "est_tokens": 1508,
             "source_counts": {
               "copilot_chat": 24
             },
@@ -2705,6 +2746,7 @@
           {
             "date": "2025-11-04",
             "prompts": 21,
+            "est_tokens": 1650,
             "source_counts": {
               "copilot_chat": 21
             },
@@ -2725,6 +2767,7 @@
           {
             "date": "2025-11-05",
             "prompts": 5,
+            "est_tokens": 75,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -2744,6 +2787,7 @@
           {
             "date": "2025-11-06",
             "prompts": 31,
+            "est_tokens": 1093,
             "source_counts": {
               "copilot_chat": 31
             },
@@ -2766,6 +2810,7 @@
           {
             "date": "2025-11-07",
             "prompts": 9,
+            "est_tokens": 356,
             "source_counts": {
               "copilot_chat": 9
             },
@@ -2786,6 +2831,7 @@
           {
             "date": "2025-11-08",
             "prompts": 150,
+            "est_tokens": 7428,
             "source_counts": {
               "copilot_chat": 150
             },
@@ -2809,6 +2855,7 @@
           {
             "date": "2025-11-09",
             "prompts": 177,
+            "est_tokens": 10641,
             "source_counts": {
               "copilot_chat": 177
             },
@@ -2834,6 +2881,7 @@
           {
             "date": "2025-11-10",
             "prompts": 13,
+            "est_tokens": 479,
             "source_counts": {
               "copilot_chat": 13
             },
@@ -2853,6 +2901,7 @@
           {
             "date": "2025-11-11",
             "prompts": 45,
+            "est_tokens": 1879,
             "source_counts": {
               "copilot_chat": 45
             },
@@ -2872,6 +2921,7 @@
           {
             "date": "2025-11-12",
             "prompts": 28,
+            "est_tokens": 2311,
             "source_counts": {
               "copilot_chat": 28
             },
@@ -2891,6 +2941,7 @@
           {
             "date": "2025-11-13",
             "prompts": 74,
+            "est_tokens": 5730,
             "source_counts": {
               "copilot_chat": 74
             },
@@ -2914,6 +2965,7 @@
           {
             "date": "2025-11-14",
             "prompts": 6,
+            "est_tokens": 174,
             "source_counts": {
               "copilot_chat": 6
             },
@@ -2933,6 +2985,7 @@
           {
             "date": "2025-11-15",
             "prompts": 95,
+            "est_tokens": 3005,
             "source_counts": {
               "copilot_chat": 94,
               "lmstudio": 1
@@ -2955,6 +3008,7 @@
           {
             "date": "2025-11-16",
             "prompts": 28,
+            "est_tokens": 877,
             "source_counts": {
               "copilot_chat": 28
             },
@@ -2975,6 +3029,7 @@
           {
             "date": "2025-11-17",
             "prompts": 5,
+            "est_tokens": 213,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -2994,6 +3049,7 @@
           {
             "date": "2025-11-18",
             "prompts": 23,
+            "est_tokens": 2049,
             "source_counts": {
               "copilot_chat": 23
             },
@@ -3015,6 +3071,7 @@
           {
             "date": "2025-11-19",
             "prompts": 10,
+            "est_tokens": 600,
             "source_counts": {
               "copilot_chat": 10
             },
@@ -3034,6 +3091,7 @@
           {
             "date": "2025-11-20",
             "prompts": 4,
+            "est_tokens": 134,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -3054,6 +3112,7 @@
           {
             "date": "2025-11-24",
             "prompts": 130,
+            "est_tokens": 4067,
             "source_counts": {
               "copilot_chat": 130
             },
@@ -3075,6 +3134,7 @@
           {
             "date": "2025-11-25",
             "prompts": 59,
+            "est_tokens": 2171,
             "source_counts": {
               "copilot_chat": 59
             },
@@ -3094,6 +3154,7 @@
           {
             "date": "2025-11-26",
             "prompts": 64,
+            "est_tokens": 2159,
             "source_counts": {
               "copilot_chat": 64
             },
@@ -3113,6 +3174,7 @@
           {
             "date": "2025-11-27",
             "prompts": 17,
+            "est_tokens": 565,
             "source_counts": {
               "copilot_chat": 17
             },
@@ -3132,6 +3194,7 @@
           {
             "date": "2025-11-28",
             "prompts": 80,
+            "est_tokens": 2900,
             "source_counts": {
               "copilot_chat": 80
             },
@@ -3151,6 +3214,7 @@
           {
             "date": "2025-11-29",
             "prompts": 72,
+            "est_tokens": 3177,
             "source_counts": {
               "copilot_chat": 72
             },
@@ -3170,6 +3234,7 @@
           {
             "date": "2025-11-30",
             "prompts": 58,
+            "est_tokens": 1845,
             "source_counts": {
               "copilot_chat": 58
             },
@@ -3189,6 +3254,7 @@
           {
             "date": "2025-12-02",
             "prompts": 53,
+            "est_tokens": 2978,
             "source_counts": {
               "copilot_chat": 53
             },
@@ -3208,6 +3274,7 @@
           {
             "date": "2025-12-06",
             "prompts": 38,
+            "est_tokens": 888,
             "source_counts": {
               "copilot_chat": 38
             },
@@ -3227,6 +3294,7 @@
           {
             "date": "2025-12-07",
             "prompts": 1,
+            "est_tokens": 71,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -3246,6 +3314,7 @@
           {
             "date": "2025-12-08",
             "prompts": 2,
+            "est_tokens": 49,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -3265,6 +3334,7 @@
           {
             "date": "2025-12-09",
             "prompts": 10,
+            "est_tokens": 577,
             "source_counts": {
               "copilot_chat": 10
             },
@@ -3284,6 +3354,7 @@
           {
             "date": "2025-12-10",
             "prompts": 14,
+            "est_tokens": 470,
             "source_counts": {
               "copilot_chat": 14
             },
@@ -3303,6 +3374,7 @@
           {
             "date": "2025-12-11",
             "prompts": 25,
+            "est_tokens": 858,
             "source_counts": {
               "copilot_chat": 25
             },
@@ -3322,6 +3394,7 @@
           {
             "date": "2025-12-12",
             "prompts": 25,
+            "est_tokens": 889,
             "source_counts": {
               "copilot_chat": 25
             },
@@ -3341,6 +3414,7 @@
           {
             "date": "2025-12-13",
             "prompts": 170,
+            "est_tokens": 6497,
             "source_counts": {
               "copilot_chat": 170
             },
@@ -3362,6 +3436,7 @@
           {
             "date": "2025-12-14",
             "prompts": 58,
+            "est_tokens": 1463,
             "source_counts": {
               "copilot_chat": 58
             },
@@ -3382,6 +3457,7 @@
           {
             "date": "2025-12-15",
             "prompts": 71,
+            "est_tokens": 2507,
             "source_counts": {
               "copilot_chat": 71
             },
@@ -3401,6 +3477,7 @@
           {
             "date": "2025-12-16",
             "prompts": 48,
+            "est_tokens": 1526,
             "source_counts": {
               "copilot_chat": 48
             },
@@ -3421,6 +3498,7 @@
           {
             "date": "2025-12-17",
             "prompts": 20,
+            "est_tokens": 2172,
             "source_counts": {
               "copilot_chat": 20
             },
@@ -3440,6 +3518,7 @@
           {
             "date": "2025-12-18",
             "prompts": 55,
+            "est_tokens": 2376,
             "source_counts": {
               "copilot_chat": 55
             },
@@ -3462,6 +3541,7 @@
           {
             "date": "2025-12-23",
             "prompts": 15,
+            "est_tokens": 883,
             "source_counts": {
               "codex": 15
             },
@@ -3481,6 +3561,7 @@
           {
             "date": "2025-12-24",
             "prompts": 19,
+            "est_tokens": 1599,
             "source_counts": {
               "codex": 19
             },
@@ -3500,6 +3581,7 @@
           {
             "date": "2025-12-25",
             "prompts": 116,
+            "est_tokens": 8806,
             "source_counts": {
               "opencode": 7,
               "codex": 109
@@ -3524,6 +3606,7 @@
           {
             "date": "2025-12-26",
             "prompts": 34,
+            "est_tokens": 1784,
             "source_counts": {
               "codex": 32,
               "opencode": 2
@@ -3546,6 +3629,7 @@
           {
             "date": "2025-12-27",
             "prompts": 14,
+            "est_tokens": 1008,
             "source_counts": {
               "codex": 14
             },
@@ -3565,6 +3649,7 @@
           {
             "date": "2025-12-28",
             "prompts": 15,
+            "est_tokens": 605,
             "source_counts": {
               "opencode": 9,
               "codex": 6
@@ -3587,6 +3672,7 @@
           {
             "date": "2025-12-30",
             "prompts": 18,
+            "est_tokens": 143,
             "source_counts": {
               "lmstudio": 3,
               "codex": 15
@@ -3608,6 +3694,7 @@
           {
             "date": "2026-01-01",
             "prompts": 17,
+            "est_tokens": 1183,
             "source_counts": {
               "claude_code": 17
             },
@@ -3625,6 +3712,7 @@
           {
             "date": "2026-01-03",
             "prompts": 4,
+            "est_tokens": 507,
             "source_counts": {
               "codex": 4
             },
@@ -3644,6 +3732,7 @@
           {
             "date": "2026-01-04",
             "prompts": 38,
+            "est_tokens": 2769,
             "source_counts": {
               "codex": 38
             },
@@ -3663,6 +3752,7 @@
           {
             "date": "2026-01-05",
             "prompts": 1,
+            "est_tokens": 1,
             "source_counts": {
               "codex": 1
             },
@@ -3682,6 +3772,7 @@
           {
             "date": "2026-01-07",
             "prompts": 10,
+            "est_tokens": 93,
             "source_counts": {
               "lmstudio": 10
             },
@@ -3699,6 +3790,7 @@
           {
             "date": "2026-01-08",
             "prompts": 2,
+            "est_tokens": 1312,
             "source_counts": {
               "claude_code": 2
             },
@@ -3716,6 +3808,7 @@
           {
             "date": "2026-01-09",
             "prompts": 74,
+            "est_tokens": 4238,
             "source_counts": {
               "opencode": 6,
               "claude_code": 33,
@@ -3743,6 +3836,7 @@
           {
             "date": "2026-01-10",
             "prompts": 47,
+            "est_tokens": 4779,
             "source_counts": {
               "codex": 47
             },
@@ -3762,6 +3856,7 @@
           {
             "date": "2026-01-11",
             "prompts": 12,
+            "est_tokens": 1883,
             "source_counts": {
               "codex": 12
             },
@@ -3781,6 +3876,7 @@
           {
             "date": "2026-01-13",
             "prompts": 3,
+            "est_tokens": 168,
             "source_counts": {
               "opencode": 3
             },
@@ -3800,6 +3896,7 @@
           {
             "date": "2026-01-14",
             "prompts": 46,
+            "est_tokens": 3200,
             "source_counts": {
               "claude_code": 46
             },
@@ -3817,6 +3914,7 @@
           {
             "date": "2026-01-15",
             "prompts": 53,
+            "est_tokens": 7683,
             "source_counts": {
               "claude_code": 53
             },
@@ -3834,6 +3932,7 @@
           {
             "date": "2026-01-16",
             "prompts": 31,
+            "est_tokens": 2190,
             "source_counts": {
               "claude_code": 27,
               "opencode": 4
@@ -3856,6 +3955,7 @@
           {
             "date": "2026-01-18",
             "prompts": 69,
+            "est_tokens": 5955,
             "source_counts": {
               "codex": 42,
               "claude_code": 27
@@ -3877,6 +3977,7 @@
           {
             "date": "2026-01-19",
             "prompts": 86,
+            "est_tokens": 22740,
             "source_counts": {
               "codex": 25,
               "claude_code": 23,
@@ -3908,6 +4009,7 @@
           {
             "date": "2026-01-20",
             "prompts": 13,
+            "est_tokens": 174,
             "source_counts": {
               "lmstudio": 13
             },
@@ -3925,6 +4027,7 @@
           {
             "date": "2026-01-21",
             "prompts": 38,
+            "est_tokens": 2776,
             "source_counts": {
               "claude_code": 38
             },
@@ -3942,6 +4045,7 @@
           {
             "date": "2026-01-22",
             "prompts": 87,
+            "est_tokens": 4170,
             "source_counts": {
               "claude_code": 86,
               "lmstudio": 1
@@ -3961,6 +4065,7 @@
           {
             "date": "2026-01-23",
             "prompts": 7,
+            "est_tokens": 269,
             "source_counts": {
               "opencode": 4,
               "codex": 3
@@ -3983,6 +4088,7 @@
           {
             "date": "2026-01-24",
             "prompts": 79,
+            "est_tokens": 6913,
             "source_counts": {
               "claude_code": 76,
               "opencode": 3
@@ -4004,6 +4110,7 @@
           {
             "date": "2026-01-25",
             "prompts": 60,
+            "est_tokens": 2869,
             "source_counts": {
               "claude_code": 60
             },
@@ -4021,6 +4128,7 @@
           {
             "date": "2026-01-26",
             "prompts": 16,
+            "est_tokens": 597,
             "source_counts": {
               "claude_code": 16
             },
@@ -4038,6 +4146,7 @@
           {
             "date": "2026-01-27",
             "prompts": 74,
+            "est_tokens": 4647,
             "source_counts": {
               "claude_code": 74
             },
@@ -4055,6 +4164,7 @@
           {
             "date": "2026-01-28",
             "prompts": 5,
+            "est_tokens": 162,
             "source_counts": {
               "claude_code": 5
             },
@@ -4072,6 +4182,7 @@
           {
             "date": "2026-01-29",
             "prompts": 20,
+            "est_tokens": 1456,
             "source_counts": {
               "claude_code": 17,
               "codex": 3
@@ -4093,6 +4204,7 @@
           {
             "date": "2026-01-30",
             "prompts": 15,
+            "est_tokens": 457,
             "source_counts": {
               "claude_code": 3,
               "opencode": 12
@@ -4114,6 +4226,7 @@
           {
             "date": "2026-01-31",
             "prompts": 194,
+            "est_tokens": 36340,
             "source_counts": {
               "claude_code": 76,
               "codex": 118
@@ -4135,6 +4248,7 @@
           {
             "date": "2026-02-01",
             "prompts": 183,
+            "est_tokens": 36954,
             "source_counts": {
               "codex": 80,
               "claude_code": 103
@@ -4156,6 +4270,7 @@
           {
             "date": "2026-02-02",
             "prompts": 4,
+            "est_tokens": 545,
             "source_counts": {
               "codex": 4
             },
@@ -4175,6 +4290,7 @@
           {
             "date": "2026-02-04",
             "prompts": 2,
+            "est_tokens": 283,
             "source_counts": {
               "claude_code": 2
             },
@@ -4192,6 +4308,7 @@
           {
             "date": "2026-02-05",
             "prompts": 18,
+            "est_tokens": 1022,
             "source_counts": {
               "claude_code": 9,
               "codex": 9
@@ -4214,6 +4331,7 @@
           {
             "date": "2026-02-06",
             "prompts": 17,
+            "est_tokens": 3300,
             "source_counts": {
               "claude_code": 17
             },
@@ -4231,6 +4349,7 @@
           {
             "date": "2026-02-07",
             "prompts": 107,
+            "est_tokens": 17762,
             "source_counts": {
               "claude_code": 83,
               "codex": 24
@@ -4252,6 +4371,7 @@
           {
             "date": "2026-02-08",
             "prompts": 19,
+            "est_tokens": 1392,
             "source_counts": {
               "codex": 19
             },
@@ -4271,6 +4391,7 @@
           {
             "date": "2026-02-09",
             "prompts": 10,
+            "est_tokens": 565,
             "source_counts": {
               "codex": 10
             },
@@ -4290,6 +4411,7 @@
           {
             "date": "2026-02-10",
             "prompts": 30,
+            "est_tokens": 1655,
             "source_counts": {
               "codex": 30
             },
@@ -4309,6 +4431,7 @@
           {
             "date": "2026-02-11",
             "prompts": 51,
+            "est_tokens": 2106,
             "source_counts": {
               "codex": 48,
               "opencode": 3
@@ -4331,6 +4454,7 @@
           {
             "date": "2026-02-12",
             "prompts": 3,
+            "est_tokens": 511,
             "source_counts": {
               "codex": 3
             },
@@ -4350,6 +4474,7 @@
           {
             "date": "2026-02-13",
             "prompts": 3,
+            "est_tokens": 265,
             "source_counts": {
               "codex": 3
             },
@@ -4369,6 +4494,7 @@
           {
             "date": "2026-02-14",
             "prompts": 19,
+            "est_tokens": 503,
             "source_counts": {
               "codex": 19
             },
@@ -4388,6 +4514,7 @@
           {
             "date": "2026-02-15",
             "prompts": 46,
+            "est_tokens": 976,
             "source_counts": {
               "codex": 46
             },
@@ -4407,6 +4534,7 @@
           {
             "date": "2026-02-16",
             "prompts": 16,
+            "est_tokens": 118,
             "source_counts": {
               "lmstudio": 16
             },
@@ -4424,6 +4552,7 @@
           {
             "date": "2026-02-18",
             "prompts": 2,
+            "est_tokens": 246,
             "source_counts": {
               "codex": 2
             },
@@ -4443,6 +4572,7 @@
           {
             "date": "2026-02-19",
             "prompts": 10,
+            "est_tokens": 294,
             "source_counts": {
               "codex": 10
             },
@@ -4462,6 +4592,7 @@
           {
             "date": "2026-02-20",
             "prompts": 4,
+            "est_tokens": 318,
             "source_counts": {
               "codex": 4
             },
@@ -4481,6 +4612,7 @@
           {
             "date": "2026-02-21",
             "prompts": 45,
+            "est_tokens": 1936,
             "source_counts": {
               "codex": 45
             },
@@ -4500,6 +4632,7 @@
           {
             "date": "2026-02-22",
             "prompts": 4,
+            "est_tokens": 1482,
             "source_counts": {
               "codex": 4
             },
@@ -4519,6 +4652,7 @@
           {
             "date": "2026-02-25",
             "prompts": 3,
+            "est_tokens": 340,
             "source_counts": {
               "codex": 3
             },
@@ -4538,6 +4672,7 @@
           {
             "date": "2026-02-26",
             "prompts": 3,
+            "est_tokens": 372,
             "source_counts": {
               "codex": 3
             },
@@ -4557,6 +4692,7 @@
           {
             "date": "2026-02-27",
             "prompts": 3,
+            "est_tokens": 25,
             "source_counts": {
               "lmstudio": 3
             },
@@ -4574,6 +4710,7 @@
           {
             "date": "2026-03-02",
             "prompts": 8,
+            "est_tokens": 228,
             "source_counts": {
               "codex": 8
             },
@@ -4593,6 +4730,7 @@
           {
             "date": "2026-03-03",
             "prompts": 10,
+            "est_tokens": 3738,
             "source_counts": {
               "claude_code": 10
             },
@@ -4610,6 +4748,7 @@
           {
             "date": "2026-03-04",
             "prompts": 38,
+            "est_tokens": 3496,
             "source_counts": {
               "claude_code": 38
             },
@@ -4627,6 +4766,7 @@
           {
             "date": "2026-03-05",
             "prompts": 25,
+            "est_tokens": 820,
             "source_counts": {
               "claude_code": 23,
               "codex": 2
@@ -4648,6 +4788,7 @@
           {
             "date": "2026-03-06",
             "prompts": 61,
+            "est_tokens": 2127,
             "source_counts": {
               "claude_code": 51,
               "codex": 10
@@ -4669,6 +4810,7 @@
           {
             "date": "2026-03-07",
             "prompts": 58,
+            "est_tokens": 2806,
             "source_counts": {
               "claude_code": 19,
               "codex": 39
@@ -4690,6 +4832,7 @@
           {
             "date": "2026-03-08",
             "prompts": 38,
+            "est_tokens": 1227,
             "source_counts": {
               "claude_code": 24,
               "codex": 14
@@ -4711,6 +4854,7 @@
           {
             "date": "2026-03-09",
             "prompts": 60,
+            "est_tokens": 1879,
             "source_counts": {
               "codex": 13,
               "claude_code": 47
@@ -4733,6 +4877,7 @@
           {
             "date": "2026-03-10",
             "prompts": 20,
+            "est_tokens": 1609,
             "source_counts": {
               "codex": 15,
               "claude_code": 5
@@ -4754,6 +4899,7 @@
           {
             "date": "2026-03-11",
             "prompts": 61,
+            "est_tokens": 2376,
             "source_counts": {
               "claude_code": 54,
               "codex": 7
@@ -4775,6 +4921,7 @@
           {
             "date": "2026-03-12",
             "prompts": 35,
+            "est_tokens": 1328,
             "source_counts": {
               "claude_code": 33,
               "codex": 2
@@ -4796,6 +4943,7 @@
           {
             "date": "2026-03-13",
             "prompts": 46,
+            "est_tokens": 1177,
             "source_counts": {
               "claude_code": 37,
               "codex": 9
@@ -4817,6 +4965,7 @@
           {
             "date": "2026-03-14",
             "prompts": 176,
+            "est_tokens": 9677,
             "source_counts": {
               "codex": 99,
               "claude_code": 77
@@ -4839,6 +4988,7 @@
           {
             "date": "2026-03-15",
             "prompts": 200,
+            "est_tokens": 12529,
             "source_counts": {
               "codex": 107,
               "claude_code": 93
@@ -4860,6 +5010,7 @@
           {
             "date": "2026-03-16",
             "prompts": 26,
+            "est_tokens": 2348,
             "source_counts": {
               "codex": 9,
               "claude_code": 17
@@ -4881,6 +5032,7 @@
           {
             "date": "2026-03-17",
             "prompts": 90,
+            "est_tokens": 4825,
             "source_counts": {
               "claude_code": 73,
               "codex": 17
@@ -4902,6 +5054,7 @@
           {
             "date": "2026-03-18",
             "prompts": 26,
+            "est_tokens": 5381,
             "source_counts": {
               "claude_code": 21,
               "codex": 5
@@ -4923,6 +5076,7 @@
           {
             "date": "2026-03-19",
             "prompts": 51,
+            "est_tokens": 2650,
             "source_counts": {
               "claude_code": 45,
               "codex": 6
@@ -4944,6 +5098,7 @@
           {
             "date": "2026-03-20",
             "prompts": 51,
+            "est_tokens": 3023,
             "source_counts": {
               "claude_code": 22,
               "codex": 29
@@ -4965,6 +5120,7 @@
           {
             "date": "2026-03-21",
             "prompts": 176,
+            "est_tokens": 11388,
             "source_counts": {
               "codex": 45,
               "claude_code": 131
@@ -4986,6 +5142,7 @@
           {
             "date": "2026-03-22",
             "prompts": 149,
+            "est_tokens": 9890,
             "source_counts": {
               "claude_code": 137,
               "codex": 12
@@ -5007,6 +5164,7 @@
           {
             "date": "2026-03-23",
             "prompts": 45,
+            "est_tokens": 2611,
             "source_counts": {
               "claude_code": 38,
               "codex": 7
@@ -5028,6 +5186,7 @@
           {
             "date": "2026-03-24",
             "prompts": 59,
+            "est_tokens": 3515,
             "source_counts": {
               "claude_code": 56,
               "codex": 3
@@ -5049,6 +5208,7 @@
           {
             "date": "2026-03-25",
             "prompts": 119,
+            "est_tokens": 7902,
             "source_counts": {
               "claude_code": 65,
               "pi": 23,
@@ -5073,6 +5233,7 @@
           {
             "date": "2026-03-26",
             "prompts": 87,
+            "est_tokens": 5379,
             "source_counts": {
               "pi": 70,
               "codex": 16,
@@ -5098,6 +5259,7 @@
           {
             "date": "2026-03-27",
             "prompts": 123,
+            "est_tokens": 11009,
             "source_counts": {
               "pi": 25,
               "claude_code": 98
@@ -5121,6 +5283,7 @@
           {
             "date": "2026-03-28",
             "prompts": 215,
+            "est_tokens": 16164,
             "source_counts": {
               "claude_code": 173,
               "pi": 39,
@@ -5146,6 +5309,7 @@
           {
             "date": "2026-03-29",
             "prompts": 35,
+            "est_tokens": 3559,
             "source_counts": {
               "claude_code": 35
             },
@@ -5163,6 +5327,7 @@
           {
             "date": "2026-03-30",
             "prompts": 22,
+            "est_tokens": 1804,
             "source_counts": {
               "claude_code": 22
             },
@@ -5180,6 +5345,7 @@
           {
             "date": "2026-03-31",
             "prompts": 24,
+            "est_tokens": 865,
             "source_counts": {
               "claude_code": 20,
               "pi": 4
@@ -5201,6 +5367,7 @@
           {
             "date": "2026-04-01",
             "prompts": 287,
+            "est_tokens": 6699,
             "source_counts": {
               "claude_code": 190,
               "pi": 97
@@ -5221,23 +5388,25 @@
           },
           {
             "date": "2026-04-02",
-            "prompts": 136,
+            "prompts": 158,
+            "est_tokens": 6628,
             "source_counts": {
-              "claude_code": 104,
-              "pi": 32
+              "claude_code": 105,
+              "pi": 53
             },
             "source_share_pct": {
-              "claude_code": 76.5,
-              "pi": 23.5
+              "claude_code": 66.5,
+              "pi": 33.5
             },
             "style": {
-              "backtrack_per_100": 1.5,
-              "question_rate_pct": 5.1,
-              "command_rate_pct": 1.5
+              "backtrack_per_100": 5.7,
+              "question_rate_pct": 7,
+              "command_rate_pct": 2.5
             },
-            "model_prompts": 32,
+            "model_prompts": 53,
             "models": {
-              "claude-opus-4-6": 31,
+              "claude-opus-4-6": 46,
+              "gpt-5.4": 6,
               "qwen/qwen3.6-plus:free": 1
             }
           }
@@ -5246,6 +5415,7 @@
           {
             "week_start": "2025-03-17",
             "prompts": 9,
+            "est_tokens": 102,
             "source_counts": {
               "copilot_chat": 9
             },
@@ -5267,6 +5437,7 @@
           {
             "week_start": "2025-03-24",
             "prompts": 12,
+            "est_tokens": 448,
             "source_counts": {
               "copilot_chat": 11,
               "cursor": 1
@@ -5290,6 +5461,7 @@
           {
             "week_start": "2025-04-07",
             "prompts": 2,
+            "est_tokens": 32,
             "source_counts": {
               "copilot_chat": 1,
               "cursor": 1
@@ -5313,6 +5485,7 @@
           {
             "week_start": "2025-04-14",
             "prompts": 4,
+            "est_tokens": 837,
             "source_counts": {
               "copilot_chat": 2,
               "cursor": 2
@@ -5336,6 +5509,7 @@
           {
             "week_start": "2025-04-21",
             "prompts": 22,
+            "est_tokens": 2962,
             "source_counts": {
               "copilot_chat": 11,
               "cursor": 11
@@ -5359,6 +5533,7 @@
           {
             "week_start": "2025-05-05",
             "prompts": 5,
+            "est_tokens": 209,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -5380,6 +5555,7 @@
           {
             "week_start": "2025-05-19",
             "prompts": 69,
+            "est_tokens": 2022,
             "source_counts": {
               "copilot_chat": 69
             },
@@ -5401,6 +5577,7 @@
           {
             "week_start": "2025-05-26",
             "prompts": 4,
+            "est_tokens": 374,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -5422,6 +5599,7 @@
           {
             "week_start": "2025-08-04",
             "prompts": 3,
+            "est_tokens": 12,
             "source_counts": {
               "copilot_chat": 3
             },
@@ -5446,6 +5624,7 @@
           {
             "week_start": "2025-08-11",
             "prompts": 2,
+            "est_tokens": 26,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -5469,6 +5648,7 @@
           {
             "week_start": "2025-08-25",
             "prompts": 4,
+            "est_tokens": 64,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -5492,6 +5672,7 @@
           {
             "week_start": "2025-09-01",
             "prompts": 7,
+            "est_tokens": 97,
             "source_counts": {
               "lmstudio": 1,
               "copilot_chat": 6
@@ -5517,6 +5698,7 @@
           {
             "week_start": "2025-09-08",
             "prompts": 47,
+            "est_tokens": 1358,
             "source_counts": {
               "lmstudio": 4,
               "copilot_chat": 43
@@ -5546,6 +5728,7 @@
           {
             "week_start": "2025-09-15",
             "prompts": 48,
+            "est_tokens": 1374,
             "source_counts": {
               "copilot_chat": 44,
               "lmstudio": 4
@@ -5574,6 +5757,7 @@
           {
             "week_start": "2025-09-22",
             "prompts": 4,
+            "est_tokens": 95,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -5598,6 +5782,7 @@
           {
             "week_start": "2025-09-29",
             "prompts": 1,
+            "est_tokens": 59,
             "source_counts": {
               "lmstudio": 1
             },
@@ -5619,6 +5804,7 @@
           {
             "week_start": "2025-10-06",
             "prompts": 1,
+            "est_tokens": 104,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -5642,6 +5828,7 @@
           {
             "week_start": "2025-10-13",
             "prompts": 81,
+            "est_tokens": 4002,
             "source_counts": {
               "copilot_chat": 79,
               "lmstudio": 2
@@ -5668,6 +5855,7 @@
           {
             "week_start": "2025-10-20",
             "prompts": 124,
+            "est_tokens": 3497,
             "source_counts": {
               "copilot_chat": 121,
               "lmstudio": 3
@@ -5701,6 +5889,7 @@
           {
             "week_start": "2025-10-27",
             "prompts": 24,
+            "est_tokens": 1508,
             "source_counts": {
               "copilot_chat": 24
             },
@@ -5725,6 +5914,7 @@
           {
             "week_start": "2025-11-03",
             "prompts": 393,
+            "est_tokens": 21241,
             "source_counts": {
               "copilot_chat": 393
             },
@@ -5756,6 +5946,7 @@
           {
             "week_start": "2025-11-10",
             "prompts": 289,
+            "est_tokens": 14453,
             "source_counts": {
               "copilot_chat": 288,
               "lmstudio": 1
@@ -5785,6 +5976,7 @@
           {
             "week_start": "2025-11-17",
             "prompts": 42,
+            "est_tokens": 2996,
             "source_counts": {
               "copilot_chat": 42
             },
@@ -5811,6 +6003,7 @@
           {
             "week_start": "2025-11-24",
             "prompts": 480,
+            "est_tokens": 16883,
             "source_counts": {
               "copilot_chat": 480
             },
@@ -5836,6 +6029,7 @@
           {
             "week_start": "2025-12-01",
             "prompts": 92,
+            "est_tokens": 3936,
             "source_counts": {
               "copilot_chat": 92
             },
@@ -5859,6 +6053,7 @@
           {
             "week_start": "2025-12-08",
             "prompts": 304,
+            "est_tokens": 10803,
             "source_counts": {
               "copilot_chat": 304
             },
@@ -5885,6 +6080,7 @@
           {
             "week_start": "2025-12-15",
             "prompts": 194,
+            "est_tokens": 8580,
             "source_counts": {
               "copilot_chat": 194
             },
@@ -5911,6 +6107,7 @@
           {
             "week_start": "2025-12-22",
             "prompts": 213,
+            "est_tokens": 14685,
             "source_counts": {
               "codex": 195,
               "opencode": 18
@@ -5939,6 +6136,7 @@
           {
             "week_start": "2025-12-29",
             "prompts": 77,
+            "est_tokens": 4602,
             "source_counts": {
               "lmstudio": 3,
               "codex": 57,
@@ -5966,6 +6164,7 @@
           {
             "week_start": "2026-01-05",
             "prompts": 146,
+            "est_tokens": 12305,
             "source_counts": {
               "codex": 95,
               "lmstudio": 10,
@@ -5999,6 +6198,7 @@
           {
             "week_start": "2026-01-12",
             "prompts": 202,
+            "est_tokens": 19195,
             "source_counts": {
               "opencode": 7,
               "claude_code": 153,
@@ -6028,6 +6228,7 @@
           {
             "week_start": "2026-01-19",
             "prompts": 370,
+            "est_tokens": 39909,
             "source_counts": {
               "codex": 28,
               "claude_code": 283,
@@ -6064,6 +6265,7 @@
           {
             "week_start": "2026-01-26",
             "prompts": 507,
+            "est_tokens": 80613,
             "source_counts": {
               "claude_code": 294,
               "codex": 201,
@@ -6092,6 +6294,7 @@
           {
             "week_start": "2026-02-02",
             "prompts": 167,
+            "est_tokens": 24302,
             "source_counts": {
               "codex": 56,
               "claude_code": 111
@@ -6118,6 +6321,7 @@
           {
             "week_start": "2026-02-09",
             "prompts": 162,
+            "est_tokens": 6579,
             "source_counts": {
               "codex": 159,
               "opencode": 3
@@ -6144,6 +6348,7 @@
           {
             "week_start": "2026-02-16",
             "prompts": 81,
+            "est_tokens": 4393,
             "source_counts": {
               "lmstudio": 16,
               "codex": 65
@@ -6169,6 +6374,7 @@
           {
             "week_start": "2026-02-23",
             "prompts": 9,
+            "est_tokens": 736,
             "source_counts": {
               "codex": 6,
               "lmstudio": 3
@@ -6194,6 +6400,7 @@
           {
             "week_start": "2026-03-02",
             "prompts": 238,
+            "est_tokens": 14440,
             "source_counts": {
               "codex": 73,
               "claude_code": 165
@@ -6220,6 +6427,7 @@
           {
             "week_start": "2026-03-09",
             "prompts": 598,
+            "est_tokens": 30574,
             "source_counts": {
               "codex": 252,
               "claude_code": 346
@@ -6246,6 +6454,7 @@
           {
             "week_start": "2026-03-16",
             "prompts": 569,
+            "est_tokens": 39505,
             "source_counts": {
               "codex": 123,
               "claude_code": 446
@@ -6271,6 +6480,7 @@
           {
             "week_start": "2026-03-23",
             "prompts": 683,
+            "est_tokens": 50138,
             "source_counts": {
               "claude_code": 465,
               "codex": 60,
@@ -6303,62 +6513,64 @@
           },
           {
             "week_start": "2026-03-30",
-            "prompts": 469,
+            "prompts": 491,
+            "est_tokens": 15995,
             "source_counts": {
-              "claude_code": 336,
-              "pi": 133
+              "claude_code": 337,
+              "pi": 154
             },
             "source_share_pct": {
-              "claude_code": 71.6,
-              "pi": 28.4
+              "claude_code": 68.6,
+              "pi": 31.4
             },
             "style": {
-              "backtrack_per_100": 4.1,
-              "question_rate_pct": 12.8,
-              "command_rate_pct": 2.6
+              "backtrack_per_100": 5.3,
+              "question_rate_pct": 13,
+              "command_rate_pct": 2.9
             },
-            "model_prompts": 133,
+            "model_prompts": 154,
             "models": {
-              "claude-opus-4-6": 128,
+              "claude-opus-4-6": 143,
+              "gpt-5.4": 6,
               "claude-sonnet-4-6": 4,
               "qwen/qwen3.6-plus:free": 1
             },
             "nlp": {
-              "vibe_coder_index": 72.8,
-              "politeness": 27.2
+              "vibe_coder_index": 72.2,
+              "politeness": 28.1
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 120.3,
-            "avg_30d": 86.2,
-            "delta_pct": 39.6
+            "avg_7d": 123.4,
+            "avg_30d": 87,
+            "delta_pct": 41.8
           },
           "dominant_source_share_pct": {
-            "avg_7d": 83.7,
-            "avg_30d": 78.3,
-            "delta_pct": 6.9
+            "avg_7d": 82.3,
+            "avg_30d": 78,
+            "delta_pct": 5.5
           },
           "backtrack_per_100": {
-            "avg_7d": 13.7,
-            "avg_30d": 8.5,
-            "delta_pct": 61.2
+            "avg_7d": 14.3,
+            "avg_30d": 8.6,
+            "delta_pct": 66.3
           },
           "question_rate_pct": {
-            "avg_7d": 26.3,
+            "avg_7d": 26.5,
             "avg_30d": 22.3,
-            "delta_pct": 17.9
+            "delta_pct": 18.8
           },
           "command_rate_pct": {
-            "avg_7d": 4.1,
+            "avg_7d": 4.3,
             "avg_30d": 10.5,
-            "delta_pct": -61
+            "delta_pct": -59
           },
           "model_coverage_pct": {
-            "avg_7d": 16.3,
-            "avg_30d": 28.5,
-            "delta_pct": -42.8
+            "avg_7d": 17.7,
+            "avg_30d": 28.8,
+            "delta_pct": -38.5
           }
         },
         "shift_markers": [
@@ -6417,15 +6629,6 @@
             "magnitude": 164
           },
           {
-            "date": "2026-04-02",
-            "type": "prompt_shift",
-            "direction": "down",
-            "delta_prompts": -151,
-            "prev_prompts": 287,
-            "curr_prompts": 136,
-            "magnitude": 151
-          },
-          {
             "date": "2025-12-13",
             "type": "prompt_shift",
             "direction": "up",
@@ -6451,6 +6654,15 @@
             "prev_prompts": 46,
             "curr_prompts": 176,
             "magnitude": 130
+          },
+          {
+            "date": "2026-04-02",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -129,
+            "prev_prompts": 287,
+            "curr_prompts": 158,
+            "magnitude": 129
           }
         ],
         "weekly_by_platform": {
@@ -6458,6 +6670,7 @@
             {
               "week_start": "2025-12-29",
               "prompts": 17,
+              "est_tokens": 1183,
               "source_counts": {
                 "claude_code": 17
               },
@@ -6479,6 +6692,7 @@
             {
               "week_start": "2026-01-05",
               "prompts": 35,
+              "est_tokens": 4099,
               "source_counts": {
                 "claude_code": 35
               },
@@ -6500,6 +6714,7 @@
             {
               "week_start": "2026-01-12",
               "prompts": 153,
+              "est_tokens": 15107,
               "source_counts": {
                 "claude_code": 153
               },
@@ -6521,6 +6736,7 @@
             {
               "week_start": "2026-01-19",
               "prompts": 283,
+              "est_tokens": 19638,
               "source_counts": {
                 "claude_code": 283
               },
@@ -6542,6 +6758,7 @@
             {
               "week_start": "2026-01-26",
               "prompts": 294,
+              "est_tokens": 28064,
               "source_counts": {
                 "claude_code": 294
               },
@@ -6563,6 +6780,7 @@
             {
               "week_start": "2026-02-02",
               "prompts": 111,
+              "est_tokens": 20098,
               "source_counts": {
                 "claude_code": 111
               },
@@ -6584,6 +6802,7 @@
             {
               "week_start": "2026-03-02",
               "prompts": 165,
+              "est_tokens": 10591,
               "source_counts": {
                 "claude_code": 165
               },
@@ -6605,6 +6824,7 @@
             {
               "week_start": "2026-03-09",
               "prompts": 346,
+              "est_tokens": 17599,
               "source_counts": {
                 "claude_code": 346
               },
@@ -6626,6 +6846,7 @@
             {
               "week_start": "2026-03-16",
               "prompts": 446,
+              "est_tokens": 27668,
               "source_counts": {
                 "claude_code": 446
               },
@@ -6647,6 +6868,7 @@
             {
               "week_start": "2026-03-23",
               "prompts": 465,
+              "est_tokens": 34411,
               "source_counts": {
                 "claude_code": 465
               },
@@ -6667,23 +6889,24 @@
             },
             {
               "week_start": "2026-03-30",
-              "prompts": 336,
+              "prompts": 337,
+              "est_tokens": 5107,
               "source_counts": {
-                "claude_code": 336
+                "claude_code": 337
               },
               "source_share_pct": {
                 "claude_code": 100
               },
               "style": {
-                "backtrack_per_100": 2.1,
-                "question_rate_pct": 5.7,
+                "backtrack_per_100": 3,
+                "question_rate_pct": 5.6,
                 "command_rate_pct": 1.2
               },
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "vibe_coder_index": 77.4,
-                "politeness": 20
+                "vibe_coder_index": 77.3,
+                "politeness": 20.1
               }
             }
           ],
@@ -6691,6 +6914,7 @@
             {
               "week_start": "2025-12-22",
               "prompts": 195,
+              "est_tokens": 13668,
               "source_counts": {
                 "codex": 195
               },
@@ -6714,6 +6938,7 @@
             {
               "week_start": "2025-12-29",
               "prompts": 57,
+              "est_tokens": 3405,
               "source_counts": {
                 "codex": 57
               },
@@ -6737,6 +6962,7 @@
             {
               "week_start": "2026-01-05",
               "prompts": 95,
+              "est_tokens": 8030,
               "source_counts": {
                 "codex": 95
               },
@@ -6760,6 +6986,7 @@
             {
               "week_start": "2026-01-12",
               "prompts": 42,
+              "est_tokens": 3741,
               "source_counts": {
                 "codex": 42
               },
@@ -6783,6 +7010,7 @@
             {
               "week_start": "2026-01-19",
               "prompts": 28,
+              "est_tokens": 19481,
               "source_counts": {
                 "codex": 28
               },
@@ -6806,6 +7034,7 @@
             {
               "week_start": "2026-01-26",
               "prompts": 201,
+              "est_tokens": 52267,
               "source_counts": {
                 "codex": 201
               },
@@ -6829,6 +7058,7 @@
             {
               "week_start": "2026-02-02",
               "prompts": 56,
+              "est_tokens": 4204,
               "source_counts": {
                 "codex": 56
               },
@@ -6853,6 +7083,7 @@
             {
               "week_start": "2026-02-09",
               "prompts": 159,
+              "est_tokens": 6156,
               "source_counts": {
                 "codex": 159
               },
@@ -6876,6 +7107,7 @@
             {
               "week_start": "2026-02-16",
               "prompts": 65,
+              "est_tokens": 4275,
               "source_counts": {
                 "codex": 65
               },
@@ -6899,6 +7131,7 @@
             {
               "week_start": "2026-02-23",
               "prompts": 6,
+              "est_tokens": 712,
               "source_counts": {
                 "codex": 6
               },
@@ -6922,6 +7155,7 @@
             {
               "week_start": "2026-03-02",
               "prompts": 73,
+              "est_tokens": 3850,
               "source_counts": {
                 "codex": 73
               },
@@ -6946,6 +7180,7 @@
             {
               "week_start": "2026-03-09",
               "prompts": 252,
+              "est_tokens": 12975,
               "source_counts": {
                 "codex": 252
               },
@@ -6970,6 +7205,7 @@
             {
               "week_start": "2026-03-16",
               "prompts": 123,
+              "est_tokens": 11837,
               "source_counts": {
                 "codex": 123
               },
@@ -6993,6 +7229,7 @@
             {
               "week_start": "2026-03-23",
               "prompts": 60,
+              "est_tokens": 2237,
               "source_counts": {
                 "codex": 60
               },
@@ -7018,6 +7255,7 @@
             {
               "week_start": "2025-03-17",
               "prompts": 9,
+              "est_tokens": 102,
               "source_counts": {
                 "copilot_chat": 9
               },
@@ -7039,6 +7277,7 @@
             {
               "week_start": "2025-03-24",
               "prompts": 11,
+              "est_tokens": 438,
               "source_counts": {
                 "copilot_chat": 11
               },
@@ -7060,6 +7299,7 @@
             {
               "week_start": "2025-04-07",
               "prompts": 1,
+              "est_tokens": 16,
               "source_counts": {
                 "copilot_chat": 1
               },
@@ -7081,6 +7321,7 @@
             {
               "week_start": "2025-04-14",
               "prompts": 2,
+              "est_tokens": 419,
               "source_counts": {
                 "copilot_chat": 2
               },
@@ -7102,6 +7343,7 @@
             {
               "week_start": "2025-04-21",
               "prompts": 11,
+              "est_tokens": 1481,
               "source_counts": {
                 "copilot_chat": 11
               },
@@ -7123,6 +7365,7 @@
             {
               "week_start": "2025-05-05",
               "prompts": 5,
+              "est_tokens": 209,
               "source_counts": {
                 "copilot_chat": 5
               },
@@ -7144,6 +7387,7 @@
             {
               "week_start": "2025-05-19",
               "prompts": 69,
+              "est_tokens": 2022,
               "source_counts": {
                 "copilot_chat": 69
               },
@@ -7165,6 +7409,7 @@
             {
               "week_start": "2025-05-26",
               "prompts": 4,
+              "est_tokens": 374,
               "source_counts": {
                 "copilot_chat": 4
               },
@@ -7186,6 +7431,7 @@
             {
               "week_start": "2025-08-04",
               "prompts": 3,
+              "est_tokens": 12,
               "source_counts": {
                 "copilot_chat": 3
               },
@@ -7210,6 +7456,7 @@
             {
               "week_start": "2025-08-11",
               "prompts": 2,
+              "est_tokens": 26,
               "source_counts": {
                 "copilot_chat": 2
               },
@@ -7233,6 +7480,7 @@
             {
               "week_start": "2025-08-25",
               "prompts": 4,
+              "est_tokens": 64,
               "source_counts": {
                 "copilot_chat": 4
               },
@@ -7256,6 +7504,7 @@
             {
               "week_start": "2025-09-01",
               "prompts": 6,
+              "est_tokens": 85,
               "source_counts": {
                 "copilot_chat": 6
               },
@@ -7279,6 +7528,7 @@
             {
               "week_start": "2025-09-08",
               "prompts": 43,
+              "est_tokens": 1178,
               "source_counts": {
                 "copilot_chat": 43
               },
@@ -7306,6 +7556,7 @@
             {
               "week_start": "2025-09-15",
               "prompts": 44,
+              "est_tokens": 1357,
               "source_counts": {
                 "copilot_chat": 44
               },
@@ -7332,6 +7583,7 @@
             {
               "week_start": "2025-09-22",
               "prompts": 4,
+              "est_tokens": 95,
               "source_counts": {
                 "copilot_chat": 4
               },
@@ -7356,6 +7608,7 @@
             {
               "week_start": "2025-10-06",
               "prompts": 1,
+              "est_tokens": 104,
               "source_counts": {
                 "copilot_chat": 1
               },
@@ -7379,6 +7632,7 @@
             {
               "week_start": "2025-10-13",
               "prompts": 79,
+              "est_tokens": 3713,
               "source_counts": {
                 "copilot_chat": 79
               },
@@ -7403,6 +7657,7 @@
             {
               "week_start": "2025-10-20",
               "prompts": 121,
+              "est_tokens": 3433,
               "source_counts": {
                 "copilot_chat": 121
               },
@@ -7434,6 +7689,7 @@
             {
               "week_start": "2025-10-27",
               "prompts": 24,
+              "est_tokens": 1508,
               "source_counts": {
                 "copilot_chat": 24
               },
@@ -7458,6 +7714,7 @@
             {
               "week_start": "2025-11-03",
               "prompts": 393,
+              "est_tokens": 21241,
               "source_counts": {
                 "copilot_chat": 393
               },
@@ -7489,6 +7746,7 @@
             {
               "week_start": "2025-11-10",
               "prompts": 288,
+              "est_tokens": 14451,
               "source_counts": {
                 "copilot_chat": 288
               },
@@ -7516,6 +7774,7 @@
             {
               "week_start": "2025-11-17",
               "prompts": 42,
+              "est_tokens": 2996,
               "source_counts": {
                 "copilot_chat": 42
               },
@@ -7542,6 +7801,7 @@
             {
               "week_start": "2025-11-24",
               "prompts": 480,
+              "est_tokens": 16883,
               "source_counts": {
                 "copilot_chat": 480
               },
@@ -7567,6 +7827,7 @@
             {
               "week_start": "2025-12-01",
               "prompts": 92,
+              "est_tokens": 3936,
               "source_counts": {
                 "copilot_chat": 92
               },
@@ -7590,6 +7851,7 @@
             {
               "week_start": "2025-12-08",
               "prompts": 304,
+              "est_tokens": 10803,
               "source_counts": {
                 "copilot_chat": 304
               },
@@ -7616,6 +7878,7 @@
             {
               "week_start": "2025-12-15",
               "prompts": 194,
+              "est_tokens": 8580,
               "source_counts": {
                 "copilot_chat": 194
               },
@@ -7644,6 +7907,7 @@
             {
               "week_start": "2025-03-24",
               "prompts": 1,
+              "est_tokens": 10,
               "source_counts": {
                 "cursor": 1
               },
@@ -7665,6 +7929,7 @@
             {
               "week_start": "2025-04-07",
               "prompts": 1,
+              "est_tokens": 16,
               "source_counts": {
                 "cursor": 1
               },
@@ -7686,6 +7951,7 @@
             {
               "week_start": "2025-04-14",
               "prompts": 2,
+              "est_tokens": 419,
               "source_counts": {
                 "cursor": 2
               },
@@ -7707,6 +7973,7 @@
             {
               "week_start": "2025-04-21",
               "prompts": 11,
+              "est_tokens": 1481,
               "source_counts": {
                 "cursor": 11
               },
@@ -7730,6 +7997,7 @@
             {
               "week_start": "2025-09-01",
               "prompts": 1,
+              "est_tokens": 12,
               "source_counts": {
                 "lmstudio": 1
               },
@@ -7751,6 +8019,7 @@
             {
               "week_start": "2025-09-08",
               "prompts": 4,
+              "est_tokens": 180,
               "source_counts": {
                 "lmstudio": 4
               },
@@ -7772,6 +8041,7 @@
             {
               "week_start": "2025-09-15",
               "prompts": 4,
+              "est_tokens": 17,
               "source_counts": {
                 "lmstudio": 4
               },
@@ -7793,6 +8063,7 @@
             {
               "week_start": "2025-09-29",
               "prompts": 1,
+              "est_tokens": 59,
               "source_counts": {
                 "lmstudio": 1
               },
@@ -7814,6 +8085,7 @@
             {
               "week_start": "2025-10-13",
               "prompts": 2,
+              "est_tokens": 289,
               "source_counts": {
                 "lmstudio": 2
               },
@@ -7835,6 +8107,7 @@
             {
               "week_start": "2025-10-20",
               "prompts": 3,
+              "est_tokens": 63,
               "source_counts": {
                 "lmstudio": 3
               },
@@ -7856,6 +8129,7 @@
             {
               "week_start": "2025-11-10",
               "prompts": 1,
+              "est_tokens": 1,
               "source_counts": {
                 "lmstudio": 1
               },
@@ -7877,6 +8151,7 @@
             {
               "week_start": "2025-12-29",
               "prompts": 3,
+              "est_tokens": 14,
               "source_counts": {
                 "lmstudio": 3
               },
@@ -7898,6 +8173,7 @@
             {
               "week_start": "2026-01-05",
               "prompts": 10,
+              "est_tokens": 93,
               "source_counts": {
                 "lmstudio": 10
               },
@@ -7919,6 +8195,7 @@
             {
               "week_start": "2026-01-19",
               "prompts": 34,
+              "est_tokens": 389,
               "source_counts": {
                 "lmstudio": 34
               },
@@ -7940,6 +8217,7 @@
             {
               "week_start": "2026-02-16",
               "prompts": 16,
+              "est_tokens": 118,
               "source_counts": {
                 "lmstudio": 16
               },
@@ -7961,6 +8239,7 @@
             {
               "week_start": "2026-02-23",
               "prompts": 3,
+              "est_tokens": 25,
               "source_counts": {
                 "lmstudio": 3
               },
@@ -7982,6 +8261,7 @@
             {
               "week_start": "2026-03-23",
               "prompts": 1,
+              "est_tokens": 4,
               "source_counts": {
                 "lmstudio": 1
               },
@@ -8005,6 +8285,7 @@
             {
               "week_start": "2026-03-23",
               "prompts": 157,
+              "est_tokens": 13486,
               "source_counts": {
                 "pi": 157
               },
@@ -8031,27 +8312,29 @@
             },
             {
               "week_start": "2026-03-30",
-              "prompts": 133,
+              "prompts": 154,
+              "est_tokens": 10888,
               "source_counts": {
-                "pi": 133
+                "pi": 154
               },
               "source_share_pct": {
                 "pi": 100
               },
               "style": {
-                "backtrack_per_100": 9,
-                "question_rate_pct": 30.8,
-                "command_rate_pct": 6
+                "backtrack_per_100": 10.4,
+                "question_rate_pct": 29.2,
+                "command_rate_pct": 6.5
               },
-              "model_prompts": 133,
+              "model_prompts": 154,
               "models": {
-                "claude-opus-4-6": 128,
+                "claude-opus-4-6": 143,
+                "gpt-5.4": 6,
                 "claude-sonnet-4-6": 4,
                 "qwen/qwen3.6-plus:free": 1
               },
               "nlp": {
-                "vibe_coder_index": 61.3,
-                "politeness": 45.2
+                "vibe_coder_index": 61.1,
+                "politeness": 45.5
               }
             }
           ],
@@ -8059,6 +8342,7 @@
             {
               "week_start": "2025-12-22",
               "prompts": 18,
+              "est_tokens": 1017,
               "source_counts": {
                 "opencode": 18
               },
@@ -8084,6 +8368,7 @@
             {
               "week_start": "2026-01-05",
               "prompts": 6,
+              "est_tokens": 83,
               "source_counts": {
                 "opencode": 6
               },
@@ -8110,6 +8395,7 @@
             {
               "week_start": "2026-01-12",
               "prompts": 7,
+              "est_tokens": 347,
               "source_counts": {
                 "opencode": 7
               },
@@ -8134,6 +8420,7 @@
             {
               "week_start": "2026-01-19",
               "prompts": 25,
+              "est_tokens": 400,
               "source_counts": {
                 "opencode": 25
               },
@@ -8163,6 +8450,7 @@
             {
               "week_start": "2026-01-26",
               "prompts": 12,
+              "est_tokens": 282,
               "source_counts": {
                 "opencode": 12
               },
@@ -8186,6 +8474,7 @@
             {
               "week_start": "2026-02-09",
               "prompts": 3,
+              "est_tokens": 423,
               "source_counts": {
                 "opencode": 3
               },
@@ -8213,18 +8502,18 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 4444,
-            "build_feature": 728,
+            "other": 4457,
+            "build_feature": 732,
             "debug_fix": 382,
-            "explanation_learning": 317,
+            "explanation_learning": 319,
             "ops_commands": 317,
-            "planning_strategy": 302,
-            "analysis_research": 268
+            "planning_strategy": 303,
+            "analysis_research": 270
           },
           "rates_pct": {
-            "other": 65.8,
+            "other": 65.7,
             "build_feature": 10.8,
-            "debug_fix": 5.7,
+            "debug_fix": 5.6,
             "explanation_learning": 4.7,
             "ops_commands": 4.7,
             "planning_strategy": 4.5,
@@ -8233,18 +8522,18 @@
           "top_intents": [
             {
               "intent": "other",
-              "count": 4444,
-              "rate_pct": 65.8
+              "count": 4457,
+              "rate_pct": 65.7
             },
             {
               "intent": "build_feature",
-              "count": 728,
+              "count": 732,
               "rate_pct": 10.8
             },
             {
               "intent": "debug_fix",
               "count": 382,
-              "rate_pct": 5.7
+              "rate_pct": 5.6
             }
           ],
           "confidence": {
@@ -8274,7 +8563,7 @@
       },
       "date_range": {
         "first": "2025-03-24T04:33:47.819Z",
-        "last": "2026-04-03T04:42:54.141Z"
+        "last": "2026-04-03T05:39:48.646Z"
       },
       "persona": {
         "name": "The Commander",
@@ -8292,25 +8581,25 @@
         {
           "feature": "constraint_count",
           "label": "Constraints/requirements",
-          "contribution": 0.366,
+          "contribution": 0.363,
           "stat": "avg 0.3 per prompt"
-        },
-        {
-          "feature": "is_terse",
-          "label": "Very short prompts",
-          "contribution": 0.284,
-          "stat": "22% of prompts"
         },
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": -0.283,
+          "contribution": -0.284,
           "stat": "9% of prompts"
+        },
+        {
+          "feature": "is_terse",
+          "label": "Very short prompts",
+          "contribution": 0.282,
+          "stat": "22% of prompts"
         },
         {
           "feature": "has_numbered_list",
           "label": "Structured requirements",
-          "contribution": 0.248,
+          "contribution": 0.246,
           "stat": "2% of prompts"
         }
       ],
@@ -8318,13 +8607,13 @@
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": -0.48,
+          "contribution": -0.482,
           "stat": "22% of prompts"
         },
         {
           "feature": "is_neutral_tone",
           "label": "Neutral tone",
-          "contribution": -0.269,
+          "contribution": -0.27,
           "stat": "57% of prompts"
         },
         {
@@ -8336,7 +8625,7 @@
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": 0.149,
+          "contribution": 0.15,
           "stat": "9% of prompts"
         }
       ],
@@ -8346,18 +8635,18 @@
       }
     },
     "claude_code": {
-      "generated_at": "2026-04-03T04:44:22.572Z",
+      "generated_at": "2026-04-03T05:40:05.592Z",
       "volume": {
-        "total_messages": 5107,
-        "total_human": 2651,
-        "total_words_human": 117406,
-        "total_conversations": 513,
-        "avg_words_per_prompt": 44.3
+        "total_messages": 5109,
+        "total_human": 2652,
+        "total_words_human": 117937,
+        "total_conversations": 514,
+        "avg_words_per_prompt": 44.5
       },
       "conversation_depth": {
         "avg_turns": 5.2,
         "max_turns": 94,
-        "quick_asks": 391,
+        "quick_asks": 392,
         "working_sessions": 48,
         "deep_dives": 74
       },
@@ -8464,7 +8753,7 @@
             12,
             9,
             41,
-            34,
+            35,
             28
           ],
           [
@@ -8574,13 +8863,13 @@
           "19": 180,
           "20": 124,
           "21": 205,
-          "22": 276,
+          "22": 277,
           "23": 332
         }
       },
       "politeness": {
         "score": 42.2,
-        "total_prompts": 2651
+        "total_prompts": 2652
       },
       "youre_right": {
         "count": 264,
@@ -8588,15 +8877,15 @@
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2651,
-          "words": 117406,
-          "conversations": 513,
+          "messages": 2652,
+          "words": 117937,
+          "conversations": 514,
           "first_message": "2026-01-01T23:28:51.222Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 2651,
+          "total_human_prompts": 2652,
           "prompts_with_model_metadata": 0,
           "metadata_coverage_pct": 0
         },
@@ -8609,6 +8898,7 @@
           {
             "date": "2026-01-01",
             "prompts": 17,
+            "est_tokens": 1183,
             "source_counts": {
               "claude_code": 17
             },
@@ -8626,6 +8916,7 @@
           {
             "date": "2026-01-08",
             "prompts": 2,
+            "est_tokens": 1312,
             "source_counts": {
               "claude_code": 2
             },
@@ -8643,6 +8934,7 @@
           {
             "date": "2026-01-09",
             "prompts": 33,
+            "est_tokens": 2788,
             "source_counts": {
               "claude_code": 33
             },
@@ -8660,6 +8952,7 @@
           {
             "date": "2026-01-14",
             "prompts": 46,
+            "est_tokens": 3200,
             "source_counts": {
               "claude_code": 46
             },
@@ -8677,6 +8970,7 @@
           {
             "date": "2026-01-15",
             "prompts": 53,
+            "est_tokens": 7683,
             "source_counts": {
               "claude_code": 53
             },
@@ -8694,6 +8988,7 @@
           {
             "date": "2026-01-16",
             "prompts": 27,
+            "est_tokens": 2011,
             "source_counts": {
               "claude_code": 27
             },
@@ -8711,6 +9006,7 @@
           {
             "date": "2026-01-18",
             "prompts": 27,
+            "est_tokens": 2214,
             "source_counts": {
               "claude_code": 27
             },
@@ -8728,6 +9024,7 @@
           {
             "date": "2026-01-19",
             "prompts": 23,
+            "est_tokens": 2947,
             "source_counts": {
               "claude_code": 23
             },
@@ -8745,6 +9042,7 @@
           {
             "date": "2026-01-21",
             "prompts": 38,
+            "est_tokens": 2776,
             "source_counts": {
               "claude_code": 38
             },
@@ -8762,6 +9060,7 @@
           {
             "date": "2026-01-22",
             "prompts": 86,
+            "est_tokens": 4157,
             "source_counts": {
               "claude_code": 86
             },
@@ -8779,6 +9078,7 @@
           {
             "date": "2026-01-24",
             "prompts": 76,
+            "est_tokens": 6891,
             "source_counts": {
               "claude_code": 76
             },
@@ -8796,6 +9096,7 @@
           {
             "date": "2026-01-25",
             "prompts": 60,
+            "est_tokens": 2869,
             "source_counts": {
               "claude_code": 60
             },
@@ -8813,6 +9114,7 @@
           {
             "date": "2026-01-26",
             "prompts": 16,
+            "est_tokens": 597,
             "source_counts": {
               "claude_code": 16
             },
@@ -8830,6 +9132,7 @@
           {
             "date": "2026-01-27",
             "prompts": 74,
+            "est_tokens": 4647,
             "source_counts": {
               "claude_code": 74
             },
@@ -8847,6 +9150,7 @@
           {
             "date": "2026-01-28",
             "prompts": 5,
+            "est_tokens": 162,
             "source_counts": {
               "claude_code": 5
             },
@@ -8864,6 +9168,7 @@
           {
             "date": "2026-01-29",
             "prompts": 17,
+            "est_tokens": 1149,
             "source_counts": {
               "claude_code": 17
             },
@@ -8881,6 +9186,7 @@
           {
             "date": "2026-01-30",
             "prompts": 3,
+            "est_tokens": 175,
             "source_counts": {
               "claude_code": 3
             },
@@ -8898,6 +9204,7 @@
           {
             "date": "2026-01-31",
             "prompts": 76,
+            "est_tokens": 7863,
             "source_counts": {
               "claude_code": 76
             },
@@ -8915,6 +9222,7 @@
           {
             "date": "2026-02-01",
             "prompts": 103,
+            "est_tokens": 13471,
             "source_counts": {
               "claude_code": 103
             },
@@ -8932,6 +9240,7 @@
           {
             "date": "2026-02-04",
             "prompts": 2,
+            "est_tokens": 283,
             "source_counts": {
               "claude_code": 2
             },
@@ -8949,6 +9258,7 @@
           {
             "date": "2026-02-05",
             "prompts": 9,
+            "est_tokens": 761,
             "source_counts": {
               "claude_code": 9
             },
@@ -8966,6 +9276,7 @@
           {
             "date": "2026-02-06",
             "prompts": 17,
+            "est_tokens": 3300,
             "source_counts": {
               "claude_code": 17
             },
@@ -8983,6 +9294,7 @@
           {
             "date": "2026-02-07",
             "prompts": 83,
+            "est_tokens": 15756,
             "source_counts": {
               "claude_code": 83
             },
@@ -9000,6 +9312,7 @@
           {
             "date": "2026-03-03",
             "prompts": 10,
+            "est_tokens": 3738,
             "source_counts": {
               "claude_code": 10
             },
@@ -9017,6 +9330,7 @@
           {
             "date": "2026-03-04",
             "prompts": 38,
+            "est_tokens": 3496,
             "source_counts": {
               "claude_code": 38
             },
@@ -9034,6 +9348,7 @@
           {
             "date": "2026-03-05",
             "prompts": 23,
+            "est_tokens": 702,
             "source_counts": {
               "claude_code": 23
             },
@@ -9051,6 +9366,7 @@
           {
             "date": "2026-03-06",
             "prompts": 51,
+            "est_tokens": 1498,
             "source_counts": {
               "claude_code": 51
             },
@@ -9068,6 +9384,7 @@
           {
             "date": "2026-03-07",
             "prompts": 19,
+            "est_tokens": 486,
             "source_counts": {
               "claude_code": 19
             },
@@ -9085,6 +9402,7 @@
           {
             "date": "2026-03-08",
             "prompts": 24,
+            "est_tokens": 672,
             "source_counts": {
               "claude_code": 24
             },
@@ -9102,6 +9420,7 @@
           {
             "date": "2026-03-09",
             "prompts": 47,
+            "est_tokens": 1045,
             "source_counts": {
               "claude_code": 47
             },
@@ -9119,6 +9438,7 @@
           {
             "date": "2026-03-10",
             "prompts": 5,
+            "est_tokens": 333,
             "source_counts": {
               "claude_code": 5
             },
@@ -9136,6 +9456,7 @@
           {
             "date": "2026-03-11",
             "prompts": 54,
+            "est_tokens": 2201,
             "source_counts": {
               "claude_code": 54
             },
@@ -9153,6 +9474,7 @@
           {
             "date": "2026-03-12",
             "prompts": 33,
+            "est_tokens": 1305,
             "source_counts": {
               "claude_code": 33
             },
@@ -9170,6 +9492,7 @@
           {
             "date": "2026-03-13",
             "prompts": 37,
+            "est_tokens": 894,
             "source_counts": {
               "claude_code": 37
             },
@@ -9187,6 +9510,7 @@
           {
             "date": "2026-03-14",
             "prompts": 77,
+            "est_tokens": 4202,
             "source_counts": {
               "claude_code": 77
             },
@@ -9204,6 +9528,7 @@
           {
             "date": "2026-03-15",
             "prompts": 93,
+            "est_tokens": 7620,
             "source_counts": {
               "claude_code": 93
             },
@@ -9221,6 +9546,7 @@
           {
             "date": "2026-03-16",
             "prompts": 17,
+            "est_tokens": 1257,
             "source_counts": {
               "claude_code": 17
             },
@@ -9238,6 +9564,7 @@
           {
             "date": "2026-03-17",
             "prompts": 73,
+            "est_tokens": 4293,
             "source_counts": {
               "claude_code": 73
             },
@@ -9255,6 +9582,7 @@
           {
             "date": "2026-03-18",
             "prompts": 21,
+            "est_tokens": 1064,
             "source_counts": {
               "claude_code": 21
             },
@@ -9272,6 +9600,7 @@
           {
             "date": "2026-03-19",
             "prompts": 45,
+            "est_tokens": 2335,
             "source_counts": {
               "claude_code": 45
             },
@@ -9289,6 +9618,7 @@
           {
             "date": "2026-03-20",
             "prompts": 22,
+            "est_tokens": 1971,
             "source_counts": {
               "claude_code": 22
             },
@@ -9306,6 +9636,7 @@
           {
             "date": "2026-03-21",
             "prompts": 131,
+            "est_tokens": 7675,
             "source_counts": {
               "claude_code": 131
             },
@@ -9323,6 +9654,7 @@
           {
             "date": "2026-03-22",
             "prompts": 137,
+            "est_tokens": 9073,
             "source_counts": {
               "claude_code": 137
             },
@@ -9340,6 +9672,7 @@
           {
             "date": "2026-03-23",
             "prompts": 38,
+            "est_tokens": 2455,
             "source_counts": {
               "claude_code": 38
             },
@@ -9357,6 +9690,7 @@
           {
             "date": "2026-03-24",
             "prompts": 56,
+            "est_tokens": 3436,
             "source_counts": {
               "claude_code": 56
             },
@@ -9374,6 +9708,7 @@
           {
             "date": "2026-03-25",
             "prompts": 65,
+            "est_tokens": 3515,
             "source_counts": {
               "claude_code": 65
             },
@@ -9391,6 +9726,7 @@
           {
             "date": "2026-03-27",
             "prompts": 98,
+            "est_tokens": 7726,
             "source_counts": {
               "claude_code": 98
             },
@@ -9408,6 +9744,7 @@
           {
             "date": "2026-03-28",
             "prompts": 173,
+            "est_tokens": 13721,
             "source_counts": {
               "claude_code": 173
             },
@@ -9425,6 +9762,7 @@
           {
             "date": "2026-03-29",
             "prompts": 35,
+            "est_tokens": 3559,
             "source_counts": {
               "claude_code": 35
             },
@@ -9442,6 +9780,7 @@
           {
             "date": "2026-03-30",
             "prompts": 22,
+            "est_tokens": 1804,
             "source_counts": {
               "claude_code": 22
             },
@@ -9459,6 +9798,7 @@
           {
             "date": "2026-03-31",
             "prompts": 20,
+            "est_tokens": 812,
             "source_counts": {
               "claude_code": 20
             },
@@ -9476,6 +9816,7 @@
           {
             "date": "2026-04-01",
             "prompts": 190,
+            "est_tokens": 1154,
             "source_counts": {
               "claude_code": 190
             },
@@ -9492,15 +9833,16 @@
           },
           {
             "date": "2026-04-02",
-            "prompts": 104,
+            "prompts": 105,
+            "est_tokens": 1337,
             "source_counts": {
-              "claude_code": 104
+              "claude_code": 105
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 0,
+              "backtrack_per_100": 2.9,
               "question_rate_pct": 0,
               "command_rate_pct": 0
             },
@@ -9512,6 +9854,7 @@
           {
             "week_start": "2025-12-29",
             "prompts": 17,
+            "est_tokens": 1183,
             "source_counts": {
               "claude_code": 17
             },
@@ -9533,6 +9876,7 @@
           {
             "week_start": "2026-01-05",
             "prompts": 35,
+            "est_tokens": 4099,
             "source_counts": {
               "claude_code": 35
             },
@@ -9554,6 +9898,7 @@
           {
             "week_start": "2026-01-12",
             "prompts": 153,
+            "est_tokens": 15107,
             "source_counts": {
               "claude_code": 153
             },
@@ -9575,6 +9920,7 @@
           {
             "week_start": "2026-01-19",
             "prompts": 283,
+            "est_tokens": 19638,
             "source_counts": {
               "claude_code": 283
             },
@@ -9596,6 +9942,7 @@
           {
             "week_start": "2026-01-26",
             "prompts": 294,
+            "est_tokens": 28064,
             "source_counts": {
               "claude_code": 294
             },
@@ -9617,6 +9964,7 @@
           {
             "week_start": "2026-02-02",
             "prompts": 111,
+            "est_tokens": 20098,
             "source_counts": {
               "claude_code": 111
             },
@@ -9638,6 +9986,7 @@
           {
             "week_start": "2026-03-02",
             "prompts": 165,
+            "est_tokens": 10591,
             "source_counts": {
               "claude_code": 165
             },
@@ -9659,6 +10008,7 @@
           {
             "week_start": "2026-03-09",
             "prompts": 346,
+            "est_tokens": 17599,
             "source_counts": {
               "claude_code": 346
             },
@@ -9680,6 +10030,7 @@
           {
             "week_start": "2026-03-16",
             "prompts": 446,
+            "est_tokens": 27668,
             "source_counts": {
               "claude_code": 446
             },
@@ -9701,6 +10052,7 @@
           {
             "week_start": "2026-03-23",
             "prompts": 465,
+            "est_tokens": 34411,
             "source_counts": {
               "claude_code": 465
             },
@@ -9721,31 +10073,32 @@
           },
           {
             "week_start": "2026-03-30",
-            "prompts": 336,
+            "prompts": 337,
+            "est_tokens": 5107,
             "source_counts": {
-              "claude_code": 336
+              "claude_code": 337
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 2.1,
-              "question_rate_pct": 5.7,
+              "backtrack_per_100": 3,
+              "question_rate_pct": 5.6,
               "command_rate_pct": 1.2
             },
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "vibe_coder_index": 77.4,
-              "politeness": 20
+              "vibe_coder_index": 77.3,
+              "politeness": 20.1
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 91.7,
+            "avg_7d": 91.9,
             "avg_30d": 61.1,
-            "delta_pct": 50.1
+            "delta_pct": 50.4
           },
           "dominant_source_share_pct": {
             "avg_7d": 100,
@@ -9753,9 +10106,9 @@
             "delta_pct": 0
           },
           "backtrack_per_100": {
-            "avg_7d": 13.2,
-            "avg_30d": 8.8,
-            "delta_pct": 50
+            "avg_7d": 13.6,
+            "avg_30d": 8.9,
+            "delta_pct": 52.8
           },
           "question_rate_pct": {
             "avg_7d": 24.6,
@@ -9823,10 +10176,10 @@
             "date": "2026-04-02",
             "type": "prompt_shift",
             "direction": "down",
-            "delta_prompts": -86,
+            "delta_prompts": -85,
             "prev_prompts": 190,
-            "curr_prompts": 104,
-            "magnitude": 86
+            "curr_prompts": 105,
+            "magnitude": 85
           },
           {
             "date": "2026-03-16",
@@ -9870,7 +10223,7 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 1800,
+            "other": 1801,
             "build_feature": 248,
             "debug_fix": 145,
             "planning_strategy": 126,
@@ -9890,7 +10243,7 @@
           "top_intents": [
             {
               "intent": "other",
-              "count": 1800,
+              "count": 1801,
               "rate_pct": 67.9
             },
             {
@@ -9931,7 +10284,7 @@
       },
       "date_range": {
         "first": "2026-01-01T23:28:51.222Z",
-        "last": "2026-04-03T02:39:34.442Z"
+        "last": "2026-04-03T05:20:12.573Z"
       },
       "persona": {
         "name": "The Commander",
@@ -9949,19 +10302,19 @@
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": 0.501,
+          "contribution": 0.5,
           "stat": "26% of prompts"
         },
         {
           "feature": "constraint_count",
           "label": "Constraints/requirements",
-          "contribution": 0.353,
+          "contribution": 0.352,
           "stat": "avg 0.3 per prompt"
         },
         {
           "feature": "has_numbered_list",
           "label": "Structured requirements",
-          "contribution": 0.269,
+          "contribution": 0.264,
           "stat": "2% of prompts"
         },
         {
@@ -10003,7 +10356,7 @@
       }
     },
     "codex": {
-      "generated_at": "2026-04-03T04:44:22.675Z",
+      "generated_at": "2026-04-03T05:40:05.705Z",
       "volume": {
         "total_messages": 1445,
         "total_human": 1412,
@@ -10737,6 +11090,7 @@
           {
             "date": "2025-12-23",
             "prompts": 15,
+            "est_tokens": 883,
             "source_counts": {
               "codex": 15
             },
@@ -10756,6 +11110,7 @@
           {
             "date": "2025-12-24",
             "prompts": 19,
+            "est_tokens": 1599,
             "source_counts": {
               "codex": 19
             },
@@ -10775,6 +11130,7 @@
           {
             "date": "2025-12-25",
             "prompts": 109,
+            "est_tokens": 8438,
             "source_counts": {
               "codex": 109
             },
@@ -10794,6 +11150,7 @@
           {
             "date": "2025-12-26",
             "prompts": 32,
+            "est_tokens": 1573,
             "source_counts": {
               "codex": 32
             },
@@ -10813,6 +11170,7 @@
           {
             "date": "2025-12-27",
             "prompts": 14,
+            "est_tokens": 1008,
             "source_counts": {
               "codex": 14
             },
@@ -10832,6 +11190,7 @@
           {
             "date": "2025-12-28",
             "prompts": 6,
+            "est_tokens": 167,
             "source_counts": {
               "codex": 6
             },
@@ -10851,6 +11210,7 @@
           {
             "date": "2025-12-30",
             "prompts": 15,
+            "est_tokens": 129,
             "source_counts": {
               "codex": 15
             },
@@ -10870,6 +11230,7 @@
           {
             "date": "2026-01-03",
             "prompts": 4,
+            "est_tokens": 507,
             "source_counts": {
               "codex": 4
             },
@@ -10889,6 +11250,7 @@
           {
             "date": "2026-01-04",
             "prompts": 38,
+            "est_tokens": 2769,
             "source_counts": {
               "codex": 38
             },
@@ -10908,6 +11270,7 @@
           {
             "date": "2026-01-05",
             "prompts": 1,
+            "est_tokens": 1,
             "source_counts": {
               "codex": 1
             },
@@ -10927,6 +11290,7 @@
           {
             "date": "2026-01-09",
             "prompts": 35,
+            "est_tokens": 1368,
             "source_counts": {
               "codex": 35
             },
@@ -10946,6 +11310,7 @@
           {
             "date": "2026-01-10",
             "prompts": 47,
+            "est_tokens": 4779,
             "source_counts": {
               "codex": 47
             },
@@ -10965,6 +11330,7 @@
           {
             "date": "2026-01-11",
             "prompts": 12,
+            "est_tokens": 1883,
             "source_counts": {
               "codex": 12
             },
@@ -10984,6 +11350,7 @@
           {
             "date": "2026-01-18",
             "prompts": 42,
+            "est_tokens": 3741,
             "source_counts": {
               "codex": 42
             },
@@ -11003,6 +11370,7 @@
           {
             "date": "2026-01-19",
             "prompts": 25,
+            "est_tokens": 19387,
             "source_counts": {
               "codex": 25
             },
@@ -11022,6 +11390,7 @@
           {
             "date": "2026-01-23",
             "prompts": 3,
+            "est_tokens": 94,
             "source_counts": {
               "codex": 3
             },
@@ -11041,6 +11410,7 @@
           {
             "date": "2026-01-29",
             "prompts": 3,
+            "est_tokens": 307,
             "source_counts": {
               "codex": 3
             },
@@ -11060,6 +11430,7 @@
           {
             "date": "2026-01-31",
             "prompts": 118,
+            "est_tokens": 28477,
             "source_counts": {
               "codex": 118
             },
@@ -11079,6 +11450,7 @@
           {
             "date": "2026-02-01",
             "prompts": 80,
+            "est_tokens": 23483,
             "source_counts": {
               "codex": 80
             },
@@ -11098,6 +11470,7 @@
           {
             "date": "2026-02-02",
             "prompts": 4,
+            "est_tokens": 545,
             "source_counts": {
               "codex": 4
             },
@@ -11117,6 +11490,7 @@
           {
             "date": "2026-02-05",
             "prompts": 9,
+            "est_tokens": 261,
             "source_counts": {
               "codex": 9
             },
@@ -11137,6 +11511,7 @@
           {
             "date": "2026-02-07",
             "prompts": 24,
+            "est_tokens": 2006,
             "source_counts": {
               "codex": 24
             },
@@ -11156,6 +11531,7 @@
           {
             "date": "2026-02-08",
             "prompts": 19,
+            "est_tokens": 1392,
             "source_counts": {
               "codex": 19
             },
@@ -11175,6 +11551,7 @@
           {
             "date": "2026-02-09",
             "prompts": 10,
+            "est_tokens": 565,
             "source_counts": {
               "codex": 10
             },
@@ -11194,6 +11571,7 @@
           {
             "date": "2026-02-10",
             "prompts": 30,
+            "est_tokens": 1655,
             "source_counts": {
               "codex": 30
             },
@@ -11213,6 +11591,7 @@
           {
             "date": "2026-02-11",
             "prompts": 48,
+            "est_tokens": 1682,
             "source_counts": {
               "codex": 48
             },
@@ -11232,6 +11611,7 @@
           {
             "date": "2026-02-12",
             "prompts": 3,
+            "est_tokens": 511,
             "source_counts": {
               "codex": 3
             },
@@ -11251,6 +11631,7 @@
           {
             "date": "2026-02-13",
             "prompts": 3,
+            "est_tokens": 265,
             "source_counts": {
               "codex": 3
             },
@@ -11270,6 +11651,7 @@
           {
             "date": "2026-02-14",
             "prompts": 19,
+            "est_tokens": 503,
             "source_counts": {
               "codex": 19
             },
@@ -11289,6 +11671,7 @@
           {
             "date": "2026-02-15",
             "prompts": 46,
+            "est_tokens": 976,
             "source_counts": {
               "codex": 46
             },
@@ -11308,6 +11691,7 @@
           {
             "date": "2026-02-18",
             "prompts": 2,
+            "est_tokens": 246,
             "source_counts": {
               "codex": 2
             },
@@ -11327,6 +11711,7 @@
           {
             "date": "2026-02-19",
             "prompts": 10,
+            "est_tokens": 294,
             "source_counts": {
               "codex": 10
             },
@@ -11346,6 +11731,7 @@
           {
             "date": "2026-02-20",
             "prompts": 4,
+            "est_tokens": 318,
             "source_counts": {
               "codex": 4
             },
@@ -11365,6 +11751,7 @@
           {
             "date": "2026-02-21",
             "prompts": 45,
+            "est_tokens": 1936,
             "source_counts": {
               "codex": 45
             },
@@ -11384,6 +11771,7 @@
           {
             "date": "2026-02-22",
             "prompts": 4,
+            "est_tokens": 1482,
             "source_counts": {
               "codex": 4
             },
@@ -11403,6 +11791,7 @@
           {
             "date": "2026-02-25",
             "prompts": 3,
+            "est_tokens": 340,
             "source_counts": {
               "codex": 3
             },
@@ -11422,6 +11811,7 @@
           {
             "date": "2026-02-26",
             "prompts": 3,
+            "est_tokens": 372,
             "source_counts": {
               "codex": 3
             },
@@ -11441,6 +11831,7 @@
           {
             "date": "2026-03-02",
             "prompts": 8,
+            "est_tokens": 228,
             "source_counts": {
               "codex": 8
             },
@@ -11460,6 +11851,7 @@
           {
             "date": "2026-03-05",
             "prompts": 2,
+            "est_tokens": 118,
             "source_counts": {
               "codex": 2
             },
@@ -11479,6 +11871,7 @@
           {
             "date": "2026-03-06",
             "prompts": 10,
+            "est_tokens": 629,
             "source_counts": {
               "codex": 10
             },
@@ -11498,6 +11891,7 @@
           {
             "date": "2026-03-07",
             "prompts": 39,
+            "est_tokens": 2320,
             "source_counts": {
               "codex": 39
             },
@@ -11517,6 +11911,7 @@
           {
             "date": "2026-03-08",
             "prompts": 14,
+            "est_tokens": 555,
             "source_counts": {
               "codex": 14
             },
@@ -11536,6 +11931,7 @@
           {
             "date": "2026-03-09",
             "prompts": 13,
+            "est_tokens": 834,
             "source_counts": {
               "codex": 13
             },
@@ -11556,6 +11952,7 @@
           {
             "date": "2026-03-10",
             "prompts": 15,
+            "est_tokens": 1276,
             "source_counts": {
               "codex": 15
             },
@@ -11575,6 +11972,7 @@
           {
             "date": "2026-03-11",
             "prompts": 7,
+            "est_tokens": 176,
             "source_counts": {
               "codex": 7
             },
@@ -11594,6 +11992,7 @@
           {
             "date": "2026-03-12",
             "prompts": 2,
+            "est_tokens": 23,
             "source_counts": {
               "codex": 2
             },
@@ -11613,6 +12012,7 @@
           {
             "date": "2026-03-13",
             "prompts": 9,
+            "est_tokens": 283,
             "source_counts": {
               "codex": 9
             },
@@ -11632,6 +12032,7 @@
           {
             "date": "2026-03-14",
             "prompts": 99,
+            "est_tokens": 5475,
             "source_counts": {
               "codex": 99
             },
@@ -11652,6 +12053,7 @@
           {
             "date": "2026-03-15",
             "prompts": 107,
+            "est_tokens": 4909,
             "source_counts": {
               "codex": 107
             },
@@ -11671,6 +12073,7 @@
           {
             "date": "2026-03-16",
             "prompts": 9,
+            "est_tokens": 1091,
             "source_counts": {
               "codex": 9
             },
@@ -11690,6 +12093,7 @@
           {
             "date": "2026-03-17",
             "prompts": 17,
+            "est_tokens": 532,
             "source_counts": {
               "codex": 17
             },
@@ -11709,6 +12113,7 @@
           {
             "date": "2026-03-18",
             "prompts": 5,
+            "est_tokens": 4318,
             "source_counts": {
               "codex": 5
             },
@@ -11728,6 +12133,7 @@
           {
             "date": "2026-03-19",
             "prompts": 6,
+            "est_tokens": 315,
             "source_counts": {
               "codex": 6
             },
@@ -11747,6 +12153,7 @@
           {
             "date": "2026-03-20",
             "prompts": 29,
+            "est_tokens": 1053,
             "source_counts": {
               "codex": 29
             },
@@ -11766,6 +12173,7 @@
           {
             "date": "2026-03-21",
             "prompts": 45,
+            "est_tokens": 3713,
             "source_counts": {
               "codex": 45
             },
@@ -11785,6 +12193,7 @@
           {
             "date": "2026-03-22",
             "prompts": 12,
+            "est_tokens": 817,
             "source_counts": {
               "codex": 12
             },
@@ -11804,6 +12213,7 @@
           {
             "date": "2026-03-23",
             "prompts": 7,
+            "est_tokens": 156,
             "source_counts": {
               "codex": 7
             },
@@ -11823,6 +12233,7 @@
           {
             "date": "2026-03-24",
             "prompts": 3,
+            "est_tokens": 79,
             "source_counts": {
               "codex": 3
             },
@@ -11842,6 +12253,7 @@
           {
             "date": "2026-03-25",
             "prompts": 31,
+            "est_tokens": 1307,
             "source_counts": {
               "codex": 31
             },
@@ -11861,6 +12273,7 @@
           {
             "date": "2026-03-26",
             "prompts": 16,
+            "est_tokens": 642,
             "source_counts": {
               "codex": 16
             },
@@ -11880,6 +12293,7 @@
           {
             "date": "2026-03-28",
             "prompts": 3,
+            "est_tokens": 54,
             "source_counts": {
               "codex": 3
             },
@@ -11901,6 +12315,7 @@
           {
             "week_start": "2025-12-22",
             "prompts": 195,
+            "est_tokens": 13668,
             "source_counts": {
               "codex": 195
             },
@@ -11924,6 +12339,7 @@
           {
             "week_start": "2025-12-29",
             "prompts": 57,
+            "est_tokens": 3405,
             "source_counts": {
               "codex": 57
             },
@@ -11947,6 +12363,7 @@
           {
             "week_start": "2026-01-05",
             "prompts": 95,
+            "est_tokens": 8030,
             "source_counts": {
               "codex": 95
             },
@@ -11970,6 +12387,7 @@
           {
             "week_start": "2026-01-12",
             "prompts": 42,
+            "est_tokens": 3741,
             "source_counts": {
               "codex": 42
             },
@@ -11993,6 +12411,7 @@
           {
             "week_start": "2026-01-19",
             "prompts": 28,
+            "est_tokens": 19481,
             "source_counts": {
               "codex": 28
             },
@@ -12016,6 +12435,7 @@
           {
             "week_start": "2026-01-26",
             "prompts": 201,
+            "est_tokens": 52267,
             "source_counts": {
               "codex": 201
             },
@@ -12039,6 +12459,7 @@
           {
             "week_start": "2026-02-02",
             "prompts": 56,
+            "est_tokens": 4204,
             "source_counts": {
               "codex": 56
             },
@@ -12063,6 +12484,7 @@
           {
             "week_start": "2026-02-09",
             "prompts": 159,
+            "est_tokens": 6156,
             "source_counts": {
               "codex": 159
             },
@@ -12086,6 +12508,7 @@
           {
             "week_start": "2026-02-16",
             "prompts": 65,
+            "est_tokens": 4275,
             "source_counts": {
               "codex": 65
             },
@@ -12109,6 +12532,7 @@
           {
             "week_start": "2026-02-23",
             "prompts": 6,
+            "est_tokens": 712,
             "source_counts": {
               "codex": 6
             },
@@ -12132,6 +12556,7 @@
           {
             "week_start": "2026-03-02",
             "prompts": 73,
+            "est_tokens": 3850,
             "source_counts": {
               "codex": 73
             },
@@ -12156,6 +12581,7 @@
           {
             "week_start": "2026-03-09",
             "prompts": 252,
+            "est_tokens": 12975,
             "source_counts": {
               "codex": 252
             },
@@ -12180,6 +12606,7 @@
           {
             "week_start": "2026-03-16",
             "prompts": 123,
+            "est_tokens": 11837,
             "source_counts": {
               "codex": 123
             },
@@ -12203,6 +12630,7 @@
           {
             "week_start": "2026-03-23",
             "prompts": 60,
+            "est_tokens": 2237,
             "source_counts": {
               "codex": 60
             },
@@ -12486,7 +12914,7 @@
       }
     },
     "copilot_chat": {
-      "generated_at": "2026-04-03T04:44:22.785Z",
+      "generated_at": "2026-04-03T05:40:05.830Z",
       "volume": {
         "total_messages": 4531,
         "total_human": 2236,
@@ -13490,6 +13918,7 @@
           {
             "date": "2025-03-23",
             "prompts": 9,
+            "est_tokens": 102,
             "source_counts": {
               "copilot_chat": 9
             },
@@ -13507,6 +13936,7 @@
           {
             "date": "2025-03-25",
             "prompts": 10,
+            "est_tokens": 428,
             "source_counts": {
               "copilot_chat": 10
             },
@@ -13524,6 +13954,7 @@
           {
             "date": "2025-03-30",
             "prompts": 1,
+            "est_tokens": 10,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -13541,6 +13972,7 @@
           {
             "date": "2025-04-08",
             "prompts": 1,
+            "est_tokens": 16,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -13558,6 +13990,7 @@
           {
             "date": "2025-04-20",
             "prompts": 2,
+            "est_tokens": 419,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -13575,6 +14008,7 @@
           {
             "date": "2025-04-21",
             "prompts": 11,
+            "est_tokens": 1481,
             "source_counts": {
               "copilot_chat": 11
             },
@@ -13592,6 +14026,7 @@
           {
             "date": "2025-05-11",
             "prompts": 5,
+            "est_tokens": 209,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -13609,6 +14044,7 @@
           {
             "date": "2025-05-21",
             "prompts": 15,
+            "est_tokens": 408,
             "source_counts": {
               "copilot_chat": 15
             },
@@ -13626,6 +14062,7 @@
           {
             "date": "2025-05-22",
             "prompts": 53,
+            "est_tokens": 1600,
             "source_counts": {
               "copilot_chat": 53
             },
@@ -13643,6 +14080,7 @@
           {
             "date": "2025-05-24",
             "prompts": 1,
+            "est_tokens": 14,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -13660,6 +14098,7 @@
           {
             "date": "2025-05-26",
             "prompts": 4,
+            "est_tokens": 374,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -13677,6 +14116,7 @@
           {
             "date": "2025-08-08",
             "prompts": 1,
+            "est_tokens": 5,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -13696,6 +14136,7 @@
           {
             "date": "2025-08-10",
             "prompts": 2,
+            "est_tokens": 7,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -13715,6 +14156,7 @@
           {
             "date": "2025-08-11",
             "prompts": 2,
+            "est_tokens": 26,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -13734,6 +14176,7 @@
           {
             "date": "2025-08-27",
             "prompts": 4,
+            "est_tokens": 64,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -13753,6 +14196,7 @@
           {
             "date": "2025-09-07",
             "prompts": 6,
+            "est_tokens": 85,
             "source_counts": {
               "copilot_chat": 6
             },
@@ -13772,6 +14216,7 @@
           {
             "date": "2025-09-11",
             "prompts": 17,
+            "est_tokens": 231,
             "source_counts": {
               "copilot_chat": 17
             },
@@ -13791,6 +14236,7 @@
           {
             "date": "2025-09-12",
             "prompts": 3,
+            "est_tokens": 8,
             "source_counts": {
               "copilot_chat": 3
             },
@@ -13811,6 +14257,7 @@
           {
             "date": "2025-09-13",
             "prompts": 12,
+            "est_tokens": 647,
             "source_counts": {
               "copilot_chat": 12
             },
@@ -13830,6 +14277,7 @@
           {
             "date": "2025-09-14",
             "prompts": 11,
+            "est_tokens": 293,
             "source_counts": {
               "copilot_chat": 11
             },
@@ -13851,6 +14299,7 @@
           {
             "date": "2025-09-15",
             "prompts": 3,
+            "est_tokens": 216,
             "source_counts": {
               "copilot_chat": 3
             },
@@ -13870,6 +14319,7 @@
           {
             "date": "2025-09-16",
             "prompts": 34,
+            "est_tokens": 798,
             "source_counts": {
               "copilot_chat": 34
             },
@@ -13892,6 +14342,7 @@
           {
             "date": "2025-09-17",
             "prompts": 7,
+            "est_tokens": 343,
             "source_counts": {
               "copilot_chat": 7
             },
@@ -13911,6 +14362,7 @@
           {
             "date": "2025-09-28",
             "prompts": 4,
+            "est_tokens": 95,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -13931,6 +14383,7 @@
           {
             "date": "2025-10-12",
             "prompts": 1,
+            "est_tokens": 104,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -13950,6 +14403,7 @@
           {
             "date": "2025-10-14",
             "prompts": 9,
+            "est_tokens": 615,
             "source_counts": {
               "copilot_chat": 9
             },
@@ -13969,6 +14423,7 @@
           {
             "date": "2025-10-15",
             "prompts": 15,
+            "est_tokens": 661,
             "source_counts": {
               "copilot_chat": 15
             },
@@ -13988,6 +14443,7 @@
           {
             "date": "2025-10-16",
             "prompts": 22,
+            "est_tokens": 657,
             "source_counts": {
               "copilot_chat": 22
             },
@@ -14007,6 +14463,7 @@
           {
             "date": "2025-10-17",
             "prompts": 30,
+            "est_tokens": 1691,
             "source_counts": {
               "copilot_chat": 30
             },
@@ -14026,6 +14483,7 @@
           {
             "date": "2025-10-18",
             "prompts": 2,
+            "est_tokens": 78,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -14045,6 +14503,7 @@
           {
             "date": "2025-10-19",
             "prompts": 1,
+            "est_tokens": 11,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -14064,6 +14523,7 @@
           {
             "date": "2025-10-20",
             "prompts": 79,
+            "est_tokens": 2159,
             "source_counts": {
               "copilot_chat": 79
             },
@@ -14088,6 +14548,7 @@
           {
             "date": "2025-10-24",
             "prompts": 5,
+            "est_tokens": 187,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -14108,6 +14569,7 @@
           {
             "date": "2025-10-25",
             "prompts": 22,
+            "est_tokens": 491,
             "source_counts": {
               "copilot_chat": 22
             },
@@ -14128,6 +14590,7 @@
           {
             "date": "2025-10-26",
             "prompts": 15,
+            "est_tokens": 597,
             "source_counts": {
               "copilot_chat": 15
             },
@@ -14147,6 +14610,7 @@
           {
             "date": "2025-10-28",
             "prompts": 24,
+            "est_tokens": 1508,
             "source_counts": {
               "copilot_chat": 24
             },
@@ -14167,6 +14631,7 @@
           {
             "date": "2025-11-04",
             "prompts": 21,
+            "est_tokens": 1650,
             "source_counts": {
               "copilot_chat": 21
             },
@@ -14187,6 +14652,7 @@
           {
             "date": "2025-11-05",
             "prompts": 5,
+            "est_tokens": 75,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -14206,6 +14672,7 @@
           {
             "date": "2025-11-06",
             "prompts": 31,
+            "est_tokens": 1093,
             "source_counts": {
               "copilot_chat": 31
             },
@@ -14228,6 +14695,7 @@
           {
             "date": "2025-11-07",
             "prompts": 9,
+            "est_tokens": 356,
             "source_counts": {
               "copilot_chat": 9
             },
@@ -14248,6 +14716,7 @@
           {
             "date": "2025-11-08",
             "prompts": 150,
+            "est_tokens": 7428,
             "source_counts": {
               "copilot_chat": 150
             },
@@ -14271,6 +14740,7 @@
           {
             "date": "2025-11-09",
             "prompts": 177,
+            "est_tokens": 10641,
             "source_counts": {
               "copilot_chat": 177
             },
@@ -14296,6 +14766,7 @@
           {
             "date": "2025-11-10",
             "prompts": 13,
+            "est_tokens": 479,
             "source_counts": {
               "copilot_chat": 13
             },
@@ -14315,6 +14786,7 @@
           {
             "date": "2025-11-11",
             "prompts": 45,
+            "est_tokens": 1879,
             "source_counts": {
               "copilot_chat": 45
             },
@@ -14334,6 +14806,7 @@
           {
             "date": "2025-11-12",
             "prompts": 28,
+            "est_tokens": 2311,
             "source_counts": {
               "copilot_chat": 28
             },
@@ -14353,6 +14826,7 @@
           {
             "date": "2025-11-13",
             "prompts": 74,
+            "est_tokens": 5730,
             "source_counts": {
               "copilot_chat": 74
             },
@@ -14376,6 +14850,7 @@
           {
             "date": "2025-11-14",
             "prompts": 6,
+            "est_tokens": 174,
             "source_counts": {
               "copilot_chat": 6
             },
@@ -14395,6 +14870,7 @@
           {
             "date": "2025-11-15",
             "prompts": 94,
+            "est_tokens": 3003,
             "source_counts": {
               "copilot_chat": 94
             },
@@ -14415,6 +14891,7 @@
           {
             "date": "2025-11-16",
             "prompts": 28,
+            "est_tokens": 877,
             "source_counts": {
               "copilot_chat": 28
             },
@@ -14435,6 +14912,7 @@
           {
             "date": "2025-11-17",
             "prompts": 5,
+            "est_tokens": 213,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -14454,6 +14932,7 @@
           {
             "date": "2025-11-18",
             "prompts": 23,
+            "est_tokens": 2049,
             "source_counts": {
               "copilot_chat": 23
             },
@@ -14475,6 +14954,7 @@
           {
             "date": "2025-11-19",
             "prompts": 10,
+            "est_tokens": 600,
             "source_counts": {
               "copilot_chat": 10
             },
@@ -14494,6 +14974,7 @@
           {
             "date": "2025-11-20",
             "prompts": 4,
+            "est_tokens": 134,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -14514,6 +14995,7 @@
           {
             "date": "2025-11-24",
             "prompts": 130,
+            "est_tokens": 4067,
             "source_counts": {
               "copilot_chat": 130
             },
@@ -14535,6 +15017,7 @@
           {
             "date": "2025-11-25",
             "prompts": 59,
+            "est_tokens": 2171,
             "source_counts": {
               "copilot_chat": 59
             },
@@ -14554,6 +15037,7 @@
           {
             "date": "2025-11-26",
             "prompts": 64,
+            "est_tokens": 2159,
             "source_counts": {
               "copilot_chat": 64
             },
@@ -14573,6 +15057,7 @@
           {
             "date": "2025-11-27",
             "prompts": 17,
+            "est_tokens": 565,
             "source_counts": {
               "copilot_chat": 17
             },
@@ -14592,6 +15077,7 @@
           {
             "date": "2025-11-28",
             "prompts": 80,
+            "est_tokens": 2900,
             "source_counts": {
               "copilot_chat": 80
             },
@@ -14611,6 +15097,7 @@
           {
             "date": "2025-11-29",
             "prompts": 72,
+            "est_tokens": 3177,
             "source_counts": {
               "copilot_chat": 72
             },
@@ -14630,6 +15117,7 @@
           {
             "date": "2025-11-30",
             "prompts": 58,
+            "est_tokens": 1845,
             "source_counts": {
               "copilot_chat": 58
             },
@@ -14649,6 +15137,7 @@
           {
             "date": "2025-12-02",
             "prompts": 53,
+            "est_tokens": 2978,
             "source_counts": {
               "copilot_chat": 53
             },
@@ -14668,6 +15157,7 @@
           {
             "date": "2025-12-06",
             "prompts": 38,
+            "est_tokens": 888,
             "source_counts": {
               "copilot_chat": 38
             },
@@ -14687,6 +15177,7 @@
           {
             "date": "2025-12-07",
             "prompts": 1,
+            "est_tokens": 71,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -14706,6 +15197,7 @@
           {
             "date": "2025-12-08",
             "prompts": 2,
+            "est_tokens": 49,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -14725,6 +15217,7 @@
           {
             "date": "2025-12-09",
             "prompts": 10,
+            "est_tokens": 577,
             "source_counts": {
               "copilot_chat": 10
             },
@@ -14744,6 +15237,7 @@
           {
             "date": "2025-12-10",
             "prompts": 14,
+            "est_tokens": 470,
             "source_counts": {
               "copilot_chat": 14
             },
@@ -14763,6 +15257,7 @@
           {
             "date": "2025-12-11",
             "prompts": 25,
+            "est_tokens": 858,
             "source_counts": {
               "copilot_chat": 25
             },
@@ -14782,6 +15277,7 @@
           {
             "date": "2025-12-12",
             "prompts": 25,
+            "est_tokens": 889,
             "source_counts": {
               "copilot_chat": 25
             },
@@ -14801,6 +15297,7 @@
           {
             "date": "2025-12-13",
             "prompts": 170,
+            "est_tokens": 6497,
             "source_counts": {
               "copilot_chat": 170
             },
@@ -14822,6 +15319,7 @@
           {
             "date": "2025-12-14",
             "prompts": 58,
+            "est_tokens": 1463,
             "source_counts": {
               "copilot_chat": 58
             },
@@ -14842,6 +15340,7 @@
           {
             "date": "2025-12-15",
             "prompts": 71,
+            "est_tokens": 2507,
             "source_counts": {
               "copilot_chat": 71
             },
@@ -14861,6 +15360,7 @@
           {
             "date": "2025-12-16",
             "prompts": 48,
+            "est_tokens": 1526,
             "source_counts": {
               "copilot_chat": 48
             },
@@ -14881,6 +15381,7 @@
           {
             "date": "2025-12-17",
             "prompts": 20,
+            "est_tokens": 2172,
             "source_counts": {
               "copilot_chat": 20
             },
@@ -14900,6 +15401,7 @@
           {
             "date": "2025-12-18",
             "prompts": 55,
+            "est_tokens": 2376,
             "source_counts": {
               "copilot_chat": 55
             },
@@ -14924,6 +15426,7 @@
           {
             "week_start": "2025-03-17",
             "prompts": 9,
+            "est_tokens": 102,
             "source_counts": {
               "copilot_chat": 9
             },
@@ -14945,6 +15448,7 @@
           {
             "week_start": "2025-03-24",
             "prompts": 11,
+            "est_tokens": 438,
             "source_counts": {
               "copilot_chat": 11
             },
@@ -14966,6 +15470,7 @@
           {
             "week_start": "2025-04-07",
             "prompts": 1,
+            "est_tokens": 16,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -14987,6 +15492,7 @@
           {
             "week_start": "2025-04-14",
             "prompts": 2,
+            "est_tokens": 419,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -15008,6 +15514,7 @@
           {
             "week_start": "2025-04-21",
             "prompts": 11,
+            "est_tokens": 1481,
             "source_counts": {
               "copilot_chat": 11
             },
@@ -15029,6 +15536,7 @@
           {
             "week_start": "2025-05-05",
             "prompts": 5,
+            "est_tokens": 209,
             "source_counts": {
               "copilot_chat": 5
             },
@@ -15050,6 +15558,7 @@
           {
             "week_start": "2025-05-19",
             "prompts": 69,
+            "est_tokens": 2022,
             "source_counts": {
               "copilot_chat": 69
             },
@@ -15071,6 +15580,7 @@
           {
             "week_start": "2025-05-26",
             "prompts": 4,
+            "est_tokens": 374,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -15092,6 +15602,7 @@
           {
             "week_start": "2025-08-04",
             "prompts": 3,
+            "est_tokens": 12,
             "source_counts": {
               "copilot_chat": 3
             },
@@ -15116,6 +15627,7 @@
           {
             "week_start": "2025-08-11",
             "prompts": 2,
+            "est_tokens": 26,
             "source_counts": {
               "copilot_chat": 2
             },
@@ -15139,6 +15651,7 @@
           {
             "week_start": "2025-08-25",
             "prompts": 4,
+            "est_tokens": 64,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -15162,6 +15675,7 @@
           {
             "week_start": "2025-09-01",
             "prompts": 6,
+            "est_tokens": 85,
             "source_counts": {
               "copilot_chat": 6
             },
@@ -15185,6 +15699,7 @@
           {
             "week_start": "2025-09-08",
             "prompts": 43,
+            "est_tokens": 1178,
             "source_counts": {
               "copilot_chat": 43
             },
@@ -15212,6 +15727,7 @@
           {
             "week_start": "2025-09-15",
             "prompts": 44,
+            "est_tokens": 1357,
             "source_counts": {
               "copilot_chat": 44
             },
@@ -15238,6 +15754,7 @@
           {
             "week_start": "2025-09-22",
             "prompts": 4,
+            "est_tokens": 95,
             "source_counts": {
               "copilot_chat": 4
             },
@@ -15262,6 +15779,7 @@
           {
             "week_start": "2025-10-06",
             "prompts": 1,
+            "est_tokens": 104,
             "source_counts": {
               "copilot_chat": 1
             },
@@ -15285,6 +15803,7 @@
           {
             "week_start": "2025-10-13",
             "prompts": 79,
+            "est_tokens": 3713,
             "source_counts": {
               "copilot_chat": 79
             },
@@ -15309,6 +15828,7 @@
           {
             "week_start": "2025-10-20",
             "prompts": 121,
+            "est_tokens": 3433,
             "source_counts": {
               "copilot_chat": 121
             },
@@ -15340,6 +15860,7 @@
           {
             "week_start": "2025-10-27",
             "prompts": 24,
+            "est_tokens": 1508,
             "source_counts": {
               "copilot_chat": 24
             },
@@ -15364,6 +15885,7 @@
           {
             "week_start": "2025-11-03",
             "prompts": 393,
+            "est_tokens": 21241,
             "source_counts": {
               "copilot_chat": 393
             },
@@ -15395,6 +15917,7 @@
           {
             "week_start": "2025-11-10",
             "prompts": 288,
+            "est_tokens": 14451,
             "source_counts": {
               "copilot_chat": 288
             },
@@ -15422,6 +15945,7 @@
           {
             "week_start": "2025-11-17",
             "prompts": 42,
+            "est_tokens": 2996,
             "source_counts": {
               "copilot_chat": 42
             },
@@ -15448,6 +15972,7 @@
           {
             "week_start": "2025-11-24",
             "prompts": 480,
+            "est_tokens": 16883,
             "source_counts": {
               "copilot_chat": 480
             },
@@ -15473,6 +15998,7 @@
           {
             "week_start": "2025-12-01",
             "prompts": 92,
+            "est_tokens": 3936,
             "source_counts": {
               "copilot_chat": 92
             },
@@ -15496,6 +16022,7 @@
           {
             "week_start": "2025-12-08",
             "prompts": 304,
+            "est_tokens": 10803,
             "source_counts": {
               "copilot_chat": 304
             },
@@ -15522,6 +16049,7 @@
           {
             "week_start": "2025-12-15",
             "prompts": 194,
+            "est_tokens": 8580,
             "source_counts": {
               "copilot_chat": 194
             },
@@ -15808,7 +16336,7 @@
       }
     },
     "cursor": {
-      "generated_at": "2026-04-03T04:44:22.844Z",
+      "generated_at": "2026-04-03T05:40:05.895Z",
       "volume": {
         "total_messages": 30,
         "total_human": 15,
@@ -16051,6 +16579,7 @@
           {
             "date": "2025-03-30",
             "prompts": 1,
+            "est_tokens": 10,
             "source_counts": {
               "cursor": 1
             },
@@ -16068,6 +16597,7 @@
           {
             "date": "2025-04-08",
             "prompts": 1,
+            "est_tokens": 16,
             "source_counts": {
               "cursor": 1
             },
@@ -16085,6 +16615,7 @@
           {
             "date": "2025-04-20",
             "prompts": 2,
+            "est_tokens": 419,
             "source_counts": {
               "cursor": 2
             },
@@ -16102,6 +16633,7 @@
           {
             "date": "2025-04-21",
             "prompts": 11,
+            "est_tokens": 1481,
             "source_counts": {
               "cursor": 11
             },
@@ -16121,6 +16653,7 @@
           {
             "week_start": "2025-03-24",
             "prompts": 1,
+            "est_tokens": 10,
             "source_counts": {
               "cursor": 1
             },
@@ -16142,6 +16675,7 @@
           {
             "week_start": "2025-04-07",
             "prompts": 1,
+            "est_tokens": 16,
             "source_counts": {
               "cursor": 1
             },
@@ -16163,6 +16697,7 @@
           {
             "week_start": "2025-04-14",
             "prompts": 2,
+            "est_tokens": 419,
             "source_counts": {
               "cursor": 2
             },
@@ -16184,6 +16719,7 @@
           {
             "week_start": "2025-04-21",
             "prompts": 11,
+            "est_tokens": 1481,
             "source_counts": {
               "cursor": 11
             },
@@ -16374,7 +16910,7 @@
       }
     },
     "lmstudio": {
-      "generated_at": "2026-04-03T04:44:22.847Z",
+      "generated_at": "2026-04-03T05:40:05.899Z",
       "volume": {
         "total_messages": 161,
         "total_human": 83,
@@ -16623,6 +17159,7 @@
           {
             "date": "2025-09-05",
             "prompts": 1,
+            "est_tokens": 12,
             "source_counts": {
               "lmstudio": 1
             },
@@ -16640,6 +17177,7 @@
           {
             "date": "2025-09-10",
             "prompts": 3,
+            "est_tokens": 154,
             "source_counts": {
               "lmstudio": 3
             },
@@ -16657,6 +17195,7 @@
           {
             "date": "2025-09-11",
             "prompts": 1,
+            "est_tokens": 26,
             "source_counts": {
               "lmstudio": 1
             },
@@ -16674,6 +17213,7 @@
           {
             "date": "2025-09-18",
             "prompts": 4,
+            "est_tokens": 17,
             "source_counts": {
               "lmstudio": 4
             },
@@ -16691,6 +17231,7 @@
           {
             "date": "2025-10-01",
             "prompts": 1,
+            "est_tokens": 59,
             "source_counts": {
               "lmstudio": 1
             },
@@ -16708,6 +17249,7 @@
           {
             "date": "2025-10-19",
             "prompts": 2,
+            "est_tokens": 289,
             "source_counts": {
               "lmstudio": 2
             },
@@ -16725,6 +17267,7 @@
           {
             "date": "2025-10-25",
             "prompts": 3,
+            "est_tokens": 63,
             "source_counts": {
               "lmstudio": 3
             },
@@ -16742,6 +17285,7 @@
           {
             "date": "2025-11-15",
             "prompts": 1,
+            "est_tokens": 1,
             "source_counts": {
               "lmstudio": 1
             },
@@ -16759,6 +17303,7 @@
           {
             "date": "2025-12-30",
             "prompts": 3,
+            "est_tokens": 14,
             "source_counts": {
               "lmstudio": 3
             },
@@ -16776,6 +17321,7 @@
           {
             "date": "2026-01-07",
             "prompts": 10,
+            "est_tokens": 93,
             "source_counts": {
               "lmstudio": 10
             },
@@ -16793,6 +17339,7 @@
           {
             "date": "2026-01-19",
             "prompts": 20,
+            "est_tokens": 203,
             "source_counts": {
               "lmstudio": 20
             },
@@ -16810,6 +17357,7 @@
           {
             "date": "2026-01-20",
             "prompts": 13,
+            "est_tokens": 174,
             "source_counts": {
               "lmstudio": 13
             },
@@ -16827,6 +17375,7 @@
           {
             "date": "2026-01-22",
             "prompts": 1,
+            "est_tokens": 13,
             "source_counts": {
               "lmstudio": 1
             },
@@ -16844,6 +17393,7 @@
           {
             "date": "2026-02-16",
             "prompts": 16,
+            "est_tokens": 118,
             "source_counts": {
               "lmstudio": 16
             },
@@ -16861,6 +17411,7 @@
           {
             "date": "2026-02-27",
             "prompts": 3,
+            "est_tokens": 25,
             "source_counts": {
               "lmstudio": 3
             },
@@ -16878,6 +17429,7 @@
           {
             "date": "2026-03-26",
             "prompts": 1,
+            "est_tokens": 4,
             "source_counts": {
               "lmstudio": 1
             },
@@ -16897,6 +17449,7 @@
           {
             "week_start": "2025-09-01",
             "prompts": 1,
+            "est_tokens": 12,
             "source_counts": {
               "lmstudio": 1
             },
@@ -16918,6 +17471,7 @@
           {
             "week_start": "2025-09-08",
             "prompts": 4,
+            "est_tokens": 180,
             "source_counts": {
               "lmstudio": 4
             },
@@ -16939,6 +17493,7 @@
           {
             "week_start": "2025-09-15",
             "prompts": 4,
+            "est_tokens": 17,
             "source_counts": {
               "lmstudio": 4
             },
@@ -16960,6 +17515,7 @@
           {
             "week_start": "2025-09-29",
             "prompts": 1,
+            "est_tokens": 59,
             "source_counts": {
               "lmstudio": 1
             },
@@ -16981,6 +17537,7 @@
           {
             "week_start": "2025-10-13",
             "prompts": 2,
+            "est_tokens": 289,
             "source_counts": {
               "lmstudio": 2
             },
@@ -17002,6 +17559,7 @@
           {
             "week_start": "2025-10-20",
             "prompts": 3,
+            "est_tokens": 63,
             "source_counts": {
               "lmstudio": 3
             },
@@ -17023,6 +17581,7 @@
           {
             "week_start": "2025-11-10",
             "prompts": 1,
+            "est_tokens": 1,
             "source_counts": {
               "lmstudio": 1
             },
@@ -17044,6 +17603,7 @@
           {
             "week_start": "2025-12-29",
             "prompts": 3,
+            "est_tokens": 14,
             "source_counts": {
               "lmstudio": 3
             },
@@ -17065,6 +17625,7 @@
           {
             "week_start": "2026-01-05",
             "prompts": 10,
+            "est_tokens": 93,
             "source_counts": {
               "lmstudio": 10
             },
@@ -17086,6 +17647,7 @@
           {
             "week_start": "2026-01-19",
             "prompts": 34,
+            "est_tokens": 389,
             "source_counts": {
               "lmstudio": 34
             },
@@ -17107,6 +17669,7 @@
           {
             "week_start": "2026-02-16",
             "prompts": 16,
+            "est_tokens": 118,
             "source_counts": {
               "lmstudio": 16
             },
@@ -17128,6 +17691,7 @@
           {
             "week_start": "2026-02-23",
             "prompts": 3,
+            "est_tokens": 25,
             "source_counts": {
               "lmstudio": 3
             },
@@ -17149,6 +17713,7 @@
           {
             "week_start": "2026-03-23",
             "prompts": 1,
+            "est_tokens": 4,
             "source_counts": {
               "lmstudio": 1
             },
@@ -17370,20 +17935,20 @@
       }
     },
     "pi": {
-      "generated_at": "2026-04-03T04:44:22.858Z",
+      "generated_at": "2026-04-03T05:40:05.911Z",
       "volume": {
-        "total_messages": 1224,
-        "total_human": 290,
-        "total_words_human": 14291,
-        "total_conversations": 22,
-        "avg_words_per_prompt": 49.3
+        "total_messages": 1329,
+        "total_human": 311,
+        "total_words_human": 15928,
+        "total_conversations": 23,
+        "avg_words_per_prompt": 51.2
       },
       "conversation_depth": {
-        "avg_turns": 13.2,
+        "avg_turns": 13.5,
         "max_turns": 72,
         "quick_asks": 5,
         "working_sessions": 9,
-        "deep_dives": 8
+        "deep_dives": 9
       },
       "temporal": {
         "heatmap": [
@@ -17487,8 +18052,8 @@
             12,
             5,
             12,
-            11,
-            17,
+            16,
+            33,
             15
           ],
           [
@@ -17570,11 +18135,11 @@
             0
           ]
         ],
-        "night_owl_pct": 38.3,
-        "peak_hour": 23,
-        "peak_hour_count": 70,
-        "peak_day": "Wednesday",
-        "peak_day_count": 120,
+        "night_owl_pct": 35.7,
+        "peak_hour": 22,
+        "peak_hour_count": 82,
+        "peak_day": "Thursday",
+        "peak_day_count": 123,
         "hour_counts": {
           "0": 38,
           "1": 3,
@@ -17586,53 +18151,53 @@
           "18": 12,
           "19": 6,
           "20": 34,
-          "21": 30,
-          "22": 66,
+          "21": 35,
+          "22": 82,
           "23": 70
         }
       },
       "politeness": {
-        "score": 44.1,
-        "total_prompts": 290
+        "score": 44.4,
+        "total_prompts": 311
       },
       "youre_right": {
-        "count": 30,
+        "count": 32,
         "per_conversation": 1.4
       },
       "platform_stats": {
         "pi": {
-          "messages": 290,
-          "words": 14291,
-          "conversations": 22,
+          "messages": 311,
+          "words": 15928,
+          "conversations": 23,
           "first_message": "2026-03-25T07:37:30.741Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 290,
-          "prompts_with_model_metadata": 290,
+          "total_human_prompts": 311,
+          "prompts_with_model_metadata": 311,
           "metadata_coverage_pct": 100
         },
         "by_model": [
           {
             "model_id": "claude-opus-4-6",
             "model_provider": "anthropic",
-            "prompts": 216,
-            "words": 8952,
+            "prompts": 231,
+            "words": 9769,
             "sources": {
-              "pi": 216
+              "pi": 231
             },
             "conversations": 11
           },
           {
             "model_id": "gpt-5.4",
             "model_provider": "openai-codex",
-            "prompts": 35,
-            "words": 3355,
+            "prompts": 41,
+            "words": 4175,
             "sources": {
-              "pi": 35
+              "pi": 41
             },
-            "conversations": 6
+            "conversations": 7
           },
           {
             "model_id": "minimax/minimax-m2.7",
@@ -17688,21 +18253,21 @@
         "by_provider": [
           {
             "model_provider": "anthropic",
-            "prompts": 220,
-            "words": 8972,
+            "prompts": 235,
+            "words": 9789,
             "sources": {
-              "pi": 220
+              "pi": 235
             },
             "conversations": 12
           },
           {
             "model_provider": "openai-codex",
-            "prompts": 35,
-            "words": 3355,
+            "prompts": 41,
+            "words": 4175,
             "sources": {
-              "pi": 35
+              "pi": 41
             },
-            "conversations": 6
+            "conversations": 7
           },
           {
             "model_provider": "openrouter",
@@ -17775,9 +18340,10 @@
             },
             {
               "date": "2026-04-02",
-              "total_prompts": 32,
+              "total_prompts": 53,
               "models": {
-                "claude-opus-4-6": 31,
+                "claude-opus-4-6": 46,
+                "gpt-5.4": 6,
                 "qwen/qwen3.6-plus:free": 1
               }
             }
@@ -17789,6 +18355,7 @@
           {
             "date": "2026-03-25",
             "prompts": 23,
+            "est_tokens": 3080,
             "source_counts": {
               "pi": 23
             },
@@ -17809,6 +18376,7 @@
           {
             "date": "2026-03-26",
             "prompts": 70,
+            "est_tokens": 4733,
             "source_counts": {
               "pi": 70
             },
@@ -17829,6 +18397,7 @@
           {
             "date": "2026-03-27",
             "prompts": 25,
+            "est_tokens": 3284,
             "source_counts": {
               "pi": 25
             },
@@ -17850,6 +18419,7 @@
           {
             "date": "2026-03-28",
             "prompts": 39,
+            "est_tokens": 2389,
             "source_counts": {
               "pi": 39
             },
@@ -17871,6 +18441,7 @@
           {
             "date": "2026-03-31",
             "prompts": 4,
+            "est_tokens": 53,
             "source_counts": {
               "pi": 4
             },
@@ -17890,6 +18461,7 @@
           {
             "date": "2026-04-01",
             "prompts": 97,
+            "est_tokens": 5545,
             "source_counts": {
               "pi": 97
             },
@@ -17908,21 +18480,23 @@
           },
           {
             "date": "2026-04-02",
-            "prompts": 32,
+            "prompts": 53,
+            "est_tokens": 5291,
             "source_counts": {
-              "pi": 32
+              "pi": 53
             },
             "source_share_pct": {
               "pi": 100
             },
             "style": {
-              "backtrack_per_100": 6.3,
-              "question_rate_pct": 21.9,
-              "command_rate_pct": 6.3
+              "backtrack_per_100": 11.3,
+              "question_rate_pct": 20.8,
+              "command_rate_pct": 7.5
             },
-            "model_prompts": 32,
+            "model_prompts": 53,
             "models": {
-              "claude-opus-4-6": 31,
+              "claude-opus-4-6": 46,
+              "gpt-5.4": 6,
               "qwen/qwen3.6-plus:free": 1
             }
           }
@@ -17931,6 +18505,7 @@
           {
             "week_start": "2026-03-23",
             "prompts": 157,
+            "est_tokens": 13486,
             "source_counts": {
               "pi": 157
             },
@@ -17957,35 +18532,37 @@
           },
           {
             "week_start": "2026-03-30",
-            "prompts": 133,
+            "prompts": 154,
+            "est_tokens": 10888,
             "source_counts": {
-              "pi": 133
+              "pi": 154
             },
             "source_share_pct": {
               "pi": 100
             },
             "style": {
-              "backtrack_per_100": 9,
-              "question_rate_pct": 30.8,
-              "command_rate_pct": 6
+              "backtrack_per_100": 10.4,
+              "question_rate_pct": 29.2,
+              "command_rate_pct": 6.5
             },
-            "model_prompts": 133,
+            "model_prompts": 154,
             "models": {
-              "claude-opus-4-6": 128,
+              "claude-opus-4-6": 143,
+              "gpt-5.4": 6,
               "claude-sonnet-4-6": 4,
               "qwen/qwen3.6-plus:free": 1
             },
             "nlp": {
-              "vibe_coder_index": 61.3,
-              "politeness": 45.2
+              "vibe_coder_index": 61.1,
+              "politeness": 45.5
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 39.4,
-            "avg_30d": 41.4,
-            "delta_pct": -4.8
+            "avg_7d": 43.6,
+            "avg_30d": 44.4,
+            "delta_pct": -1.8
           },
           "dominant_source_share_pct": {
             "avg_7d": 100,
@@ -17993,18 +18570,18 @@
             "delta_pct": 0
           },
           "backtrack_per_100": {
-            "avg_7d": 8.3,
-            "avg_30d": 7,
-            "delta_pct": 18.6
+            "avg_7d": 9.3,
+            "avg_30d": 7.7,
+            "delta_pct": 20.8
           },
           "question_rate_pct": {
-            "avg_7d": 26.2,
-            "avg_30d": 22.2,
-            "delta_pct": 18
+            "avg_7d": 25.9,
+            "avg_30d": 22,
+            "delta_pct": 17.7
           },
           "command_rate_pct": {
-            "avg_7d": 10.7,
-            "avg_30d": 10.9,
+            "avg_7d": 10.9,
+            "avg_30d": 11.1,
             "delta_pct": -1.8
           },
           "model_coverage_pct": {
@@ -18022,15 +18599,6 @@
             "prev_prompts": 4,
             "curr_prompts": 97,
             "magnitude": 93
-          },
-          {
-            "date": "2026-04-02",
-            "type": "prompt_shift",
-            "direction": "down",
-            "delta_prompts": -65,
-            "prev_prompts": 97,
-            "curr_prompts": 32,
-            "magnitude": 65
           },
           {
             "date": "2026-03-26",
@@ -18051,6 +18619,15 @@
             "magnitude": 45
           },
           {
+            "date": "2026-04-02",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -44,
+            "prev_prompts": 97,
+            "curr_prompts": 53,
+            "magnitude": 44
+          },
+          {
             "date": "2026-03-31",
             "type": "prompt_shift",
             "direction": "down",
@@ -18058,15 +18635,6 @@
             "prev_prompts": 39,
             "curr_prompts": 4,
             "magnitude": 35
-          },
-          {
-            "date": "2026-03-28",
-            "type": "prompt_shift",
-            "direction": "up",
-            "delta_prompts": 14,
-            "prev_prompts": 25,
-            "curr_prompts": 39,
-            "magnitude": 14
           }
         ]
       },
@@ -18074,38 +18642,38 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 182,
-            "explanation_learning": 30,
-            "build_feature": 26,
-            "analysis_research": 17,
+            "other": 194,
+            "explanation_learning": 32,
+            "build_feature": 30,
+            "analysis_research": 19,
             "debug_fix": 13,
             "ops_commands": 13,
-            "planning_strategy": 9
+            "planning_strategy": 10
           },
           "rates_pct": {
-            "other": 62.8,
+            "other": 62.4,
             "explanation_learning": 10.3,
-            "build_feature": 9,
-            "analysis_research": 5.9,
-            "debug_fix": 4.5,
-            "ops_commands": 4.5,
-            "planning_strategy": 3.1
+            "build_feature": 9.6,
+            "analysis_research": 6.1,
+            "debug_fix": 4.2,
+            "ops_commands": 4.2,
+            "planning_strategy": 3.2
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 182,
-              "rate_pct": 62.8
+              "count": 194,
+              "rate_pct": 62.4
             },
             {
               "intent": "explanation_learning",
-              "count": 30,
+              "count": 32,
               "rate_pct": 10.3
             },
             {
               "intent": "build_feature",
-              "count": 26,
-              "rate_pct": 9
+              "count": 30,
+              "rate_pct": 9.6
             }
           ],
           "confidence": {
@@ -18116,7 +18684,7 @@
         },
         "vibe_coder_index": {
           "method": "embedding_similarity_v1",
-          "avg_score": 62.8,
+          "avg_score": 62.6,
           "confidence": {
             "mean": 0.69,
             "min": 0.36,
@@ -18125,7 +18693,7 @@
         },
         "politeness": {
           "method": "embedding_similarity_v1",
-          "avg_score": 44.1,
+          "avg_score": 44.4,
           "confidence": {
             "mean": 0.84,
             "min": 0.49,
@@ -18135,7 +18703,7 @@
       },
       "date_range": {
         "first": "2026-03-25T07:37:30.741Z",
-        "last": "2026-04-03T04:42:54.141Z"
+        "last": "2026-04-03T05:39:48.646Z"
       },
       "persona": {
         "name": "The Commander",
@@ -18146,32 +18714,32 @@
           "Efficient",
           "Decisive"
         ],
-        "detail_score": 45.8,
-        "style_score": 49.5
+        "detail_score": 46.1,
+        "style_score": 49.8
       },
       "vibe_explanation": [
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": -0.559,
+          "contribution": -0.552,
           "stat": "14% of prompts"
-        },
-        {
-          "feature": "constraint_count",
-          "label": "Constraints/requirements",
-          "contribution": 0.209,
-          "stat": "avg 0.4 per prompt"
         },
         {
           "feature": "task_generate_count",
           "label": "Generation tasks",
-          "contribution": -0.194,
+          "contribution": -0.195,
           "stat": "avg 0.1 per prompt"
+        },
+        {
+          "feature": "constraint_count",
+          "label": "Constraints/requirements",
+          "contribution": 0.186,
+          "stat": "avg 0.4 per prompt"
         },
         {
           "feature": "code_ratio",
           "label": "Code-heavy content",
-          "contribution": 0.174,
+          "contribution": 0.178,
           "stat": "0% code characters"
         }
       ],
@@ -18185,29 +18753,29 @@
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": 0.514,
+          "contribution": 0.523,
           "stat": "14% of prompts"
         },
         {
           "feature": "is_neutral_tone",
           "label": "Neutral tone",
-          "contribution": -0.44,
+          "contribution": -0.442,
           "stat": "56% of prompts"
         },
         {
           "feature": "word_count",
           "label": "Prompt length",
-          "contribution": 0.288,
-          "stat": "avg 49 words/prompt"
+          "contribution": 0.29,
+          "stat": "avg 51 words/prompt"
         }
       ],
       "normalized": {
-        "vibe_index": 37.2,
-        "politeness": 44.1
+        "vibe_index": 37.4,
+        "politeness": 44.4
       }
     },
     "opencode": {
-      "generated_at": "2026-04-03T04:44:22.871Z",
+      "generated_at": "2026-04-03T05:40:05.927Z",
       "volume": {
         "total_messages": 158,
         "total_human": 71,
@@ -18763,6 +19331,7 @@
           {
             "date": "2025-12-25",
             "prompts": 7,
+            "est_tokens": 368,
             "source_counts": {
               "opencode": 7
             },
@@ -18784,6 +19353,7 @@
           {
             "date": "2025-12-26",
             "prompts": 2,
+            "est_tokens": 211,
             "source_counts": {
               "opencode": 2
             },
@@ -18803,6 +19373,7 @@
           {
             "date": "2025-12-28",
             "prompts": 9,
+            "est_tokens": 439,
             "source_counts": {
               "opencode": 9
             },
@@ -18822,6 +19393,7 @@
           {
             "date": "2026-01-09",
             "prompts": 6,
+            "est_tokens": 83,
             "source_counts": {
               "opencode": 6
             },
@@ -18844,6 +19416,7 @@
           {
             "date": "2026-01-13",
             "prompts": 3,
+            "est_tokens": 168,
             "source_counts": {
               "opencode": 3
             },
@@ -18863,6 +19436,7 @@
           {
             "date": "2026-01-16",
             "prompts": 4,
+            "est_tokens": 179,
             "source_counts": {
               "opencode": 4
             },
@@ -18883,6 +19457,7 @@
           {
             "date": "2026-01-19",
             "prompts": 18,
+            "est_tokens": 204,
             "source_counts": {
               "opencode": 18
             },
@@ -18907,6 +19482,7 @@
           {
             "date": "2026-01-23",
             "prompts": 4,
+            "est_tokens": 175,
             "source_counts": {
               "opencode": 4
             },
@@ -18926,6 +19502,7 @@
           {
             "date": "2026-01-24",
             "prompts": 3,
+            "est_tokens": 22,
             "source_counts": {
               "opencode": 3
             },
@@ -18945,6 +19522,7 @@
           {
             "date": "2026-01-30",
             "prompts": 12,
+            "est_tokens": 282,
             "source_counts": {
               "opencode": 12
             },
@@ -18964,6 +19542,7 @@
           {
             "date": "2026-02-11",
             "prompts": 3,
+            "est_tokens": 423,
             "source_counts": {
               "opencode": 3
             },
@@ -18985,6 +19564,7 @@
           {
             "week_start": "2025-12-22",
             "prompts": 18,
+            "est_tokens": 1017,
             "source_counts": {
               "opencode": 18
             },
@@ -19010,6 +19590,7 @@
           {
             "week_start": "2026-01-05",
             "prompts": 6,
+            "est_tokens": 83,
             "source_counts": {
               "opencode": 6
             },
@@ -19036,6 +19617,7 @@
           {
             "week_start": "2026-01-12",
             "prompts": 7,
+            "est_tokens": 347,
             "source_counts": {
               "opencode": 7
             },
@@ -19060,6 +19642,7 @@
           {
             "week_start": "2026-01-19",
             "prompts": 25,
+            "est_tokens": 400,
             "source_counts": {
               "opencode": 25
             },
@@ -19089,6 +19672,7 @@
           {
             "week_start": "2026-01-26",
             "prompts": 12,
+            "est_tokens": 282,
             "source_counts": {
               "opencode": 12
             },
@@ -19112,6 +19696,7 @@
           {
             "week_start": "2026-02-09",
             "prompts": 3,
+            "est_tokens": 423,
             "source_counts": {
               "opencode": 3
             },
