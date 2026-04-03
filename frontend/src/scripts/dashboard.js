@@ -525,24 +525,23 @@ function initCardTilt() {
     dock.addEventListener('mouseleave', () => { card.style.transform = ''; });
 
     // Mobile: gyroscope tilt
-    if (!window.DeviceOrientationEvent) return;
-    const GYRO_TILT = 6;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (!isTouchDevice || !window.DeviceOrientationEvent) return;
+
+    const GYRO_TILT = 8;
     let gyroActive = false;
     let smoothX = 0, smoothY = 0;
-    const LERP = 0.15; // smoothing factor
+    const LERP = 0.12;
 
     function handleOrientation(e) {
-        // beta = front-back tilt (-180..180), gamma = left-right tilt (-90..90)
-        const beta = e.beta;   // front-back
-        const gamma = e.gamma; // left-right
+        const beta = e.beta;
+        const gamma = e.gamma;
         if (beta == null || gamma == null) return;
 
-        // Normalize: center around typical holding angle (~40° beta when upright)
-        // Clamp to ±30° range then map to -1..1
-        const rawY = Math.max(-30, Math.min(30, beta - 40)) / 30;
-        const rawX = Math.max(-30, Math.min(30, gamma)) / 30;
+        // Center around typical holding angle (~45° beta when upright)
+        const rawY = Math.max(-25, Math.min(25, beta - 45)) / 25;
+        const rawX = Math.max(-25, Math.min(25, gamma)) / 25;
 
-        // Smooth with lerp to avoid jitter
         smoothX += (rawX - smoothX) * LERP;
         smoothY += (rawY - smoothY) * LERP;
 
@@ -555,18 +554,24 @@ function initCardTilt() {
         window.addEventListener('deviceorientation', handleOrientation);
     }
 
-    // iOS 13+ requires permission request
+    // iOS 13+ requires explicit permission from a user gesture
     if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // Request on first user interaction (touch)
-        const requestOnce = () => {
+        // Try on any tap on the card or the page
+        function requestGyroPermission() {
             DeviceOrientationEvent.requestPermission()
-                .then((state) => { if (state === 'granted') startGyro(); })
+                .then((state) => {
+                    if (state === 'granted') startGyro();
+                })
                 .catch(() => {});
-            document.removeEventListener('touchstart', requestOnce);
-        };
-        document.addEventListener('touchstart', requestOnce, { once: true });
+            // Remove both listeners once triggered
+            card.removeEventListener('click', requestGyroPermission);
+            document.removeEventListener('touchend', requestGyroPermission);
+        }
+        // Attach to card click (most reliable user gesture) and document touchend as fallback
+        card.addEventListener('click', requestGyroPermission);
+        document.addEventListener('touchend', requestGyroPermission, { once: true });
     } else {
-        // Android and older iOS — just listen
+        // Android, older iOS — just start
         startGyro();
     }
 }
