@@ -1,20 +1,20 @@
 {
   "source_views": {
     "both": {
-      "generated_at": "2026-04-03T05:59:00.227Z",
+      "generated_at": "2026-04-06T05:24:42.769Z",
       "volume": {
-        "total_messages": 12793,
-        "total_human": 6787,
-        "total_words_human": 270858,
-        "total_conversations": 700,
-        "avg_words_per_prompt": 39.9
+        "total_messages": 14500,
+        "total_human": 7166,
+        "total_words_human": 301613,
+        "total_conversations": 728,
+        "avg_words_per_prompt": 42.1
       },
       "conversation_depth": {
-        "avg_turns": 9.7,
+        "avg_turns": 9.8,
         "max_turns": 239,
-        "quick_asks": 460,
-        "working_sessions": 93,
-        "deep_dives": 147
+        "quick_asks": 471,
+        "working_sessions": 100,
+        "deep_dives": 157
       },
       "temporal": {
         "heatmap": [
@@ -120,7 +120,7 @@
             60,
             139,
             171,
-            140
+            162
           ],
           [
             75,
@@ -132,51 +132,51 @@
             6,
             14,
             53,
-            12,
-            4,
+            15,
+            9,
             25,
-            21,
-            1,
-            4,
-            11,
-            7,
-            20,
+            28,
+            2,
+            5,
+            13,
+            15,
+            23,
             44,
             35,
-            24,
-            31,
-            88,
-            91
+            27,
+            42,
+            99,
+            108
           ],
           [
-            124,
-            143,
-            50,
+            131,
+            188,
+            71,
             2,
             2,
             12,
             0,
-            3,
-            13,
+            8,
+            22,
             13,
             99,
-            55,
-            35,
-            58,
+            61,
+            50,
+            68,
             90,
-            104,
-            80,
-            54,
-            144,
-            112,
-            108,
-            90,
+            113,
+            103,
+            66,
+            151,
             120,
-            188
+            134,
+            93,
+            140,
+            203
           ],
           [
-            161,
-            92,
+            170,
+            95,
             59,
             5,
             0,
@@ -184,9 +184,9 @@
             0,
             0,
             19,
-            63,
-            79,
-            37,
+            66,
+            84,
+            40,
             65,
             54,
             113,
@@ -194,64 +194,64 @@
             23,
             34,
             83,
-            62,
-            24,
             65,
-            69,
+            31,
+            71,
+            74,
             100
           ]
         ],
-        "night_owl_pct": 32.3,
+        "night_owl_pct": 32.5,
         "peak_hour": 23,
-        "peak_hour_count": 940,
+        "peak_hour_count": 994,
         "peak_day": "Saturday",
-        "peak_day_count": 1699,
+        "peak_day_count": 1940,
         "hour_counts": {
-          "0": 695,
-          "1": 376,
-          "2": 155,
+          "0": 711,
+          "1": 424,
+          "2": 176,
           "3": 24,
           "4": 32,
           "5": 33,
           "6": 20,
-          "7": 106,
-          "8": 268,
-          "9": 160,
-          "10": 232,
-          "11": 180,
-          "12": 164,
-          "13": 175,
-          "14": 230,
-          "15": 187,
-          "16": 169,
-          "17": 171,
-          "18": 411,
-          "19": 370,
-          "20": 372,
-          "21": 535,
-          "22": 782,
-          "23": 940
+          "7": 111,
+          "8": 277,
+          "9": 166,
+          "10": 242,
+          "11": 189,
+          "12": 186,
+          "13": 186,
+          "14": 231,
+          "15": 198,
+          "16": 200,
+          "17": 186,
+          "18": 418,
+          "19": 381,
+          "20": 408,
+          "21": 555,
+          "22": 818,
+          "23": 994
         }
       },
       "politeness": {
-        "score": 42.5,
-        "total_prompts": 6787
+        "score": 42.6,
+        "total_prompts": 7166
       },
       "youre_right": {
-        "count": 527,
+        "count": 565,
         "per_conversation": 0.8
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2652,
-          "words": 117937,
-          "conversations": 514,
+          "messages": 2659,
+          "words": 118180,
+          "conversations": 515,
           "first_message": "2026-01-01T23:28:51.222Z"
         },
         "codex": {
-          "messages": 1412,
-          "words": 66307,
-          "conversations": 73,
+          "messages": 1422,
+          "words": 70487,
+          "conversations": 77,
           "first_message": "2025-12-23T15:58:08.000Z"
         },
         "copilot_chat": {
@@ -279,17 +279,17 @@
           "first_message": "2025-12-25T08:41:26.471Z"
         },
         "pi": {
-          "messages": 318,
-          "words": 16240,
-          "conversations": 23,
+          "messages": 680,
+          "words": 42572,
+          "conversations": 46,
           "first_message": "2026-03-25T07:37:30.741Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 6787,
-          "prompts_with_model_metadata": 3925,
-          "metadata_coverage_pct": 57.8
+          "total_human_prompts": 7166,
+          "prompts_with_model_metadata": 4297,
+          "metadata_coverage_pct": 60
         },
         "by_model": [
           {
@@ -313,20 +313,30 @@
             "conversations": 21
           },
           {
-            "model_id": "gpt-5.3-codex",
-            "model_provider": "openai",
-            "prompts": 394,
-            "words": 13048,
+            "model_id": "claude-opus-4-6",
+            "model_provider": "anthropic",
+            "prompts": 478,
+            "words": 27949,
             "sources": {
-              "codex": 394
+              "pi": 478
             },
-            "conversations": 26
+            "conversations": 20
           },
           {
             "model_id": "gpt-5.4",
             "model_provider": "openai",
+            "prompts": 404,
+            "words": 21528,
+            "sources": {
+              "codex": 404
+            },
+            "conversations": 30
+          },
+          {
+            "model_id": "gpt-5.3-codex",
+            "model_provider": "openai",
             "prompts": 394,
-            "words": 17348,
+            "words": 13048,
             "sources": {
               "codex": 394
             },
@@ -353,16 +363,6 @@
             "conversations": 3
           },
           {
-            "model_id": "claude-opus-4-6",
-            "model_provider": "anthropic",
-            "prompts": 235,
-            "words": 9902,
-            "sources": {
-              "pi": 235
-            },
-            "conversations": 11
-          },
-          {
             "model_id": "copilot/gpt-5.1-codex",
             "model_provider": "copilot",
             "prompts": 144,
@@ -383,6 +383,16 @@
             "conversations": 7
           },
           {
+            "model_id": "gpt-5.4",
+            "model_provider": "openai-codex",
+            "prompts": 96,
+            "words": 6450,
+            "sources": {
+              "pi": 96
+            },
+            "conversations": 10
+          },
+          {
             "model_id": "copilot/gpt-5",
             "model_provider": "copilot",
             "prompts": 91,
@@ -393,6 +403,16 @@
             "conversations": 2
           },
           {
+            "model_id": "minimax/minimax-m2.7",
+            "model_provider": "openrouter",
+            "prompts": 55,
+            "words": 2775,
+            "sources": {
+              "pi": 55
+            },
+            "conversations": 8
+          },
+          {
             "model_id": "copilot/gpt-4.1",
             "model_provider": "copilot",
             "prompts": 45,
@@ -401,16 +421,6 @@
               "copilot_chat": 45
             },
             "conversations": 5
-          },
-          {
-            "model_id": "gpt-5.4",
-            "model_provider": "openai-codex",
-            "prompts": 44,
-            "words": 4354,
-            "sources": {
-              "pi": 44
-            },
-            "conversations": 7
           },
           {
             "model_id": "copilot/grok-code-fast-1",
@@ -443,16 +453,6 @@
             "conversations": 2
           },
           {
-            "model_id": "minimax/minimax-m2.7",
-            "model_provider": "openrouter",
-            "prompts": 25,
-            "words": 1126,
-            "sources": {
-              "pi": 25
-            },
-            "conversations": 3
-          },
-          {
             "model_id": "copilot/gpt-5-codex",
             "model_provider": "copilot",
             "prompts": 23,
@@ -461,6 +461,16 @@
               "copilot_chat": 23
             },
             "conversations": 2
+          },
+          {
+            "model_id": "claude-sonnet-4-6",
+            "model_provider": "anthropic",
+            "prompts": 15,
+            "words": 1237,
+            "sources": {
+              "pi": 15
+            },
+            "conversations": 7
           },
           {
             "model_id": "claude-opus-4-5",
@@ -481,6 +491,16 @@
               "opencode": 12
             },
             "conversations": 1
+          },
+          {
+            "model_id": "qwen/qwen3.6-plus:free",
+            "model_provider": "openrouter",
+            "prompts": 12,
+            "words": 1487,
+            "sources": {
+              "pi": 12
+            },
+            "conversations": 2
           },
           {
             "model_id": "copilot/gpt-5.2",
@@ -519,6 +539,16 @@
             "words": 120,
             "sources": {
               "opencode": 8
+            },
+            "conversations": 2
+          },
+          {
+            "model_id": "moonshotai/kimi-k2.5",
+            "model_provider": "openrouter",
+            "prompts": 7,
+            "words": 569,
+            "sources": {
+              "pi": 7
             },
             "conversations": 2
           },
@@ -583,14 +613,15 @@
             "conversations": 4
           },
           {
-            "model_id": "moonshotai/kimi-k2.5",
+            "model_id": "z-ai/glm-5",
             "model_provider": "openrouter",
             "prompts": 5,
-            "words": 176,
+            "words": 629,
             "sources": {
-              "pi": 5
+              "opencode": 3,
+              "pi": 2
             },
-            "conversations": 1
+            "conversations": 2
           },
           {
             "model_id": "Qwen3.5-9B-GGUF",
@@ -601,16 +632,6 @@
               "pi": 4
             },
             "conversations": 2
-          },
-          {
-            "model_id": "claude-sonnet-4-6",
-            "model_provider": "anthropic",
-            "prompts": 4,
-            "words": 20,
-            "sources": {
-              "pi": 4
-            },
-            "conversations": 1
           },
           {
             "model_id": "mistralai/devstral-small-2-2512",
@@ -653,12 +674,12 @@
             "conversations": 2
           },
           {
-            "model_id": "z-ai/glm-5",
-            "model_provider": "openrouter",
+            "model_id": "gemma4:latest",
+            "model_provider": "ollama",
             "prompts": 3,
-            "words": 275,
+            "words": 3,
             "sources": {
-              "opencode": 3
+              "pi": 3
             },
             "conversations": 1
           },
@@ -669,6 +690,16 @@
             "words": 457,
             "sources": {
               "copilot_chat": 2
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "google/gemma-4-26b-a4b",
+            "model_provider": "lmstudio",
+            "prompts": 2,
+            "words": 15,
+            "sources": {
+              "pi": 2
             },
             "conversations": 1
           },
@@ -693,6 +724,26 @@
             "conversations": 1
           },
           {
+            "model_id": "x-ai/grok-4.1-fast",
+            "model_provider": "openrouter",
+            "prompts": 2,
+            "words": 615,
+            "sources": {
+              "pi": 2
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "deepseek/deepseek-v3.2",
+            "model_provider": "openrouter",
+            "prompts": 1,
+            "words": 311,
+            "sources": {
+              "pi": 1
+            },
+            "conversations": 1
+          },
+          {
             "model_id": "github.copilot-chat/claude-sonnet-4",
             "model_provider": "github.copilot-chat",
             "prompts": 1,
@@ -713,6 +764,16 @@
             "conversations": 1
           },
           {
+            "model_id": "minimax/minimax-m2.5:free",
+            "model_provider": "openrouter",
+            "prompts": 1,
+            "words": 152,
+            "sources": {
+              "pi": 1
+            },
+            "conversations": 1
+          },
+          {
             "model_id": "openrouter/nousresearch/hermes-4-70b",
             "model_provider": "openrouter",
             "prompts": 1,
@@ -723,10 +784,10 @@
             "conversations": 1
           },
           {
-            "model_id": "qwen/qwen3.6-plus:free",
-            "model_provider": "openrouter",
+            "model_id": "qwen/qwen3.5-35b-a3b",
+            "model_provider": "lmstudio",
             "prompts": 1,
-            "words": 311,
+            "words": 1,
             "sources": {
               "pi": 1
             },
@@ -751,6 +812,16 @@
               "opencode": 1
             },
             "conversations": 1
+          },
+          {
+            "model_id": "x-ai/grok-4.20",
+            "model_provider": "openrouter",
+            "prompts": 1,
+            "words": 303,
+            "sources": {
+              "pi": 1
+            },
+            "conversations": 1
           }
         ],
         "by_provider": [
@@ -765,43 +836,43 @@
           },
           {
             "model_provider": "openai",
-            "prompts": 1418,
-            "words": 66533,
+            "prompts": 1428,
+            "words": 70713,
             "sources": {
-              "codex": 1412,
+              "codex": 1422,
               "opencode": 6
             },
-            "conversations": 76
+            "conversations": 80
           },
           {
             "model_provider": "anthropic",
-            "prompts": 253,
-            "words": 10326,
+            "prompts": 507,
+            "words": 29590,
             "sources": {
               "opencode": 14,
-              "pi": 239
+              "pi": 493
             },
-            "conversations": 18
+            "conversations": 31
           },
           {
             "model_provider": "openrouter",
-            "prompts": 69,
-            "words": 2857,
+            "prompts": 119,
+            "words": 7810,
             "sources": {
               "copilot_chat": 31,
               "opencode": 7,
-              "pi": 31
+              "pi": 81
             },
-            "conversations": 16
+            "conversations": 25
           },
           {
             "model_provider": "openai-codex",
-            "prompts": 44,
-            "words": 4354,
+            "prompts": 96,
+            "words": 6450,
             "sources": {
-              "pi": 44
+              "pi": 96
             },
-            "conversations": 7
+            "conversations": 10
           },
           {
             "model_provider": "opencode",
@@ -814,21 +885,23 @@
           },
           {
             "model_provider": "ollama",
-            "prompts": 10,
-            "words": 125,
+            "prompts": 13,
+            "words": 128,
             "sources": {
-              "opencode": 10
+              "opencode": 10,
+              "pi": 3
             },
-            "conversations": 3
+            "conversations": 4
           },
           {
             "model_provider": "lmstudio",
-            "prompts": 6,
-            "words": 6,
+            "prompts": 9,
+            "words": 22,
             "sources": {
-              "opencode": 6
+              "opencode": 6,
+              "pi": 3
             },
-            "conversations": 1
+            "conversations": 3
           },
           {
             "model_provider": "kimi-for-coding",
@@ -1297,6 +1370,27 @@
               "total_prompts": 3,
               "models": {
                 "gpt-5.4": 3
+              }
+            },
+            {
+              "date": "2026-04-03",
+              "total_prompts": 2,
+              "models": {
+                "gpt-5.4": 2
+              }
+            },
+            {
+              "date": "2026-04-04",
+              "total_prompts": 7,
+              "models": {
+                "gpt-5.4": 7
+              }
+            },
+            {
+              "date": "2026-04-05",
+              "total_prompts": 1,
+              "models": {
+                "gpt-5.4": 1
               }
             }
           ],
@@ -1932,11 +2026,47 @@
             },
             {
               "date": "2026-04-02",
-              "total_prompts": 60,
+              "total_prompts": 82,
               "models": {
-                "claude-opus-4-6": 50,
-                "gpt-5.4": 9,
-                "qwen/qwen3.6-plus:free": 1
+                "claude-opus-4-6": 51,
+                "gpt-5.4": 15,
+                "qwen/qwen3.6-plus:free": 12,
+                "claude-sonnet-4-6": 1,
+                "deepseek/deepseek-v3.2": 1,
+                "minimax/minimax-m2.5:free": 1,
+                "minimax/minimax-m2.7": 1
+              }
+            },
+            {
+              "date": "2026-04-03",
+              "total_prompts": 70,
+              "models": {
+                "claude-opus-4-6": 59,
+                "minimax/minimax-m2.7": 11
+              }
+            },
+            {
+              "date": "2026-04-04",
+              "total_prompts": 227,
+              "models": {
+                "claude-opus-4-6": 140,
+                "gpt-5.4": 46,
+                "minimax/minimax-m2.7": 18,
+                "claude-sonnet-4-6": 10,
+                "gemma4:latest": 3,
+                "google/gemma-4-26b-a4b": 2,
+                "moonshotai/kimi-k2.5": 2,
+                "x-ai/grok-4.1-fast": 2,
+                "z-ai/glm-5": 2,
+                "qwen/qwen3.5-35b-a3b": 1,
+                "x-ai/grok-4.20": 1
+              }
+            },
+            {
+              "date": "2026-04-05",
+              "total_prompts": 43,
+              "models": {
+                "claude-opus-4-6": 43
               }
             }
           ]
@@ -5222,25 +5352,107 @@
           },
           {
             "date": "2026-04-02",
-            "prompts": 165,
+            "prompts": 187,
             "source_counts": {
               "claude_code": 105,
-              "pi": 60
+              "pi": 82
             },
             "source_share_pct": {
-              "claude_code": 63.6,
-              "pi": 36.4
+              "claude_code": 56.1,
+              "pi": 43.9
             },
             "style": {
-              "backtrack_per_100": 5.5,
-              "question_rate_pct": 7.9,
-              "command_rate_pct": 3
+              "backtrack_per_100": 7.5,
+              "question_rate_pct": 9.6,
+              "command_rate_pct": 2.7
             },
-            "model_prompts": 60,
+            "model_prompts": 82,
             "models": {
-              "claude-opus-4-6": 50,
-              "gpt-5.4": 9,
-              "qwen/qwen3.6-plus:free": 1
+              "claude-opus-4-6": 51,
+              "gpt-5.4": 15,
+              "qwen/qwen3.6-plus:free": 12,
+              "deepseek/deepseek-v3.2": 1,
+              "claude-sonnet-4-6": 1,
+              "minimax/minimax-m2.7": 1,
+              "minimax/minimax-m2.5:free": 1
+            }
+          },
+          {
+            "date": "2026-04-03",
+            "prompts": 72,
+            "source_counts": {
+              "pi": 70,
+              "codex": 2
+            },
+            "source_share_pct": {
+              "codex": 2.8,
+              "pi": 97.2
+            },
+            "style": {
+              "backtrack_per_100": 23.6,
+              "question_rate_pct": 25,
+              "command_rate_pct": 11.1
+            },
+            "model_prompts": 72,
+            "models": {
+              "claude-opus-4-6": 59,
+              "minimax/minimax-m2.7": 11,
+              "gpt-5.4": 2
+            }
+          },
+          {
+            "date": "2026-04-04",
+            "prompts": 241,
+            "source_counts": {
+              "codex": 7,
+              "pi": 227,
+              "claude_code": 7
+            },
+            "source_share_pct": {
+              "claude_code": 2.9,
+              "codex": 2.9,
+              "pi": 94.2
+            },
+            "style": {
+              "backtrack_per_100": 19.5,
+              "question_rate_pct": 21.6,
+              "command_rate_pct": 5.4
+            },
+            "model_prompts": 234,
+            "models": {
+              "claude-opus-4-6": 140,
+              "gpt-5.4": 53,
+              "minimax/minimax-m2.7": 18,
+              "claude-sonnet-4-6": 10,
+              "gemma4:latest": 3,
+              "google/gemma-4-26b-a4b": 2,
+              "moonshotai/kimi-k2.5": 2,
+              "x-ai/grok-4.1-fast": 2,
+              "z-ai/glm-5": 2,
+              "qwen/qwen3.5-35b-a3b": 1,
+              "x-ai/grok-4.20": 1
+            }
+          },
+          {
+            "date": "2026-04-05",
+            "prompts": 44,
+            "source_counts": {
+              "pi": 43,
+              "codex": 1
+            },
+            "source_share_pct": {
+              "codex": 2.3,
+              "pi": 97.7
+            },
+            "style": {
+              "backtrack_per_100": 15.9,
+              "question_rate_pct": 9.1,
+              "command_rate_pct": 4.5
+            },
+            "model_prompts": 44,
+            "models": {
+              "claude-opus-4-6": 43,
+              "gpt-5.4": 1
             }
           }
         ],
@@ -6305,63 +6517,75 @@
           },
           {
             "week_start": "2026-03-30",
-            "prompts": 498,
+            "prompts": 877,
             "source_counts": {
-              "claude_code": 337,
-              "pi": 161
+              "claude_code": 344,
+              "pi": 523,
+              "codex": 10
             },
             "source_share_pct": {
-              "claude_code": 67.7,
-              "pi": 32.3
+              "claude_code": 39.2,
+              "codex": 1.1,
+              "pi": 59.6
             },
             "style": {
-              "backtrack_per_100": 5.2,
-              "question_rate_pct": 13.3,
-              "command_rate_pct": 3
+              "backtrack_per_100": 11.6,
+              "question_rate_pct": 16.5,
+              "command_rate_pct": 4.3
             },
-            "model_prompts": 161,
+            "model_prompts": 533,
             "models": {
-              "claude-opus-4-6": 147,
-              "gpt-5.4": 9,
-              "claude-sonnet-4-6": 4,
-              "qwen/qwen3.6-plus:free": 1
+              "claude-opus-4-6": 390,
+              "gpt-5.4": 71,
+              "minimax/minimax-m2.7": 30,
+              "claude-sonnet-4-6": 15,
+              "qwen/qwen3.6-plus:free": 12,
+              "gemma4:latest": 3,
+              "google/gemma-4-26b-a4b": 2,
+              "moonshotai/kimi-k2.5": 2,
+              "x-ai/grok-4.1-fast": 2,
+              "z-ai/glm-5": 2,
+              "deepseek/deepseek-v3.2": 1,
+              "minimax/minimax-m2.5:free": 1,
+              "qwen/qwen3.5-35b-a3b": 1,
+              "x-ai/grok-4.20": 1
             },
             "nlp": {
-              "vibe_coder_index": 72.1,
-              "politeness": 28.3
+              "vibe_coder_index": 67.4,
+              "politeness": 35.1
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 124.4,
-            "avg_30d": 87.2,
-            "delta_pct": 42.7
+            "avg_7d": 125.3,
+            "avg_30d": 95.3,
+            "delta_pct": 31.5
           },
           "dominant_source_share_pct": {
-            "avg_7d": 81.9,
-            "avg_30d": 77.9,
-            "delta_pct": 5.1
+            "avg_7d": 85,
+            "avg_30d": 79.2,
+            "delta_pct": 7.3
           },
           "backtrack_per_100": {
-            "avg_7d": 14.2,
-            "avg_30d": 8.6,
-            "delta_pct": 65.1
+            "avg_7d": 13.3,
+            "avg_30d": 9.9,
+            "delta_pct": 34.3
           },
           "question_rate_pct": {
-            "avg_7d": 26.7,
-            "avg_30d": 22.4,
-            "delta_pct": 19.2
+            "avg_7d": 21.1,
+            "avg_30d": 21.9,
+            "delta_pct": -3.7
           },
           "command_rate_pct": {
-            "avg_7d": 4.3,
-            "avg_30d": 10.5,
-            "delta_pct": -59
+            "avg_7d": 5.6,
+            "avg_30d": 9.7,
+            "delta_pct": -42.3
           },
           "model_coverage_pct": {
-            "avg_7d": 18.1,
-            "avg_30d": 28.9,
-            "delta_pct": -37.4
+            "avg_7d": 55.9,
+            "avg_30d": 36.3,
+            "delta_pct": 54
           }
         },
         "shift_markers": [
@@ -6373,6 +6597,15 @@
             "prev_prompts": 24,
             "curr_prompts": 287,
             "magnitude": 263
+          },
+          {
+            "date": "2026-04-05",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -197,
+            "prev_prompts": 241,
+            "curr_prompts": 44,
+            "magnitude": 197
           },
           {
             "date": "2026-03-29",
@@ -6411,6 +6644,15 @@
             "magnitude": 174
           },
           {
+            "date": "2026-04-04",
+            "type": "prompt_shift",
+            "direction": "up",
+            "delta_prompts": 169,
+            "prev_prompts": 72,
+            "curr_prompts": 241,
+            "magnitude": 169
+          },
+          {
             "date": "2025-11-10",
             "type": "prompt_shift",
             "direction": "down",
@@ -6436,24 +6678,6 @@
             "prev_prompts": 9,
             "curr_prompts": 150,
             "magnitude": 141
-          },
-          {
-            "date": "2026-03-14",
-            "type": "prompt_shift",
-            "direction": "up",
-            "delta_prompts": 130,
-            "prev_prompts": 46,
-            "curr_prompts": 176,
-            "magnitude": 130
-          },
-          {
-            "date": "2025-11-24",
-            "type": "prompt_shift",
-            "direction": "up",
-            "delta_prompts": 126,
-            "prev_prompts": 4,
-            "curr_prompts": 130,
-            "magnitude": 126
           }
         ],
         "weekly_by_platform": {
@@ -6670,23 +6894,23 @@
             },
             {
               "week_start": "2026-03-30",
-              "prompts": 337,
+              "prompts": 344,
               "source_counts": {
-                "claude_code": 337
+                "claude_code": 344
               },
               "source_share_pct": {
                 "claude_code": 100
               },
               "style": {
-                "backtrack_per_100": 3,
-                "question_rate_pct": 5.6,
-                "command_rate_pct": 1.2
+                "backtrack_per_100": 3.2,
+                "question_rate_pct": 6.1,
+                "command_rate_pct": 1.5
               },
               "model_prompts": 0,
               "models": {},
               "nlp": {
-                "vibe_coder_index": 77.3,
-                "politeness": 20.1
+                "vibe_coder_index": 77,
+                "politeness": 20.7
               }
             }
           ],
@@ -7014,6 +7238,29 @@
               "nlp": {
                 "vibe_coder_index": 63.3,
                 "politeness": 47.9
+              }
+            },
+            {
+              "week_start": "2026-03-30",
+              "prompts": 10,
+              "source_counts": {
+                "codex": 10
+              },
+              "source_share_pct": {
+                "codex": 100
+              },
+              "style": {
+                "backtrack_per_100": 220,
+                "question_rate_pct": 0,
+                "command_rate_pct": 0
+              },
+              "model_prompts": 10,
+              "models": {
+                "gpt-5.4": 10
+              },
+              "nlp": {
+                "vibe_coder_index": 56.3,
+                "politeness": 46.2
               }
             }
           ],
@@ -8034,28 +8281,38 @@
             },
             {
               "week_start": "2026-03-30",
-              "prompts": 161,
+              "prompts": 523,
               "source_counts": {
-                "pi": 161
+                "pi": 523
               },
               "source_share_pct": {
                 "pi": 100
               },
               "style": {
-                "backtrack_per_100": 9.9,
-                "question_rate_pct": 29.2,
-                "command_rate_pct": 6.8
+                "backtrack_per_100": 13.2,
+                "question_rate_pct": 23.7,
+                "command_rate_pct": 6.3
               },
-              "model_prompts": 161,
+              "model_prompts": 523,
               "models": {
-                "claude-opus-4-6": 147,
-                "gpt-5.4": 9,
-                "claude-sonnet-4-6": 4,
-                "qwen/qwen3.6-plus:free": 1
+                "claude-opus-4-6": 390,
+                "gpt-5.4": 61,
+                "minimax/minimax-m2.7": 30,
+                "claude-sonnet-4-6": 15,
+                "qwen/qwen3.6-plus:free": 12,
+                "gemma4:latest": 3,
+                "google/gemma-4-26b-a4b": 2,
+                "moonshotai/kimi-k2.5": 2,
+                "x-ai/grok-4.1-fast": 2,
+                "z-ai/glm-5": 2,
+                "deepseek/deepseek-v3.2": 1,
+                "minimax/minimax-m2.5:free": 1,
+                "qwen/qwen3.5-35b-a3b": 1,
+                "x-ai/grok-4.20": 1
               },
               "nlp": {
                 "vibe_coder_index": 61.3,
-                "politeness": 45.3
+                "politeness": 44.3
               }
             }
           ],
@@ -8217,38 +8474,38 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 4460,
-            "build_feature": 733,
-            "debug_fix": 382,
-            "explanation_learning": 321,
-            "ops_commands": 317,
-            "planning_strategy": 304,
-            "analysis_research": 270
+            "other": 4694,
+            "build_feature": 781,
+            "debug_fix": 393,
+            "explanation_learning": 348,
+            "ops_commands": 324,
+            "planning_strategy": 318,
+            "analysis_research": 308
           },
           "rates_pct": {
-            "other": 65.7,
-            "build_feature": 10.8,
-            "debug_fix": 5.6,
-            "explanation_learning": 4.7,
-            "ops_commands": 4.7,
-            "planning_strategy": 4.5,
-            "analysis_research": 4
+            "other": 65.5,
+            "build_feature": 10.9,
+            "debug_fix": 5.5,
+            "explanation_learning": 4.9,
+            "ops_commands": 4.5,
+            "planning_strategy": 4.4,
+            "analysis_research": 4.3
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 4460,
-              "rate_pct": 65.7
+              "count": 4694,
+              "rate_pct": 65.5
             },
             {
               "intent": "build_feature",
-              "count": 733,
-              "rate_pct": 10.8
+              "count": 781,
+              "rate_pct": 10.9
             },
             {
               "intent": "debug_fix",
-              "count": 382,
-              "rate_pct": 5.6
+              "count": 393,
+              "rate_pct": 5.5
             }
           ],
           "confidence": {
@@ -8259,16 +8516,16 @@
         },
         "vibe_coder_index": {
           "method": "embedding_similarity_v1",
-          "avg_score": 63.8,
+          "avg_score": 63.7,
           "confidence": {
-            "mean": 0.66,
+            "mean": 0.67,
             "min": 0.32,
             "max": 1
           }
         },
         "politeness": {
           "method": "embedding_similarity_v1",
-          "avg_score": 42.5,
+          "avg_score": 42.6,
           "confidence": {
             "mean": 0.79,
             "min": 0.35,
@@ -8278,7 +8535,7 @@
       },
       "date_range": {
         "first": "2025-03-24T04:33:47.819Z",
-        "last": "2026-04-03T05:57:09.250Z"
+        "last": "2026-04-06T05:23:54.539Z"
       },
       "persona": {
         "name": "The Commander",
@@ -8289,32 +8546,32 @@
           "Efficient",
           "Decisive"
         ],
-        "detail_score": 44.9,
-        "style_score": 46.1
+        "detail_score": 45.1,
+        "style_score": 46.3
       },
       "vibe_explanation": [
         {
           "feature": "constraint_count",
           "label": "Constraints/requirements",
-          "contribution": 0.363,
+          "contribution": 0.344,
           "stat": "avg 0.3 per prompt"
         },
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": -0.285,
+          "contribution": -0.301,
           "stat": "9% of prompts"
         },
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": 0.282,
+          "contribution": 0.266,
           "stat": "22% of prompts"
         },
         {
           "feature": "has_numbered_list",
           "label": "Structured requirements",
-          "contribution": 0.244,
+          "contribution": 0.209,
           "stat": "2% of prompts"
         }
       ],
@@ -8322,25 +8579,25 @@
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": -0.482,
+          "contribution": -0.488,
           "stat": "22% of prompts"
         },
         {
           "feature": "is_neutral_tone",
           "label": "Neutral tone",
-          "contribution": -0.27,
+          "contribution": -0.275,
           "stat": "57% of prompts"
         },
         {
           "feature": "word_count",
           "label": "Prompt length",
-          "contribution": 0.22,
-          "stat": "avg 40 words/prompt"
+          "contribution": 0.222,
+          "stat": "avg 42 words/prompt"
         },
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": 0.151,
+          "contribution": 0.166,
           "stat": "9% of prompts"
         }
       ],
@@ -8348,112 +8605,112 @@
         "top_phrases": [
           {
             "phrase": "right now",
-            "count": 352,
-            "pct": 5.2
+            "count": 423,
+            "pct": 5.9
           },
           {
             "phrase": "users eeshans",
-            "count": 342,
-            "pct": 5
+            "count": 382,
+            "pct": 5.3
           },
           {
             "phrase": "ashley pdfs",
             "count": 301,
-            "pct": 4.4
+            "pct": 4.2
           },
           {
             "phrase": "eeshans dev",
             "count": 288,
-            "pct": 4.2
+            "pct": 4
           },
           {
             "phrase": "unknown skill",
             "count": 282,
-            "pct": 4.2
+            "pct": 3.9
           },
           {
             "phrase": "skill usage",
             "count": 282,
-            "pct": 4.2
+            "pct": 3.9
           },
           {
             "phrase": "com apple",
             "count": 268,
-            "pct": 3.9
+            "pct": 3.7
           },
           {
             "phrase": "let know",
+            "count": 239,
+            "pct": 3.3
+          },
+          {
+            "phrase": "make sure",
             "count": 230,
-            "pct": 3.4
+            "pct": 3.2
           },
           {
             "phrase": "mini projects",
             "count": 217,
-            "pct": 3.2
+            "pct": 3
+          },
+          {
+            "phrase": "little bit",
+            "count": 215,
+            "pct": 3
           },
           {
             "phrase": "private mini",
             "count": 215,
-            "pct": 3.2
+            "pct": 3
+          },
+          {
+            "phrase": "don't know",
+            "count": 214,
+            "pct": 3
           },
           {
             "phrase": "dev private",
             "count": 213,
-            "pct": 3.1
+            "pct": 3
           },
           {
             "phrase": "projects letters",
             "count": 210,
-            "pct": 3.1
-          },
-          {
-            "phrase": "pdfs received",
-            "count": 210,
-            "pct": 3.1
-          },
-          {
-            "phrase": "pdf users",
-            "count": 203,
-            "pct": 3
-          },
-          {
-            "phrase": "make sure",
-            "count": 202,
-            "pct": 3
+            "pct": 2.9
           }
         ],
         "openers": {
-          "question": 790,
-          "directive": 229,
-          "context": 936,
-          "greeting": 50,
-          "affirmation": 1580,
-          "other": 3202
+          "question": 837,
+          "directive": 233,
+          "context": 992,
+          "greeting": 54,
+          "affirmation": 1658,
+          "other": 3392
         },
         "length_histogram": [
           {
             "label": "1–5",
-            "count": 1566
+            "count": 1638
           },
           {
             "label": "6–15",
-            "count": 1536
+            "count": 1619
           },
           {
             "label": "16–30",
-            "count": 1387
+            "count": 1447
           },
           {
             "label": "31–60",
-            "count": 1140
+            "count": 1201
           },
           {
             "label": "61–100",
-            "count": 549
+            "count": 580
           },
           {
             "label": "100+",
-            "count": 609
+            "count": 681
           }
         ],
         "source_comparison": {
@@ -8479,11 +8736,11 @@
             "terse_pct": 74.7
           },
           "codex": {
-            "prompts": 1412,
-            "avg_words": 47,
-            "question_pct": 19.2,
-            "code_block_pct": 0.1,
-            "terse_pct": 31.3
+            "prompts": 1422,
+            "avg_words": 49.6,
+            "question_pct": 19.1,
+            "code_block_pct": 0.2,
+            "terse_pct": 31.2
           },
           "opencode": {
             "prompts": 71,
@@ -8493,40 +8750,40 @@
             "terse_pct": 39.4
           },
           "claude_code": {
-            "prompts": 2652,
-            "avg_words": 44.5,
+            "prompts": 2659,
+            "avg_words": 44.4,
             "question_pct": 21.4,
             "code_block_pct": 0.5,
             "terse_pct": 35.2
           },
           "pi": {
-            "prompts": 318,
-            "avg_words": 51.1,
-            "question_pct": 24.2,
-            "code_block_pct": 5,
-            "terse_pct": 28.3
+            "prompts": 680,
+            "avg_words": 62.6,
+            "question_pct": 22.6,
+            "code_block_pct": 5.3,
+            "terse_pct": 29
           }
         }
       },
       "normalized": {
-        "vibe_index": 36.2,
-        "politeness": 42.5
+        "vibe_index": 36.3,
+        "politeness": 42.6
       }
     },
     "claude_code": {
-      "generated_at": "2026-04-03T05:59:00.557Z",
+      "generated_at": "2026-04-06T05:24:43.117Z",
       "volume": {
-        "total_messages": 5109,
-        "total_human": 2652,
-        "total_words_human": 117937,
-        "total_conversations": 514,
-        "avg_words_per_prompt": 44.5
+        "total_messages": 5124,
+        "total_human": 2659,
+        "total_words_human": 118180,
+        "total_conversations": 515,
+        "avg_words_per_prompt": 44.4
       },
       "conversation_depth": {
         "avg_turns": 5.2,
         "max_turns": 94,
         "quick_asks": 392,
-        "working_sessions": 48,
+        "working_sessions": 49,
         "deep_dives": 74
       },
       "temporal": {
@@ -8680,7 +8937,7 @@
             42,
             45,
             21,
-            70,
+            77,
             41,
             33,
             31,
@@ -8714,11 +8971,11 @@
             38
           ]
         ],
-        "night_owl_pct": 29.1,
+        "night_owl_pct": 29,
         "peak_hour": 23,
         "peak_hour_count": 332,
         "peak_day": "Saturday",
-        "peak_day_count": 635,
+        "peak_day_count": 642,
         "hour_counts": {
           "0": 255,
           "1": 108,
@@ -8738,7 +8995,7 @@
           "15": 95,
           "16": 97,
           "17": 95,
-          "18": 226,
+          "18": 233,
           "19": 180,
           "20": 124,
           "21": 205,
@@ -8748,7 +9005,7 @@
       },
       "politeness": {
         "score": 42.2,
-        "total_prompts": 2652
+        "total_prompts": 2659
       },
       "youre_right": {
         "count": 264,
@@ -8756,15 +9013,15 @@
       },
       "platform_stats": {
         "claude_code": {
-          "messages": 2652,
-          "words": 117937,
-          "conversations": 514,
+          "messages": 2659,
+          "words": 118180,
+          "conversations": 515,
           "first_message": "2026-01-01T23:28:51.222Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 2652,
+          "total_human_prompts": 2659,
           "prompts_with_model_metadata": 0,
           "metadata_coverage_pct": 0
         },
@@ -9674,6 +9931,23 @@
             },
             "model_prompts": 0,
             "models": {}
+          },
+          {
+            "date": "2026-04-04",
+            "prompts": 7,
+            "source_counts": {
+              "claude_code": 7
+            },
+            "source_share_pct": {
+              "claude_code": 100
+            },
+            "style": {
+              "backtrack_per_100": 14.3,
+              "question_rate_pct": 28.6,
+              "command_rate_pct": 14.3
+            },
+            "model_prompts": 0,
+            "models": {}
           }
         ],
         "weekly_rollups": [
@@ -9889,31 +10163,31 @@
           },
           {
             "week_start": "2026-03-30",
-            "prompts": 337,
+            "prompts": 344,
             "source_counts": {
-              "claude_code": 337
+              "claude_code": 344
             },
             "source_share_pct": {
               "claude_code": 100
             },
             "style": {
-              "backtrack_per_100": 3,
-              "question_rate_pct": 5.6,
-              "command_rate_pct": 1.2
+              "backtrack_per_100": 3.2,
+              "question_rate_pct": 6.1,
+              "command_rate_pct": 1.5
             },
             "model_prompts": 0,
             "models": {},
             "nlp": {
-              "vibe_coder_index": 77.3,
-              "politeness": 20.1
+              "vibe_coder_index": 77,
+              "politeness": 20.7
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 91.9,
-            "avg_30d": 61.1,
-            "delta_pct": 50.4
+            "avg_7d": 63.2,
+            "avg_30d": 60.9,
+            "delta_pct": 3.8
           },
           "dominant_source_share_pct": {
             "avg_7d": 100,
@@ -9921,19 +10195,19 @@
             "delta_pct": 0
           },
           "backtrack_per_100": {
-            "avg_7d": 13.6,
-            "avg_30d": 8.9,
-            "delta_pct": 52.8
+            "avg_7d": 13,
+            "avg_30d": 9,
+            "delta_pct": 44.4
           },
           "question_rate_pct": {
-            "avg_7d": 24.6,
-            "avg_30d": 22.7,
-            "delta_pct": 8.4
+            "avg_7d": 22.7,
+            "avg_30d": 22.4,
+            "delta_pct": 1.3
           },
           "command_rate_pct": {
-            "avg_7d": 3,
-            "avg_30d": 8.4,
-            "delta_pct": -64.3
+            "avg_7d": 4.1,
+            "avg_30d": 8.3,
+            "delta_pct": -50.6
           },
           "model_coverage_pct": {
             "avg_7d": 0,
@@ -9988,6 +10262,15 @@
             "magnitude": 99
           },
           {
+            "date": "2026-04-04",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -98,
+            "prev_prompts": 105,
+            "curr_prompts": 7,
+            "magnitude": 98
+          },
+          {
             "date": "2026-04-02",
             "type": "prompt_shift",
             "direction": "down",
@@ -10022,15 +10305,6 @@
             "prev_prompts": 3,
             "curr_prompts": 76,
             "magnitude": 73
-          },
-          {
-            "date": "2026-03-03",
-            "type": "prompt_shift",
-            "direction": "down",
-            "delta_prompts": -73,
-            "prev_prompts": 83,
-            "curr_prompts": 10,
-            "magnitude": 73
           }
         ]
       },
@@ -10038,37 +10312,37 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 1801,
-            "build_feature": 248,
-            "debug_fix": 145,
+            "other": 1803,
+            "build_feature": 249,
+            "debug_fix": 146,
             "planning_strategy": 126,
-            "explanation_learning": 115,
-            "analysis_research": 113,
+            "explanation_learning": 116,
+            "analysis_research": 115,
             "ops_commands": 104
           },
           "rates_pct": {
-            "other": 67.9,
+            "other": 67.8,
             "build_feature": 9.4,
             "debug_fix": 5.5,
-            "planning_strategy": 4.8,
-            "explanation_learning": 4.3,
+            "planning_strategy": 4.7,
+            "explanation_learning": 4.4,
             "analysis_research": 4.3,
             "ops_commands": 3.9
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 1801,
-              "rate_pct": 67.9
+              "count": 1803,
+              "rate_pct": 67.8
             },
             {
               "intent": "build_feature",
-              "count": 248,
+              "count": 249,
               "rate_pct": 9.4
             },
             {
               "intent": "debug_fix",
-              "count": 145,
+              "count": 146,
               "rate_pct": 5.5
             }
           ],
@@ -10099,7 +10373,7 @@
       },
       "date_range": {
         "first": "2026-01-01T23:28:51.222Z",
-        "last": "2026-04-03T05:20:12.573Z"
+        "last": "2026-04-05T01:45:09.407Z"
       },
       "persona": {
         "name": "The Commander",
@@ -10117,7 +10391,7 @@
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": 0.5,
+          "contribution": 0.498,
           "stat": "26% of prompts"
         },
         {
@@ -10129,13 +10403,13 @@
         {
           "feature": "has_numbered_list",
           "label": "Structured requirements",
-          "contribution": 0.264,
+          "contribution": 0.265,
           "stat": "2% of prompts"
         },
         {
           "feature": "task_generate_count",
           "label": "Generation tasks",
-          "contribution": -0.232,
+          "contribution": -0.233,
           "stat": "avg 0.1 per prompt"
         }
       ],
@@ -10143,13 +10417,13 @@
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": -0.498,
+          "contribution": -0.499,
           "stat": "26% of prompts"
         },
         {
           "feature": "is_neutral_tone",
           "label": "Neutral tone",
-          "contribution": -0.343,
+          "contribution": -0.344,
           "stat": "51% of prompts"
         },
         {
@@ -10205,7 +10479,7 @@
           {
             "phrase": "dev private",
             "count": 211,
-            "pct": 8
+            "pct": 7.9
           },
           {
             "phrase": "projects letters",
@@ -10220,11 +10494,11 @@
           {
             "phrase": "pdf users",
             "count": 203,
-            "pct": 7.7
+            "pct": 7.6
           },
           {
             "phrase": "right now",
-            "count": 173,
+            "count": 174,
             "pct": 6.5
           },
           {
@@ -10235,7 +10509,7 @@
           {
             "phrase": "received pdf",
             "count": 166,
-            "pct": 6.3
+            "pct": 6.2
           },
           {
             "phrase": "little bit",
@@ -10244,33 +10518,33 @@
           }
         ],
         "openers": {
-          "question": 281,
+          "question": 282,
           "directive": 73,
-          "context": 263,
+          "context": 265,
           "greeting": 4,
-          "affirmation": 658,
-          "other": 1373
+          "affirmation": 660,
+          "other": 1375
         },
         "length_histogram": [
           {
             "label": "1–5",
-            "count": 688
+            "count": 689
           },
           {
             "label": "6–15",
-            "count": 504
+            "count": 506
           },
           {
             "label": "16–30",
-            "count": 487
+            "count": 488
           },
           {
             "label": "31–60",
-            "count": 451
+            "count": 452
           },
           {
             "label": "61–100",
-            "count": 237
+            "count": 239
           },
           {
             "label": "100+",
@@ -10279,8 +10553,8 @@
         ],
         "source_comparison": {
           "claude_code": {
-            "prompts": 2652,
-            "avg_words": 44.5,
+            "prompts": 2659,
+            "avg_words": 44.4,
             "question_pct": 21.4,
             "code_block_pct": 0.5,
             "terse_pct": 35.2
@@ -10293,19 +10567,19 @@
       }
     },
     "codex": {
-      "generated_at": "2026-04-03T05:59:00.675Z",
+      "generated_at": "2026-04-06T05:24:43.243Z",
       "volume": {
-        "total_messages": 1445,
-        "total_human": 1412,
-        "total_words_human": 66307,
-        "total_conversations": 73,
-        "avg_words_per_prompt": 47
+        "total_messages": 1458,
+        "total_human": 1422,
+        "total_words_human": 70487,
+        "total_conversations": 77,
+        "avg_words_per_prompt": 49.6
       },
       "conversation_depth": {
-        "avg_turns": 19.3,
+        "avg_turns": 18.5,
         "max_turns": 136,
-        "quick_asks": 27,
-        "working_sessions": 17,
+        "quick_asks": 30,
+        "working_sessions": 18,
         "deep_dives": 29
       },
       "temporal": {
@@ -10438,10 +10712,10 @@
             11,
             5,
             17,
-            31
+            33
           ],
           [
-            60,
+            64,
             65,
             15,
             0,
@@ -10456,9 +10730,9 @@
             5,
             10,
             26,
-            32,
+            34,
             9,
-            12,
+            13,
             24,
             26,
             25,
@@ -10477,7 +10751,7 @@
             0,
             9,
             22,
-            26,
+            27,
             1,
             29,
             12,
@@ -10493,38 +10767,38 @@
             27
           ]
         ],
-        "night_owl_pct": 40.9,
+        "night_owl_pct": 41.1,
         "peak_hour": 0,
-        "peak_hour_count": 209,
+        "peak_hour_count": 213,
         "peak_day": "Saturday",
-        "peak_day_count": 457,
+        "peak_day_count": 464,
         "hour_counts": {
-          "0": 209,
+          "0": 213,
           "1": 121,
           "2": 44,
           "3": 2,
           "7": 9,
           "8": 55,
           "9": 35,
-          "10": 59,
+          "10": 60,
           "11": 17,
           "12": 41,
           "13": 41,
           "14": 33,
-          "15": 46,
+          "15": 48,
           "16": 27,
-          "17": 37,
+          "17": 38,
           "18": 74,
           "19": 77,
           "20": 64,
           "21": 88,
           "22": 131,
-          "23": 202
+          "23": 204
         }
       },
       "politeness": {
         "score": 42,
-        "total_prompts": 1412
+        "total_prompts": 1422
       },
       "youre_right": {
         "count": 0,
@@ -10532,16 +10806,16 @@
       },
       "platform_stats": {
         "codex": {
-          "messages": 1412,
-          "words": 66307,
-          "conversations": 73,
+          "messages": 1422,
+          "words": 70487,
+          "conversations": 77,
           "first_message": "2025-12-23T15:58:08.000Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 1412,
-          "prompts_with_model_metadata": 1412,
+          "total_human_prompts": 1422,
+          "prompts_with_model_metadata": 1422,
           "metadata_coverage_pct": 100
         },
         "by_model": [
@@ -10556,20 +10830,20 @@
             "conversations": 21
           },
           {
+            "model_id": "gpt-5.4",
+            "model_provider": "openai",
+            "prompts": 404,
+            "words": 21528,
+            "sources": {
+              "codex": 404
+            },
+            "conversations": 30
+          },
+          {
             "model_id": "gpt-5.3-codex",
             "model_provider": "openai",
             "prompts": 394,
             "words": 13048,
-            "sources": {
-              "codex": 394
-            },
-            "conversations": 26
-          },
-          {
-            "model_id": "gpt-5.4",
-            "model_provider": "openai",
-            "prompts": 394,
-            "words": 17348,
             "sources": {
               "codex": 394
             },
@@ -10579,12 +10853,12 @@
         "by_provider": [
           {
             "model_provider": "openai",
-            "prompts": 1412,
-            "words": 66307,
+            "prompts": 1422,
+            "words": 70487,
             "sources": {
-              "codex": 1412
+              "codex": 1422
             },
-            "conversations": 73
+            "conversations": 77
           }
         ],
         "time_series_by_source": {
@@ -11017,6 +11291,27 @@
               "total_prompts": 3,
               "models": {
                 "gpt-5.4": 3
+              }
+            },
+            {
+              "date": "2026-04-03",
+              "total_prompts": 2,
+              "models": {
+                "gpt-5.4": 2
+              }
+            },
+            {
+              "date": "2026-04-04",
+              "total_prompts": 7,
+              "models": {
+                "gpt-5.4": 7
+              }
+            },
+            {
+              "date": "2026-04-05",
+              "total_prompts": 1,
+              "models": {
+                "gpt-5.4": 1
               }
             }
           ]
@@ -12185,6 +12480,63 @@
             "models": {
               "gpt-5.4": 3
             }
+          },
+          {
+            "date": "2026-04-03",
+            "prompts": 2,
+            "source_counts": {
+              "codex": 2
+            },
+            "source_share_pct": {
+              "codex": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 0,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 2,
+            "models": {
+              "gpt-5.4": 2
+            }
+          },
+          {
+            "date": "2026-04-04",
+            "prompts": 7,
+            "source_counts": {
+              "codex": 7
+            },
+            "source_share_pct": {
+              "codex": 100
+            },
+            "style": {
+              "backtrack_per_100": 314.3,
+              "question_rate_pct": 0,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 7,
+            "models": {
+              "gpt-5.4": 7
+            }
+          },
+          {
+            "date": "2026-04-05",
+            "prompts": 1,
+            "source_counts": {
+              "codex": 1
+            },
+            "source_share_pct": {
+              "codex": 100
+            },
+            "style": {
+              "backtrack_per_100": 0,
+              "question_rate_pct": 0,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 1,
+            "models": {
+              "gpt-5.4": 1
+            }
           }
         ],
         "weekly_rollups": [
@@ -12512,13 +12864,36 @@
               "vibe_coder_index": 63.3,
               "politeness": 47.9
             }
+          },
+          {
+            "week_start": "2026-03-30",
+            "prompts": 10,
+            "source_counts": {
+              "codex": 10
+            },
+            "source_share_pct": {
+              "codex": 100
+            },
+            "style": {
+              "backtrack_per_100": 220,
+              "question_rate_pct": 0,
+              "command_rate_pct": 0
+            },
+            "model_prompts": 10,
+            "models": {
+              "gpt-5.4": 10
+            },
+            "nlp": {
+              "vibe_coder_index": 56.3,
+              "politeness": 46.2
+            }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 12,
-            "avg_30d": 21.2,
-            "delta_pct": -43.4
+            "avg_7d": 3.3,
+            "avg_30d": 20,
+            "delta_pct": -83.5
           },
           "dominant_source_share_pct": {
             "avg_7d": 100,
@@ -12526,19 +12901,19 @@
             "delta_pct": 0
           },
           "backtrack_per_100": {
-            "avg_7d": 1.6,
-            "avg_30d": 6.4,
-            "delta_pct": -75
+            "avg_7d": 104.8,
+            "avg_30d": 19.1,
+            "delta_pct": 448.7
           },
           "question_rate_pct": {
-            "avg_7d": 21.2,
-            "avg_30d": 16.1,
-            "delta_pct": 31.7
+            "avg_7d": 0,
+            "avg_30d": 14.1,
+            "delta_pct": -100
           },
           "command_rate_pct": {
-            "avg_7d": 27.7,
-            "avg_30d": 22.2,
-            "delta_pct": 24.8
+            "avg_7d": 0,
+            "avg_30d": 17.7,
+            "delta_pct": -100
           },
           "model_coverage_pct": {
             "avg_7d": 100,
@@ -12643,38 +13018,38 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 856,
-            "build_feature": 160,
-            "analysis_research": 111,
+            "other": 858,
+            "build_feature": 163,
+            "analysis_research": 114,
             "planning_strategy": 91,
-            "debug_fix": 77,
-            "explanation_learning": 71,
+            "debug_fix": 78,
+            "explanation_learning": 72,
             "ops_commands": 46
           },
           "rates_pct": {
-            "other": 60.6,
-            "build_feature": 11.3,
-            "analysis_research": 7.9,
+            "other": 60.3,
+            "build_feature": 11.5,
+            "analysis_research": 8,
             "planning_strategy": 6.4,
             "debug_fix": 5.5,
-            "explanation_learning": 5,
-            "ops_commands": 3.3
+            "explanation_learning": 5.1,
+            "ops_commands": 3.2
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 856,
-              "rate_pct": 60.6
+              "count": 858,
+              "rate_pct": 60.3
             },
             {
               "intent": "build_feature",
-              "count": 160,
-              "rate_pct": 11.3
+              "count": 163,
+              "rate_pct": 11.5
             },
             {
               "intent": "analysis_research",
-              "count": 111,
-              "rate_pct": 7.9
+              "count": 114,
+              "rate_pct": 8
             }
           ],
           "confidence": {
@@ -12704,7 +13079,7 @@
       },
       "date_range": {
         "first": "2025-12-23T15:58:08.000Z",
-        "last": "2026-03-29T03:20:21.000Z"
+        "last": "2026-04-05T17:51:40.000Z"
       },
       "persona": {
         "name": "The Commander",
@@ -12715,32 +13090,32 @@
           "Efficient",
           "Decisive"
         ],
-        "detail_score": 47,
+        "detail_score": 47.1,
         "style_score": 45.3
       },
       "vibe_explanation": [
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": -0.44,
+          "contribution": -0.439,
           "stat": "12% of prompts"
         },
         {
           "feature": "constraint_count",
           "label": "Constraints/requirements",
-          "contribution": 0.309,
+          "contribution": 0.288,
           "stat": "avg 0.3 per prompt"
         },
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": 0.258,
+          "contribution": 0.252,
           "stat": "22% of prompts"
         },
         {
           "feature": "task_generate_count",
           "label": "Generation tasks",
-          "contribution": -0.193,
+          "contribution": -0.191,
           "stat": "avg 0.2 per prompt"
         }
       ],
@@ -12748,26 +13123,26 @@
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": -0.509,
+          "contribution": -0.517,
           "stat": "22% of prompts"
         },
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": 0.302,
+          "contribution": 0.306,
           "stat": "12% of prompts"
-        },
-        {
-          "feature": "word_count",
-          "label": "Prompt length",
-          "contribution": 0.229,
-          "stat": "avg 47 words/prompt"
         },
         {
           "feature": "is_neutral_tone",
           "label": "Neutral tone",
-          "contribution": -0.229,
+          "contribution": -0.232,
           "stat": "59% of prompts"
+        },
+        {
+          "feature": "word_count",
+          "label": "Prompt length",
+          "contribution": 0.227,
+          "stat": "avg 50 words/prompt"
         }
       ],
       "linguistics": {
@@ -12775,12 +13150,12 @@
           {
             "phrase": "com apple",
             "count": 267,
-            "pct": 18.9
+            "pct": 18.8
           },
           {
             "phrase": "apple driver",
             "count": 188,
-            "pct": 13.3
+            "pct": 13.2
           },
           {
             "phrase": "right now",
@@ -12789,13 +13164,13 @@
           },
           {
             "phrase": "let know",
-            "count": 66,
+            "count": 67,
             "pct": 4.7
           },
           {
             "phrase": "implementation plan",
             "count": 53,
-            "pct": 3.8
+            "pct": 3.7
           },
           {
             "phrase": "don't know",
@@ -12804,8 +13179,8 @@
           },
           {
             "phrase": "code base",
-            "count": 43,
-            "pct": 3
+            "count": 44,
+            "pct": 3.1
           },
           {
             "phrase": "apple iokit",
@@ -12833,41 +13208,41 @@
             "pct": 2.3
           },
           {
+            "phrase": "think about",
+            "count": 31,
+            "pct": 2.2
+          },
+          {
             "phrase": "codex review",
             "count": 31,
             "pct": 2.2
           },
           {
-            "phrase": "think about",
-            "count": 30,
-            "pct": 2.1
-          },
-          {
             "phrase": "little bit",
             "count": 29,
-            "pct": 2.1
+            "pct": 2
           }
         ],
         "openers": {
           "question": 154,
           "directive": 94,
-          "context": 166,
+          "context": 168,
           "greeting": 2,
-          "affirmation": 339,
-          "other": 657
+          "affirmation": 340,
+          "other": 664
         },
         "length_histogram": [
           {
             "label": "1–5",
-            "count": 315
+            "count": 316
           },
           {
             "label": "6–15",
-            "count": 268
+            "count": 270
           },
           {
             "label": "16–30",
-            "count": 294
+            "count": 295
           },
           {
             "label": "31–60",
@@ -12875,20 +13250,20 @@
           },
           {
             "label": "61–100",
-            "count": 130
+            "count": 132
           },
           {
             "label": "100+",
-            "count": 184
+            "count": 188
           }
         ],
         "source_comparison": {
           "codex": {
-            "prompts": 1412,
-            "avg_words": 47,
-            "question_pct": 19.2,
-            "code_block_pct": 0.1,
-            "terse_pct": 31.3
+            "prompts": 1422,
+            "avg_words": 49.6,
+            "question_pct": 19.1,
+            "code_block_pct": 0.2,
+            "terse_pct": 31.2
           }
         }
       },
@@ -12898,7 +13273,7 @@
       }
     },
     "copilot_chat": {
-      "generated_at": "2026-04-03T05:59:00.790Z",
+      "generated_at": "2026-04-06T05:24:43.370Z",
       "volume": {
         "total_messages": 4531,
         "total_human": 2236,
@@ -16342,7 +16717,7 @@
       }
     },
     "cursor": {
-      "generated_at": "2026-04-03T05:59:00.857Z",
+      "generated_at": "2026-04-06T05:24:43.440Z",
       "volume": {
         "total_messages": 30,
         "total_human": 15,
@@ -17030,7 +17405,7 @@
       }
     },
     "lmstudio": {
-      "generated_at": "2026-04-03T05:59:00.860Z",
+      "generated_at": "2026-04-06T05:24:43.443Z",
       "volume": {
         "total_messages": 161,
         "total_human": 83,
@@ -18088,20 +18463,20 @@
       }
     },
     "pi": {
-      "generated_at": "2026-04-03T05:59:00.871Z",
+      "generated_at": "2026-04-06T05:24:43.472Z",
       "volume": {
-        "total_messages": 1359,
-        "total_human": 318,
-        "total_words_human": 16240,
-        "total_conversations": 23,
-        "avg_words_per_prompt": 51.1
+        "total_messages": 3038,
+        "total_human": 680,
+        "total_words_human": 42572,
+        "total_conversations": 46,
+        "avg_words_per_prompt": 62.6
       },
       "conversation_depth": {
-        "avg_turns": 13.8,
-        "max_turns": 72,
-        "quick_asks": 5,
-        "working_sessions": 9,
-        "deep_dives": 9
+        "avg_turns": 14.8,
+        "max_turns": 98,
+        "quick_asks": 13,
+        "working_sessions": 14,
+        "deep_dives": 19
       },
       "temporal": {
         "heatmap": [
@@ -18207,7 +18582,7 @@
             12,
             16,
             40,
-            15
+            37
           ],
           [
             19,
@@ -18219,49 +18594,51 @@
             0,
             0,
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3
-          ],
-          [
+            3,
             5,
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            7,
             1,
-            0,
-            0,
+            1,
             2,
-            0,
-            0,
-            2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            4,
-            6,
             8,
-            11
+            3,
+            0,
+            0,
+            3,
+            11,
+            11,
+            18
           ],
           [
+            8,
+            45,
+            21,
+            0,
+            0,
+            0,
+            0,
+            5,
+            10,
+            0,
+            0,
+            8,
+            15,
+            10,
+            2,
+            7,
+            23,
+            11,
+            0,
+            8,
+            30,
+            9,
+            28,
+            26
+          ],
+          [
+            9,
+            3,
             0,
             0,
             0,
@@ -18269,6 +18646,9 @@
             0,
             0,
             0,
+            3,
+            4,
+            3,
             0,
             0,
             0,
@@ -18276,101 +18656,123 @@
             0,
             0,
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            3,
+            7,
+            6,
+            5,
             0
           ]
         ],
-        "night_owl_pct": 34.9,
+        "night_owl_pct": 35.9,
         "peak_hour": 22,
-        "peak_hour_count": 89,
-        "peak_day": "Thursday",
-        "peak_day_count": 130,
+        "peak_hour_count": 125,
+        "peak_day": "Saturday",
+        "peak_day_count": 266,
         "hour_counts": {
-          "0": 38,
-          "1": 3,
-          "7": 16,
-          "8": 9,
-          "11": 2,
-          "14": 2,
-          "17": 2,
+          "0": 50,
+          "1": 51,
+          "2": 21,
+          "7": 21,
+          "8": 18,
+          "9": 6,
+          "10": 9,
+          "11": 11,
+          "12": 22,
+          "13": 11,
+          "14": 3,
+          "15": 9,
+          "16": 31,
+          "17": 16,
           "18": 12,
-          "19": 6,
-          "20": 34,
-          "21": 35,
-          "22": 89,
-          "23": 70
+          "19": 17,
+          "20": 70,
+          "21": 55,
+          "22": 125,
+          "23": 122
         }
       },
       "politeness": {
-        "score": 44.3,
-        "total_prompts": 318
+        "score": 44.1,
+        "total_prompts": 680
       },
       "youre_right": {
-        "count": 33,
-        "per_conversation": 1.4
+        "count": 71,
+        "per_conversation": 1.5
       },
       "platform_stats": {
         "pi": {
-          "messages": 318,
-          "words": 16240,
-          "conversations": 23,
+          "messages": 680,
+          "words": 42572,
+          "conversations": 46,
           "first_message": "2026-03-25T07:37:30.741Z"
         }
       },
       "model_usage": {
         "coverage": {
-          "total_human_prompts": 318,
-          "prompts_with_model_metadata": 318,
+          "total_human_prompts": 680,
+          "prompts_with_model_metadata": 680,
           "metadata_coverage_pct": 100
         },
         "by_model": [
           {
             "model_id": "claude-opus-4-6",
             "model_provider": "anthropic",
-            "prompts": 235,
-            "words": 9902,
+            "prompts": 478,
+            "words": 27949,
             "sources": {
-              "pi": 235
+              "pi": 478
             },
-            "conversations": 11
+            "conversations": 20
           },
           {
             "model_id": "gpt-5.4",
             "model_provider": "openai-codex",
-            "prompts": 44,
-            "words": 4354,
+            "prompts": 96,
+            "words": 6450,
             "sources": {
-              "pi": 44
+              "pi": 96
             },
-            "conversations": 7
+            "conversations": 10
           },
           {
             "model_id": "minimax/minimax-m2.7",
             "model_provider": "openrouter",
-            "prompts": 25,
-            "words": 1126,
+            "prompts": 55,
+            "words": 2775,
             "sources": {
-              "pi": 25
+              "pi": 55
             },
-            "conversations": 3
+            "conversations": 8
+          },
+          {
+            "model_id": "claude-sonnet-4-6",
+            "model_provider": "anthropic",
+            "prompts": 15,
+            "words": 1237,
+            "sources": {
+              "pi": 15
+            },
+            "conversations": 7
+          },
+          {
+            "model_id": "qwen/qwen3.6-plus:free",
+            "model_provider": "openrouter",
+            "prompts": 12,
+            "words": 1487,
+            "sources": {
+              "pi": 12
+            },
+            "conversations": 2
           },
           {
             "model_id": "moonshotai/kimi-k2.5",
             "model_provider": "openrouter",
-            "prompts": 5,
-            "words": 176,
+            "prompts": 7,
+            "words": 569,
             "sources": {
-              "pi": 5
+              "pi": 7
             },
-            "conversations": 1
+            "conversations": 2
           },
           {
             "model_id": "Qwen3.5-9B-GGUF",
@@ -18383,20 +18785,80 @@
             "conversations": 2
           },
           {
-            "model_id": "claude-sonnet-4-6",
-            "model_provider": "anthropic",
-            "prompts": 4,
-            "words": 20,
+            "model_id": "gemma4:latest",
+            "model_provider": "ollama",
+            "prompts": 3,
+            "words": 3,
             "sources": {
-              "pi": 4
+              "pi": 3
             },
             "conversations": 1
           },
           {
-            "model_id": "qwen/qwen3.6-plus:free",
+            "model_id": "google/gemma-4-26b-a4b",
+            "model_provider": "lmstudio",
+            "prompts": 2,
+            "words": 15,
+            "sources": {
+              "pi": 2
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "x-ai/grok-4.1-fast",
+            "model_provider": "openrouter",
+            "prompts": 2,
+            "words": 615,
+            "sources": {
+              "pi": 2
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "z-ai/glm-5",
+            "model_provider": "openrouter",
+            "prompts": 2,
+            "words": 354,
+            "sources": {
+              "pi": 2
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "deepseek/deepseek-v3.2",
             "model_provider": "openrouter",
             "prompts": 1,
             "words": 311,
+            "sources": {
+              "pi": 1
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "minimax/minimax-m2.5:free",
+            "model_provider": "openrouter",
+            "prompts": 1,
+            "words": 152,
+            "sources": {
+              "pi": 1
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "qwen/qwen3.5-35b-a3b",
+            "model_provider": "lmstudio",
+            "prompts": 1,
+            "words": 1,
+            "sources": {
+              "pi": 1
+            },
+            "conversations": 1
+          },
+          {
+            "model_id": "x-ai/grok-4.20",
+            "model_provider": "openrouter",
+            "prompts": 1,
+            "words": 303,
             "sources": {
               "pi": 1
             },
@@ -18406,30 +18868,30 @@
         "by_provider": [
           {
             "model_provider": "anthropic",
-            "prompts": 239,
-            "words": 9922,
+            "prompts": 493,
+            "words": 29186,
             "sources": {
-              "pi": 239
+              "pi": 493
             },
-            "conversations": 12
+            "conversations": 25
           },
           {
             "model_provider": "openai-codex",
-            "prompts": 44,
-            "words": 4354,
+            "prompts": 96,
+            "words": 6450,
             "sources": {
-              "pi": 44
+              "pi": 96
             },
-            "conversations": 7
+            "conversations": 10
           },
           {
             "model_provider": "openrouter",
-            "prompts": 31,
-            "words": 1613,
+            "prompts": 81,
+            "words": 6566,
             "sources": {
-              "pi": 31
+              "pi": 81
             },
-            "conversations": 5
+            "conversations": 14
           },
           {
             "model_provider": "llama-cpp",
@@ -18439,6 +18901,24 @@
               "pi": 4
             },
             "conversations": 2
+          },
+          {
+            "model_provider": "lmstudio",
+            "prompts": 3,
+            "words": 16,
+            "sources": {
+              "pi": 3
+            },
+            "conversations": 2
+          },
+          {
+            "model_provider": "ollama",
+            "prompts": 3,
+            "words": 3,
+            "sources": {
+              "pi": 3
+            },
+            "conversations": 1
           }
         ],
         "time_series_by_source": {
@@ -18493,11 +18973,47 @@
             },
             {
               "date": "2026-04-02",
-              "total_prompts": 60,
+              "total_prompts": 82,
               "models": {
-                "claude-opus-4-6": 50,
-                "gpt-5.4": 9,
-                "qwen/qwen3.6-plus:free": 1
+                "claude-opus-4-6": 51,
+                "gpt-5.4": 15,
+                "qwen/qwen3.6-plus:free": 12,
+                "claude-sonnet-4-6": 1,
+                "deepseek/deepseek-v3.2": 1,
+                "minimax/minimax-m2.5:free": 1,
+                "minimax/minimax-m2.7": 1
+              }
+            },
+            {
+              "date": "2026-04-03",
+              "total_prompts": 70,
+              "models": {
+                "claude-opus-4-6": 59,
+                "minimax/minimax-m2.7": 11
+              }
+            },
+            {
+              "date": "2026-04-04",
+              "total_prompts": 227,
+              "models": {
+                "claude-opus-4-6": 140,
+                "gpt-5.4": 46,
+                "minimax/minimax-m2.7": 18,
+                "claude-sonnet-4-6": 10,
+                "gemma4:latest": 3,
+                "google/gemma-4-26b-a4b": 2,
+                "moonshotai/kimi-k2.5": 2,
+                "x-ai/grok-4.1-fast": 2,
+                "z-ai/glm-5": 2,
+                "qwen/qwen3.5-35b-a3b": 1,
+                "x-ai/grok-4.20": 1
+              }
+            },
+            {
+              "date": "2026-04-05",
+              "total_prompts": 43,
+              "models": {
+                "claude-opus-4-6": 43
               }
             }
           ]
@@ -18627,23 +19143,95 @@
           },
           {
             "date": "2026-04-02",
-            "prompts": 60,
+            "prompts": 82,
             "source_counts": {
-              "pi": 60
+              "pi": 82
             },
             "source_share_pct": {
               "pi": 100
             },
             "style": {
-              "backtrack_per_100": 10,
-              "question_rate_pct": 21.7,
-              "command_rate_pct": 8.3
+              "backtrack_per_100": 13.4,
+              "question_rate_pct": 22,
+              "command_rate_pct": 6.1
             },
-            "model_prompts": 60,
+            "model_prompts": 82,
             "models": {
-              "claude-opus-4-6": 50,
-              "gpt-5.4": 9,
-              "qwen/qwen3.6-plus:free": 1
+              "claude-opus-4-6": 51,
+              "gpt-5.4": 15,
+              "qwen/qwen3.6-plus:free": 12,
+              "deepseek/deepseek-v3.2": 1,
+              "claude-sonnet-4-6": 1,
+              "minimax/minimax-m2.7": 1,
+              "minimax/minimax-m2.5:free": 1
+            }
+          },
+          {
+            "date": "2026-04-03",
+            "prompts": 70,
+            "source_counts": {
+              "pi": 70
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 24.3,
+              "question_rate_pct": 25.7,
+              "command_rate_pct": 11.4
+            },
+            "model_prompts": 70,
+            "models": {
+              "claude-opus-4-6": 59,
+              "minimax/minimax-m2.7": 11
+            }
+          },
+          {
+            "date": "2026-04-04",
+            "prompts": 227,
+            "source_counts": {
+              "pi": 227
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 10.6,
+              "question_rate_pct": 22,
+              "command_rate_pct": 5.3
+            },
+            "model_prompts": 227,
+            "models": {
+              "claude-opus-4-6": 140,
+              "gpt-5.4": 46,
+              "minimax/minimax-m2.7": 18,
+              "claude-sonnet-4-6": 10,
+              "gemma4:latest": 3,
+              "google/gemma-4-26b-a4b": 2,
+              "moonshotai/kimi-k2.5": 2,
+              "x-ai/grok-4.1-fast": 2,
+              "z-ai/glm-5": 2,
+              "qwen/qwen3.5-35b-a3b": 1,
+              "x-ai/grok-4.20": 1
+            }
+          },
+          {
+            "date": "2026-04-05",
+            "prompts": 43,
+            "source_counts": {
+              "pi": 43
+            },
+            "source_share_pct": {
+              "pi": 100
+            },
+            "style": {
+              "backtrack_per_100": 16.3,
+              "question_rate_pct": 9.3,
+              "command_rate_pct": 4.7
+            },
+            "model_prompts": 43,
+            "models": {
+              "claude-opus-4-6": 43
             }
           }
         ],
@@ -18677,36 +19265,46 @@
           },
           {
             "week_start": "2026-03-30",
-            "prompts": 161,
+            "prompts": 523,
             "source_counts": {
-              "pi": 161
+              "pi": 523
             },
             "source_share_pct": {
               "pi": 100
             },
             "style": {
-              "backtrack_per_100": 9.9,
-              "question_rate_pct": 29.2,
-              "command_rate_pct": 6.8
+              "backtrack_per_100": 13.2,
+              "question_rate_pct": 23.7,
+              "command_rate_pct": 6.3
             },
-            "model_prompts": 161,
+            "model_prompts": 523,
             "models": {
-              "claude-opus-4-6": 147,
-              "gpt-5.4": 9,
-              "claude-sonnet-4-6": 4,
-              "qwen/qwen3.6-plus:free": 1
+              "claude-opus-4-6": 390,
+              "gpt-5.4": 61,
+              "minimax/minimax-m2.7": 30,
+              "claude-sonnet-4-6": 15,
+              "qwen/qwen3.6-plus:free": 12,
+              "gemma4:latest": 3,
+              "google/gemma-4-26b-a4b": 2,
+              "moonshotai/kimi-k2.5": 2,
+              "x-ai/grok-4.1-fast": 2,
+              "z-ai/glm-5": 2,
+              "deepseek/deepseek-v3.2": 1,
+              "minimax/minimax-m2.5:free": 1,
+              "qwen/qwen3.5-35b-a3b": 1,
+              "x-ai/grok-4.20": 1
             },
             "nlp": {
               "vibe_coder_index": 61.3,
-              "politeness": 45.3
+              "politeness": 44.3
             }
           }
         ],
         "deltas_7d_vs_30d": {
           "prompts_per_day": {
-            "avg_7d": 45,
-            "avg_30d": 45.4,
-            "delta_pct": -0.9
+            "avg_7d": 87.2,
+            "avg_30d": 68,
+            "delta_pct": 28.2
           },
           "dominant_source_share_pct": {
             "avg_7d": 100,
@@ -18714,19 +19312,19 @@
             "delta_pct": 0
           },
           "backtrack_per_100": {
-            "avg_7d": 9.1,
-            "avg_30d": 7.5,
-            "delta_pct": 21.3
+            "avg_7d": 12.5,
+            "avg_30d": 10.7,
+            "delta_pct": 16.8
           },
           "question_rate_pct": {
-            "avg_7d": 26.1,
-            "avg_30d": 22.1,
-            "delta_pct": 18.1
+            "avg_7d": 23,
+            "avg_30d": 21.2,
+            "delta_pct": 8.5
           },
           "command_rate_pct": {
-            "avg_7d": 11.1,
-            "avg_30d": 11.2,
-            "delta_pct": -0.9
+            "avg_7d": 9.6,
+            "avg_30d": 9.8,
+            "delta_pct": -2
           },
           "model_coverage_pct": {
             "avg_7d": 100,
@@ -18735,6 +19333,24 @@
           }
         },
         "shift_markers": [
+          {
+            "date": "2026-04-05",
+            "type": "prompt_shift",
+            "direction": "down",
+            "delta_prompts": -184,
+            "prev_prompts": 227,
+            "curr_prompts": 43,
+            "magnitude": 184
+          },
+          {
+            "date": "2026-04-04",
+            "type": "prompt_shift",
+            "direction": "up",
+            "delta_prompts": 157,
+            "prev_prompts": 70,
+            "curr_prompts": 227,
+            "magnitude": 157
+          },
           {
             "date": "2026-04-01",
             "type": "prompt_shift",
@@ -18763,15 +19379,6 @@
             "magnitude": 45
           },
           {
-            "date": "2026-04-02",
-            "type": "prompt_shift",
-            "direction": "down",
-            "delta_prompts": -37,
-            "prev_prompts": 97,
-            "curr_prompts": 60,
-            "magnitude": 37
-          },
-          {
             "date": "2026-03-31",
             "type": "prompt_shift",
             "direction": "down",
@@ -18786,38 +19393,38 @@
         "intent": {
           "method": "deterministic_rules_v1",
           "counts": {
-            "other": 197,
-            "explanation_learning": 34,
-            "build_feature": 31,
-            "analysis_research": 19,
-            "debug_fix": 13,
-            "ops_commands": 13,
-            "planning_strategy": 11
+            "other": 427,
+            "build_feature": 75,
+            "explanation_learning": 59,
+            "analysis_research": 52,
+            "planning_strategy": 25,
+            "debug_fix": 22,
+            "ops_commands": 20
           },
           "rates_pct": {
-            "other": 61.9,
-            "explanation_learning": 10.7,
-            "build_feature": 9.7,
-            "analysis_research": 6,
-            "debug_fix": 4.1,
-            "ops_commands": 4.1,
-            "planning_strategy": 3.5
+            "other": 62.8,
+            "build_feature": 11,
+            "explanation_learning": 8.7,
+            "analysis_research": 7.6,
+            "planning_strategy": 3.7,
+            "debug_fix": 3.2,
+            "ops_commands": 2.9
           },
           "top_intents": [
             {
               "intent": "other",
-              "count": 197,
-              "rate_pct": 61.9
-            },
-            {
-              "intent": "explanation_learning",
-              "count": 34,
-              "rate_pct": 10.7
+              "count": 427,
+              "rate_pct": 62.8
             },
             {
               "intent": "build_feature",
-              "count": 31,
-              "rate_pct": 9.7
+              "count": 75,
+              "rate_pct": 11
+            },
+            {
+              "intent": "explanation_learning",
+              "count": 59,
+              "rate_pct": 8.7
             }
           ],
           "confidence": {
@@ -18828,26 +19435,26 @@
         },
         "vibe_coder_index": {
           "method": "embedding_similarity_v1",
-          "avg_score": 62.7,
+          "avg_score": 61.9,
           "confidence": {
             "mean": 0.69,
-            "min": 0.36,
+            "min": 0.34,
             "max": 1
           }
         },
         "politeness": {
           "method": "embedding_similarity_v1",
-          "avg_score": 44.3,
+          "avg_score": 44.1,
           "confidence": {
-            "mean": 0.84,
-            "min": 0.49,
+            "mean": 0.83,
+            "min": 0.48,
             "max": 0.99
           }
         }
       },
       "date_range": {
         "first": "2026-03-25T07:37:30.741Z",
-        "last": "2026-04-03T05:57:09.250Z"
+        "last": "2026-04-06T05:23:54.539Z"
       },
       "persona": {
         "name": "The Commander",
@@ -18858,190 +19465,190 @@
           "Efficient",
           "Decisive"
         ],
-        "detail_score": 46.1,
-        "style_score": 49.7
+        "detail_score": 47.4,
+        "style_score": 49.1
       },
       "vibe_explanation": [
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": -0.551,
+          "contribution": -0.543,
           "stat": "14% of prompts"
         },
         {
-          "feature": "task_generate_count",
-          "label": "Generation tasks",
-          "contribution": -0.197,
-          "stat": "avg 0.1 per prompt"
-        },
-        {
-          "feature": "constraint_count",
-          "label": "Constraints/requirements",
-          "contribution": 0.189,
-          "stat": "avg 0.4 per prompt"
+          "feature": "has_numbered_list",
+          "label": "Structured requirements",
+          "contribution": -0.226,
+          "stat": "7% of prompts"
         },
         {
           "feature": "code_ratio",
           "label": "Code-heavy content",
-          "contribution": 0.175,
+          "contribution": 0.174,
           "stat": "0% code characters"
+        },
+        {
+          "feature": "task_generate_count",
+          "label": "Generation tasks",
+          "contribution": -0.151,
+          "stat": "avg 0.2 per prompt"
         }
       ],
       "politeness_explanation": [
         {
           "feature": "is_terse",
           "label": "Very short prompts",
-          "contribution": -0.604,
-          "stat": "20% of prompts"
+          "contribution": -0.545,
+          "stat": "19% of prompts"
         },
         {
           "feature": "is_single_token",
           "label": "Single-word prompts",
-          "contribution": 0.52,
+          "contribution": 0.53,
           "stat": "14% of prompts"
         },
         {
           "feature": "is_neutral_tone",
           "label": "Neutral tone",
-          "contribution": -0.438,
-          "stat": "56% of prompts"
+          "contribution": -0.358,
+          "stat": "57% of prompts"
         },
         {
-          "feature": "word_count",
-          "label": "Prompt length",
-          "contribution": 0.289,
-          "stat": "avg 51 words/prompt"
+          "feature": "list_marker_count",
+          "label": "Bullet/numbered lists",
+          "contribution": 0.269,
+          "stat": "avg 2.1 per prompt"
         }
       ],
       "linguistics": {
         "top_phrases": [
           {
             "phrase": "context restore",
-            "count": 73,
-            "pct": 23
+            "count": 152,
+            "pct": 22.4
           },
           {
             "phrase": "context file",
-            "count": 58,
-            "pct": 18.2
+            "count": 119,
+            "pct": 17.5
           },
           {
             "phrase": "saved context",
-            "count": 48,
-            "pct": 15.1
+            "count": 100,
+            "pct": 14.7
           },
           {
-            "phrase": "var folders",
-            "count": 44,
-            "pct": 13.8
-          },
-          {
-            "phrase": "folders wdr",
-            "count": 44,
-            "pct": 13.8
-          },
-          {
-            "phrase": "wdr kvphrlw",
-            "count": 44,
-            "pct": 13.8
-          },
-          {
-            "phrase": "kvphrlw clipboard",
-            "count": 44,
-            "pct": 13.8
+            "phrase": "right now",
+            "count": 87,
+            "pct": 12.8
           },
           {
             "phrase": "agent skills",
-            "count": 36,
-            "pct": 11.3
+            "count": 76,
+            "pct": 11.2
+          },
+          {
+            "phrase": "var folders",
+            "count": 76,
+            "pct": 11.2
+          },
+          {
+            "phrase": "folders wdr",
+            "count": 76,
+            "pct": 11.2
+          },
+          {
+            "phrase": "wdr kvphrlw",
+            "count": 76,
+            "pct": 11.2
+          },
+          {
+            "phrase": "kvphrlw clipboard",
+            "count": 76,
+            "pct": 11.2
           },
           {
             "phrase": "users eeshans",
-            "count": 32,
-            "pct": 10.1
+            "count": 72,
+            "pct": 10.6
           },
           {
             "phrase": "eeshans agent",
-            "count": 30,
-            "pct": 9.4
-          },
-          {
-            "phrase": "skills context",
-            "count": 30,
-            "pct": 9.4
+            "count": 70,
+            "pct": 10.3
           },
           {
             "phrase": "codex context",
-            "count": 30,
-            "pct": 9.4
+            "count": 67,
+            "pct": 9.9
+          },
+          {
+            "phrase": "skills context",
+            "count": 66,
+            "pct": 9.7
           },
           {
             "phrase": "git log",
-            "count": 27,
+            "count": 58,
             "pct": 8.5
           },
           {
-            "phrase": "current codebase",
-            "count": 24,
-            "pct": 7.5
-          },
-          {
-            "phrase": "key docs",
-            "count": 24,
-            "pct": 7.5
+            "phrase": "context save",
+            "count": 57,
+            "pct": 8.4
           }
         ],
         "openers": {
-          "question": 39,
-          "directive": 2,
-          "context": 49,
-          "greeting": 5,
-          "affirmation": 85,
-          "other": 138
+          "question": 85,
+          "directive": 6,
+          "context": 101,
+          "greeting": 9,
+          "affirmation": 160,
+          "other": 319
         },
         "length_histogram": [
           {
             "label": "1–5",
-            "count": 68
+            "count": 138
           },
           {
             "label": "6–15",
-            "count": 53
+            "count": 132
           },
           {
             "label": "16–30",
-            "count": 63
+            "count": 121
           },
           {
             "label": "31–60",
-            "count": 68
+            "count": 128
           },
           {
             "label": "61–100",
-            "count": 29
+            "count": 56
           },
           {
             "label": "100+",
-            "count": 37
+            "count": 105
           }
         ],
         "source_comparison": {
           "pi": {
-            "prompts": 318,
-            "avg_words": 51.1,
-            "question_pct": 24.2,
-            "code_block_pct": 5,
-            "terse_pct": 28.3
+            "prompts": 680,
+            "avg_words": 62.6,
+            "question_pct": 22.6,
+            "code_block_pct": 5.3,
+            "terse_pct": 29
           }
         }
       },
       "normalized": {
-        "vibe_index": 37.3,
-        "politeness": 44.3
+        "vibe_index": 38.1,
+        "politeness": 44.1
       }
     },
     "opencode": {
-      "generated_at": "2026-04-03T05:59:00.887Z",
+      "generated_at": "2026-04-06T05:24:43.512Z",
       "volume": {
         "total_messages": 158,
         "total_human": 71,
