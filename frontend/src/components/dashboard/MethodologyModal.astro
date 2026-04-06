@@ -1,5 +1,5 @@
 ---
-// Methodology modal: snap-scroll methodology guide with persona explorer
+// Methodology modal: two-page snap-scroll — methodology poster + persona explorer
 ---
 <div class="modal-overlay" id="methodologyModal" role="dialog" aria-modal="true" aria-labelledby="methodologyTitle">
   <div class="meth-modal">
@@ -14,6 +14,7 @@
           <div class="meth-header-sub">How your prompting profile is built</div>
         </div>
       </div>
+      <div class="meth-header-right">From raw chats to your <em>prompting profile</em></div>
       <button class="modal-close" onclick="closeMethodology()" aria-label="Close methodology modal">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -24,93 +25,152 @@
     <!-- Snap-scroll container -->
     <div class="meth-scroll" id="methScroll">
 
-      <!-- S1: Intro + Pipeline -->
+      <!-- S1: Combined Methodology Poster -->
       <section class="meth-snap meth-s1" data-meth-section="0">
-        <div class="meth-s1-inner">
-          <div class="meth-hero">
-            <div class="meth-hero-kicker meth-reveal">🔬 Methodology</div>
-            <h1 class="meth-reveal d1">From raw chats to your <em>prompting profile</em></h1>
-            <p class="meth-hero-sub meth-reveal d2">Your prompts never leave your machine. On-device feature extraction and behavioral analysis turn them into a profile that captures how you prompt.</p>
-          </div>
-
-          <div class="meth-pipeline-wrap meth-reveal d3">
-            <div class="meth-rule">The Pipeline</div>
-            <div class="meth-process">
-              <div class="meth-step">
-                <div class="meth-step-icon">📥</div>
-                <h3>Collect</h3>
-                <p>Read local histories from Claude Code, Codex, Copilot Chat, Cursor, and LM Studio.</p>
+        <div class="meth-poster">
+          <!-- Pipeline strip -->
+          <div class="meth-pipe meth-reveal d1">
+            <div class="meth-pipe-label">Processing Pipeline</div>
+            <div class="meth-pipe-row">
+              <div class="meth-pipe-cell">
+                <div class="meth-pipe-icon">📥</div>
+                <div class="meth-pipe-text">
+                  <h4>Collect</h4>
+                  <p>Read local JSONL from coding agents</p>
+                  <span class="meth-pipe-detail">Claude Code · Codex · Copilot Chat · Cursor · LM Studio</span>
+                </div>
               </div>
-              <div class="meth-step">
-                <div class="meth-step-icon">🔍</div>
-                <h3>Filter</h3>
-                <p>Keep human-authored prompts. Remove system messages, tool output, and assistant text.</p>
+              <div class="meth-pipe-cell">
+                <div class="meth-pipe-icon">🔍</div>
+                <div class="meth-pipe-text">
+                  <h4>Filter</h4>
+                  <p>Human-authored prompts only</p>
+                  <span class="meth-pipe-detail">Strip system, tool output, assistant text</span>
+                </div>
               </div>
-              <div class="meth-step">
-                <div class="meth-step-icon">📐</div>
-                <h3>Score</h3>
-                <p>Extract 38 features per prompt — length, structure, tone markers, code patterns — and score with calibrated logistic regression. No model download needed.</p>
+              <div class="meth-pipe-cell">
+                <div class="meth-pipe-icon">📐</div>
+                <div class="meth-pipe-text">
+                  <h4>Extract</h4>
+                  <p>38 regex features per prompt</p>
+                  <span class="meth-pipe-detail">Length · structure · tone · code · interaction moves</span>
+                </div>
               </div>
-              <div class="meth-step">
-                <div class="meth-step-icon">🧭</div>
-                <h3>Classify</h3>
-                <p>Two axes — Detail Level and Communication Style — place you on a 2×2 grid validated on 21k prompts.</p>
+              <div class="meth-pipe-cell">
+                <div class="meth-pipe-icon">🧭</div>
+                <div class="meth-pipe-text">
+                  <h4>Score</h4>
+                  <p>Logistic regression classifier</p>
+                  <span class="meth-pipe-detail">Weighted feature sums → sigmoid → 0–100 per axis</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="meth-scroll-hint meth-reveal d4">
-            <span>Scroll</span>
-            <div class="meth-scroll-arrow"></div>
+          <!-- Two-column body -->
+          <div class="meth-poster-body meth-reveal d2">
+            <!-- Left column -->
+            <div class="meth-poster-left">
+              <!-- Feature importance -->
+              <div class="meth-panel">
+                <div class="meth-panel-label">Feature Importance — Top Coefficients</div>
+                <div class="meth-feat-grid">
+                  <div>
+                    <div class="meth-feat-group"><span class="meth-feat-dot" style="background:#5c3d2e"></span> Vibe Coder Index</div>
+                    <div class="meth-feat-rows">
+                      <div class="meth-feat-row"><span class="meth-feat-name">Terse prompts</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:100%;background:#5c3d2e"></div></div><span class="meth-feat-val">.70</span></div>
+                      <div class="meth-feat-row"><span class="meth-feat-name">Numbered lists</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:90%;background:#5c3d2e"></div></div><span class="meth-feat-val">.63</span></div>
+                      <div class="meth-feat-row"><span class="meth-feat-name">Constraints</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:81%;background:#5c3d2e"></div></div><span class="meth-feat-val">.57</span></div>
+                      <div class="meth-feat-row"><span class="meth-feat-name">Corrections</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:73%;background:#5c3d2e"></div></div><span class="meth-feat-val">.51</span></div>
+                      <div class="meth-feat-row"><span class="meth-feat-name">Directives</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:71%;background:#5c3d2e"></div></div><span class="meth-feat-val">.50</span></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="meth-feat-group"><span class="meth-feat-dot" style="background:#8a5d73"></span> Politeness</div>
+                    <div class="meth-feat-rows">
+                      <div class="meth-feat-row"><span class="meth-feat-name">Frustration</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:100%;background:#8a5d73"></div></div><span class="meth-feat-val">1.04</span></div>
+                      <div class="meth-feat-row"><span class="meth-feat-name">"Please" usage</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:77%;background:#8a5d73"></div></div><span class="meth-feat-val">.80</span></div>
+                      <div class="meth-feat-row"><span class="meth-feat-name">Terse prompts</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:73%;background:#8a5d73"></div></div><span class="meth-feat-val">.76</span></div>
+                      <div class="meth-feat-row"><span class="meth-feat-name">Neutral tone</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:71%;background:#8a5d73"></div></div><span class="meth-feat-val">.74</span></div>
+                      <div class="meth-feat-row"><span class="meth-feat-name">Message length</span><div class="meth-feat-bar"><div class="meth-feat-fill" style="width:62%;background:#8a5d73"></div></div><span class="meth-feat-val">.65</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Metrics + Calibration combined -->
+              <div class="meth-panel">
+                <div class="meth-panel-label">Metrics & Validation</div>
+                <div class="meth-metrics-grid">
+                  <div class="meth-metric-cell">
+                    <div class="meth-metric-cat">Volume</div>
+                    <div class="meth-metric-item">Prompts · Convos · Words</div>
+                  </div>
+                  <div class="meth-metric-cell">
+                    <div class="meth-metric-cat">Temporal</div>
+                    <div class="meth-metric-item">Weekly · Peak hr · Night owl</div>
+                  </div>
+                  <div class="meth-metric-cell">
+                    <div class="meth-metric-cat">Style</div>
+                    <div class="meth-metric-item">Vibe · Politeness (0–100)</div>
+                  </div>
+                  <div class="meth-metric-cell">
+                    <div class="meth-metric-cat">Persona</div>
+                    <div class="meth-metric-item">Detail · Comm style (0–100)</div>
+                  </div>
+                </div>
+                <ul class="meth-val-list">
+                  <li>38 regex features per prompt — no model downloads at runtime</li>
+                  <li>Logistic regression on 1,000 human-labeled prompts (5-point scale)</li>
+                  <li>Validated on 21k prompts from WildChat, OpenAssistant, Copilot Chat</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Right column — persona distribution -->
+            <div class="meth-poster-right">
+              <div class="meth-panel meth-persona-dist">
+                <div class="meth-panel-label">Persona Distribution — 21k Prompts</div>
+                <div class="meth-dist-wrap">
+                  <svg viewBox="0 0 280 280" preserveAspectRatio="xMidYMid meet">
+                    <line x1="140" y1="16" x2="140" y2="254" stroke="rgba(92,61,46,.15)" stroke-width=".5" stroke-dasharray="3,3"/>
+                    <line x1="16" y1="135" x2="264" y2="135" stroke="rgba(92,61,46,.15)" stroke-width=".5" stroke-dasharray="3,3"/>
+                    <rect x="16" y="16" width="120" height="115" rx="10" fill="rgba(92,61,46,.05)" stroke="rgba(92,61,46,.1)" stroke-width=".5"/>
+                    <rect x="144" y="16" width="120" height="115" rx="10" fill="rgba(92,61,46,.06)" stroke="rgba(92,61,46,.1)" stroke-width=".5"/>
+                    <rect x="16" y="139" width="120" height="115" rx="10" fill="rgba(92,61,46,.03)" stroke="rgba(92,61,46,.1)" stroke-width=".5"/>
+                    <rect x="144" y="139" width="120" height="115" rx="10" fill="rgba(92,61,46,.04)" stroke="rgba(92,61,46,.1)" stroke-width=".5"/>
+                    <ellipse cx="52" cy="72" rx="28" ry="14" fill="rgba(92,61,46,.10)"/>
+                    <ellipse cx="68" cy="58" rx="38" ry="30" fill="rgba(92,61,46,.06)"/>
+                    <ellipse cx="210" cy="52" rx="32" ry="34" fill="rgba(92,61,46,.06)"/>
+                    <ellipse cx="225" cy="40" rx="20" ry="24" fill="rgba(92,61,46,.09)"/>
+                    <ellipse cx="55" cy="200" rx="20" ry="16" fill="rgba(92,61,46,.05)"/>
+                    <ellipse cx="210" cy="195" rx="24" ry="18" fill="rgba(92,61,46,.05)"/>
+                    <rect x="20" y="125" width="240" height="20" rx="10" fill="rgba(92,61,46,.04)"/>
+                    <text x="76" y="34" text-anchor="middle" font-family="Fraunces" font-size="11" font-weight="700" fill="var(--accent,#5c3d2e)">The Partner</text>
+                    <text x="76" y="47" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="var(--muted,#8a7d6f)">42%</text>
+                    <text x="76" y="58" text-anchor="middle" font-family="DM Sans" font-size="7.5" fill="var(--muted,#a09080)">Brief + Collaborative</text>
+                    <text x="204" y="34" text-anchor="middle" font-family="Fraunces" font-size="11" font-weight="700" fill="var(--accent,#5c3d2e)">The Explorer</text>
+                    <text x="204" y="47" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="var(--muted,#8a7d6f)">41%</text>
+                    <text x="204" y="58" text-anchor="middle" font-family="DM Sans" font-size="7.5" fill="var(--muted,#a09080)">Detailed + Collaborative</text>
+                    <text x="76" y="160" text-anchor="middle" font-family="Fraunces" font-size="11" font-weight="700" fill="var(--accent,#5c3d2e)">The Commander</text>
+                    <text x="76" y="173" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="var(--muted,#8a7d6f)">8%</text>
+                    <text x="76" y="184" text-anchor="middle" font-family="DM Sans" font-size="7.5" fill="var(--muted,#a09080)">Brief + Directive</text>
+                    <text x="204" y="160" text-anchor="middle" font-family="Fraunces" font-size="11" font-weight="700" fill="var(--accent,#5c3d2e)">The Architect</text>
+                    <text x="204" y="173" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" fill="var(--muted,#8a7d6f)">9%</text>
+                    <text x="204" y="184" text-anchor="middle" font-family="DM Sans" font-size="7.5" fill="var(--muted,#a09080)">Detailed + Directive</text>
+                    <text x="140" y="272" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--muted,#8a7d6f)">← Brief · Detail Level · Detailed →</text>
+                    <text transform="rotate(-90 10 135)" x="10" y="135" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--muted,#8a7d6f)">← Directive · Comm Style · Collab →</text>
+                    <text x="264" y="272" text-anchor="end" font-family="JetBrains Mono" font-size="7" fill="var(--muted,#a09080)">n = 20,981</text>
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- S2: What Gets Measured -->
-      <section class="meth-snap meth-s2" data-meth-section="1">
-        <div class="meth-s2-inner">
-          <div class="meth-s2-header meth-reveal">
-            <h2>What Gets Measured</h2>
-            <p>Style scores use on-device feature extraction with learned weights. Persona axes use behavioral patterns validated on 21k prompts from open research datasets (WildChat, OpenAssistant).</p>
-          </div>
-
-          <div class="meth-taste-grid">
-            <div class="meth-taste-card meth-reveal d1" style="--tc:#5c3d2e">
-              <div class="meth-taste-cat">Volume</div>
-              <div class="meth-taste-list">
-                <div class="meth-taste-item"><span class="meth-taste-name">Prompts</span><span class="meth-taste-note">Total messages</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Conversations</span><span class="meth-taste-note">Distinct threads</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Words</span><span class="meth-taste-note">Total typed</span></div>
-              </div>
-            </div>
-            <div class="meth-taste-card meth-reveal d2" style="--tc:#7b5a42">
-              <div class="meth-taste-cat">Timing</div>
-              <div class="meth-taste-list">
-                <div class="meth-taste-item"><span class="meth-taste-name">Peak hour</span><span class="meth-taste-note">Most active time</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Night owl</span><span class="meth-taste-note">11pm–4am share</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Trend</span><span class="meth-taste-note">Volume over time</span></div>
-              </div>
-            </div>
-            <div class="meth-taste-card meth-reveal d3" style="--tc:#a08060">
-              <div class="meth-taste-cat">Style</div>
-              <div class="meth-taste-list">
-                <div class="meth-taste-item"><span class="meth-taste-name">Vibe Index</span><span class="meth-taste-note">Vibes vs. specs</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Politeness</span><span class="meth-taste-note">Tone warmth</span></div>
-              </div>
-            </div>
-            <div class="meth-taste-card meth-reveal d4" style="--tc:#c4a882">
-              <div class="meth-taste-cat">Persona Axes</div>
-              <div class="meth-taste-list">
-                <div class="meth-taste-item"><span class="meth-taste-name">Detail Level</span><span class="meth-taste-note">Prompt depth</span></div>
-                <div class="meth-taste-item"><span class="meth-taste-name">Comm Style</span><span class="meth-taste-note">How you direct</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- S3: Persona Explorer -->
-      <section class="meth-snap meth-s3" data-meth-section="2">
+      <!-- S2: Persona Explorer (was S3) -->
+      <section class="meth-snap meth-s3" data-meth-section="1">
         <div class="meth-s3-inner">
           <div class="meth-s3-header meth-reveal">
             <h2>The 4 Personas</h2>
@@ -127,11 +187,10 @@
 
     <!-- Bottom bar -->
     <div class="meth-bottom">
-      <span class="meth-bottom-note">🔒 Fully local — no data leaves your machine.</span>
+      <span class="meth-bottom-note">🔒 Fully local — no data leaves your machine. No model downloads. No API calls.</span>
       <div class="meth-dot-nav" id="methDotNav">
         <button class="meth-dot active" data-meth-idx="0"></button>
         <button class="meth-dot" data-meth-idx="1"></button>
-        <button class="meth-dot" data-meth-idx="2"></button>
       </div>
     </div>
   </div>
@@ -140,16 +199,13 @@
 <script>
 (function() {
   const IMG = '/images/';
-  // Persona UX copy — intentionally more casual than pipeline definitions in
-  // src/pipeline/style.ts. Names and keys must stay in sync; descriptions
-  // are tailored for the modal context (signature prompts, one-liners).
   const personas = [
     { key:'commander', img:IMG+'char_commander.png', name:'The Commander',
       badge:'Brief + Directive', trait:'Direct, efficient, decisive',
       accent:'#41608e', accentDark:'#7da4d4',
       gradient:'linear-gradient(160deg,#d4dde8,#c2cedd)',
       gradientDark:'linear-gradient(160deg,#222830,#1a2028)',
-      desc:'You give precise orders in short bursts. No wasted words, no hand-holding — you know exactly what you want and expect the AI to deliver it on the first try.',
+      desc:'You give precise orders in short bursts. No wasted words, no hand-holding \u2014 you know exactly what you want and expect the AI to deliver it on the first try.',
       prompt:'\u201CPatch this regression, keep the API stable, and show me the exact files changed.\u201D',
       liner:'You prefer decisive progress over collaborative wandering.',
       axes:{'Detail Level':30,'Communication Style':25} },
@@ -176,7 +232,7 @@
       accent:'#3f7a6e', accentDark:'#6abfae',
       gradient:'linear-gradient(160deg,#d4e8e3,#c2ddd6)',
       gradientDark:'linear-gradient(160deg,#222e2b,#1a2624)',
-      desc:'You bring context and ask questions. Every conversation is an investigation — you explain what you\u2019re thinking, ask for alternatives, and dig into the details together.',
+      desc:'You bring context and ask questions. Every conversation is an investigation \u2014 you explain what you\u2019re thinking, ask for alternatives, and dig into the details together.',
       prompt:'\u201CCompare these three approaches, surface tradeoffs, and tell me what an experienced engineer would worry about.\u201D',
       liner:'You use the model as an idea space, not just a task runner.',
       axes:{'Detail Level':80,'Communication Style':75} }
@@ -257,15 +313,12 @@
     if (btn) selectPersona(btn.dataset.pkey);
   });
 
-  // Initial render
   renderList();
   renderDetail('commander', false);
 
-  // Re-render on theme change to swap accent colors
   const themeObs = new MutationObserver(() => { renderList(); renderDetail(activeKey, false); });
   themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
-  // Intersection Observer for reveals
   const scroll = document.getElementById('methScroll');
   if (!scroll) return;
   const obs = new IntersectionObserver(entries => {
@@ -273,7 +326,6 @@
   }, { threshold: 0.1, root: scroll });
   scroll.querySelectorAll('.meth-reveal').forEach(el => obs.observe(el));
 
-  // Scroll progress + dot nav
   const sections = scroll.querySelectorAll('[data-meth-section]');
   const dots = document.querySelectorAll('.meth-dot');
   const pf = document.getElementById('methProgressFill');
@@ -294,7 +346,6 @@
     sections[idx]?.scrollIntoView({ behavior:'smooth' });
   }));
 
-  // Reset scroll position when modal opens
   const modal = document.getElementById('methodologyModal');
   if (modal) {
     const mo = new MutationObserver((mutations) => {
@@ -303,7 +354,6 @@
           scroll.scrollTop = 0;
           if (pf) pf.style.width = '0%';
           dots.forEach((d, i) => d.classList.toggle('active', i === 0));
-          // Re-trigger reveals
           scroll.querySelectorAll('.meth-reveal').forEach(el => el.classList.remove('vis'));
           setTimeout(() => {
             scroll.querySelectorAll('.meth-reveal').forEach(el => obs.observe(el));

@@ -89,6 +89,7 @@ import SideQuestNotch from '../components/SideQuestNotch.astro';
           <!-- Player card -->
           <div class="player-card" id="playerCard">
             <div class="card-top" id="cardTop">
+              <button class="other-personas-pill" onclick="openPersonaExplorer()" aria-label="View other personas">Other Personas</button>
               <div class="card-top-content">
                 <div class="persona-name" id="personaName">--</div>
                 <div class="donut-grid">
@@ -107,8 +108,14 @@ import SideQuestNotch from '../components/SideQuestNotch.astro';
               <p class="persona-desc" id="personaDescription">Loading persona data...</p>
             </div>
             <div class="stat-strip">
-              <div class="stat-block"><div class="stat-num" id="cardVibe">--</div><div class="stat-label">Vibe Coder Index <span class="why-pill" id="whyVibe">why?</span></div><div class="stat-minibar"><div class="stat-minibar-fill b" id="cardVibeBar"></div></div></div>
-              <div class="stat-block"><div class="stat-num" id="cardPolite">--</div><div class="stat-label">Politeness <span class="why-pill" id="whyPolite">why?</span></div><div class="stat-minibar"><div class="stat-minibar-fill r" id="cardPoliteBar"></div></div></div>
+              <div class="stat-block">
+                <div class="stat-inline"><span class="stat-num" id="cardVibe">--</span><span class="stat-label">Vibe Coder Index</span></div>
+                <div class="stat-callout" id="vibeCallout"></div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-inline"><span class="stat-num" id="cardPolite">--</span><span class="stat-label">Politeness</span></div>
+                <div class="stat-callout" id="politeCallout"></div>
+              </div>
             </div>
             <div class="card-foot"><span>howiprompt.eeshans.com</span><span id="cardSerial">#0000</span></div>
           </div>
@@ -139,7 +146,7 @@ import SideQuestNotch from '../components/SideQuestNotch.astro';
 <SetupWizard />
 <SettingsModal />
 
-<div class="why-tip" id="whyTip"></div>
+
 <script src="../scripts/header-ui.js"></script>
 <script src="../scripts/dashboard.js"></script>
 </DashboardLayout>

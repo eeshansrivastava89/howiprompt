@@ -330,6 +330,7 @@ async function saveSettings() {
 
 window.openSettings = openSettings;
 window.closeSettings = closeSettings;
+window.handleRefresh = handleRefresh;
 
 // === Heatmap ===
 

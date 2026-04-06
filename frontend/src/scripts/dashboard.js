@@ -76,8 +76,25 @@ function renderPlayerCard(persona, nlp, politeness, view) {
     const el = (id) => document.getElementById(id);
     if (el('cardVibe')) el('cardVibe').textContent = vibeScore != null ? Math.round(vibeScore) : '--';
     if (el('cardPolite')) el('cardPolite').textContent = politeScore != null ? Math.round(politeScore) : '--';
-    if (el('cardVibeBar')) el('cardVibeBar').style.width = `${Math.min(vibeScore ?? 0, 100)}%`;
-    if (el('cardPoliteBar')) el('cardPoliteBar').style.width = `${Math.min(politeScore, 100)}%`;
+
+    // Callout text for vibe
+    const vibeCallout = el('vibeCallout');
+    if (vibeCallout && vibeScore != null) {
+        const v = Math.round(vibeScore);
+        vibeCallout.textContent = v >= 70 ? 'Pure vibes — you trust the AI and let it run.'
+            : v >= 50 ? 'More vibes than specs — you guide loosely.'
+            : v >= 30 ? 'Engineer-leaning — you write specs, not wishes.'
+            : 'All specs, no vibes — precise and structured.';
+    }
+    // Callout text for politeness
+    const politeCallout = el('politeCallout');
+    if (politeCallout && politeScore != null) {
+        const p = Math.round(politeScore);
+        politeCallout.textContent = p >= 70 ? 'Very courteous — please and thank you, every time.'
+            : p >= 50 ? 'Warm but efficient — polite without overdoing it.'
+            : p >= 30 ? 'Direct and to the point — no filler.'
+            : 'All business — skip the pleasantries, ship the code.';
+    }
 
     const serial = el('cardSerial');
     if (serial) {
@@ -85,12 +102,7 @@ function renderPlayerCard(persona, nlp, politeness, view) {
         serial.textContent = `#${hash}`;
     }
 
-    // Store explanation text for tooltip
-    const fmtWhy = (entries) => (entries || []).map(e => {
-        const arrow = e.contribution > 0 ? '\u2191' : '\u2193';
-        return `${arrow} ${e.label}: ${e.stat}`;
-    }).join('\n') || 'Not enough data';
-    window._whyText = { vibe: fmtWhy(view.vibe_explanation), politeness: fmtWhy(view.politeness_explanation) };
+
 
 }
 
@@ -828,8 +840,20 @@ function closeMethodology() {
     }
 }
 
+function openPersonaExplorer() {
+    openMethodology();
+    // The modal's MutationObserver resets scrollTop=0 synchronously;
+    // schedule our scroll after that reset completes.
+    requestAnimationFrame(() => {
+        const scroll = document.getElementById('methScroll');
+        const target = scroll?.querySelector('[data-meth-section="1"]');
+        if (target) target.scrollIntoView({ behavior: 'instant' });
+    });
+}
+
 window.openMethodology = openMethodology;
 window.closeMethodology = closeMethodology;
+window.openPersonaExplorer = openPersonaExplorer;
 
 // === Settings modal ===
 
@@ -999,6 +1023,7 @@ async function saveSettings() {
 
 window.openSettings = openSettings;
 window.closeSettings = closeSettings;
+window.handleRefresh = handleRefresh;
 
 document.getElementById('settingsAddExclusion')?.addEventListener('click', () => pickAndAddExclusion('settingsExclusionChips'));
 document.getElementById('settingsSave')?.addEventListener('click', saveSettings);
@@ -1019,40 +1044,6 @@ document.getElementById('settingsModal')?.addEventListener('click', (e) => {
 document.getElementById('methodologyModal')?.addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeMethodology();
 });
-
-// Why tooltip
-(function() {
-    const tip = document.getElementById('whyTip');
-    if (!tip) return;
-    const show = (pill, key) => {
-        const text = window._whyText?.[key];
-        if (!text) return;
-        tip.textContent = text;
-        tip.style.opacity = '0';
-        tip.style.left = '0';
-        tip.style.top = '0';
-        // Force layout so offsetWidth is correct
-        void tip.offsetWidth;
-        const rect = pill.getBoundingClientRect();
-        const tipW = tip.offsetWidth;
-        const tipH = tip.offsetHeight;
-        let left = rect.left + rect.width / 2 - tipW / 2;
-        // Clamp to viewport
-        left = Math.max(8, Math.min(left, window.innerWidth - tipW - 8));
-        const top = rect.top - tipH - 10;
-        tip.style.left = left + 'px';
-        tip.style.top = top + 'px';
-        tip.style.opacity = '1';
-    };
-    const hide = () => { tip.style.opacity = '0'; };
-    ['whyVibe', 'whyPolite'].forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        const key = id === 'whyVibe' ? 'vibe' : 'politeness';
-        el.addEventListener('mouseenter', () => show(el, key));
-        el.addEventListener('mouseleave', hide);
-    });
-})();
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { closeMethodology(); closeSettings(); }
@@ -1666,6 +1657,7 @@ async function init() {
     fixLocalLinks();
     initCardTilt();
 
+
     // Re-render trend chart on theme toggle
     document.getElementById('themeToggle')?.addEventListener('click', () => {
         requestAnimationFrame(() => {
@@ -1675,7 +1667,7 @@ async function init() {
 
     // Check if wizard is needed
     const wizardActive = await initWizard();
-    if (wizardActive) return;
+    if (wizardActive) { window._wizardActive = true; return; }
 
     fetchDetectedBackends({ useCache: true }).catch(() => {});
 
@@ -1698,4 +1690,54 @@ async function init() {
     }
 }
 
-init();
+init().then(() => {
+    // Show onboarding overlay on first visit
+    if (!localStorage.getItem('howiprompt-onboarded') && !window._wizardActive) {
+        setTimeout(() => showOnboarding(), 600);
+    }
+});
+
+function showOnboarding() {
+    if (!window.driver?.js?.driver) return;
+
+    const allSteps = [
+        { element: '#sourceBar',      popover: { title: '① Source',          description: 'Choose which coding agent backends to display.', side: 'bottom', align: 'start' } },
+        { element: '#metricTabs',     popover: { title: '② Metric',          description: 'Switch between Activity, Vibe Score, and Politeness.', side: 'bottom', align: 'start' } },
+        { element: '#wrappedLink',    popover: { title: '③ Wrapped',         description: 'View a Spotify Wrapped\u2013style report of your prompting habits.', side: 'bottom', align: 'center' } },
+        { element: '#createToggle',   popover: { title: '④ Create Your Own', description: 'Deploy this dashboard on your own GitHub Pages.', side: 'bottom', align: 'center' } },
+        { element: '#methodologyBtn', popover: { title: '⑤ Methodology',     description: 'The data science and research behind every score.', side: 'bottom', align: 'center' } },
+        { element: '#refreshBtn',     popover: { title: '⑥ Refresh',         description: 'Re-run the pipeline to pick up any new chats.', side: 'left', align: 'start' } },
+    ];
+
+    // Only include steps whose target element is visible
+    const steps = allSteps.filter(s => {
+        const el = document.querySelector(s.element);
+        return el && el.offsetParent !== null && getComputedStyle(el).display !== 'none';
+    });
+
+    // Re-number the visible steps
+    const circled = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+    steps.forEach((s, i) => {
+        const baseTitle = s.popover.title.replace(/^[①-⑩]\s*/, '');
+        s.popover.title = `${circled[i]} ${baseTitle}`;
+    });
+
+    if (steps.length === 0) return;
+
+    const driverObj = window.driver.js.driver({
+        showProgress: true,
+        animate: true,
+        overlayColor: 'rgba(0,0,0,.55)',
+        stagePadding: 8,
+        stageRadius: 12,
+        popoverOffset: 12,
+        nextBtnText: 'Next →',
+        prevBtnText: '← Back',
+        doneBtnText: 'Got it!',
+        onDestroyed: () => {
+            localStorage.setItem('howiprompt-onboarded', '1');
+        },
+        steps
+    });
+    driverObj.drive();
+}

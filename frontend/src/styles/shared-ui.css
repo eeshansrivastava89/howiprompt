@@ -10,6 +10,11 @@
 .header-right{display:flex;align-items:center;gap:12px}
 .nav-link,.accent-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--text);text-decoration:none;background:var(--surface);border:1px solid var(--border);border-radius:20px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
 .nav-link:hover,.accent-link:hover{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 10%, var(--surface))}
+
+/* Golden wrapped button */
+.wrapped-link{background:linear-gradient(135deg,#d4a54a,#c4943e,#b8862e) !important;border-color:#c4943e !important;color:#fff !important;box-shadow:0 2px 8px rgba(196,148,62,.3)}
+.wrapped-link svg{stroke:#fff}
+.wrapped-link:hover{background:linear-gradient(135deg,#e0b35a,#d4a54a,#c4943e) !important;border-color:#d4a54a !important;color:#fff !important;box-shadow:0 3px 12px rgba(196,148,62,.4)}
 .nav-link.is-current,.accent-link.is-current{border-color:color-mix(in srgb,var(--accent) 48%, var(--border));color:var(--accent);background:color-mix(in srgb,var(--accent) 10%, var(--surface))}
 .create-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 35%, var(--border));border-radius:20px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
 .create-btn:hover{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 18%, var(--surface))}
@@ -51,6 +56,7 @@
 .create-bottom-note{font-size:11px;line-height:1.5;color:var(--muted)}
 .theme-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s}
 .theme-btn:hover{border-color:var(--accent);color:var(--accent)}
+
 
 /* Mobile menu: hamburger hidden by default, shown <640px */
 .mobile-menu-btn{display:none}
@@ -131,10 +137,12 @@
 
 @media(max-width:640px){
   .header{padding:10px 16px;gap:6px}
-  .header-right{gap:6px}
+  .header-right{gap:6px;margin-left:auto}
   .header-nav-item{display:none!important}
   .mobile-menu-btn{display:flex}
   .accent-link,.dashboard-link{padding:6px 10px;font-size:12px}
+  .wrapped-link{width:36px;height:36px;padding:0 !important;border-radius:50%;justify-content:center}
+  .wrapped-link-text{display:none}
   .hip-dd-trigger{padding:5px 10px;font-size:11px;gap:5px}
   .hip-dd-ph{font-size:10px}
   .hip-dd-dot{width:6px;height:6px}

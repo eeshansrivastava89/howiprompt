@@ -60,3 +60,4 @@ images/
 *.npz
 tests/screenshots/
 tests/visual-qa.mjs
+.fallow/
