@@ -3,7 +3,7 @@
 // Loads metrics.json via fetch() at runtime.
 
 import { initThemeToggle } from './theme.js';
-import { SOURCE_LABELS, SOURCE_ACCENTS, formatSourceLabel, getSourceDisplayName, formatHour12, formatDateRange, createDropdown } from './shared.js';
+import { SOURCE_KEYS, SOURCE_ACCENTS, formatSourceLabel, getSourceDisplayName, formatHour12, formatDateRange, sourceDisabledReason, createPillGroup } from './shared.js';
 
 let sourceViews = {};
 let activeSourceKey = 'both';
@@ -622,23 +622,34 @@ function initSourceFilter() {
             if (b === 'both') return -1;
             return formatSourceLabel(a).localeCompare(formatSourceLabel(b));
         });
+    const availableSet = new Set(available);
+    const detected = getCachedDetectedBackends();
+    const detectedById = new Map(detected.map((backend) => [backend.id, backend]));
+    const sourceKeys = detected.length > 0
+        ? SOURCE_KEYS.filter((key) => key === 'both' || detectedById.has(key) || availableSet.has(key))
+        : SOURCE_KEYS.filter((key) => availableSet.has(key));
 
-    const items = available.map(key => ({
-        key,
-        label: formatSourceLabel(key),
-        color: SOURCE_ACCENTS[key],
-    }));
+    const items = sourceKeys.map(key => {
+        const info = detectedById.get(key);
+        const reason = key === 'both' ? '' : (sourceDisabledReason(info) || (!availableSet.has(key) ? 'Detected, but no analyzed data yet' : ''));
+        return {
+            key,
+            label: getSourceDisplayName(key, true),
+            color: SOURCE_ACCENTS[key],
+            disabled: key !== 'both' && !availableSet.has(key),
+            reason,
+        };
+    });
 
     let selected = localStorage.getItem('wrapped-source-filter') || '';
-    if (!available.includes(selected)) {
-        selected = available.includes('both') ? 'both' : available[0] || 'both';
+    if (!availableSet.has(selected)) {
+        selected = availableSet.has('both') ? 'both' : available[0] || 'both';
     }
 
-    const dd = createDropdown({
+    const pills = createPillGroup({
         container: sourceBar,
         items,
         selected,
-        placeholder: 'Source',
         onSelect(key) {
             activeSourceKey = key;
             localStorage.setItem('wrapped-source-filter', key);
@@ -646,7 +657,7 @@ function initSourceFilter() {
         },
     });
 
-    dd.select(selected);
+    pills?.select(selected);
 }
 
 // === Methodology modal ===
@@ -730,6 +741,10 @@ async function init() {
     initThemeToggle();
     fixLocalLinks();
     initAnimations();
+
+    fetchDetectedBackends({ useCache: true })
+        .then(() => initSourceFilter())
+        .catch(() => {});
 
     try {
         const response = await fetch('./metrics.json');

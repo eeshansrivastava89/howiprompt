@@ -100,9 +100,11 @@ Then commit and push `docs/`, and enable GitHub Pages from `main` / `docs` in yo
 | **Cursor** | macOS: `~/Library/Application Support/Cursor/…` · Windows: `%APPDATA%\Cursor\…` · Linux: `~/.config/Cursor/…` |
 | **LM Studio** | `~/.lmstudio/conversations` |
 | **Pi** | `~/.pi/agent/sessions` |
-| **OpenCode** | macOS/Linux: `~/.local/share/opencode/storage` · Windows: `%LOCALAPPDATA%\opencode\storage` |
+| **OpenCode** | Current storage: macOS/Linux `~/.local/share/opencode/opencode.db` · Windows `%LOCALAPPDATA%\opencode\opencode.db`; legacy JSON storage also works |
 
-All supported sources are auto-synced into `~/.howiprompt/raw/` and reused across refreshes.
+Supported file-based sources are auto-synced into `~/.howiprompt/raw/` and
+reused across refreshes. Parsed messages and derived metrics are stored in the
+local SQLite database at `~/.howiprompt/data.db`.
 
 ### Backend Status
 

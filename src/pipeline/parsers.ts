@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { createClient } from "@libsql/client";
 import { Message, Platform, Role } from "./models.js";
 import type { CompiledRules } from "./exclusions.js";
 import { shouldExcludeContent, shouldExcludeCwd, shouldExcludeDir } from "./exclusions.js";
@@ -610,7 +611,11 @@ export async function parsePiSessions(sourceDir: string): Promise<Message[]> {
 
 // ── OpenCode ───────────────────────────────────────────
 
-export async function parseOpenCodeSessions(sourceDir: string): Promise<Message[]> {
+export async function parseOpenCodeSessions(sourceDir: string, dbPath?: string): Promise<Message[]> {
+  if (dbPath && fs.existsSync(dbPath)) {
+    return parseOpenCodeDb(dbPath);
+  }
+
   if (!fs.existsSync(sourceDir)) return [];
 
   const messageDir = path.join(sourceDir, "message");
@@ -692,4 +697,69 @@ export async function parseOpenCodeSessions(sourceDir: string): Promise<Message[
   }
 
   return sortMessages(messages);
+}
+
+async function parseOpenCodeDb(dbPath: string): Promise<Message[]> {
+  const client = createClient({ url: `file:${dbPath}` });
+  try {
+    const messageResult = await client.execute(
+      "SELECT id, session_id, time_created, data FROM message ORDER BY time_created",
+    );
+    const partResult = await client.execute(
+      "SELECT message_id, data FROM part ORDER BY time_created, id",
+    );
+
+    const partsByMessage = new Map<string, string[]>();
+    for (const row of partResult.rows) {
+      const messageId = String(row.message_id);
+      const data = safeJsonValue(row.data);
+      if (data?.type !== "text" || typeof data.text !== "string" || !data.text.trim()) continue;
+      const parts = partsByMessage.get(messageId) ?? [];
+      parts.push(data.text);
+      partsByMessage.set(messageId, parts);
+    }
+
+    const messages: Message[] = [];
+    for (const row of messageResult.rows) {
+      const data = safeJsonValue(row.data);
+      if (!data || typeof data.role !== "string") continue;
+
+      const role = data.role === "user" ? Role.HUMAN : data.role === "assistant" ? Role.ASSISTANT : null;
+      if (!role) continue;
+
+      const created = Number(row.time_created ?? data.time?.created);
+      if (!Number.isFinite(created)) continue;
+      const timestamp = new Date(created);
+      if (isNaN(timestamp.getTime())) continue;
+
+      const messageId = String(row.id);
+      const content = (partsByMessage.get(messageId) ?? []).join("\n").trim();
+      if (!content) continue;
+
+      messages.push({
+        timestamp,
+        platform: Platform.OPENCODE,
+        role,
+        content,
+        conversationId: String(row.session_id),
+        wordCount: content.split(/\s+/).filter(Boolean).length,
+        modelId: data.modelID ?? data.model?.modelID,
+        modelProvider: data.providerID ?? data.model?.providerID,
+        sourceFile: `${dbPath}#message/${messageId}`,
+      });
+    }
+
+    return sortMessages(messages);
+  } finally {
+    client.close();
+  }
+}
+
+function safeJsonValue(value: unknown): any {
+  if (typeof value !== "string") return null;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
 }

@@ -2,7 +2,7 @@
 // Loads metrics.json via fetch() at runtime — no build-time data injection.
 
 import { initThemeToggle } from './theme.js';
-import { SOURCE_LABELS, SOURCE_ACCENTS, formatSourceLabel, getSourceDisplayName, formatHour12, formatDateRange, createDropdown } from './shared.js';
+import { SOURCE_LABELS, SOURCE_KEYS, SOURCE_ACCENTS, formatSourceLabel, getSourceDisplayName, formatHour12, formatDateRange, sourceDisabledReason, createPillGroup } from './shared.js';
 let sourceViews = {};
 let defaultSource = 'both';
 let activeSourceKey = 'both';
@@ -196,6 +196,21 @@ function extractTrendPoints(weekly, metricKey) {
     });
 }
 
+function getCanonicalWeekly(view) {
+    const allWeekly = sourceViews?.both?.trends?.weekly_rollups;
+    if (Array.isArray(allWeekly) && allWeekly.length > 0) return allWeekly;
+    return view?.trends?.weekly_rollups || [];
+}
+
+function alignWeeklyRollups(weekly = [], canonicalWeekly = []) {
+    if (!Array.isArray(canonicalWeekly) || canonicalWeekly.length === 0) return weekly || [];
+    const byWeek = new Map((weekly || []).map((w) => [w.week_start || w.date, w]));
+    return canonicalWeekly.map((week) => {
+        const key = week.week_start || week.date;
+        return byWeek.get(key) || { week_start: key, date: key, prompts: 0, nlp: {} };
+    });
+}
+
 function resolveAccent() {
     const platColor = SOURCE_ACCENTS[activeSourceKey];
     if (platColor) return platColor;
@@ -210,7 +225,8 @@ let trendChartInstance = null;
 
 function initTrendChart(view) {
     const trends = view?.trends || {};
-    const weekly = trends?.weekly_rollups || [];
+    const canonicalWeekly = getCanonicalWeekly(view);
+    const weekly = alignWeeklyRollups(trends?.weekly_rollups || [], canonicalWeekly);
     if (weekly.length < 2) return;
 
     const weeklyByPlatform = trends?.weekly_by_platform || {};
@@ -265,10 +281,10 @@ function initTrendChart(view) {
             };
 
             if (isAllView) {
-                const weekKeys = weekly.map((w) => w.week_start);
+                const weekKeys = weekly.map((w) => w.week_start || w.date);
                 entry.platforms = {};
                 for (const [plat, platWeekly] of Object.entries(weeklyByPlatform)) {
-                    const platByWeek = new Map(platWeekly.map((w) => [w.week_start, w]));
+                    const platByWeek = new Map(platWeekly.map((w) => [w.week_start || w.date, w]));
                     const platPoints = weekKeys.map((wk) => {
                         const pw = platByWeek.get(wk);
                         if (!pw) return 0;
@@ -545,17 +561,20 @@ function initTrendChart(view) {
         }, false, false, false);
     }
 
-    // Metric dropdown
+    // Metric pills
     const metricTabsEl = document.getElementById('metricTabs');
     if (metricTabsEl) {
         const metricItems = Object.entries(TREND_METRIC_CONFIG)
             .filter(([k]) => trendData[k])
-            .map(([k, cfg]) => ({ key: k, label: cfg.label }));
-        createDropdown({
+            .map(([k, cfg]) => ({
+                key: k,
+                label: k === 'polite' ? 'Polite' : k === 'vibe' ? 'Vibe' : cfg.label,
+            }));
+        createPillGroup({
             container: metricTabsEl,
             items: metricItems,
             selected: activeTrendMetric,
-            placeholder: 'Metric',
+            className: 'metric-tabs filter-pills',
             onSelect(key) { setMetric(key); },
         });
     }
@@ -784,36 +803,44 @@ function renderView(sourceKey) {
 
 // === Source filter ===
 
-let sourceDropdown = null;
-
 function initSourceFilter() {
     if (!sourceBar) return;
 
-    const available = getAvailableSourceKeys();
-    const items = available.map(key => ({
-        key,
-        label: formatSourceLabel(key),
-        color: SOURCE_ACCENTS[key],
-    }));
+    const available = new Set(getAvailableSourceKeys());
+    const detected = getCachedDetectedBackends();
+    const detectedById = new Map(detected.map((backend) => [backend.id, backend]));
+    const sourceKeys = detected.length > 0
+        ? SOURCE_KEYS.filter((key) => key === 'both' || detectedById.has(key) || available.has(key))
+        : SOURCE_KEYS.filter((key) => available.has(key));
+    const items = sourceKeys.map(key => {
+        const info = detectedById.get(key);
+        const reason = key === 'both' ? '' : (sourceDisabledReason(info) || (!available.has(key) ? 'Detected, but no analyzed data yet' : ''));
+        return {
+            key,
+            label: getSourceDisplayName(key, true),
+            color: SOURCE_ACCENTS[key],
+            disabled: key !== 'both' && !available.has(key),
+            reason,
+        };
+    });
 
     let selected = localStorage.getItem(sourceStorageKey) || defaultSource;
-    if (selected === 'claude' && available.includes('claude_code')) selected = 'claude_code';
-    if (!available.includes(selected)) {
-        selected = available.includes('both') ? 'both' : available[0] || 'both';
+    if (selected === 'claude' && available.has('claude_code')) selected = 'claude_code';
+    if (!available.has(selected)) {
+        selected = available.has('both') ? 'both' : [...available][0] || 'both';
     }
 
-    sourceDropdown = createDropdown({
+    const pills = createPillGroup({
         container: sourceBar,
         items,
         selected,
-        placeholder: 'Source',
         onSelect(key) {
             localStorage.setItem(sourceStorageKey, key);
             renderView(key);
         },
     });
 
-    sourceDropdown.select(selected);
+    pills?.select(selected);
 }
 
 // === Methodology modal ===
@@ -1669,7 +1696,9 @@ async function init() {
     const wizardActive = await initWizard();
     if (wizardActive) { window._wizardActive = true; return; }
 
-    fetchDetectedBackends({ useCache: true }).catch(() => {});
+    fetchDetectedBackends({ useCache: true })
+        .then(() => initSourceFilter())
+        .catch(() => {});
 
     try {
         const response = await fetch('/metrics.json');

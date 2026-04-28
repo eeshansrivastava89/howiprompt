@@ -117,7 +117,24 @@
 
 
   /* ── Source filter pills (shared dashboard + wrapped) ── */
-  .filter-bar{display:flex;gap:8px;padding:8px 24px;border-bottom:1px solid var(--border);flex-shrink:0;align-items:center;flex-wrap:wrap}
+  .filter-bar{display:flex;gap:8px;padding:8px 24px;border-bottom:1px solid var(--border);flex-shrink:0;align-items:center;overflow:visible;scrollbar-width:none}
+  .filter-bar::-webkit-scrollbar{display:none}
+  .filter-pills{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+  .filter-bar .filter-pills{flex-wrap:nowrap}
+  .filter-pill{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 9px;border:1px solid color-mix(in srgb,var(--border) 88%, transparent);border-radius:999px;background:color-mix(in srgb,var(--surface) 74%, var(--bg) 26%);color:var(--muted);font:600 11px/1 'DM Sans',system-ui,sans-serif;white-space:nowrap;cursor:pointer;transition:color .15s,border-color .15s,background .15s,box-shadow .15s,opacity .15s}
+  .filter-pill:hover{border-color:color-mix(in srgb,var(--accent) 42%, var(--border));color:var(--text);background:color-mix(in srgb,var(--accent) 8%, var(--surface))}
+  .filter-pill.active{border-color:color-mix(in srgb,var(--accent) 52%, var(--border));background:color-mix(in srgb,var(--accent) 13%, var(--surface));color:var(--text);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 10%, transparent)}
+  .filter-pill.is-disabled{cursor:not-allowed;opacity:.48;border-style:dashed;background:transparent;color:var(--muted)}
+  .filter-pill-dot{width:7px;height:7px;border-radius:999px;flex:0 0 auto;box-shadow:0 0 0 2px color-mix(in srgb,currentColor 8%, transparent)}
+  .filter-pill[data-tooltip]::after{content:attr(data-tooltip);position:absolute;left:50%;top:calc(100% + 8px);z-index:80;transform:translateX(-50%) translateY(-2px);width:max-content;max-width:210px;padding:7px 9px;border-radius:10px;background:var(--text);color:var(--bg);font-size:11px;font-weight:600;line-height:1.3;text-align:center;box-shadow:var(--shadow-hover);opacity:0;pointer-events:none;transition:opacity .12s,transform .12s;white-space:normal}
+  .filter-pill[data-tooltip]::before{content:'';position:absolute;left:50%;top:calc(100% + 3px);z-index:81;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:var(--text);opacity:0;pointer-events:none;transition:opacity .12s}
+  .filter-pill[data-tooltip]:hover::after,.filter-pill[data-tooltip]:focus-visible::after{opacity:1;transform:translateX(-50%) translateY(0)}
+  .filter-pill[data-tooltip]:hover::before,.filter-pill[data-tooltip]:focus-visible::before{opacity:1}
+
+  @media(max-width:640px){
+    .filter-bar{padding:7px 16px;overflow-x:auto;overflow-y:hidden}
+    .filter-pill{padding:5px 8px;font-size:10.5px}
+  }
 
 
   /* ── Player card 3D tilt ── */

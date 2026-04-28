@@ -2,11 +2,13 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { createClient } from "@libsql/client";
 import {
   parseClaudeCode,
   parseCodexHistory,
   parseCodexSessionMetadata,
   parseLmStudioConversations,
+  parseOpenCodeSessions,
   parseVsCodeChatSessions,
 } from "../src/pipeline/parsers.js";
 import { Platform, Role } from "../src/pipeline/models.js";
@@ -396,5 +398,34 @@ describe("parseLmStudioConversations", () => {
       modelProvider: "mistralai",
     });
     expect(messages[0].timestamp.getTime()).toBeLessThan(messages[1].timestamp.getTime());
+  });
+});
+
+describe("parseOpenCodeSessions", () => {
+  it("parses current OpenCode SQLite storage", async () => {
+    const dbPath = path.join(tmpDir, "opencode.db");
+    const client = createClient({ url: `file:${dbPath}` });
+    await client.execute("CREATE TABLE message (id TEXT PRIMARY KEY, session_id TEXT NOT NULL, time_created INTEGER NOT NULL, data TEXT NOT NULL)");
+    await client.execute("CREATE TABLE part (id TEXT PRIMARY KEY, message_id TEXT NOT NULL, session_id TEXT NOT NULL, time_created INTEGER NOT NULL, data TEXT NOT NULL)");
+    await client.execute({
+      sql: "INSERT INTO message (id, session_id, time_created, data) VALUES (?, ?, ?, ?)",
+      args: ["msg-1", "ses-1", 1767112781244, JSON.stringify({ role: "user", modelID: "gpt-5", providerID: "openai" })],
+    });
+    await client.execute({
+      sql: "INSERT INTO part (id, message_id, session_id, time_created, data) VALUES (?, ?, ?, ?, ?)",
+      args: ["prt-1", "msg-1", "ses-1", 1767112781245, JSON.stringify({ type: "text", text: "hello from db" })],
+    });
+    client.close();
+
+    const messages = await parseOpenCodeSessions(path.join(tmpDir, "legacy"), dbPath);
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toMatchObject({
+      platform: Platform.OPENCODE,
+      role: Role.HUMAN,
+      content: "hello from db",
+      conversationId: "ses-1",
+      modelId: "gpt-5",
+      modelProvider: "openai",
+    });
   });
 });

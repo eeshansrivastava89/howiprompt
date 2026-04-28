@@ -11,6 +11,17 @@ export const SOURCE_LABELS = {
     opencode: 'OpenCode',
 };
 
+export const SOURCE_KEYS = [
+    'both',
+    'claude_code',
+    'codex',
+    'copilot_chat',
+    'cursor',
+    'lmstudio',
+    'pi',
+    'opencode',
+];
+
 export const SOURCE_ACCENTS = {
     claude_code: '#e67e22',
     codex: '#a855f7',
@@ -27,10 +38,64 @@ export function formatSourceLabel(key) {
 
 export function getSourceDisplayName(key, short = false) {
     if (short) {
+        if (key === 'both') return 'All';
         if (key === 'claude_code') return 'Claude';
         if (key === 'copilot_chat') return 'Copilot';
     }
     return formatSourceLabel(key);
+}
+
+export function sourceDisabledReason(info) {
+    if (!info) return '';
+    if (info.supported === false || info.status === 'coming_soon') return 'Detected, but analysis support is not shipped yet';
+    if (info.status === 'not_found' || info.detected === false) return 'Supported, but not detected on this machine';
+    return '';
+}
+
+export function createPillGroup({ container, items, selected, className = 'filter-pills', onSelect }) {
+    if (!container) return null;
+    container.className = className;
+    let currentKey = selected;
+
+    function render() {
+        container.innerHTML = '';
+        for (const item of items) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `filter-pill${item.key === currentKey ? ' active' : ''}${item.disabled ? ' is-disabled' : ''}`;
+            btn.dataset.key = item.key;
+            btn.setAttribute('aria-pressed', item.key === currentKey ? 'true' : 'false');
+            if (item.disabled) {
+                btn.setAttribute('aria-disabled', 'true');
+                if (item.reason) btn.dataset.tooltip = item.reason;
+            }
+            if (item.color) {
+                const dot = document.createElement('span');
+                dot.className = 'filter-pill-dot';
+                dot.style.background = item.color;
+                btn.appendChild(dot);
+            }
+            const label = document.createElement('span');
+            label.textContent = item.label;
+            btn.appendChild(label);
+            btn.addEventListener('click', () => {
+                if (item.disabled) return;
+                select(item.key);
+            });
+            container.appendChild(btn);
+        }
+    }
+
+    function select(key) {
+        const item = items.find((i) => i.key === key);
+        if (!item || item.disabled) return;
+        currentKey = key;
+        render();
+        onSelect(key);
+    }
+
+    render();
+    return { select };
 }
 
 export function formatHour12(hour) {

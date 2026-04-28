@@ -570,6 +570,17 @@ function openCodeDataDir(): string {
   return path.join(os.homedir(), ".local", "share", "opencode", "storage");
 }
 
+function openCodeDbPath(): string {
+  if (os.platform() === "win32") {
+    return path.join(
+      process.env.LOCALAPPDATA ?? path.join(os.homedir(), "AppData", "Local"),
+      "opencode",
+      "opencode.db",
+    );
+  }
+  return path.join(os.homedir(), ".local", "share", "opencode", "opencode.db");
+}
+
 class OpenCodeBackend implements Backend {
   readonly id = "opencode";
   readonly name = "OpenCode";
@@ -578,8 +589,13 @@ class OpenCodeBackend implements Backend {
     return openCodeDataDir();
   }
 
+  private dbPath(): string {
+    return openCodeDbPath();
+  }
+
   detect(): BackendInfo {
-    const sourcePath = this.sourceDir();
+    const dbPath = this.dbPath();
+    const sourcePath = fs.existsSync(dbPath) ? dbPath : this.sourceDir();
     const detected = fs.existsSync(sourcePath);
     return {
       id: this.id,
@@ -596,7 +612,7 @@ class OpenCodeBackend implements Backend {
   }
 
   async parse(config: Config): Promise<Message[]> {
-    return parseOpenCodeSessions(config.openCodeSource);
+    return parseOpenCodeSessions(config.openCodeSource, this.dbPath());
   }
 }
 
