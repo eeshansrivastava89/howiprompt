@@ -43,33 +43,40 @@ jobs:
         continue-on-error: true
         run: npm test
 
-      - name: Validate production analytics secrets
+      - name: Validate production analytics config
         run: |
-          if [ "$GITHUB_REPOSITORY" = "eeshansrivastava89/howiprompt" ] && [ "$PUBLIC_ENABLE_ANALYTICS" = "true" ]; then
+          if [ "$PUBLIC_ENABLE_ANALYTICS" = "true" ]; then
             if [ -z "$PUBLIC_POSTHOG_KEY" ]; then
-              echo "::error::Missing required secret PUBLIC_POSTHOG_KEY for production demo deploy"
+              echo "::error::PUBLIC_ENABLE_ANALYTICS is true but PUBLIC_POSTHOG_KEY secret is missing. Set it in Settings → Secrets and variables → Actions."
               exit 1
             fi
             if [ -z "$PUBLIC_POSTHOG_HOST" ]; then
-              echo "::error::Missing required secret PUBLIC_POSTHOG_HOST for production demo deploy"
+              echo "::error::PUBLIC_ENABLE_ANALYTICS is true but PUBLIC_POSTHOG_HOST secret is missing. Set it in Settings → Secrets and variables → Actions."
               exit 1
             fi
+            if [ -z "$PUBLIC_ANALYTICS_ALLOWED_HOSTS" ]; then
+              echo "::error::PUBLIC_ENABLE_ANALYTICS is true but PUBLIC_ANALYTICS_ALLOWED_HOSTS variable is missing. Set it in Settings → Secrets and variables → Actions → Variables."
+              exit 1
+            fi
+          else
+            echo "Analytics disabled — skipping validation."
           fi
         env:
-          PUBLIC_ENABLE_ANALYTICS: ${{ vars.PUBLIC_ENABLE_ANALYTICS || 'true' }}
+          PUBLIC_ENABLE_ANALYTICS: ${{ vars.PUBLIC_ENABLE_ANALYTICS }}
           PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
           PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
+          PUBLIC_ANALYTICS_ALLOWED_HOSTS: ${{ vars.PUBLIC_ANALYTICS_ALLOWED_HOSTS }}
 
       - name: Build frontend
         run: npm run build
         working-directory: frontend
         env:
-          PUBLIC_ENABLE_ANALYTICS: ${{ vars.PUBLIC_ENABLE_ANALYTICS || 'true' }}
+          PUBLIC_ENABLE_ANALYTICS: ${{ vars.PUBLIC_ENABLE_ANALYTICS }}
           PUBLIC_ENABLE_LINGUISTICS: ""
           PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
           PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
           PUBLIC_POSTHOG_UI_HOST: ${{ vars.PUBLIC_POSTHOG_UI_HOST || 'https://us.posthog.com' }}
-          PUBLIC_ANALYTICS_ALLOWED_HOSTS: ${{ vars.PUBLIC_ANALYTICS_ALLOWED_HOSTS || (github.repository == 'eeshansrivastava89/howiprompt' && 'howiprompt.eeshans.com' || '') }}
+          PUBLIC_ANALYTICS_ALLOWED_HOSTS: ${{ vars.PUBLIC_ANALYTICS_ALLOWED_HOSTS }}
 
       - name: Copy demo data into build output
         run: |
