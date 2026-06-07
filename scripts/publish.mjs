@@ -10,13 +10,15 @@
  * Usage:
  *   npm run publish
  *
- * Environment variables (all optional, with defaults for the demo site):
- *   HOWIPROMPT_METRICS_PATH  Path to metrics.json (default: ~/.howiprompt/metrics.json)
- *   PUBLIC_ENABLE_ANALYTICS   Enable PostHog analytics (default: "true")
- *   PUBLIC_ENABLE_LINGUISTICS  Enable linguistics page (default: disabled)
- *   PUBLIC_POSTHOG_KEY        PostHog project API key (default: demo site key)
- *   PUBLIC_POSTHOG_HOST       PostHog API host (default: https://api-v2.eeshans.com)
- *   PUBLIC_POSTHOG_UI_HOST    PostHog UI host (default: https://us.posthog.com)
+ * Environment variables:
+ *   HOWIPROMPT_METRICS_PATH       Path to metrics.json (default: ~/.howiprompt/metrics.json)
+ *   PUBLIC_ENABLE_ANALYTICS        Enable PostHog analytics (default: "true")
+ *   PUBLIC_ENABLE_LINGUISTICS      Enable linguistics page (default: disabled)
+ *   PUBLIC_POSTHOG_KEY             Enables analytics when paired with PUBLIC_POSTHOG_HOST
+ *   PUBLIC_POSTHOG_HOST            Enables analytics when paired with PUBLIC_POSTHOG_KEY
+ *   PUBLIC_POSTHOG_UI_HOST         PostHog UI host (default: https://us.posthog.com)
+ *   PUBLIC_ANALYTICS_ALLOWED_HOSTS Comma-separated host allowlist (default: no host restriction)
+ *   HOWIPROMPT_REQUIRE_ANALYTICS    Fail if analytics env vars are missing (default: false)
  */
 
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -55,13 +57,34 @@ console.log(`Demo data ready: ${metricsSize} KB`);
 
 // ── 2. Build frontend ──────────────────────────────────────────────
 
-// Demo site defaults: enable analytics and linguistics unless overridden
+// Demo site defaults: analytics is enabled when credentials are provided.
+// Without credentials, analytics is omitted so forks can deploy successfully.
+// The production GitHub Actions workflow separately requires secrets for the canonical repo.
+let analyticsEnabled = process.env.PUBLIC_ENABLE_ANALYTICS ?? "true";
+const missingAnalyticsEnv = [];
+if (analyticsEnabled === "true") {
+  for (const name of ["PUBLIC_POSTHOG_KEY", "PUBLIC_POSTHOG_HOST"]) {
+    if (!process.env[name]) missingAnalyticsEnv.push(name);
+  }
+}
+
+if (missingAnalyticsEnv.length > 0) {
+  if (process.env.HOWIPROMPT_REQUIRE_ANALYTICS === "true") {
+    console.error(`\nAnalytics is required, but missing env var(s): ${missingAnalyticsEnv.join(", ")}`);
+    console.error("Set them from secrets, or unset HOWIPROMPT_REQUIRE_ANALYTICS.\n");
+    process.exit(1);
+  }
+  console.warn(`Analytics disabled for this build: missing ${missingAnalyticsEnv.join(", ")}`);
+  analyticsEnabled = "false";
+}
+
 const buildEnv = {
-  PUBLIC_ENABLE_ANALYTICS: process.env.PUBLIC_ENABLE_ANALYTICS ?? "true",
+  PUBLIC_ENABLE_ANALYTICS: analyticsEnabled,
   PUBLIC_ENABLE_LINGUISTICS: process.env.PUBLIC_ENABLE_LINGUISTICS ?? "",
-  PUBLIC_POSTHOG_KEY: process.env.PUBLIC_POSTHOG_KEY ?? "phc_zfue5Ca8VaxypRHPCi9j2h2R3Qy1eytEHt3TMPWlOOS",
-  PUBLIC_POSTHOG_HOST: process.env.PUBLIC_POSTHOG_HOST ?? "https://api-v2.eeshans.com",
+  PUBLIC_POSTHOG_KEY: process.env.PUBLIC_POSTHOG_KEY ?? "",
+  PUBLIC_POSTHOG_HOST: process.env.PUBLIC_POSTHOG_HOST ?? "",
   PUBLIC_POSTHOG_UI_HOST: process.env.PUBLIC_POSTHOG_UI_HOST ?? "https://us.posthog.com",
+  PUBLIC_ANALYTICS_ALLOWED_HOSTS: process.env.PUBLIC_ANALYTICS_ALLOWED_HOSTS ?? "",
 };
 
 await run("npm", ["run", "build"], frontendDir, buildEnv);

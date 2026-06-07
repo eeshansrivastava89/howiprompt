@@ -77,6 +77,13 @@ npm run publish
 
 Then commit `data/demo/metrics.json` and push to `main`. GitHub Actions deploys the site automatically from `dist-static/`.
 
+Hosted analytics is enabled when you add your own repository secrets. If these are missing, the deploy still works and analytics is omitted:
+
+- `PUBLIC_POSTHOG_KEY`
+- `PUBLIC_POSTHOG_HOST`
+
+You can also set the repository variable `PUBLIC_ENABLE_ANALYTICS=false` to explicitly disable analytics.
+
 Enable GitHub Pages in your repo settings and set the source to **GitHub Actions**.
 
 ---
